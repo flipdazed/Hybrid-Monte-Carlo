@@ -1,1 +1,1 @@
-# Hybrid Monte Carlo & Kramer's Algorithm
+# Hybrid Monte Carlo: Kramer's Algorithm
