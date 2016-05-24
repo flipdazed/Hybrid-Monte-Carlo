@@ -1,5 +1,5 @@
 #Hybrid Monte Carlo (HMC)
-This directory contains the HMC code and test cases
+This directory contains the HMC code and test cases.
 
 #To Do
  - Adapt/improve existing HMC routines

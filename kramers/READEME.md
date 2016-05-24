@@ -1,5 +1,5 @@
 #HMC: Kramers Algorithm (KHMC)
-This directory contains the KHMC code and test cases
+This directory contains the KHMC code and test cases.
 
 #To Do
  - Extend the HMC algorithm to include the Kramers condition
