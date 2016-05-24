@@ -1,6 +1,6 @@
 #Hybrid Monte Carlo & Kramer's Algorithm
 
-This repository contains the code used to generate results for the thesis component of a Masters degree in Theoretical Physics at Edinburgh University.
+This repository contains the code used for the thesis component of a Masters degree in Theoretical Physics at Edinburgh University.
 
 Supervisors: Brian Pendleton, Tony Kennedy
 
