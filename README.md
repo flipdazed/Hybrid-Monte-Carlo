@@ -21,3 +21,8 @@ Kramer's Algorithm, also known as (L2MC), introduces an alternative approach whe
  - [Generalised Hybrid Monte Carlo (Kennedy, Pendleton)](http://www2.ph.ed.ac.uk/~adk/exact.pdf)
 
 Both the above algorithms are specific parameterisations of the generalised Hybrid Monte Carlo algorithm.
+
+## Conventions
+Functions :: `CamelType()`
+variables :: `lower_case`
+Classes   :: `Upper_Case()`

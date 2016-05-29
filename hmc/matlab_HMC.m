@@ -1,79 +1,60 @@
-% EXAMPLE 2: HYBRID MONTE CARLO SAMPLING -- BIVARIATE NORMAL
-rand('seed',12345);
-randn('seed',12345);
- 
+% EXAMPLE 1: SIMULATING HAMILTONIAN DYNAMICS
+%            OF HARMONIC OSCILLATOR
 % STEP SIZE
-delta = 0.3;
-nSamples = 1000;
-L = 20;
+delta = 0.1;
  
-% DEFINE POTENTIAL ENERGY FUNCTION
-U = inline('transp(x)*inv([1,.8;.8,1])*x','x');
- 
-% DEFINE GRADIENT OF POTENTIAL ENERGY
-dU = inline('transp(x)*inv([1,.8;.8,1])','x');
+% # LEAP FROG
+L = 70;
  
 % DEFINE KINETIC ENERGY FUNCTION
-K = inline('sum((transp(p)*p))/2','p');
+K = inline('p^2/2','p');
  
-% INITIAL STATE
-x = zeros(2,nSamples);
-x0 = [0;6];
-x(:,1) = x0;
+% DEFINE POTENTIAL ENERGY FUNCTION FOR SPRING (K =1)
+U = inline('1/2*x^2','x');
  
-t = 1;
-while t < nSamples
-    t = t + 1;
+% DEFINE GRADIENT OF POTENTIAL ENERGY
+dU = inline('x','x');
  
-    % SAMPLE RANDOM MOMENTUM
-    p0 = randn(2,1);
- 
-    %% SIMULATE HAMILTONIAN DYNAMICS
-    % FIRST 1/2 STEP OF MOMENTUM
-    pStar = p0 - delta/2*dU(x(:,t-1))';
- 
-    % FIRST FULL STEP FOR POSITION/SAMPLE
-    xStar = x(:,t-1) + delta*pStar;
- 
-    % FULL STEPS
-    for jL = 1:L-1
-        % MOMENTUM
-        pStar = pStar - delta*dU(xStar)';
-        % POSITION/SAMPLE
-        xStar = xStar + delta*pStar;
-    end
- 
-    % LAST HALP STEP
-    pStar = pStar - delta/2*dU(xStar)';
- 
-    % COULD NEGATE MOMENTUM HERE TO LEAVE
-    % THE PROPOSAL DISTRIBUTION SYMMETRIC.
-    % HOWEVER WE THROW THIS AWAY FOR NEXT
-    % SAMPLE, SO IT DOESN'T MATTER
- 
-    % EVALUATE ENERGIES AT
-    % START AND END OF TRAJECTORY
-    U0 = U(x(:,t-1));
-    UStar = U(xStar);
- 
-    K0 = K(p0);
-    KStar = K(pStar);
- 
-    % ACCEPTANCE/REJECTION CRITERION
-    alpha = min(1,exp((U0 + K0) - (UStar + KStar)));
- 
-    u = rand;
-    if u < alpha
-        x(:,t) = xStar;
-    else
-        x(:,t) = x(:,t-1);
-    end
-end
- 
-% DISPLAY
+% INITIAL CONDITIONS
+x0 = -4; % POSTIION
+p0 = 1;  % MOMENTUM
 figure
-scatter(x(1,:),x(2,:),'k.'); hold on;
-plot(x(1,1:50),x(2,1:50),'ro-','Linewidth',2);
-xlim([-6 6]); ylim([-6 6]);
-legend({'Samples','1st 50 States'},'Location','Northwest')
-title('Hamiltonian Monte Carlo')
+ 
+%% SIMULATE HAMILTONIAN DYNAMICS WITH LEAPFROG METHOD
+% FIRST HALF STEP FOR MOMENTUM
+pStep = p0 - delta/2*dU(x0)';
+ 
+% FIRST FULL STEP FOR POSITION/SAMPLE
+xStep = x0 + delta*pStep;
+ 
+% FULL STEPS
+for jL = 1:L-1
+    % UPDATE MOMENTUM
+    pStep = pStep - delta*dU(xStep);
+ 
+    % UPDATE POSITION
+    xStep = xStep + delta*pStep;
+ 
+    % UPDATE DISPLAYS
+    subplot(211), cla
+    hold on;
+    xx = linspace(-6,xStep,1000);
+    plot(xx,sin(6*linspace(0,2*pi,1000)),'k-');
+    plot(xStep+.5,0,'bo','Linewidth',20)
+    xlim([-6 6]);ylim([-1 1])
+    hold off;
+    title('Harmonic Oscillator')
+    subplot(223), cla
+    b = bar([U(xStep),K(pStep);0,U(xStep)+K(pStep)],'stacked');
+    set(gca,'xTickLabel',{'U+K','H'})
+    ylim([0 10]);
+    title('Energy')
+    subplot(224);
+    plot(xStep,pStep,'ko','Linewidth',20);
+        xlim([-6 6]); ylim([-6 6]); axis square
+    xlabel('x'); ylabel('p');
+    title('Phase Space')
+    pause(.1)
+end
+% (LAST HALF STEP FOR MOMENTUM)
+pStep = pStep - delta/2*dU(xStep);
