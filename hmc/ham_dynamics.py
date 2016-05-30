@@ -6,8 +6,8 @@ import subprocess
 
 # code based on the following matlab blog entry
 prefix = 'https://'
-blog = 'TheCleverMachine.wordpress.com/'
-url_path = '2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/'
+blog = 'TheCleverMachine.wordpress.com'
+url_path = '/2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/'
 ref = prefix+blog+url_path
 
 class Hamiltonian_Dynamics(object):

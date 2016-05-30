@@ -2,7 +2,7 @@ Hybrid Monte Carlo (HMC)
 ===============
 This directory contains the HMC code and test cases.
 
-# Table of Contents
+## Table of Contents
  - [To Do](#to-do)
  - [Unit Tests](#unit-tests)
      * [Hamiltonian Dynamics (Leap-Frog)](#hdlf)
@@ -22,7 +22,7 @@ This directory contains the HMC code and test cases.
 
 <a name="hdlf"/>
 ### Hamiltonian Dynamics (Leap-Frog)
-![Hamiltonian Dynamics](./animations/ham_dynamics.gif)
+<img src="./animations/ham_dynamics.gif" width="200" height="400" />
 
 <a name="ak"/>
 ## Code Acknowledgements
