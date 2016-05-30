@@ -22,7 +22,7 @@ This directory contains the HMC code and test cases.
 
 <a name="hdlf"/>
 ### Hamiltonian Dynamics (Leap-Frog)
-<img src="./animations/ham_dynamics.gif" width="200" height="400" />
+<img src="./animations/ham_dynamics.gif" width="600" height="600" />
 
 <a name="ak"/>
 ## Code Acknowledgements
