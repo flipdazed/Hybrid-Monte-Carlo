@@ -4,6 +4,12 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import subprocess
 
+# code based on the following matlab blog entry
+prefix = 'https://'
+blog = 'TheCleverMachine.wordpress.com/'
+url_path = '2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/'
+ref = prefix+blog+url_path
+
 class Hamiltonian_Dynamics(object):
     """Simulates Hamiltonian Dynamics using Leap-Frog Integration
     
@@ -121,6 +127,8 @@ class Test(object):
                   'font.size' : 11,
                   'font.family' : 'lmodern',
                   'text.latex.unicode': True,
+                  # 'text.latex.preamble': [r"\usepackage{hyperref}"], # doesn't work
+                  # 'text.latex.preamble': [r"\usepackage{amsmath}"],
                   'figure.figsize' : self.fig_dims,
                   'figure.subplot.top':    0.85, #0.85 for title
                   'figure.subplot.hspace': 0.40,
@@ -157,7 +165,8 @@ class Test(object):
         self._teXify() # make it lookm like LaTeX
         fig.suptitle(r"Hamiltonian Dynamics of the SHO using Leap-Frog Integrator",
             fontsize=16)
-        
+        fig.text(.02, .02,
+        r"... Based on a blog entry from %s" % blog, fontsize=8)
         ax = [] # container list for the axes
         gs = gridspec.GridSpec(2, 2) # set up a 2x2 grid for axes
         ax.append(plt.subplot(gs[0, :]))    # Top spanning all
