@@ -4,7 +4,7 @@ This directory contains the HMC code and test cases.
 
 # Table of Contents
  - [To Do](#to-do)
- - [Unit Tests](#unit-tests
+ - [Unit Tests](#unit-tests)
      * [Hamiltonian Dynamics (Leap-Frog)](#hdlf)
  - [Code Acknowledgements](#ak)
 
