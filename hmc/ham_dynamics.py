@@ -4,7 +4,7 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import subprocess
 
-# code based on the following matlab blog entry
+# code test based on the following matlab blog entry
 prefix = 'https://'
 blog = 'TheCleverMachine.wordpress.com'
 url_path = '/2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/'
@@ -31,7 +31,8 @@ class Hamiltonian_Dynamics(object):
         Either may have additional parameters
     """
     def __init__(self, p0, x0, k, u, dk, du, delta=0.1, lf = 250):
-        self.p0,self.x0 = p0, x0   # initial conditions
+        self.p0,self.x0 = p0, x0        # initial conditions
+        self.p_step,self.x_step = p0,x0   # Assign
         
         self.k, self.u = k,u        # energy functions
         self.dk, self.du = dk,du    # energy gradients
@@ -39,50 +40,64 @@ class Hamiltonian_Dynamics(object):
         self.delta = delta  # step size
         self.lf = lf        # leap-frog step length
         
-        self.pStep_arr = [] # data for plots
-        self.xStep_arr = [] # data for plots
+        self.p_step_arr = [] # data for plots
+        self.x_step_arr = [] # data for plots
         pass
     
-    def leapFrog(self):
-        """The Leap Frog Integration"""
+    def leapFrog(self, save_path=True):
+        """The Leap Frog Integration
         
-        self.pStep = self.p0 - self.delta/2.*self.du(self.x0) # first half mom. step.
-        self.xStep = self.x0 + self.delta*self.pStep # first full pos. step (NEW mom.)
+        Expectations
+            self.x_step = x0 when class is instantiated
+            self.p_step = p0 when class is instantiated
+        
+        Note: Do not reassign x0,p0 each leapFrog sequence
+        else the MCMC will keep resetting, rather than sketching a path
+        """
+        
+        self.leapFrogMoveP(frac_step=0.5)
+        self.leapFrogMoveX()
         
         for step in xrange(1, self.lf): # continue with full steps
-            self.leapFrogMove(self.pStep,self.xStep)
+            self.leapFrogMoveP()
+            self.leapFrogMoveX()
+            self._storeSteps() # store moves
         
-        self.pStep -= self.delta/2.*self.du(self.xStep)  # last half step with momentum
+        self.leapFrogMoveP(frac_step=0.5)
         
         pass
-        
-    def leapFrogMove(self, p, x):
-        """Calculates a move for the Leap Frog integrator 
+    def leapFrogMoveX(self, frac_step=1.):
+        """Calculates a POSITION move for the Leap Frog integrator 
         
         Required Inputs
             p :: float :: current momentum
             x :: float :: current position
         """
+        self.x_step += self.delta*self.p_step # position step
+        pass
+    
+    def leapFrogMoveP(self, frac_step=1.):
+        """Calculates a MOMENTUM move for the Leap Frog integrator 
         
-        p -= self.delta*self.du(x)  # momentum step with NEW pos.
-        x += self.delta*p           # position step with NEW mom.
-        
-        self.pStep, self.xStep = p,x   # assign for next iteration
-        
-        self._storeSteps() # store data
+        Required Inputs
+            p :: float :: current momentum
+            x :: float :: current position
+        """
+        self.p_step -= self.delta*self.du(self.x_step)  # momentum step
         pass
     
     def _storeSteps(self):
         """Stores current momentum and position in lists
         
         Expectations
-            self.xStep :: float
-            self.pStep :: float
+            self.x_step :: float
+            self.p_step :: float
         """
-        self.pStep_arr.append(self.pStep)
-        self.xStep_arr.append(self.xStep)
+        self.p_step_arr.append(self.p_step)
+        self.x_step_arr.append(self.x_step)
         pass
     
+
 class Test(object):
     """This class plots a test animation as a sort of Unit Test
     
@@ -156,7 +171,7 @@ class Test(object):
         """
         ### Set up
         
-        xStep_arr, pStep_arr = self.Ham_Dyn.xStep_arr, self.Ham_Dyn.pStep_arr
+        x_step_arr, p_step_arr = self.Ham_Dyn.x_step_arr, self.Ham_Dyn.p_step_arr
         dk,du = self.Ham_Dyn.dk,self.Ham_Dyn.du
         k,u = self.Ham_Dyn.k,self.Ham_Dyn.u
         
@@ -183,8 +198,8 @@ class Test(object):
         ax[0].set_ylim([-1.,1.])
         
         # Intial parameters
-        pos = xStep_arr[0]
-        mom = pStep_arr[0]
+        pos = x_step_arr[0]
+        mom = p_step_arr[0]
         x = np.linspace(-6., pos, n, endpoint=True) # x range to clip wire
         wire = np.sin(6.*np.linspace(0,2.*np.pi,1000)) # wire is clipped at x[-1]
         
@@ -216,7 +231,7 @@ class Test(object):
         ax[2].set_ylim([-6.,6.])
         
         # Lines: all_traj (all trajectories) ; curr_traj (where we are now)
-        all_traj, = ax[2].plot(xStep_arr, pStep_arr, linestyle='-', color='blue')
+        all_traj, = ax[2].plot(x_step_arr, p_step_arr, linestyle='-', color='blue')
         curr_traj = plt.Circle((0,0), radius=0.25, color='red')
         ### End (Bottom Right) Phase Space
         
@@ -230,8 +245,8 @@ class Test(object):
             return weight,curr_traj,        # must return for animation in order
         
         def animate(i): # animation func
-            pos = xStep_arr[i]              # update x pos
-            mom = pStep_arr[i]              # update x pos
+            pos = x_step_arr[i]              # update x pos
+            mom = p_step_arr[i]              # update x pos
             x = np.linspace(-6., pos, n)    # create x-pos array
             weight.set_x(pos)               # update weight pos
             spring.set_xdata(x)             # refresh spring x-axis
@@ -246,7 +261,7 @@ class Test(object):
             curr_traj.center = (pos, mom) # current phase space point
             return spring,en_t,en_v,en_h # must return as tuple again in order
         
-        anim = animation.FuncAnimation(fig, animate, np.arange(0, len(xStep_arr)),
+        anim = animation.FuncAnimation(fig, animate, np.arange(0, len(x_step_arr)),
                                       interval=50, blit=False, init_func=init)
         
         if self.save:
