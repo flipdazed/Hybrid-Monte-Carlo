@@ -33,6 +33,6 @@ Both the above algorithms are specific parameterisations of the generalised Hybr
 
 <a name="conv"/>
 ## Conventions
-Functions :: `CamelType()`
-variables :: `lower_case`
-Classes   :: `Upper_Case()`
+- Functions :: `CamelType()`
+- Variables :: `lower_case`
+- Classes   :: `Upper_Case()`
