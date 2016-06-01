@@ -57,7 +57,7 @@ class Test(object):
                   # 'text.latex.preamble': [r"\usepackage{hyperref}"], # doesn't work
                   # 'text.latex.preamble': [r"\usepackage{amsmath}"],
                   'figure.figsize' : self.fig_dims,
-                  'figure.subplot.top':    0.85, #0.85 for title
+                  'figure.subplot.top':    0.90, #0.85 for title
                   'figure.subplot.hspace': 0.40,
                   'figure.subplot.wspace': 0.40,
                   'figure.subplot.bottom': 0.15,
@@ -83,8 +83,8 @@ class Test(object):
         ax =[]
         ax.append(fig.add_subplot(111))
         self._teXify() # LaTeX
-        fig.suptitle(r"Hamiltonian Dynamics of the SHO using Leap-Frog Integrator",
-            fontsize=16)
+        # fig.suptitle(r"Hamiltonian Dynamics of the SHO using Leap-Frog Integrator",
+        #     fontsize=16)
         ax[0].set_title(r'Oscillating Hamiltonian as a function of Integration Steps: \textit{Energy Drift}')
         ax[0].set_xlabel(r'Integration Steps, $\epsilon$')
         ax[0].set_ylabel(r'Hamiltonian, $H(p,x)$')
@@ -122,8 +122,8 @@ class Test(object):
         n = 1000 # Resolution of the spring (< 500 is shit)
         fig = plt.figure(figsize=(8, 8)) # make plot
         self._teXify() # make it lookm like LaTeX
-        fig.suptitle(r"Hamiltonian Dynamics of the SHO using Leap-Frog Integrator",
-            fontsize=16)
+        # fig.suptitle(r"Hamiltonian Dynamics of the SHO using Leap-Frog Integrator",
+            # fontsize=16)
         fig.text(.02, .02,
         r"... Based on a blog entry from %s" % self.blog, fontsize=8)
         ax = [] # container list for the axes
