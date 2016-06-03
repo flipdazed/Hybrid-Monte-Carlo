@@ -14,10 +14,19 @@ class Hybrid_Monte_Carlo(object):
     Expectations
         
     """
-    def __init__(self):
+    def __init__(self, samples, p0, x0):
+        self.samples = samples
+        self.p0, self.x0 = p0, x0
+        
+        self.potential = Simple_Harmonic_Oscillator()
+        self.integrator = Leap_Frog(duE=self.potential.duE, d=0.3, l = 20)
+        self.momentum = Momentum()
+        pass
+    
+    def sample(self):
         
         pass
-
+    
 class Momentum(object):
     def __init__(self):
         pass
