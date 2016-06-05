@@ -38,9 +38,9 @@ class Multivariate_Gaussian(object):
         cov     :: n-dim^2 matrix (float)   :: covariance matrix
     """
     def __init__(self, mean=[[0.], [0.]], cov=[[1.,.8],[.8,1.]]):
-        self.dim = mean.shape[1]
         self.mean = np.matrix(mean) # use 1D matrix for vector to use linalg ops.
         self.cov = np.matrix(cov)
+        self.dim = self.mean.shape[1]
         
         self.dim_rng = np.arange(self.dim) # range of dimensions for iterating
         assert (self.cov.T == self.cov).all() # must be symmetric
@@ -73,7 +73,7 @@ class Multivariate_Gaussian(object):
         """
         assert x.shape == self.mean.shape
         x -= self.mean
-        return .5 * ( np.dot(x.T, self.cov_inv) * x).sum(axis=1)
+        return .5 * ( np.dot(x.T, self.cov_inv) * x).sum(axis=0)
     
     def gradKineticEnergy(self, p):
         """n-dim Kinetic Energy"""

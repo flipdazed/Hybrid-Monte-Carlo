@@ -1,6 +1,6 @@
 import numpy as np
 from potentials import Simple_Harmonic_Oscillator
-from h_dynamics import Hamiltonian_Dynamics, Leap_Frog
+from h_dynamics import Leap_Frog
 
 class Hybrid_Monte_Carlo(object):
     """The Hybrid (Hamiltonian) Monte Carlo method
@@ -9,28 +9,55 @@ class Hybrid_Monte_Carlo(object):
         
     
     Required Inputs
-        x0  :: n-dim array :: positions are 
-        rng :: random number generator
+        # x0         :: tuple :: initial starting position vector
+        # potential  :: class :: class from potentials.py
+        # dynamics :: class :: integrator class for dynamics from h_dynamics.py
     Expectations
-        
     """
-    def __init__(self, x0):
-        self.samples = samples
-        self.p0, self.x0 = p0, x0
+    def __init__(self):
         
         # These can be made into inputs
+        self.x0 = np.asarray([[0.],[0.]]) # start at 0,0 by default
         self.rng = np.random.RandomState(1234)
         
         self.potential = Simple_Harmonic_Oscillator()
-        self.integrator = Leap_Frog(duE=self.potential.duE, d=0.3, l = 20)
+        self.dynamics = Leap_Frog(duE=self.potential.duE, d=0.3, l = 20)
+        self.momentum = self.Momentum(self.rng)
+        # end inputs
         
-        self.momentum = Momentum()
-        # End
-        
+        self.x = self.x0
+        self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
         pass
     
-    def move(self):
+    def moveHMC(self, step_size=None, n_steps=None):
+        """A Hybrid Monte Carlo move:
+        Combines Hamiltonian Dynamics and Momentum Refreshment
+        to generate a the next position for the MCMC chain
         
+        Optional Inputs
+            step_size   :: float    :: step_size for integrator
+            n_steps     :: integer  :: number of integrator steps
+        
+        Expectations
+            self.p, self.x
+            self.dynamics.integrate
+            self.momentum.fullRefresh
+        """
+        p,x = self.p,self.x # initial temp. proposal p,x
+        p = -self.momentum.fullRefresh(p) # mixing matrix adds a flip
+        p, x = self.dynamics.integrate(p, x)
+        # p = self.momentum.flip(p) # not necessary as full refreshment
+        
+        accept = 
+        pass
+    
+    def moveGHMC(self, mixing_angle):
+        """A generalised Hybrid Monte Carlo move:
+        As HMC but includes partial momentum refreshment
+        
+        Required Inputs
+            mixing_angle :: float :: see Momentum()._rotationMatrix()
+        """
         pass
     
     def test():
@@ -154,7 +181,7 @@ class Momentum(object):
             pass
         
         p14 = np.mat([[1.,7.,-1., 400.]])
-        noise = np.mat([[0.1, 3., 1., -2]])
+        self.noise = np.mat([[0.1, 3., 1., -2]])
         
         expected_0 = np.mat([[-1., -7., 1., -400.], [-0.1, -3., -1., 2.]])
         expected_halfpi = np.mat([[-0.1, -3., -1., 2.], [1., 7., -1., 400.]])
@@ -162,19 +189,19 @@ class Momentum(object):
         expected_quartpi = np.mat( [[-0.778, -7.071, 0., -281.428],
                                     [0.636, 2.828, -1.414, 284.257]])
         
-        self.mixed = self._refresh(p14, noise, theta = 0.)
+        self.mixed = self._refresh(p14, self.noise, theta = 0.)
         result = (np.around(self.mixed, 3) == expected_0).all()
-        if print_out: display("Theta = 0. (Total Mix)", p14, expected_0, result)
+        if print_out: display("Theta = 0. (No Mix)", p14, expected_0, result)
         
-        self.mixed = self._refresh(p14, noise, theta = np.pi)
+        self.mixed = self._refresh(p14, self.noise, theta = np.pi)
         result = (np.around(self.mixed, 3) == expected_pi).all()
-        if print_out: display("Theta = pi (- Total Mix)", p14, expected_pi, result)
+        if print_out: display("Theta = pi (- No Mix)", p14, expected_pi, result)
         
-        self.mixed = self._refresh(p14, noise, theta = np.pi/2.)
+        self.mixed = self._refresh(p14, self.noise, theta = np.pi/2.)
         result = (np.around(self.mixed, 3) == expected_halfpi).all()
-        if print_out: display("Theta = pi/2. (No Mix)", p14, expected_halfpi, result)
+        if print_out: display("Theta = pi/2. (Total Mix)", p14, expected_halfpi, result)
         
-        self.mixed = self._refresh(p14, noise, theta = np.pi/4.)
+        self.mixed = self._refresh(p14, self.noise, theta = np.pi/4.)
         result = (np.around(self.mixed, 3) == expected_quartpi).all()
         if print_out: display("Theta = pi/4. (Partial Mix)", p14, expected_quartpi, result)
         
@@ -206,4 +233,4 @@ class Momentum(object):
 if __name__ == '__main__':
     rng = np.random.RandomState(1234)
     m = Momentum(rng)
-    print m.test(print_out=False)
+    print 'Momentum Test:', m.test(print_out=True)
