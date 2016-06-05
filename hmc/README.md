@@ -11,9 +11,16 @@ This directory contains the HMC code and test cases.
 <a name="to-do"/>
 ## To Do
  - ~~Hamiltonian Dynamics: Leap-Frog Integration~~
- - ~~Unit Test: Simple Harmonic Oscillator~~
- - HMC Sampling
- - Unit Test: Bivariate Gaussian
+ - ~~Practical Test: Simple Harmonic Oscillator~~
+ - Unit Test: Energy Conservation
+ - Unit Test: Reversibility: Satisfy Detailed Balance
+ - Unit Test: No change in magnitude of phase space
+ - HMC Sampler
+ - Practical Test: Bivariate Gaussian
+ - Practical Test: Simple Harmonic Oscillator
+ - Practical Test: Quantum Harmonic Oscillator
+   * n-dimensional
+   * n-Dimensional, Anharmonic
  - *Code on GPU (if time) & Unit Test*
  - *Unit Test (if time): v. high-dim Gaussian*
 
