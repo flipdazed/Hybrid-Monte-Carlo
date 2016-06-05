@@ -9,20 +9,24 @@ class Hybrid_Monte_Carlo(object):
         
     
     Required Inputs
+        store_path  :: bool :: Store path for plotting
         # x0         :: tuple :: initial starting position vector
         # potential  :: class :: class from potentials.py
         # dynamics :: class :: integrator class for dynamics from h_dynamics.py
     Expectations
     """
-    def __init__(self):
+    def __init__(self, store_path=False):
+        self.store_path = store_path
         
         # These can be made into inputs
         self.x0 = np.asarray([[0.],[0.]]) # start at 0,0 by default
         self.rng = np.random.RandomState(1234)
         
         self.potential = Simple_Harmonic_Oscillator()
-        self.dynamics = Leap_Frog(duE=self.potential.duE, d=0.3, l = 20)
-        self.momentum = self.Momentum(self.rng)
+        self.dynamics = Leap_Frog(duE = self.potential.duE,
+            step_size = 0.3, n_steps = 20)
+        self.momentum = Momentum(self.rng)
+        self.accept = Accept_Reject(self.rng)
         # end inputs
         
         self.x = self.x0
@@ -42,14 +46,27 @@ class Hybrid_Monte_Carlo(object):
             self.p, self.x
             self.dynamics.integrate
             self.momentum.fullRefresh
+        
+        Returns
+            (p,x) :: (float, float) :: new momentum and position
         """
+        
         p,x = self.p,self.x # initial temp. proposal p,x
+        h_old = self.potential.hamiltonian(p, x)
+        
         p = -self.momentum.fullRefresh(p) # mixing matrix adds a flip
+        
+        if (step_size is not None): self.dynamics.step_size = step_size
+        if (n_steps is not None): self.dynamics.n_steps = step_size
+        
         p, x = self.dynamics.integrate(p, x)
         # p = self.momentum.flip(p) # not necessary as full refreshment
+        h_new = self.potential.hamiltonian(p, x)
         
-        accept = 
-        pass
+        accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
+        if not accept: p, x = self.p, self.x
+        
+        return p,x
     
     def moveGHMC(self, mixing_angle):
         """A generalised Hybrid Monte Carlo move:
@@ -60,10 +77,47 @@ class Hybrid_Monte_Carlo(object):
         """
         pass
     
-    def test():
+    def test(self):
         """A test to sample the Bivariate Normal Distribution"""
         pass
+#
+class Accept_Reject(object):
+    """Contains accept-reject routines
     
+    Required Inputs
+        rng :: np.random.RandomState :: random number generator
+    """
+    def __init__(self, rng):
+        self.rng = rng
+        pass
+    def metropolisHastings(self, h_old, h_new):
+        """A M-H accept/reject test as per
+        Duane, Kennedy, Pendleton (1987)
+        and also used by Neal (2003)
+        
+        The following, 
+            min(1., np.exp(-delta_h)) - self.rng.uniform() >= 0.
+            (np.exp(-delta_h) - self.rng.uniform()) >= 0
+        
+        are equivalent to the original step:
+            self.rng.uniform() < min(1., np.exp(-delta_h))
+        
+        The min() function need not be evaluated as both
+        the resultant 1. a huge +ve number will both result
+        in acceptance.
+        >= is also introduced for OCD reasons.
+        
+        Required Inputs
+            h_old :: float :: old hamiltonian
+            h_new :: float :: new hamiltonian
+        
+        Return :: bool
+            True    :: acceptance
+            False   :: rejection
+        """
+        delta_h = h_new - h_old
+        # (self.rng.uniform() < min(1., np.exp(-delta_h))) # Neal / DKP original
+        return (np.exp(-delta_h) - self.rng.uniform()) >= 0 # faster
 #
 class Momentum(object):
     """Momentum Routines
@@ -232,5 +286,7 @@ class Momentum(object):
 #
 if __name__ == '__main__':
     rng = np.random.RandomState(1234)
-    m = Momentum(rng)
-    print 'Momentum Test:', m.test(print_out=True)
+    # m = Momentum(rng)
+    # print 'Momentum Test:', m.test(print_out=True)
+    hmc = Hybrid_Monte_Carlo()
+    hmc.test()

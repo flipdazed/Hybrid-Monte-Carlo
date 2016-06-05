@@ -1,5 +1,11 @@
 import numpy as np
 
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+        
 class Simple_Harmonic_Oscillator(object):
     """Simple Harmonic Oscillator
     
@@ -26,6 +32,8 @@ class Simple_Harmonic_Oscillator(object):
         return p
     def gradPotentialEnergy(self, x):
         return self.k*x
+    def hamiltonian(self, p, x):
+        return self.kineticEnergy(p) + self.potentialEnergy(x)
 #
 class Multivariate_Gaussian(object):
     """Multivariate Gaussian Distribution
@@ -84,12 +92,9 @@ class Multivariate_Gaussian(object):
         """n-dim gradient"""
         assert len(x.shape) == 2
         return np.dot(self.cov_inv, x)
+    def hamiltonian(self, p, x):
+        return self.kineticEnergy(p) + self.potentialEnergy(x)
     def testPlot(self):
-        from mpl_toolkits.mplot3d import Axes3D
-        from matplotlib import cm
-        from matplotlib.ticker import LinearLocator, FormatStrFormatter
-        import matplotlib.pyplot as plt
-        from matplotlib import rcParams
         rcParams['text.usetex'] = True
         rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
         

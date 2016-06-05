@@ -13,14 +13,14 @@ class Leap_Frog(object):
         duE  :: func :: Gradient of Potential Energy
     
     Optional Inputs
-        d   :: integration step length
-        lf  :: leap frog integration steps (trajectory length)
+        d   :: integration step size
+        l  :: leap frog integration steps (trajectory length)
     
     Note: Do not confuse x0,p0 with initial x0,p0 for HD
     """
-    def __init__(self, duE, d=0.1, l = 250, save_path=False):
-        self.d = d
-        self.l = l
+    def __init__(self, duE, step_size=0.1, n_steps=250, save_path=False):
+        self.step_size = step_size
+        self.n_steps = n_steps
         self.duE = duE
         
         self.save_path = save_path
@@ -44,7 +44,7 @@ class Leap_Frog(object):
             (x,p) :: tuple :: momentum, position
         """
         self.p, self.x = p0,x0
-        for step in xrange(0, self.l):
+        for step in xrange(0, self.n_steps):
             self._moveP(frac_step=0.5)
             self._moveX()
             self._moveP(frac_step=0.5)
@@ -73,7 +73,7 @@ class Leap_Frog(object):
         self._moveX()
         if self.save_path: self._storeSteps() # store moves
         
-        for step in xrange(1, self.lf):
+        for step in xrange(1, self.n_steps):
             self._moveP()
             self._moveX()
             if self.save_path: self._storeSteps() # store moves
@@ -89,7 +89,7 @@ class Leap_Frog(object):
             p :: float :: current momentum
             x :: float :: current position
         """
-        self.x += frac_step*self.d*self.p
+        self.x += frac_step*self.step_size*self.p
         pass
     
     def _moveP(self, frac_step=1.):
@@ -99,7 +99,7 @@ class Leap_Frog(object):
             p :: float :: current momentum
             x :: float :: current position
         """
-        self.p -= frac_step*self.d*self.duE(self.x)
+        self.p -= frac_step*self.step_size*self.duE(self.x)
         pass
     def _storeSteps(self):
         """Stores current momentum and position in lists
@@ -147,7 +147,7 @@ class Test_Hamiltonian_Dynamics(object):
         prefix = 'https://'
         self.blog = 'TheCleverMachine.wordpress.com'
         url_path = '/2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/'
-        self.ref = prefix+self.blog+url_path
+        self.ref = prefix + self.blog + url_path
         
         self.potential = potential
         self.kE, self.uE = self.potential.kE, self.potential.uE
@@ -366,28 +366,30 @@ class Test_Hamiltonian_Dynamics(object):
 if __name__ == '__main__': # demo if run directly
     
     pot = Simple_Harmonic_Oscillator(k=1.)
-    lf = Leap_Frog(duE=pot.duE, d=0.1, 
-        l = 63,
-        # l=250, 
-        save_path=True
+    lf = Leap_Frog(
+        duE = pot.duE,
+        step_size = 0.1,
+        # n_steps = 63,
+        n_steps = 250, 
+        save_path = True
         )
     
     test = Test_Hamiltonian_Dynamics(
-        p0=1., x0=4.,
-        dynamics=lf,
-        potential=pot
+        p0 = 1., x0 = 4.,
+        dynamics = lf,
+        potential = pot
         )
     
     test.run() # run dynamics
     
     test.energy_drift( # show energy drift
         # save=False,
-        p_ar=test.dynamics.p_ar,
-        x_ar=test.dynamics.x_ar
+        p_ar = test.dynamics.p_ar,
+        x_ar = test.dynamics.x_ar
         )
     
     test.full_anim( # animated demo
         # save=False,
-        p_ar=test.dynamics.p_ar,
-        x_ar=test.dynamics.x_ar
+        p_ar = test.dynamics.p_ar,
+        x_ar = test.dynamics.x_ar
         )
