@@ -4,7 +4,7 @@ This directory contains the HMC code and test cases.
 
 ## Table of Contents
  - [To Do](#to-do)
- - [Unit Tests](#unit-tests)
+ - [Interesting Tests](#unit-tests)
      * [Hamiltonian Dynamics (Leap-Frog)](#hdlf)
  - [Code Acknowledgements](#ak)
 
@@ -25,10 +25,13 @@ This directory contains the HMC code and test cases.
  - *Unit Test (if time): v. high-dim Gaussian*
 
 <a name="tests"/>
-## Unit Tests
+## Interesting Tests
 
 <a name="hdlf"/>
 ### Hamiltonian Dynamics (Leap-Frog)
+A basic demonstration of symplectic Leap-Frog integrator. The key points to note are the
+conservation of energy shown by the circular phase space path and near stationary hamiltonian. The small oscillations are due to *energy drift* which can also be seen in the subtle deviation from a true circle in phase space. Importantly the circular phase path is a closed loop showing reversibility in artificial time.
+
 Animated Summary | Energy Drift
 :---:|:---:
 <img src="./animations/ham_dynamics.gif" width="500" height="500" />  |  <img src="./plots/energy_drift.png" width="500" height="500" />
