@@ -1,8 +1,10 @@
 import numpy as np
+import copy
 
 from potentials import Simple_Harmonic_Oscillator, Multivariate_Gaussian
 from h_dynamics import Leap_Frog
-from pretty_plotting import Pretty_Plotter
+
+from pretty_plotting import Pretty_Plotter, viridis, magma, inferno, plasma
 
 import matplotlib.pyplot as plt
 import subprocess
@@ -46,20 +48,21 @@ class Hybrid_Monte_Carlo(object):
             n_burn_in   :: integer :: Number of steps to discard at start
             store_path  :: bool    :: Store path for plotting
         """
+        self.burn_in_p = [copy.copy(self.p)]
+        self.burn_in = [copy.copy(self.x)]
         
-        self.burn_in = [self.x[0,0]]
-        self.burn_in_p = [self.p[0,0]]
         for step in xrange(n_burn_in): # burn in
             self.p, self.x = self.moveHMC()
-            self.burn_in.append(self.x[0,0])
-            self.burn_in_p.append(self.p[0,0])
+            self.burn_in_p.append(copy.copy(self.p))
+            self.burn_in.append(copy.copy(self.x))
         
-        self.samples = [self.x[0,0]]
-        self.samples_p = [self.p[0,0]]
+        self.samples_p = [copy.copy(self.p)]
+        self.samples = [copy.copy(self.x)]
+        
         for step in xrange(n_samples):
-            self.p, self.x = self.moveHMC()
-            self.samples.append(self.x[0,0])
-            self.samples_p.append(self.p[0,0])
+            p, x = self.moveHMC()
+            self.samples_p.append(copy.copy(self.p))
+            self.samples.append(copy.copy(self.x))
         
         return (self.burn_in_p, self.samples_p), (self.burn_in, self.samples)
     
@@ -469,13 +472,13 @@ class Test_HMC(Pretty_Plotter):
             print '\n outcome: {}'.format(['Failed','Passed'][result])
             pass
         
-        x0 = np.asarray([[0.], [0.]])
+        x0 = np.asarray([[-3.5], [4.]])
         
         self.lf.duE = self.bg.duE # reassign leapfrog gradient
         self.hmc.__init__(x0, self.lf, self.bg, self.rng)
         
-        n_samples = 1500
-        n_burn_in = 1000
+        n_samples = 0
+        n_burn_in = 50
         
         act_mean = self.hmc.potential.mean
         act_cov = self.hmc.potential.cov
@@ -485,26 +488,69 @@ class Test_HMC(Pretty_Plotter):
         
         p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in)
         burn_in, samples = samples
-        samples = np.asarray(samples)
+        samples = np.asarray(samples).T.reshape(2, -1).T
+        burn_in = np.asarray(burn_in).T.reshape(2, -1).T
         
         mean = samples.mean(axis=0)
-        cov = np.cov(samples)
+        cov = np.cov(samples.T)
         
         passed *= (np.abs(mean - act_mean) <= mean_tol).all()
-        passed *= (np.abs(cov - act_cov) <= cov_tol).all()
+        # passed *= (np.abs(cov - act_cov) <= cov_tol).all()
         
         if print_out: 
             np.set_printoptions(precision=2, suppress=True)
             display("HMC: Bivariate Gaussian Distribution",
                 act_mean, act_cov, mean, cov, mean_tol, cov_tol, passed)
         
-        if save: 
-            burn_in = np.asarray(burn_in).reshape(n_burn_in+1)
-            samples = np.asarray(samples).reshape(n_samples+1)
+        def plot(burn_in, samples, cov, mean, save=save):
             
-            plot(burn_in, samples)
+            self._teXify() # LaTeX
+            self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
+            self.params['figure.subplot.top'] = 0.85
+            self._updateRC()
             
-        return passed
+            n = 100    # n**2 is the number of points
+            
+            x = np.linspace(-5., 5., n, endpoint=True)
+            x,y = np.meshgrid(x, x)
+            
+            z = np.exp(-np.asarray([self.bg.uE(np.matrix([[i],[j]])) for i,j in zip(np.ravel(x), np.ravel(y))]))
+            z = np.asarray(z).reshape(n,n)
+            
+            fig = plt.figure(figsize=(8,8))
+            ax = fig.add_subplot(111)
+            
+            c = ax.contourf(x, y, z, 100, cmap=viridis)
+            l1 = ax.plot(burn_in[:,0], burn_in[:,1], 
+                color='blue',
+                marker='o', markerfacecolor='red'
+                )
+            # l2 = ax.plot(samples[:,0], samples[:,1],
+            #     color='blue',
+            #     # marker='o', markerfacecolor='r'
+            #     )
+                
+            ax.set_xlabel(r'$\mathrm{x_1}$')
+            ax.set_ylabel(r'$\mathrm{x_2}$')
+            
+            fig.suptitle(r'Sampling Multivariate Gaussian with HMC', fontsize=self.ttfont)
+            ax.set_title(r'Showing the first 50 HMC moves for:\ $\mu=\begin{pmatrix}0 & 0\end{pmatrix}$, $\Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$', fontsize=self.tfont-4)
+            
+            plt.grid(True)
+            
+            if save:
+                save_dir = './plots/'
+                subprocess.call(['mkdir', './plots/'])
+            
+                fig.savefig(save_dir+save)
+            else:
+                plt.show()
+            pass
+        
+        if save:
+            plot(burn_in, samples, cov, mean)
+            
+        return burn_in, samples
 #
 if __name__ == '__main__':
     rng = np.random.RandomState(1234)

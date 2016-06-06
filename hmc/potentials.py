@@ -75,7 +75,7 @@ class Multivariate_Gaussian(object):
             p :: np.matrix (col vector) :: momentum vector
         """
         assert len(p.shape) == 2
-        return .5 * np.square(p).sum(axis=1)
+        return .5 * np.square(p).sum(axis=0)
     
     def potentialEnergy(self, x):
         """n-dim potential
@@ -97,7 +97,8 @@ class Multivariate_Gaussian(object):
         assert len(x.shape) == 2
         return np.dot(self.cov_inv, x)
     def hamiltonian(self, p, x):
-        return self.kineticEnergy(p) + self.potentialEnergy(x)
+        h = self.kineticEnergy(p) + self.potentialEnergy(x)
+        return h.reshape(1)
     def testPlot(self):
         rcParams['text.usetex'] = True
         rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
@@ -117,7 +118,7 @@ class Multivariate_Gaussian(object):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         
-        l = ax.contourf(x, y, z)
+        l = ax.contourf(x, y, z, 200)
         # l = ax.plot_surface(x, y, z,rstride=1, cstride=1, cmap=cm.coolwarm,
         #                    linewidth=0, antialiased=False)
         # ax.zaxis.set_major_locator(LinearLocator(10))
