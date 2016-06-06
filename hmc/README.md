@@ -7,6 +7,7 @@ This directory contains the HMC code and test cases.
  - [Interesting Tests](#tests)
      * [Hamiltonian Dynamics (Leap-Frog)](#tests-hdlf)
 	 * [Leap-Frog Parameters](#tests-lf)
+	 * [HMC sampling Bivariate Gaussian](#tests-bg)
  - [Code Acknowledgements](#ak)
 
 <a name="td"/>
@@ -16,8 +17,8 @@ This directory contains the HMC code and test cases.
  - ~~Unit Test: Energy Conservation~~
  - ~~Unit Test: Reversibility: Satisfy Detailed Balance~~
  - ~~HMC Sampler~~
- - Practical Test: Bivariate Gaussian
- - Practical Test: Simple Harmonic Oscillator
+ - ~~Practical Test: Bivariate Gaussian~~
+ - ~~Practical Test: Simple Harmonic Oscillator~~
  - Practical Test: Quantum Harmonic Oscillator
    * n-dimensional
    * n-Dimensional, Anharmonic
@@ -42,6 +43,14 @@ A contour plot showing the small energy loss encountered for different Leap-Frog
 show as a dashed horizontal line.
 <p align="center">
 	<img src="./plots/energy_conservation.png" width="700" height="700" />
+</p>
+
+
+<a name="tests-bg"/>
+### Sampling a Bivariate Gaussian
+A demonstration of the first 50 HMC moves when sampling a bivariate gaussian distribution. Normally these moves would be part of the *burn in* phase.
+<p align="center">
+	<img src="./plots/HMC_gauss_2d.png" width="700" height="700" />
 </p>
 
 <a name="ak"/>
