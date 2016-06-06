@@ -6,16 +6,17 @@ This directory contains the HMC code and test cases.
  - [To Do](#to-do)
  - [Interesting Tests](#unit-tests)
      * [Hamiltonian Dynamics (Leap-Frog)](#hdlf)
+	 * [Leap-Frog Parameters](#lf)
  - [Code Acknowledgements](#ak)
 
 <a name="to-do"/>
 ## To Do
  - ~~Hamiltonian Dynamics: Leap-Frog Integration~~
  - ~~Practical Test: Simple Harmonic Oscillator~~
- - Unit Test: Energy Conservation
+ - ~~Unit Test: Energy Conservation~~
  - Unit Test: Reversibility: Satisfy Detailed Balance
  - Unit Test: No change in magnitude of phase space
- - HMC Sampler
+ - ~~HMC Sampler~~
  - Practical Test: Bivariate Gaussian
  - Practical Test: Simple Harmonic Oscillator
  - Practical Test: Quantum Harmonic Oscillator
@@ -35,6 +36,12 @@ conservation of energy shown by the circular phase space path and near stationar
 Animated Summary | Energy Drift
 :---:|:---:
 <img src="./animations/ham_dynamics.gif" width="500" height="500" />  |  <img src="./plots/energy_drift.png" width="500" height="500" />
+
+<a name="lf"/>
+### Energy Drift for varying Leap-Frog Parameters
+A contour plot showing the small energy loss encountered for different Leap-Frog parameters. Tested using the Simple Harmonic Oscillator. Acceptable tolerance level is
+show as a dashed horizontal line.
+<img src="./plots/energy_conservation.png" width="500" height="500" />
 
 <a name="ak"/>
 ## Code Acknowledgements
