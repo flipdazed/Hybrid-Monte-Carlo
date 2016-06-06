@@ -41,7 +41,7 @@ Animated Summary | Energy Drift
 ### Energy Drift for varying Leap-Frog Parameters
 A contour plot showing the small energy loss encountered for different Leap-Frog parameters. Tested using the Simple Harmonic Oscillator. Acceptable tolerance level is
 show as a dashed horizontal line.
-<img align="middle" src="./plots/energy_conservation.png" width="500" height="500" />
+<img display="block" margin="0 auto" src="./plots/energy_conservation.png" width="650" height="650" />
 
 <a name="ak"/>
 ## Code Acknowledgements
