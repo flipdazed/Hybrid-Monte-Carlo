@@ -533,8 +533,10 @@ class Test_HMC(Pretty_Plotter):
             ax.set_xlabel(r'$\mathrm{x_1}$')
             ax.set_ylabel(r'$\mathrm{x_2}$')
             
-            fig.suptitle(r'Sampling Multivariate Gaussian with HMC', fontsize=self.ttfont)
-            ax.set_title(r'Showing the first 50 HMC moves for:\ $\mu=\begin{pmatrix}0 & 0\end{pmatrix}$, $\Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$', fontsize=self.tfont-4)
+            fig.suptitle(r'Sampling Multivariate Gaussian with HMC',
+                fontsize=self.s*self.ttfont)
+            ax.set_title(r'Showing the first 50 HMC moves for:\ $\mu=\begin{pmatrix}0 & 0\end{pmatrix}$, $\Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$',
+                fontsize=(self.tfont-4)*self.s)
             
             plt.grid(True)
             
@@ -557,5 +559,5 @@ if __name__ == '__main__':
     m = Momentum(rng)
     r1 = m.test(print_out=False)
     test = Test_HMC(rng)
-    # r2 = test.hmcSho1d(tol = 5e-2, print_out = True, save = 'HMC_oscillator_1d.png')
+    r2 = test.hmcSho1d(tol = 5e-2, print_out = True, save = 'HMC_oscillator_1d.png')
     r3 = test.hmcGaus2d(tol = 5e-2, print_out = True, save = 'HMC_gauss_2d.png')

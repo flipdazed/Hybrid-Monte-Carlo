@@ -1,11 +1,10 @@
 import numpy as np
 
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from pretty_plotting import Pretty_Plotter, viridis, magma, inferno, plasma
+
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
-        
+import subprocess
+
 class Simple_Harmonic_Oscillator(object):
     """Simple Harmonic Oscillator
     
@@ -55,7 +54,7 @@ class Multivariate_Gaussian(object):
         self.dim = self.mean.shape[1]
         
         self.dim_rng = np.arange(self.dim) # range of dimensions for iterating
-        assert (self.cov.T == self.cov).all() # must be symmetric
+        # assert (self.cov.T == self.cov).all() # must be symmetric
         assert (self.cov[self.dim_rng, self.dim_rng] == 1.).all() # diagonal of 1s
         
         self.cov_inv = self.cov.I # calculate inverse (save comp. time)
@@ -99,40 +98,54 @@ class Multivariate_Gaussian(object):
     def hamiltonian(self, p, x):
         h = self.kineticEnergy(p) + self.potentialEnergy(x)
         return h.reshape(1)
-    def testPlot(self):
-        rcParams['text.usetex'] = True
-        rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
+class Test(Pretty_Plotter):
+    def __init__(self):
+        self.mean = np.asarray([[0.], [0.]])
+        self.cov = np.asarray([[1.0,0.8],[0.8,1.0]])
+        self.bg = Multivariate_Gaussian(mean = self.mean, cov = self.cov)
+        pass
+    
+    def testBG(self, save = 'potentials_Gaussian_2d.png'):
+        """Plots a test image of the Bivariate Gaussian"""
+        self._teXify() # LaTeX
+        self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
+        self.params['figure.subplot.top'] = 0.85
+        self._updateRC()
         
-        n = 1000                                # n**2 is the number of points
-        cov = self.cov
-        mean = self.mean
-        print 'random uniform...'
-        x = np.linspace(-10., 10., n, endpoint=True)
+        n = 200 # n**2 is the number of points
+        cov = self.bg.cov
+        mean = self.bg.mean
+        
+        x = np.linspace(-5., 5., n, endpoint=True)
         x,y = np.meshgrid(x,x)
+        z = np.exp(-np.asarray([self.bg.uE(np.matrix([[i],[j]])) \
+            for i,j in zip(np.ravel(x), np.ravel(y))]))
+        z = np.asarray(z).reshape(n, n)
         
-        print 'gaussian...'
-        z = np.exp(-np.asarray([self.potentialEnergy(np.matrix([[i],[j]])) for i,j in zip(np.ravel(x), np.ravel(y))]))
-        z = np.asarray(z).reshape(n,n)
-        
-        print 'plotting...'
-        fig = plt.figure()
+        fig = plt.figure(figsize=(8,8))
         ax = fig.add_subplot(111)
+        c = ax.contourf(x, y, z, 100, cmap=plasma)
         
-        l = ax.contourf(x, y, z, 200)
-        # l = ax.plot_surface(x, y, z,rstride=1, cstride=1, cmap=cm.coolwarm,
-        #                    linewidth=0, antialiased=False)
-        # ax.zaxis.set_major_locator(LinearLocator(10))
-        # ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+        ax.set_xlabel(r'$x_1$')
+        ax.set_ylabel(r'$x_2$')
+        fig.suptitle(r'Test plot of a 2D Multivariate (Bivariate) Gaussian',
+             fontsize=self.ttfont*self.s)
+        ax.set_title(
+        r'Parameters: $\mu=\begin{pmatrix}0 & 0\end{pmatrix}$, $\Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$',
+            fontsize=(self.tfont-4)*self.s)
         
-        ax.set_xlabel(r'$\mathrm{x_1}$')
-        ax.set_ylabel(r'$\mathrm{x_2}$')
-        # ax.set_zlabel(r'$\mathrm{P(x)}$')
-        plt.title(r'$\mathrm{Multivariate\ Gaussian\ Test:}\ \mu=\begin{pmatrix}0 & 0\end{pmatrix},\ \Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$')
-        # plt.xlim([-1, 1])
-        # plt.grid(True)
+        ax.grid(False)
         
-        plt.show()
+        if save:
+            save_dir = './plots/'
+            subprocess.call(['mkdir', './plots/'])
+            
+            fig.savefig(save_dir+save)
+        else:
+            plt.show()
+        pass
 #
 if __name__ == '__main__':
-    test = Multivariate_Gaussian()
-    test.testPlot()
+    test = Test()
+    test.testBG(save = 'potentials_Gaussian_2d.png')
