@@ -5,6 +5,7 @@ import matplotlib.gridspec as gridspec
 import subprocess
 
 from potentials import Simple_Harmonic_Oscillator
+from pretty_plotting import Pretty_Plotter
 
 class Leap_Frog(object):
     """Leap Frog Integrator
@@ -18,7 +19,7 @@ class Leap_Frog(object):
     
     Note: Do not confuse x0,p0 with initial x0,p0 for HD
     """
-    def __init__(self, duE, step_size=0.1, n_steps=250, save_path=False):
+    def __init__(self, duE, step_size = 0.1, n_steps = 250, save_path = False):
         self.step_size = step_size
         self.n_steps = n_steps
         self.duE = duE
@@ -112,9 +113,112 @@ class Leap_Frog(object):
         self.x_ar.append(self.x)
         pass
 
-
 #
-class Test_Hamiltonian_Dynamics(object):
+class Tests(Pretty_Plotter):
+    """Tests energy conservation"""
+    def __init__(self, dynamics):
+        self.pot = Simple_Harmonic_Oscillator(k=1.)
+        self.dynamics = dynamics
+        self.dynamics.duE = self.pot.duE
+        pass
+    def constantEnergy(self, step_sample, step_sizes, tol = 0.05, print_out = True, save = 'energy_conservation.png'):
+        """Checks that the change in hamiltonian ~0"""
+        passed = True
+        
+        def display(test_name, steps, size, h_new, h_old, bench_mark, result): # print
+            print '\n\n TEST: {}'.format(test_name)
+            print ' initial H(p, x):',h_old
+            print ' worst   H(p, x):',h_new
+            print ' at steps: {}', steps
+            print ' at step size: {}', size
+            print ' np.abs(exp(-dH): {}'.format(h_new - h_old, bench_mark)
+            print ' outcome: {}'.format(['Failed','Passed'][result])
+            pass
+        
+        diffs = []
+        
+        # calculate original hamiltonian and set starting vals
+        pi,xi = 4., 1.
+        h_old = self.pot.hamiltonian(pi,xi)
+        
+        # initial vals required
+        w_bmk = 1.
+        diff = 0.
+        w_step = 0
+        w_size = 0
+        
+        # set up a mesh grid of the steps and sizes
+        step_sample, step_sizes = np.meshgrid(step_sample, step_sizes)
+        
+        for n_steps_i, step_size_i in zip(np.ravel(step_sample), np.ravel(step_sizes)):
+            
+            # set new parameters
+            self.dynamics.n_steps = n_steps_i
+            self.dynamics.step_size = step_size_i
+            
+            # obtain new duynamics and resultant hamiltonian
+            pf,xf = self.dynamics.integrate(pi,xi)
+            h_new = self.pot.hamiltonian(pf,xf)
+            
+            bench_mark = np.exp(-(h_old-h_new))
+            
+            # stores the worst for printing to terminal
+            if print_out:
+                # avoid calc every time when no print out
+                if (np.abs(1. - bench_mark) > diff): # compare to last diff
+                    w_bmk = bench_mark
+                    w_h_new = h_new
+                    w_step = n_steps_i
+                    w_size = step_size_i
+            
+            diff = np.abs(1. - bench_mark) # set new diff
+            
+            passed *= (diff <= tol)
+            diffs.append(diff) # append to list for plotting
+        
+        if print_out:
+            display("Constant Energy", w_step, w_size, w_h_new, h_old, w_bmk, passed)
+        
+        def plot(x = step_sample, y = step_sizes, z = diffs, save = save):
+            self._teXify() # LaTeX
+            fig = plt.figure(figsize=(8*self.s,8*self.s)) # make plot
+            ax =[]
+            ax.append(fig.add_subplot(111))
+            
+            
+            fig.suptitle(r'Energy Drift as a function of Integrator Parameters', 
+                fontsize=self.ttfont)
+            ax[0].set_title(r'Potential:SHO, tolerance level: {}'.format(tol),
+                fontsize=self.ttfont-4)
+            ax[0].set_xlabel(r'Number of Integrator Steps, $n$')
+            ax[0].set_ylabel(r'Integrator Step Size, $\epsilon$')
+            
+            z = np.asarray(z).reshape(*x.shape)
+            p = ax[0].contourf(x, y, z, 500)
+            
+            # add colorbar and label
+            cbar = plt.colorbar(p, ax=ax[0], shrink=0.9)
+            cbar.ax.set_ylabel(r'Absolute change in Hamiltonian, $|{1 - e^{-\delta H(p,x)}}|$')
+            
+            # ax[0].plot(step_sample, np.asarray(diffs), linestyle='-', color='blue')
+            # ax[0].plot(step_sample, np.full(step_sample.shape, tol),
+            # linestyle='--', color='red', label='tolerance')
+            ax[0].axhline(tol, color='red', linestyle='--')
+            
+            if save:
+                save_dir = './plots/'
+                subprocess.call(['mkdir', './plots/'])
+            
+                fig.savefig(save_dir+save)
+            else:
+                plt.show()
+            pass
+        if save: plot(save=save)
+        
+        return passed
+    
+#
+class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
     """Simulates Hamiltonian Dynamics using arbitrary integrator
     This class plots a test animation as a sort of Unit Test
     
@@ -163,38 +267,8 @@ class Test_Hamiltonian_Dynamics(object):
         self.p, self.x = self.dynamics.integrate(self.p, self.x)
         pass
     
-    def _teXify(self):
-        """makes plots look posh"""
-        
-        self.s = 1   # Increase plot size by a scale factor
-        self.fig_dims = [12*self.s,5*self.s]    # size of plot
-        self.axfont = 11*self.s                 # axes
-        self.tfont  = 14*self.s                 # subplot titles
-        self.ttfont = 16*self.s                 # figure title
-        
-        plt.rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
-        
-        # Customising Options
-        params = {'text.usetex' : True,
-                  'font.size' : 11,
-                  'font.family' : 'lmodern',
-                  'text.latex.unicode': True,
-                  # 'text.latex.preamble': [r"\usepackage{hyperref}"], # doesn't work
-                  # 'text.latex.preamble': [r"\usepackage{amsmath}"],
-                  'figure.figsize' : self.fig_dims,
-                  'figure.subplot.top':    0.90, #0.85 for title
-                  'figure.subplot.hspace': 0.40,
-                  'figure.subplot.wspace': 0.40,
-                  'figure.subplot.bottom': 0.15,
-                  'axes.titlesize': self.tfont,
-                  'axes.labelsize': self.axfont,
-                  'axes.grid': True
-                  }
-                  
-        plt.rcParams.update(params) # updates the default parameters
-        pass
     
-    def energy_drift(self, p_ar, x_ar, save='energy_drift.png'):
+    def energy_drift(self, p_ar, x_ar, save = 'energy_drift.png'):
         """Plot the Hamiltonian at each integrator integration"""
         
         # convert position/momentum to Energies
@@ -225,7 +299,7 @@ class Test_Hamiltonian_Dynamics(object):
             plt.show()
         pass
     
-    def full_anim(self, p_ar, x_ar, save='ham_dynamics.gif'):
+    def full_anim(self, p_ar, x_ar, save = 'ham_dynamics.gif'):
         """Display a demo animation of Hamiltonian Dynamics
         
         Required Inputs
@@ -363,18 +437,25 @@ class Test_Hamiltonian_Dynamics(object):
             plt.show()
         pass
 #
-if __name__ == '__main__': # demo if run directly
+def fullDemo():
+    """Displays two plots for Simple Harmonic Oscillator
     
+    1. Energy Drift phenomenon
+    2. Animated demo
+        - mass on spring
+        - phase space for leap-frog integrator
+        - energy functions
+    """
     pot = Simple_Harmonic_Oscillator(k=1.)
     lf = Leap_Frog(
         duE = pot.duE,
         step_size = 0.1,
         # n_steps = 63,
-        n_steps = 250, 
+        n_steps = 250,
         save_path = True
         )
     
-    test = Test_Hamiltonian_Dynamics(
+    test = Demo_Hamiltonian_Dynamics(
         p0 = 1., x0 = 4.,
         dynamics = lf,
         potential = pot
@@ -383,13 +464,28 @@ if __name__ == '__main__': # demo if run directly
     test.run() # run dynamics
     
     test.energy_drift( # show energy drift
-        # save=False,
+        save=False,
         p_ar = test.dynamics.p_ar,
         x_ar = test.dynamics.x_ar
         )
     
     test.full_anim( # animated demo
-        # save=False,
+        save=False,
         p_ar = test.dynamics.p_ar,
         x_ar = test.dynamics.x_ar
+        )
+
+if __name__ == '__main__': # demo if run directly
+    # fullDemo()
+    i = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
+    t = Tests(dynamics = i)
+    r = t.constantEnergy(
+        tol = 0.05,
+        step_sample = np.linspace(1, 100, 10, True, dtype=int),
+        step_sizes = np.linspace(0.01, 0.1, 5, True),
+        # These values are for pretty pictures
+        save=False, # comment out to print figure
+        # step_sample = np.linspace(1, 100, 100, True, dtype=int),
+        # step_sizes = np.linspace(0.01, 0.5, 100, True),
+        print_out = True # shows a small print out
         )

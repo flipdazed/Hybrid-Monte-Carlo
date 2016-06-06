@@ -79,6 +79,7 @@ class Hybrid_Monte_Carlo(object):
     
     def test(self):
         """A test to sample the Bivariate Normal Distribution"""
+        
         pass
 #
 class Accept_Reject(object):
