@@ -17,7 +17,7 @@ class Pretty_Plotter(object):
         rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
         
         # Customising Options
-        params = {'text.usetex' : True,
+        self.params = {'text.usetex' : True,
                   'font.size' : 11,
                   'font.family' : 'lmodern',
                   'text.latex.unicode': True,
@@ -33,5 +33,8 @@ class Pretty_Plotter(object):
                   'axes.grid': True
                   }
               
-        rcParams.update(params) # updates the default parameters
+        self._updateRC()
+        pass
+    def _updateRC(self):
+        rcParams.update(self.params) # updates the default parameters
         pass

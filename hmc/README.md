@@ -14,8 +14,7 @@ This directory contains the HMC code and test cases.
  - ~~Hamiltonian Dynamics: Leap-Frog Integration~~
  - ~~Practical Test: Simple Harmonic Oscillator~~
  - ~~Unit Test: Energy Conservation~~
- - Unit Test: Reversibility: Satisfy Detailed Balance
- - Unit Test: No change in magnitude of phase space
+ - ~~Unit Test: Reversibility: Satisfy Detailed Balance~~
  - ~~HMC Sampler~~
  - Practical Test: Bivariate Gaussian
  - Practical Test: Simple Harmonic Oscillator
@@ -42,8 +41,9 @@ Animated Summary | Energy Drift
 A contour plot showing the small energy loss encountered for different Leap-Frog parameters. Tested using the Simple Harmonic Oscillator. Acceptable tolerance level is
 show as a dashed horizontal line.
 <p align="center">
-<img src="./plots/energy_conservation.png" width="700" height="700" />
+	<img src="./plots/energy_conservation.png" width="700" height="700" />
 </p>
+
 <a name="ak"/>
 ## Code Acknowledgements
  - `matlab_HMC.m` is taken from [The Clever Machine](https://theclevermachine.wordpress.com/2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/)

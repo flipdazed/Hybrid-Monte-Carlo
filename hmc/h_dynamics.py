@@ -45,6 +45,8 @@ class Leap_Frog(object):
             (x,p) :: tuple :: momentum, position
         """
         self.p, self.x = p0,x0
+        if self.save_path: self._storeSteps() # store zeroth step
+        
         for step in xrange(0, self.n_steps):
             self._moveP(frac_step=0.5)
             self._moveX()
@@ -121,16 +123,32 @@ class Tests(Pretty_Plotter):
         self.dynamics = dynamics
         self.dynamics.duE = self.pot.duE
         pass
-    def constantEnergy(self, step_sample, step_sizes, tol = 0.05, print_out = True, save = 'energy_conservation.png'):
-        """Checks that the change in hamiltonian ~0"""
+    def constantEnergy(self, step_sample, step_sizes, tol = 1e-2, print_out = True, save = 'energy_conservation.png'):
+        """Checks that the change in hamiltonian ~0
+        for varying step_sizes and step_lengths
+        
+        Can also plot a pretty 2d contour plot
+        
+        Required Inputs
+            step_sample :: np.array :: array of steps lengths to test
+            step_sizes  :: np.array :: array of step sizes to test
+        
+        Optional Inputs
+            tol         :: float    :: tolerance level for hamiltonian changes
+            save        :: string   :: file to save plot. False or '' gives no plot
+            print_out   :: bool     :: if True prints to screen
+        
+        Returns
+            passed :: bool :: True if passed
+        """
         passed = True
         
         def display(test_name, steps, size, h_new, h_old, bench_mark, result): # print
             print '\n\n TEST: {}'.format(test_name)
             print ' initial H(p, x):',h_old
             print ' worst   H(p, x):',h_new
-            print ' at steps: {}', steps
-            print ' at step size: {}', size
+            print ' at steps: {}'.format(steps)
+            print ' at step size: {}'.format(size)
             print ' np.abs(exp(-dH): {}'.format(h_new - h_old, bench_mark)
             print ' outcome: {}'.format(['Failed','Passed'][result])
             pass
@@ -217,6 +235,96 @@ class Tests(Pretty_Plotter):
         
         return passed
     
+    def reversibility(self, tol = 1e-3, steps = 2000, print_out = True, save = 'reversibility.png'):
+        """Checks the integrator is reversible
+        by running and then reversing the integration and 
+        verifying the same point in phase space
+        
+        Optional Inputs
+            tol         :: float    :: tolerance level for hamiltonian changes
+            steps       :: integer  :: number of integration steps
+            save        :: string   :: file to save plot. False or '' gives no plot
+            print_out   :: bool     :: if True prints to screen
+        """
+        
+        passed = True
+        def display(test_name, steps, x0, p0, pf, xf, p0f, x0f, pc, result): # print
+            print '\n\n TEST: {}'.format(test_name)
+            print ' initial (p, x): ({}, {})'.format(p0, x0)
+            print ' int.    (p, x): ({}, {})'.format(pf, xf)
+            print ' final   (p, x): ({}, {})'.format(p0f, x0f)
+            print ' phase change:    {}'.format(pc)
+            print ' number of steps: {}'.format(steps)
+            print ' outcome: {}'.format(['Failed','Passed'][passed])
+            pass
+        
+        # params and ensure dynamic params correct
+        p0, x0 = 4., 1.
+        self.dynamics.n_steps = steps
+        self.dynamics.step_size = 0.1
+        self.dynamics.save_path = True
+        
+        pf,xf = self.dynamics.integrate(p0, x0)
+        p0f,x0f = self.dynamics.integrate(-pf, xf) # time flip
+        
+        p0f = -p0f # time flip to point in right time again
+        
+        phase_change = np.linalg.norm( # calculate frobenius norm
+            np.asarray([[p0f], [x0f]]) - np.asarray([[p0], [x0]])
+            )
+        
+        passed = (phase_change < tol)
+        
+        if print_out: display("Reversibility of Integrator",
+            self.dynamics.n_steps, x0, p0, pf, xf, p0f, x0f, phase_change, passed)
+        
+        def plot(steps, norm, save=save):
+            
+            self._teXify() # LaTeX
+            self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
+            self._updateRC()
+            
+            fig = plt.figure(figsize=(8*self.s,8*self.s)) # make plot
+            ax =[]
+            ax.append(fig.add_subplot(111))
+            # fig.suptitle(r"Hamiltonian Dynamics of the SHO using Leap-Frog Integrator",
+            #     fontsize=16)
+            ax[0].set_title(r'Magnitude of Change in Phase Space, $\Delta\mathcal{P}(x,p)$')
+            ax[0].set_xlabel(r'Integration Step, $n$')
+            ax[0].set_ylabel(r"$|\Delta\mathcal{P}(x,p)| = \sqrt{(p_{t} + p_{\text{-}t})^2 + (x_{t} - x_{\text{-}t})^2}$")
+            
+            ax[0].plot(steps, norm, #marker='x',
+                linestyle='-', color='blue')
+            # ax[0].plot(-p[p.shape[0]//2 : ], x[x.shape[0]//2 : ],
+            #     linestyle='-', color='red', marker='+')
+            
+            if save:
+                save_dir = './plots/'
+                subprocess.call(['mkdir', './plots/'])
+            
+                fig.savefig(save_dir+save)
+            else:
+                plt.show()
+            pass
+        if save:
+            p_path, x_path = self.dynamics.p_ar, self.dynamics.x_ar
+            p, x = np.asarray(p_path), np.asarray(x_path)
+            
+            # curious why I need to clip one step on each?
+            # something to do with the way I sample the steps...
+            # clip last step on forward and first step on backwards
+            # solved!... because I didn't save the zeroth step in the integrator
+            # integrator nowsaves zeroth steps
+            change_p = (-p[ : p.shape[0]//2] - p[p.shape[0]//2 : ][::-1])**2
+            change_x = (x[ : x.shape[0]//2] - x[x.shape[0]//2 : ][::-1])**2
+            
+            norm = np.sqrt(change_p + change_x)
+            steps = np.linspace(0, steps, steps+1, True)
+            plot(steps, norm)
+            
+            self.dynamics.save_path = False
+            
+        return passed
 #
 class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
     """Simulates Hamiltonian Dynamics using arbitrary integrator
@@ -285,7 +393,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         # fig.suptitle(r"Hamiltonian Dynamics of the SHO using Leap-Frog Integrator",
         #     fontsize=16)
         ax[0].set_title(r'Oscillating Hamiltonian as a function of Integration Steps: \textit{Energy Drift}')
-        ax[0].set_xlabel(r'Integration Steps, $\epsilon$')
+        ax[0].set_xlabel(r'Integration Steps, $n$')
         ax[0].set_ylabel(r'Hamiltonian, $H(p,x)$')
         
         ax[0].plot(steps, kE_ar + uE_ar, linestyle='-', color='blue')
@@ -488,4 +596,9 @@ if __name__ == '__main__': # demo if run directly
         # step_sample = np.linspace(1, 100, 100, True, dtype=int),
         # step_sizes = np.linspace(0.01, 0.5, 100, True),
         print_out = True # shows a small print out
+        )
+    a = t.reversibility(
+        steps = 1000,
+        tol = 0.01,
+        print_out = True # shows a small print out)
         )
