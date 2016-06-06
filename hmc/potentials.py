@@ -23,17 +23,21 @@ class Simple_Harmonic_Oscillator(object):
         self.duE = lambda x: self.gradPotentialEnergy(x)
         
         self.all = [self.kE, self.uE, self.dkE, self.duE]
+        
+        self.mean = np.asarray([[0.]])
+        self.cov = np.asarray([[1.]])
         pass
     def kineticEnergy(self, p):
-        return .5 * p**2
+        return .5 * np.dot(p.T, p)
     def potentialEnergy(self, x):
-        return .5 * self.k*x**2
+        return .5 * self.k*np.dot(x.T, x)
     def gradKineticEnergy(self, p):
         return p
     def gradPotentialEnergy(self, x):
         return self.k*x
     def hamiltonian(self, p, x):
-        return self.kineticEnergy(p) + self.potentialEnergy(x)
+        h = self.kineticEnergy(p) + self.potentialEnergy(x)
+        return h.reshape(1)
 #
 class Multivariate_Gaussian(object):
     """Multivariate Gaussian Distribution

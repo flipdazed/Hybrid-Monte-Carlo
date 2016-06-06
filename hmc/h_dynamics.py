@@ -156,7 +156,7 @@ class Tests(Pretty_Plotter):
         diffs = []
         
         # calculate original hamiltonian and set starting vals
-        pi,xi = 4., 1.
+        pi,xi = np.asarray([[4.]]), np.asarray([[1.]])
         h_old = self.pot.hamiltonian(pi,xi)
         
         # initial vals required
@@ -191,7 +191,7 @@ class Tests(Pretty_Plotter):
             
             diff = np.abs(1. - bench_mark) # set new diff
             
-            passed *= (diff <= tol)
+            passed *= (diff <= tol).all()
             diffs.append(diff) # append to list for plotting
         
         if print_out:
@@ -585,9 +585,9 @@ def fullDemo():
 
 if __name__ == '__main__': # demo if run directly
     # fullDemo()
-    i = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
-    t = Tests(dynamics = i)
-    r = t.constantEnergy(
+    integrator = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
+    tests = Tests(dynamics = integrator)
+    r1 = tests.constantEnergy(
         tol = 0.05,
         step_sample = np.linspace(1, 100, 10, True, dtype=int),
         step_sizes = np.linspace(0.01, 0.1, 5, True),
@@ -597,7 +597,7 @@ if __name__ == '__main__': # demo if run directly
         # step_sizes = np.linspace(0.01, 0.5, 100, True),
         print_out = True # shows a small print out
         )
-    a = t.reversibility(
+    r2 = tests.reversibility(
         steps = 1000,
         tol = 0.01,
         print_out = True # shows a small print out)

@@ -36,5 +36,6 @@ class Pretty_Plotter(object):
         self._updateRC()
         pass
     def _updateRC(self):
+        """updates with new poshness"""
         rcParams.update(self.params) # updates the default parameters
         pass

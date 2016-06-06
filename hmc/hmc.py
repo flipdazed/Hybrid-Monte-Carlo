@@ -1,6 +1,11 @@
 import numpy as np
-from potentials import Simple_Harmonic_Oscillator
+
+from potentials import Simple_Harmonic_Oscillator, Multivariate_Gaussian
 from h_dynamics import Leap_Frog
+from pretty_plotting import Pretty_Plotter
+
+import matplotlib.pyplot as plt
+import subprocess
 
 class Hybrid_Monte_Carlo(object):
     """The Hybrid (Hamiltonian) Monte Carlo method
@@ -9,31 +14,56 @@ class Hybrid_Monte_Carlo(object):
         
     
     Required Inputs
-        store_path  :: bool :: Store path for plotting
-        # x0         :: tuple :: initial starting position vector
-        # potential  :: class :: class from potentials.py
-        # dynamics :: class :: integrator class for dynamics from h_dynamics.py
+        x0         :: tuple :: initial starting position vector
+        potential  :: class :: class from potentials.py
+        dynamics   :: class :: integrator class for dynamics from h_dynamics.py
+        rng        :: np.random.RandomState :: random number state
     Expectations
     """
-    def __init__(self, store_path=False):
-        self.store_path = store_path
+    def __init__(self, x0, dynamics, potential, rng):
         
-        # These can be made into inputs
-        self.x0 = np.asarray([[0.],[0.]]) # start at 0,0 by default
-        self.rng = np.random.RandomState(1234)
+        self.x0 = x0
+        self.dynamics = dynamics
+        self.potential = potential
+        self.rng = rng
         
-        self.potential = Simple_Harmonic_Oscillator()
-        self.dynamics = Leap_Frog(duE = self.potential.duE,
-            step_size = 0.3, n_steps = 20)
         self.momentum = Momentum(self.rng)
         self.accept = Accept_Reject(self.rng)
-        # end inputs
         
         self.x = self.x0
         self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
+        assert self.x.shape == self.p.shape
+        
         pass
     
-    def moveHMC(self, step_size=None, n_steps=None):
+    def sample(self, n_samples, n_burn_in = 1000):
+        """runs the sampler for HMC
+        
+        Required Inputs
+            n_samples   :: integer :: Number of samples (# steps after burn in)
+        
+        Optional Inputs
+            n_burn_in   :: integer :: Number of steps to discard at start
+            store_path  :: bool    :: Store path for plotting
+        """
+        
+        self.burn_in = [self.x[0,0]]
+        self.burn_in_p = [self.p[0,0]]
+        for step in xrange(n_burn_in): # burn in
+            self.p, self.x = self.moveHMC()
+            self.burn_in.append(self.x[0,0])
+            self.burn_in_p.append(self.p[0,0])
+        
+        self.samples = [self.x[0,0]]
+        self.samples_p = [self.p[0,0]]
+        for step in xrange(n_samples):
+            self.p, self.x = self.moveHMC()
+            self.samples.append(self.x[0,0])
+            self.samples_p.append(self.p[0,0])
+        
+        return (self.burn_in_p, self.samples_p), (self.burn_in, self.samples)
+    
+    def moveHMC(self, step_size = None, n_steps = None):
         """A Hybrid Monte Carlo move:
         Combines Hamiltonian Dynamics and Momentum Refreshment
         to generate a the next position for the MCMC chain
@@ -63,24 +93,53 @@ class Hybrid_Monte_Carlo(object):
         # p = self.momentum.flip(p) # not necessary as full refreshment
         h_new = self.potential.hamiltonian(p, x)
         
-        accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
-        if not accept: p, x = self.p, self.x
-        
+        try:
+            accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
+            if not accept: p, x = self.p, self.x
+        except Exception as e:
+            print h_new
+            print h_old
+            raise e
+            
         return p,x
     
-    def moveGHMC(self, mixing_angle):
+    def moveGHMC(self, mixing_angle, step_size = None, n_steps = None):
         """A generalised Hybrid Monte Carlo move:
         As HMC but includes partial momentum refreshment
         
         Required Inputs
             mixing_angle :: float :: see Momentum()._rotationMatrix()
-        """
-        pass
-    
-    def test(self):
-        """A test to sample the Bivariate Normal Distribution"""
         
-        pass
+        Optional Inputs
+            step_size   :: float    :: step_size for integrator
+            n_steps     :: integer  :: number of integrator steps
+        
+        Expectations
+            self.p, self.x
+            self.dynamics.integrate
+            self.momentum.fullRefresh
+        
+        Returns
+            (p,x) :: (float, float) :: new momentum and position
+        """
+        p,x = self.p,self.x # initial temp. proposal p,x
+        h_old = self.potential.hamiltonian(p, x)
+        
+        p = self.momentum.generalisedRefresh(p, theta=mixing_angle)
+        
+        if (step_size is not None): self.dynamics.step_size = step_size
+        if (n_steps is not None): self.dynamics.n_steps = step_size
+        
+        p, x = self.dynamics.integrate(p, x)
+        p = self.momentum.flip(p)
+        h_new = self.potential.hamiltonian(p, x)
+        
+        accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
+        if not accept: p, x = self.p, self.x
+        
+        return p,x
+    
+    
 #
 class Accept_Reject(object):
     """Contains accept-reject routines
@@ -285,9 +344,172 @@ class Momentum(object):
         
         return result
 #
+class Test_HMC(Pretty_Plotter):
+    """Tests for the HMC class
+    
+    Required Inputs
+        rng :: np.random.RandomState :: random number generator
+    """
+    def __init__(self, rng):
+        self.rng = rng
+        
+        self.sho = Simple_Harmonic_Oscillator()
+        self.bg = Multivariate_Gaussian()
+        self.lf = Leap_Frog(duE = self.sho.duE, step_size = 0.1, n_steps = 20)
+        x0 = np.asarray([[0.]]) # start at 0 by default
+        
+        self.hmc = Hybrid_Monte_Carlo(x0, self.lf, self.sho, self.rng)
+        pass
+    
+    def hmcSho1d(self, tol = 5e-2, print_out = True, save = 'HMC_oscillator_1d.png'):
+        """A test to sample the Simple Harmonic Oscillator
+        
+        Optional Inputs
+            tol     ::  float   :: tolerance level allowed
+            print_out   :: bool     :: print results to screen
+            save    :: string   :: file to save plot. False or '' gives no plot
+        """
+        passed = True
+        def display(test_name, act_mean, act_cov, mean, cov, mean_tol, cov_tol, result):
+            print '\n\n TEST: {}'.format(test_name)
+            print ' target mean: ', act_mean
+            print ' target cov: ', act_cov
+            print '\n empirical mean: ', mean
+            print ' empirical_cov: ', cov
+            print '\n mean tol: ', mean_tol
+            print ' cov tol: ', cov_tol
+            print '\n outcome: {}'.format(['Failed','Passed'][result])
+            pass
+        
+        x0 = np.asarray([[1.]])
+        
+        self.lf.duE = self.sho.duE # reassign leapfrog gradient
+        self.hmc.__init__(x0, self.lf, self.sho, self.rng)
+        
+        n_samples = 15000
+        n_burn_in = 1000
+        
+        act_mean = self.hmc.potential.mean
+        act_cov = self.hmc.potential.cov
+        
+        mean_tol = np.full(act_mean.shape, tol)
+        cov_tol = np.full(act_cov.shape, tol)
+        
+        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in)
+        burn_in, samples = samples
+        samples = np.asarray(samples)
+        
+        mean = samples.mean(axis=0)
+        cov = np.cov(samples)
+        
+        passed *= (np.abs(mean - act_mean) <= mean_tol).all()
+        passed *= (np.abs(cov - act_cov) <= cov_tol).all()
+        
+        if print_out: 
+            np.set_printoptions(precision=2, suppress=True)
+            display("HMC: Simple Harmonic Oscillator",
+                act_mean, act_cov, mean, cov, mean_tol, cov_tol, passed)
+        
+        def plot(burn_in, samples, save=save):
+            
+            self._teXify() # LaTeX
+            self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
+            self._updateRC()
+            
+            fig = plt.figure(figsize = (8*self.s, 8*self.s)) # make plot
+            ax =[]
+            ax.append(fig.add_subplot(111))
+            fig.suptitle(r'Sampling the Simple Harmonic Oscillator',
+                fontsize=16)
+            ax[0].set_title(
+                r'{} Burn-in Samples shown in orange'.format(burn_in.shape[0]-1))
+            ax[0].set_ylabel(r'Sample, $n$')
+            ax[0].set_xlabel(r"Position, $x$")
+            
+            offst = burn_in.shape[0]+1 # burn-in samples
+            ax[0].plot(burn_in, np.arange(1, offst), #marker='x',
+                linestyle='-', color='orange', label=r'Burn In')
+            ax[0].plot(samples, np.arange(offst, offst + samples.shape[0]), #marker='x',
+                linestyle='-', color='blue', label=r'Sampling')
+            
+            if save:
+                save_dir = './plots/'
+                subprocess.call(['mkdir', './plots/'])
+            
+                fig.savefig(save_dir+save)
+            else:
+                plt.show()
+            pass
+        
+        if save: 
+            burn_in = np.asarray(burn_in).reshape(n_burn_in+1)
+            samples = np.asarray(samples).reshape(n_samples+1)
+            
+            plot(burn_in, samples)
+        
+        return passed
+    
+    def hmcGaus2d(self, tol = 5e-2, print_out = True, save = 'HMC_gauss_2d.png'):
+        """A test to sample the 2d Gaussian Distribution
+        
+        Optional Inputs
+            tol     ::  float   :: tolerance level allowed
+            print_out   :: bool     :: print results to screen
+            save    :: string   :: file to save plot. False or '' gives no plot
+        """
+        passed = True
+        def display(test_name, act_mean, act_cov, mean, cov, mean_tol, cov_tol, result):
+            print '\n\n TEST: {}'.format(test_name)
+            print ' target mean: ', act_mean
+            print ' target cov: ', act_cov
+            print '\n empirical mean: ', mean
+            print ' empirical_cov: ', cov
+            print '\n mean tol: ', mean_tol
+            print ' cov tol: ', cov_tol
+            print '\n outcome: {}'.format(['Failed','Passed'][result])
+            pass
+        
+        x0 = np.asarray([[0.], [0.]])
+        
+        self.lf.duE = self.bg.duE # reassign leapfrog gradient
+        self.hmc.__init__(x0, self.lf, self.bg, self.rng)
+        
+        n_samples = 1500
+        n_burn_in = 1000
+        
+        act_mean = self.hmc.potential.mean
+        act_cov = self.hmc.potential.cov
+        
+        mean_tol = np.full(act_mean.shape, tol)
+        cov_tol = np.full(act_cov.shape, tol)
+        
+        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in)
+        burn_in, samples = samples
+        samples = np.asarray(samples)
+        
+        mean = samples.mean(axis=0)
+        cov = np.cov(samples)
+        
+        passed *= (np.abs(mean - act_mean) <= mean_tol).all()
+        passed *= (np.abs(cov - act_cov) <= cov_tol).all()
+        
+        if print_out: 
+            np.set_printoptions(precision=2, suppress=True)
+            display("HMC: Bivariate Gaussian Distribution",
+                act_mean, act_cov, mean, cov, mean_tol, cov_tol, passed)
+        
+        if save: 
+            burn_in = np.asarray(burn_in).reshape(n_burn_in+1)
+            samples = np.asarray(samples).reshape(n_samples+1)
+            
+            plot(burn_in, samples)
+            
+        return passed
+#
 if __name__ == '__main__':
     rng = np.random.RandomState(1234)
-    # m = Momentum(rng)
-    # print 'Momentum Test:', m.test(print_out=True)
-    hmc = Hybrid_Monte_Carlo()
-    hmc.test()
+    m = Momentum(rng)
+    r1 = m.test(print_out=False)
+    test = Test_HMC(rng)
+    # r2 = test.hmcSho1d(tol = 5e-2, print_out = True, save = 'HMC_oscillator_1d.png')
+    r3 = test.hmcGaus2d(tol = 5e-2, print_out = True, save = 'HMC_gauss_2d.png')
