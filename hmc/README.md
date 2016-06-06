@@ -41,8 +41,9 @@ Animated Summary | Energy Drift
 ### Energy Drift for varying Leap-Frog Parameters
 A contour plot showing the small energy loss encountered for different Leap-Frog parameters. Tested using the Simple Harmonic Oscillator. Acceptable tolerance level is
 show as a dashed horizontal line.
-<img display="block" margin="0 auto" src="./plots/energy_conservation.png" width="650" height="650" />
-
+<p align="center">
+<img src="./plots/energy_conservation.png" width="700" height="700" />
+</p>
 <a name="ak"/>
 ## Code Acknowledgements
  - `matlab_HMC.m` is taken from [The Clever Machine](https://theclevermachine.wordpress.com/2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/)
