@@ -56,3 +56,4 @@ A demonstration of the first 50 HMC moves when sampling a bivariate gaussian dis
 ## Code Acknowledgements
  - `matlab_HMC.m` is taken from [The Clever Machine](https://theclevermachine.wordpress.com/2012/11/18/mcmc-hamiltonian-monte-carlo-a-k-a-hybrid-monte-carlo/)
  - `theano_HMC.py` is taken from the DeepLearning.net [tutorial on HMC](http://deeplearning.net/tutorial/hmc.html)
+ - `mh_qho.py` is taken from Lepage, G. Peter. 1998. [Lattice QCD for novices](http://arxiv.org/abs/hep-lat/0506036)
