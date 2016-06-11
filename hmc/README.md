@@ -20,7 +20,7 @@ This directory contains the HMC code and test cases.
  - ~~Unit Test: Simple Harmonic Oscillator (1D Gaussian)~~
  - ~~Unit Test: Bivariate Gaussian~~
  - Practical Test: Quantum Harmonic Oscillator
- - Practical Test: Quantum Harmonic Oscillator
+ - Practical Test: Quantum Anharmonic Oscillator
  - *Code on GPU (if time) & Unit Test*
  - *Unit Test (if time): v. high-dim Gaussian*
 
