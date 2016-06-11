@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.gridspec as gridspec
 import subprocess
+from copy import copy
 
 from potentials import Simple_Harmonic_Oscillator
 from pretty_plotting import Pretty_Plotter
@@ -53,6 +54,16 @@ class Leap_Frog(object):
             self._moveP(frac_step=0.5)
             if self.save_path: self._storeSteps() # store moves
         
+        # make into a 3-tensor of (path, column x/p, 1)
+        # last shape required to preserve as column vector for np. matrix mul
+        if self.save_path: 
+            self.p_ar = np.asarray(self.p_ar).reshape(
+                (len(self.p_ar), self.p.shape[0], self.p.shape[1]))
+            self.x_ar = np.asarray(self.x_ar).reshape(
+                (len(self.x_ar), self.x.shape[0], self.x.shape[1]))
+        
+        # remember that any usage of self.p,self.x will be stored as a pointer
+        # must slice or use a copy(self.p) to "freeze" the current value in mem
         return self.p, self.x
     
     def integrateAlt(self, p0, x0):
@@ -111,8 +122,8 @@ class Leap_Frog(object):
             self.x_step :: float
             self.p_step :: float
         """
-        self.p_ar.append(self.p)
-        self.x_ar.append(self.x)
+        self.p_ar.append(copy(self.p))
+        self.x_ar.append(copy(self.x))
         pass
 
 #
@@ -364,10 +375,10 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         self.potential = potential
         self.kE, self.uE = self.potential.kE, self.potential.uE
         
-        self.p0,self.x0 = p0, x0
+        self.p0,self.x0 = np.matrix(p0), np.matrix(x0)
         self.dynamics = dynamics
         
-        self.p,self.x = p0,x0 # initial conditions
+        self.p,self.x = self.p0,self.x0 # initial conditions
         pass
     
     def run(self):
@@ -380,8 +391,8 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         """Plot the Hamiltonian at each integrator integration"""
         
         # convert position/momentum to Energies
-        kE_ar = self.potential.kE(np.asarray(p_ar))
-        uE_ar = self.potential.uE(np.asarray(x_ar))
+        kE_ar = np.apply_along_axis(self.potential.kE, 2, np.asarray(p_ar))
+        uE_ar = np.apply_along_axis(self.potential.uE, 2, np.asarray(x_ar))
         assert len(kE_ar) == len(uE_ar)
         steps = np.arange(len(kE_ar))
         h = kE_ar + uE_ar
@@ -449,12 +460,12 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         ax[0].set_ylim([-1.,1.])
         
         # Intial parameters
-        pos = x_ar[0]
-        mom = p_ar[0]
+        pos = x_ar[0,:,:].reshape((1)) # expect 1D p and x
+        mom = p_ar[0,:,:].reshape((1)) # expect 1D p and x
         x = np.linspace(-6., pos, n, endpoint=True) # x range to clip wire
-        wire = np.sin(6.*np.linspace(0,2.*np.pi,1000)) # wire is clipped at x[-1]
-        
+        wire = np.sin(6. * np.linspace(0, 2.*np.pi, n)) # wire is clipped at x[-1]
         # Lines: spring (sin curve); weight (rectangle)
+        
         spring, = ax[0].plot(x, wire, color='grey', linestyle='-', linewidth=2)
         weight = plt.Rectangle((0, -0.25), 0.5, 0.5, color='red')
         ### End (Top) Spring Plot
@@ -482,7 +493,9 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         ax[2].set_ylim([-6.,6.])
         
         # Lines: all_traj (all trajectories) ; curr_traj (where we are now)
-        all_traj, = ax[2].plot(x_ar, p_ar, linestyle='-', color='blue'
+        # must flatten last column index to convert to a row vector
+        # expect shape of (array_len, col_vector_dims, 1)
+        all_traj, = ax[2].plot(x_ar[:,0,0], p_ar[:,0,0], linestyle='-', color='blue'
         # ,marker='o'
         )
         curr_traj = plt.Circle((0,0), radius=0.25, color='red')
@@ -498,8 +511,8 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
             return weight,curr_traj,        # must return for animation in order
         
         def animate(i): # animation func
-            pos = x_ar[i]              # update x pos
-            mom = p_ar[i]              # update x pos
+            pos = x_ar[i,0,0]              # update x pos
+            mom = p_ar[i,0,0]              # update x pos
             x = np.linspace(-6., pos, n)    # create x-pos array
             weight.set_x(pos)               # update weight pos
             spring.set_xdata(x)             # refresh spring x-axis
@@ -564,7 +577,7 @@ def fullDemo():
         )
     
     test = Demo_Hamiltonian_Dynamics(
-        p0 = 1., x0 = 4.,
+        p0 = [[1.]], x0 = [[4.]],
         dynamics = lf,
         potential = pot
         )

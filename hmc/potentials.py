@@ -97,8 +97,92 @@ class Multivariate_Gaussian(object):
         return np.dot(self.cov_inv, x)
     def hamiltonian(self, p, x):
         h = self.kineticEnergy(p) + self.potentialEnergy(x)
+        assert h.shape == (1,)*len(h.shape) # check 1 dimensional
         return h.reshape(1)
-
+#
+class Quantum_Harmonic_Oscillator(object):
+    """Quantum Harmonic Oscillator
+    
+    Required Inputs
+        x       :: array :: euclidean time & positions (x[i] = time)
+    
+    Optional Inputs
+        m       :: float :: mass
+        w       :: float :: angular frequency
+    """
+    def __init__(self, x, m=1., w=[[1.]], phi_3=0., phi_4=0.):
+        self.m = m
+        self.w = np.asmatrix(w)
+        self.x = np.asarray(x)
+        self.phi_3 = phi_3
+        self.phi_4 = phi_4
+        
+        self.kE = lambda p: self.kineticEnergy(p)
+        self.uE = lambda x: self.potentialEnergy(x)
+        self.dkE = lambda p: self.gradKineticEnergy(p)
+        self.duE = lambda x: self.gradPotentialEnergy(x)
+        
+        self.all = [self.kE, self.uE, self.dkE, self.duE]
+        pass
+    
+    def kineticEnergy(self, p):
+        """n-dim KE
+        
+        This is the kinetic energy for the shadow hamiltonian
+        
+        Required Inputs
+            p :: np.matrix (col vector) :: momentum vector
+        """
+        assert len(p.shape) == 2
+        return .5 * np.square(p).sum(axis=0)
+    
+    def potentialEnergy(self, t):
+        """n-dim potential
+        
+        This is the true hamiltonian. In HMC, the hamiltonian
+        is the potential in the shadow hamiltonian.
+        
+        Required Inputs
+            # x :: np.matrix (col vector) :: position vector
+            i   :: integer :: euclidean time
+        """
+        k = .5 * self.m
+        k *= self._velSq(t)
+        
+        u_0 = .5 * self.m                       # mass term
+        u_0 *= np.dot(self.w.T, self.w)         # angular freq.
+        u_0 *= np.dot(self.x[t].T, self.x[t])   # position at time i
+        
+        # phi^3 term
+        u_3 = self.phi_3 * np.dot(self.x[t].T, self.x[t]) * self.x[t]
+        u_3 /= np.math.factorial(3)
+        
+        u_4 = self.phi_4 * np.dot(self.x[t].T, self.x[t]) * self.x[t]
+        u_4 /= np.math.factorial(4)
+        
+        h = k_e - u_e
+        return h
+    
+    def gradKineticEnergy(self, p):
+        """Gradient w.r.t. conjugate momentum"""
+        return p
+    
+    def gradPotentialEnergy(self, t):
+        """Gradient of the true hamiltonian"""
+        dh_dp = np.sqrt(self._velSq(t)) # p/m = v[i] = sqrt(v[i]^2)
+        dh_dx = self.m * np.dot(self.w.T, self.w) * self.x[t] # m*w^2*x[i]
+        dh_dx += self.phi_3 * np.dot(self.x[t].T, self.x[t])
+        return dh_dx + dh_dp
+    
+    def hamiltonian(self, t):
+        h = self.kineticEnergy(t) + self.potentialEnergy(t)
+        assert h.shape == (1,)*len(h.shape) # check 1 dimensional
+        return h.reshape(1)
+    def _velSq(self, t):
+        """returns the time derivative of position squared"""
+        return (self.x[t+1] - self.x[t]) * (self.x[t] - self.x[t-1])
+    
+#
 class Test(Pretty_Plotter):
     def __init__(self):
         self.mean = np.asarray([[0.], [0.]])

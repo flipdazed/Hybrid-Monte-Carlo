@@ -7,6 +7,7 @@ from h_dynamics import Leap_Frog
 from pretty_plotting import Pretty_Plotter, viridis, magma, inferno, plasma
 
 import matplotlib.pyplot as plt
+from scipy.stats import norm
 import subprocess
 
 class Hybrid_Monte_Carlo(object):
@@ -364,7 +365,7 @@ class Test_HMC(Pretty_Plotter):
         self.hmc = Hybrid_Monte_Carlo(x0, self.lf, self.sho, self.rng)
         pass
     
-    def hmcSho1d(self, tol = 5e-2, print_out = True, save = 'HMC_oscillator_1d.png'):
+    def hmcSho1d(self, n_samples = 10000, n_burn_in = 50, tol = 5e-2, print_out = True, save = 'HMC_oscillator_1d.png'):
         """A test to sample the Simple Harmonic Oscillator
         
         Optional Inputs
@@ -385,12 +386,9 @@ class Test_HMC(Pretty_Plotter):
             pass
         
         x0 = np.asarray([[1.]])
-        
+        dim = x0.shape[0] # dimension the column vector
         self.lf.duE = self.sho.duE # reassign leapfrog gradient
         self.hmc.__init__(x0, self.lf, self.sho, self.rng)
-        
-        n_samples = 15000
-        n_burn_in = 1000
         
         act_mean = self.hmc.potential.mean
         act_cov = self.hmc.potential.cov
@@ -398,12 +396,17 @@ class Test_HMC(Pretty_Plotter):
         mean_tol = np.full(act_mean.shape, tol)
         cov_tol = np.full(act_cov.shape, tol)
         
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in)
-        burn_in, samples = samples
-        samples = np.asarray(samples)
+        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in)
+        burn_in, samples = samples # return the shape: (n, dim, 1)
+        
+        # flatten last dimension to a shape of (n, dim)
+        samples = np.asarray(samples).T.reshape(dim, -1).T
+        burn_in = np.asarray(burn_in).T.reshape(dim, -1).T
         
         mean = samples.mean(axis=0)
-        cov = np.cov(samples)
+        # covariance assumes observations in columns
+        # we have observations in rows so specify rowvar=0
+        cov = np.cov(samples, rowvar=0)
         
         passed *= (np.abs(mean - act_mean) <= mean_tol).all()
         passed *= (np.abs(cov - act_cov) <= cov_tol).all()
@@ -413,8 +416,8 @@ class Test_HMC(Pretty_Plotter):
             display("HMC: Simple Harmonic Oscillator",
                 act_mean, act_cov, mean, cov, mean_tol, cov_tol, passed)
         
-        def plot(burn_in, samples, save=save):
-            
+        def plotPath(burn_in, samples, save=save):
+            """Note that samples and burn_in contain the initial conditions"""
             self._teXify() # LaTeX
             self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
             self._updateRC()
@@ -422,10 +425,10 @@ class Test_HMC(Pretty_Plotter):
             fig = plt.figure(figsize = (8*self.s, 8*self.s)) # make plot
             ax =[]
             ax.append(fig.add_subplot(111))
-            fig.suptitle(r'Sampling the Simple Harmonic Oscillator',
+            fig.suptitle(r'Example HMC path sampling the SHO potential',
                 fontsize=16)
             ax[0].set_title(
-                r'{} Burn-in Samples shown in orange'.format(burn_in.shape[0]-1))
+                r'{} Burn-in Samples shown in orange'.format(burn_in.shape[0]))
             ax[0].set_ylabel(r'Sample, $n$')
             ax[0].set_xlabel(r"Position, $x$")
             
@@ -438,7 +441,51 @@ class Test_HMC(Pretty_Plotter):
             if save:
                 save_dir = './plots/'
                 subprocess.call(['mkdir', './plots/'])
+                save = save.split('.')
+                save = save[0] + '_path' + '.' + save[1] # add identifier
+                fig.savefig(save_dir+save)
+            else:
+                plt.show()
+            pass
+        def plotPot(samples, save=save):
+            """Note that samples and burn_in contain the initial conditions"""
+            self._teXify() # LaTeX
+            self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
+            self._updateRC()
             
+            n = 100 # size of linear space
+            x = np.linspace(-5,5,n)
+            
+            fig = plt.figure(figsize = (8*self.s, 8*self.s)) # make plot
+            ax =[]
+            ax.append(fig.add_subplot(111))
+            fig.suptitle(r'Sampled SHO Potential',
+                fontsize=16)
+            ax[0].set_title(
+                r'{} HMC samples. True potential in Blue.'.format(samples.shape[0]))
+            ax[0].set_ylabel(r'Sampled Potential, $e^{-V(x)}$')
+            ax[0].set_xlabel(r"Position, $x$")
+            
+            # fitted normal dist. parameters p[0] = mean, p[1] = stdev
+            p = norm.fit(samples)
+            fitted = norm.pdf(x, loc=p[0], scale=p[1])
+            actual = norm.pdf(x)
+            
+            n, bins, patches = ax[0].hist(samples, 50, normed=1, # histogram
+                facecolor='green', alpha=0.5, label=r'Sampled Data')
+            
+            ax[0].plot(x, fitted, # marker='x', # best fit
+                linestyle='-', color='orange', label=r'Fitted Potential')
+            
+            ax[0].plot(x, actual, # marker='x',
+                linestyle='-', color='blue', label=r'True Potential')
+            
+            if save:
+                save_dir = './plots/'
+                subprocess.call(['mkdir', './plots/'])
+                
+                save = save.split('.')
+                save = save[0] + '_pot' + '.' + save[1] # add identifier
                 fig.savefig(save_dir+save)
             else:
                 plt.show()
@@ -448,11 +495,14 @@ class Test_HMC(Pretty_Plotter):
             burn_in = np.asarray(burn_in).reshape(n_burn_in+1)
             samples = np.asarray(samples).reshape(n_samples+1)
             
-            plot(burn_in, samples)
+            # burn_in includes initial cond.
+            # samples inclues final burn_in as initial cond.
+            plotPath(burn_in[:50], samples=np.asarray([]), save=save)
+            plotPot(samples, save=save)
         
-        return passed
+        return passed, burn_in, samples
     
-    def hmcGaus2d(self, tol = 5e-2, print_out = True, save = 'HMC_gauss_2d.png'):
+    def hmcGaus2d(self, n_samples = 10000, n_burn_in = 50, tol = 5e-2, print_out = True, save = 'HMC_gauss_2d.png'):
         """A test to sample the 2d Gaussian Distribution
         
         Optional Inputs
@@ -474,11 +524,9 @@ class Test_HMC(Pretty_Plotter):
         
         x0 = np.asarray([[-3.5], [4.]])
         
+        dim = x0.shape[0] # dimension the column vector
         self.lf.duE = self.bg.duE # reassign leapfrog gradient
         self.hmc.__init__(x0, self.lf, self.bg, self.rng)
-        
-        n_samples = 0
-        n_burn_in = 50
         
         act_mean = self.hmc.potential.mean
         act_cov = self.hmc.potential.cov
@@ -487,12 +535,16 @@ class Test_HMC(Pretty_Plotter):
         cov_tol = np.full(act_cov.shape, tol)
         
         p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in)
-        burn_in, samples = samples
-        samples = np.asarray(samples).T.reshape(2, -1).T
-        burn_in = np.asarray(burn_in).T.reshape(2, -1).T
+        burn_in, samples = samples # return the shape: (n, 2, 1)
+        
+        # flatten last dimension to a shape of (n, 2)
+        samples = np.asarray(samples).T.reshape(dim, -1).T
+        burn_in = np.asarray(burn_in).T.reshape(dim, -1).T
         
         mean = samples.mean(axis=0)
-        cov = np.cov(samples.T)
+        # covariance assumes observations in columns
+        # we have observations in rows so specify rowvar=0
+        cov = np.cov(samples, rowvar=0)
         
         passed *= (np.abs(mean - act_mean) <= mean_tol).all()
         # passed *= (np.abs(cov - act_cov) <= cov_tol).all()
@@ -502,7 +554,8 @@ class Test_HMC(Pretty_Plotter):
             display("HMC: Bivariate Gaussian Distribution",
                 act_mean, act_cov, mean, cov, mean_tol, cov_tol, passed)
         
-        def plot(burn_in, samples, cov, mean, save=save):
+        def plotPath(burn_in, samples, cov, mean, save=save):
+            """Note that samples and burn_in contain the initial conditions"""
             
             self._teXify() # LaTeX
             self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
@@ -550,14 +603,24 @@ class Test_HMC(Pretty_Plotter):
             pass
         
         if save:
-            plot(burn_in, samples, cov, mean)
+            plotPath(burn_in, samples, cov, mean, save=save)
             
-        return burn_in, samples
+        return passed, burn_in, samples
 #
 if __name__ == '__main__':
     rng = np.random.RandomState(1234)
     m = Momentum(rng)
     r1 = m.test(print_out=False)
     test = Test_HMC(rng)
-    r2 = test.hmcSho1d(tol = 5e-2, print_out = True, save = 'HMC_oscillator_1d.png')
-    r3 = test.hmcGaus2d(tol = 5e-2, print_out = True, save = 'HMC_gauss_2d.png')
+    r2 = test.hmcSho1d(n_samples = 10000, n_burn_in = 1000,
+        tol = 5e-2,
+        print_out = True,
+        # save = False
+        save = 'HMC_oscillator_1d.png'
+        )
+    r3 = test.hmcGaus2d(n_samples = 10000, n_burn_in = 50,
+        tol = 5e-2,
+        print_out = True,
+        save = False
+        # save = 'HMC_gauss_2d.png'
+        )

@@ -17,11 +17,10 @@ This directory contains the HMC code and test cases.
  - ~~Unit Test: Energy Conservation~~
  - ~~Unit Test: Reversibility: Satisfy Detailed Balance~~
  - ~~HMC Sampler~~
- - ~~Practical Test: Bivariate Gaussian~~
- - ~~Practical Test: Simple Harmonic Oscillator~~
+ - ~~Unit Test: Simple Harmonic Oscillator (1D Gaussian)~~
+ - ~~Unit Test: Bivariate Gaussian~~
  - Practical Test: Quantum Harmonic Oscillator
-   * n-dimensional
-   * n-Dimensional, Anharmonic
+ - Practical Test: Quantum Harmonic Oscillator
  - *Code on GPU (if time) & Unit Test*
  - *Unit Test (if time): v. high-dim Gaussian*
 

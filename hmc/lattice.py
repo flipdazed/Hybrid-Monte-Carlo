@@ -32,7 +32,7 @@ class Ring(object):
             filename, line, func, text = tb_info[-1]
             print('Error on line {} in {}'.format(line, text))
         
-        mod_index = tuple((i%s for i,s in zip(index, self.get.shape)))
+        mod_index = tuple(( (i%s + s)%s for i,s in zip(index, self.get.shape)))
         ar = self.get[mod_index]
         return ar
     
