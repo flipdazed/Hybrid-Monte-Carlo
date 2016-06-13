@@ -14,8 +14,8 @@
 
 # The only changes made in the published program are minor modifications
 # needed to make it compatible with more-recent versions of Python. In
-# particular, the older Numeric package has been replaced with the modern
 # NumPy package.
+# particular, the older Numeric package has been replaced with the modern
 
 
 import numpy 
@@ -50,7 +50,7 @@ def MCaverage(x,G):
         update(x) 
     for alpha in range(0,N_cf):     # loop on random paths 
         for j in range(0,N_cor): 
-            update(x) 
+            update(x)
         for n in range(0,N): 
             G[alpha][n] = compute_G(x,n) 
     for n in range(0,N):            # compute MC averages 

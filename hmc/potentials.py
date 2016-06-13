@@ -1,6 +1,7 @@
 import numpy as np
 
 from pretty_plotting import Pretty_Plotter, viridis, magma, inferno, plasma
+from lattice import Periodic_Lattice
 
 import matplotlib.pyplot as plt
 import subprocess
@@ -101,26 +102,31 @@ class Multivariate_Gaussian(object):
         return h.reshape(1)
 #
 class Quantum_Harmonic_Oscillator(object):
-    """Quantum Harmonic Oscillator
+    """Quantum Harmonic Oscillator on a lattice
+    
+    H = \frac{m}{2}\dot{x}^2 + V(x)
+    
+    V(x) = \frac{1}{2}mx^2 + \frac{1}{3!}\lambda_3 x^3 + \frac{1}{4!}\lambda_4 x^4
     
     Required Inputs
-        x       :: array :: euclidean time & positions (x[i] = time)
+        lattice :: class :: see lattice.py for info
     
     Optional Inputs
         m       :: float :: mass
-        w       :: float :: angular frequency
+        phi_3   :: phi_3 coupling constant
+        phi_4   :: phi_4 coupling constant
     """
-    def __init__(self, x, m=1., w=[[1.]], phi_3=0., phi_4=0.):
+    def __init__(self, lattice, m=1., phi_3=0., phi_4=0.):
         self.m = m
-        self.w = np.asmatrix(w)
-        self.x = np.asarray(x)
-        self.phi_3 = phi_3
-        self.phi_4 = phi_4
+        self.lattice = lattice
+        
+        self.phi_3 = phi_3      # phi^3 coupling const.
+        self.phi_4 = phi_4      # phi^4 coupling const.
         
         self.kE = lambda p: self.kineticEnergy(p)
-        self.uE = lambda x: self.potentialEnergy(x)
+        self.uE = lambda i: self.potentialEnergy(i)
         self.dkE = lambda p: self.gradKineticEnergy(p)
-        self.duE = lambda x: self.gradPotentialEnergy(x)
+        self.duE = lambda i: self.gradPotentialEnergy(i)
         
         self.all = [self.kE, self.uE, self.dkE, self.duE]
         pass
@@ -136,7 +142,7 @@ class Quantum_Harmonic_Oscillator(object):
         assert len(p.shape) == 2
         return .5 * np.square(p).sum(axis=0)
     
-    def potentialEnergy(self, t):
+    def potentialEnergy(self, idx):
         """n-dim potential
         
         This is the true hamiltonian. In HMC, the hamiltonian
@@ -146,20 +152,23 @@ class Quantum_Harmonic_Oscillator(object):
             # x :: np.matrix (col vector) :: position vector
             i   :: integer :: euclidean time
         """
-        k = .5 * self.m
-        k *= self._velSq(t)
+        lattice = self.lattice.get # shortcut for brevity
         
-        u_0 = .5 * self.m                       # mass term
-        u_0 *= np.dot(self.w.T, self.w)         # angular freq.
-        u_0 *= np.dot(self.x[t].T, self.x[t])   # position at time i
+        k_e = .5 * self.m
+        k_e *= self.lattice.gradSquared(idx, a_power=2) # (dx/dt)^2
+        
+        u_0 = .5 * self.m                       # mass term: 1/2 * m
+        u_0 *= np.dot(lattice[idx].T, lattice[idx])   # position at t=i: x(t)^2
         
         # phi^3 term
-        u_3 = self.phi_3 * np.dot(self.x[t].T, self.x[t]) * self.x[t]
+        u_3 = self.phi_3 * np.dot(lattice[idx].T, lattice[idx]) * lattice[idx]
         u_3 /= np.math.factorial(3)
         
-        u_4 = self.phi_4 * np.dot(self.x[t].T, self.x[t]) * self.x[t]
+        # phi^4 terms
+        u_4 = self.phi_4 * np.dot(lattice[idx].T, lattice[idx]) * lattice[idx]
         u_4 /= np.math.factorial(4)
         
+        u_e = u_0 + u_3 + u_4
         h = k_e - u_e
         return h
     
@@ -167,21 +176,28 @@ class Quantum_Harmonic_Oscillator(object):
         """Gradient w.r.t. conjugate momentum"""
         return p
     
-    def gradPotentialEnergy(self, t):
+    def gradPotentialEnergy(self, idx):
         """Gradient of the true hamiltonian"""
-        dh_dp = np.sqrt(self._velSq(t)) # p/m = v[i] = sqrt(v[i]^2)
-        dh_dx = self.m * np.dot(self.w.T, self.w) * self.x[t] # m*w^2*x[i]
-        dh_dx += self.phi_3 * np.dot(self.x[t].T, self.x[t])
+        lattice = self.lattice.get # shortcut
+        
+        # kinetic term:  p/m = m * v[i] = sqrt(v[i]^2)
+        dh_dp = self.m * np.sqrt(self.lattice.gradSquared(idx, a_power=2)) 
+        
+        # mass term (phi^2)
+        dh_dx = self.m * lattice[idx]
+        # phi^3
+        dh_dx += self.phi_3 * np.dot(lattice[idx].T, lattice[idx])
+        dh_dx /= np.math.factorial(2)
+        # phi^4
+        dh_dx += self.phi_4 * np.dot(lattice[idx].T, lattice[idx]) * lattice[idx]
+        dh_dx /= np.math.factorial(3)
+        
         return dh_dx + dh_dp
     
-    def hamiltonian(self, t):
-        h = self.kineticEnergy(t) + self.potentialEnergy(t)
+    def hamiltonian(self, idx):
+        h = self.kineticEnergy(idx) + self.potentialEnergy(idx)
         assert h.shape == (1,)*len(h.shape) # check 1 dimensional
         return h.reshape(1)
-    def _velSq(self, t):
-        """returns the time derivative of position squared"""
-        return (self.x[t+1] - self.x[t]) * (self.x[t] - self.x[t-1])
-    
 #
 class Test(Pretty_Plotter):
     def __init__(self):
@@ -229,7 +245,27 @@ class Test(Pretty_Plotter):
         else:
             plt.show()
         pass
+    def testQHO(self, dim = 4, sites = 10, spacing = 1.):
+        """checks that QHO can be initialised and all functions run"""
+        np.set_printoptions(suppress=True)
+        
+        passed = True
+        shape = (sites,)*dim
+        raw_lattice = np.arange(sites**dim).reshape(shape)
+        self.lattice = Periodic_Lattice(array = raw_lattice, spacing = 1.)
+        
+        passed *= (self.lattice.get.shape == shape) # check dimensions
+        
+        test_idx = tuple(np.random.randint(0, 10000, dim))
+        wrapped_idx = self.lattice.wrapIdx(test_idx)
+        lap = self.lattice.laplacian(test_idx, a_power=2.)
+        print 'Lap x({})~Lap x({}) : {}'.format(test_idx, wrapped_idx, lap)
+        grad = np.sqrt(self.lattice.gradSquared(test_idx, a_power=2.))
+        print 'v({})^2~v({})^2 : {}'.format(test_idx, wrapped_idx, grad)
+        return passed
 #
 if __name__ == '__main__':
     test = Test()
-    test.testBG(save = 'potentials_Gaussian_2d.png')
+    # test.testBG(save = 'potentials_Gaussian_2d.png')
+    print 'testing QHO:', test.testQHO()
+    

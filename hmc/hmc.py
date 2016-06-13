@@ -143,7 +143,6 @@ class Hybrid_Monte_Carlo(object):
         
         return p,x
     
-    
 #
 class Accept_Reject(object):
     """Contains accept-reject routines
