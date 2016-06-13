@@ -142,60 +142,88 @@ class Quantum_Harmonic_Oscillator(object):
         assert len(p.shape) == 2
         return .5 * np.square(p).sum(axis=0)
     
-    def potentialEnergy(self, idx):
+    def potentialEnergy(self):
         """n-dim potential
         
-        This is the true hamiltonian. In HMC, the hamiltonian
+        This is the action. In HMC, the action
         is the potential in the shadow hamiltonian.
         
+        Here the laplacian in the action is used with 1/a
+        the potential is then Va
+        
         Required Inputs
-            # x :: np.matrix (col vector) :: position vector
-            i   :: integer :: euclidean time
+            idx   :: integer :: lattice position
         """
         lattice = self.lattice.get # shortcut for brevity
         
-        k_e = .5 * self.m
-        k_e *= self.lattice.gradSquared(idx, a_power=2) # (dx/dt)^2
+        euclidean_action = 0.
+        # sum (integrate) across euclidean-space (i.e. all lattice sites)
+        for idx in np.ndindex(lattice.shape):
+            x_sq = np.dot(lattice[idx].T, lattice[idx])
+            # k_e = .5 * self.m # optionally can use velocity but less stable
+            # k_e *= self.lattice.gradSquared(idx, a_power=2) # (dx/dt)^2
+            
+            #### free action S_0: 1/2 \phi(m^2 - \nabla)\phi 
+            k_e = - .5 * self.lattice.laplacian(idx, a_power=1)  # lap^2_L
+            k_e *= np.dot(lattice[idx], k_e) # 2nd x term not acted on by Lap_L^2
+            
+            # gradient should be an array of the length of degrees of freedom 
+            assert (k_e.shape == (self.lattice.d,))
+            
+            u_0 = .5 * self.m**2    # mass term: 1/2 * m^2
+            u_0 *= x_sq             # position at t=i: x(t)^2
+            u_0 *= self.lattice.spacing
+            ### End free action
+            
+            # phi^3 term
+            u_3 = self.phi_3 * x_sq * lattice[idx]
+            u_3 /= np.math.factorial(3)
+            
+            # phi^4 terms
+            u_4 = self.phi_4 * np.dot(x_sq.T, x_sq)
+            u_4 /= np.math.factorial(4)
+            
+            euclidean_action += k_e + u_0 + u_3 + u_4
         
-        u_0 = .5 * self.m                       # mass term: 1/2 * m
-        u_0 *= np.dot(lattice[idx].T, lattice[idx])   # position at t=i: x(t)^2
-        
-        # phi^3 term
-        u_3 = self.phi_3 * np.dot(lattice[idx].T, lattice[idx]) * lattice[idx]
-        u_3 /= np.math.factorial(3)
-        
-        # phi^4 terms
-        u_4 = self.phi_4 * np.dot(lattice[idx].T, lattice[idx]) * lattice[idx]
-        u_4 /= np.math.factorial(4)
-        
-        u_e = u_0 + u_3 + u_4
-        h = k_e - u_e
-        return h
+        return euclidean_action
     
     def gradKineticEnergy(self, p):
         """Gradient w.r.t. conjugate momentum"""
         return p
     
     def gradPotentialEnergy(self, idx):
-        """Gradient of the true hamiltonian"""
+        """Gradient of the action
+        
+        Here the laplacian in the action is used with 1/a
+        the potential is then Va
+        
+        Required Inputs
+            idx   :: integer :: lattice position
+        """
         lattice = self.lattice.get # shortcut
         
+        x_sq = np.dot(lattice[idx].T, lattice[idx])
+        
         # kinetic term:  p/m = m * v[i] = sqrt(v[i]^2)
-        dh_dp = self.m * np.sqrt(self.lattice.gradSquared(idx, a_power=2)) 
+        # dh_dp = self.m * np.sqrt(self.lattice.gradSquared(idx, a_power=2))
+        dke_dx = -.5* self.lattice.laplacian(idx, a_power=1)
         
         # mass term (phi^2)
-        dh_dx = self.m * lattice[idx]
-        # phi^3
-        dh_dx += self.phi_3 * np.dot(lattice[idx].T, lattice[idx])
-        dh_dx /= np.math.factorial(2)
-        # phi^4
-        dh_dx += self.phi_4 * np.dot(lattice[idx].T, lattice[idx]) * lattice[idx]
-        dh_dx /= np.math.factorial(3)
+        du0_dx = self.m**2 * lattice[idx] * self.lattice.spacing
         
-        return dh_dx + dh_dp
+        # phi^3
+        du3_dx = self.phi_3 * x_sq
+        du3_dx /= np.math.factorial(2)
+        
+        # phi^4
+        du4_dx = self.phi_4 * x_sq * lattice[idx]
+        du4_dx /= np.math.factorial(3)
+        
+        dS_dx = dke_dx + du0_dx + du3_dx + du4_dx
+        return dS_dx
     
-    def hamiltonian(self, idx):
-        h = self.kineticEnergy(idx) + self.potentialEnergy(idx)
+    def hamiltonian(self, p):
+        h = self.kineticEnergy(p) + self.potentialEnergy()
         assert h.shape == (1,)*len(h.shape) # check 1 dimensional
         return h.reshape(1)
 #
@@ -253,15 +281,11 @@ class Test(Pretty_Plotter):
         shape = (sites,)*dim
         raw_lattice = np.arange(sites**dim).reshape(shape)
         self.lattice = Periodic_Lattice(array = raw_lattice, spacing = 1.)
-        
-        passed *= (self.lattice.get.shape == shape) # check dimensions
-        
-        test_idx = tuple(np.random.randint(0, 10000, dim))
-        wrapped_idx = self.lattice.wrapIdx(test_idx)
-        lap = self.lattice.laplacian(test_idx, a_power=2.)
-        print 'Lap x({})~Lap x({}) : {}'.format(test_idx, wrapped_idx, lap)
-        grad = np.sqrt(self.lattice.gradSquared(test_idx, a_power=2.))
-        print 'v({})^2~v({})^2 : {}'.format(test_idx, wrapped_idx, grad)
+        self.qho = Quantum_Harmonic_Oscillator(self.lattice)
+        en = self.qho.potentialEnergy()
+        gi = self.qho.gradPotentialEnergy((0,)*dim)
+        gf = self.qho.gradPotentialEnergy((sites-1,)*dim)
+        print '\n',gi, gf
         return passed
 #
 if __name__ == '__main__':

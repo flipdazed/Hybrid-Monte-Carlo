@@ -96,24 +96,35 @@ class Leap_Frog(object):
         
         return self.p, self.x
     
-    def _moveX(self, frac_step=1.):
+    def _moveX(self, frac_step = 1.):
         """Calculates a POSITION move for the Leap Frog integrator 
         
         Required Inputs
             p :: float :: current momentum
             x :: float :: current position
         """
+        
+        # all addition can be done in place as it is a one-to-one operation
         self.x += frac_step*self.step_size*self.p
         pass
     
-    def _moveP(self, frac_step=1.):
+    def _moveP(self, frac_step = 1.):
         """Calculates a MOMENTUM move for the Leap Frog integrator 
         
         Required Inputs
             p :: float :: current momentum
             x :: float :: current position
         """
-        self.p -= frac_step*self.step_size*self.duE(self.x)
+        
+        lattice_dims = self.p.shape[1:]
+        if lattice_dims == (1,)*len(lattice_dims): # no lattice (a point)
+            self.p -= frac_step*self.step_size*self.duE(self.x)
+            
+        else: # lattice is present
+            # the first index is the field dimensions at each point
+            # all the remaining dimensions correspond to the lattice
+            for index in np.ndindex(self.p.shape[1:]):
+                self.p[index] -= frac_step*self.step_size*self.duE(index)
         pass
     def _storeSteps(self):
         """Stores current momentum and position in lists

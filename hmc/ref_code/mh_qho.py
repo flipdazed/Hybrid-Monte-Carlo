@@ -14,8 +14,8 @@
 
 # The only changes made in the published program are minor modifications
 # needed to make it compatible with more-recent versions of Python. In
-# NumPy package.
 # particular, the older Numeric package has been replaced with the modern
+# NumPy package.
 
 
 import numpy 
@@ -31,7 +31,7 @@ def update(x):
         dS = S(j,x) - old_Sj                # change in action 
         if dS > 0 and exp(-dS) < uniform(0,1): 
             x[j] = old_x                    # restore old value
- 
+
 def S(j,x):         # harm. osc. S 
     jp = (j+1) % N  # next site
     jm = (j-1) % N  # previous site
@@ -50,9 +50,9 @@ def MCaverage(x,G):
         update(x) 
     for alpha in range(0,N_cf):     # loop on random paths 
         for j in range(0,N_cor): 
-            update(x)
+            update(x) 
         for n in range(0,N): 
-            G[alpha][n] = compute_G(x,n) 
+            G[alpha][n] = compute_G(x,n)
     for n in range(0,N):            # compute MC averages 
         avg_G = 0 
         for alpha in range(0,N_cf): 

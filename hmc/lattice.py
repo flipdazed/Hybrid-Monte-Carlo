@@ -27,7 +27,12 @@ class Periodic_Lattice(object):
         Expectations
             position is a tuple that gives current point in the n-dim lattice
         """
-        assert len(position) == self.d
+        try:
+            assert len(position) == self.d
+        except Exception as e:
+            raise ValueError("mismatch of indices...\nshape received: {}\nshape expected: {}".format(position, self.get.shape))
+        position = np.asarray(position)
+        
         lap = []
         position = np.asarray(position)
         for axis in xrange(self.d): # iterate through axes (lattice dimensions)
@@ -63,7 +68,10 @@ class Periodic_Lattice(object):
         Expectations
             position is a tuple that gives current point in the n-dim lattice
         """
-        assert len(position) == self.d
+        try:
+            assert len(position) == self.d
+        except Exception as e:
+            raise ValueError("mismatch of indices...\nshape received: {}\nshape expected: {}".format(position, self.get.shape))
         position = np.asarray(position)
         
         grad = []

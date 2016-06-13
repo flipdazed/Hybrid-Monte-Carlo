@@ -3,6 +3,7 @@ import copy
 
 from potentials import Simple_Harmonic_Oscillator, Multivariate_Gaussian
 from h_dynamics import Leap_Frog
+from metropolis import Accept_Reject
 
 from pretty_plotting import Pretty_Plotter, viridis, magma, inferno, plasma
 
@@ -85,7 +86,7 @@ class Hybrid_Monte_Carlo(object):
             (p,x) :: (float, float) :: new momentum and position
         """
         
-        p,x = self.p,self.x # initial temp. proposal p,x
+        p,x = self.p, self.x # initial temp. proposal p,x
         h_old = self.potential.hamiltonian(p, x)
         
         p = -self.momentum.fullRefresh(p) # mixing matrix adds a flip
@@ -142,45 +143,6 @@ class Hybrid_Monte_Carlo(object):
         if not accept: p, x = self.p, self.x
         
         return p,x
-    
-#
-class Accept_Reject(object):
-    """Contains accept-reject routines
-    
-    Required Inputs
-        rng :: np.random.RandomState :: random number generator
-    """
-    def __init__(self, rng):
-        self.rng = rng
-        pass
-    def metropolisHastings(self, h_old, h_new):
-        """A M-H accept/reject test as per
-        Duane, Kennedy, Pendleton (1987)
-        and also used by Neal (2003)
-        
-        The following, 
-            min(1., np.exp(-delta_h)) - self.rng.uniform() >= 0.
-            (np.exp(-delta_h) - self.rng.uniform()) >= 0
-        
-        are equivalent to the original step:
-            self.rng.uniform() < min(1., np.exp(-delta_h))
-        
-        The min() function need not be evaluated as both
-        the resultant 1. a huge +ve number will both result
-        in acceptance.
-        >= is also introduced for OCD reasons.
-        
-        Required Inputs
-            h_old :: float :: old hamiltonian
-            h_new :: float :: new hamiltonian
-        
-        Return :: bool
-            True    :: acceptance
-            False   :: rejection
-        """
-        delta_h = h_new - h_old
-        # (self.rng.uniform() < min(1., np.exp(-delta_h))) # Neal / DKP original
-        return (np.exp(-delta_h) - self.rng.uniform()) >= 0 # faster
 #
 class Momentum(object):
     """Momentum Routines
@@ -213,7 +175,7 @@ class Momentum(object):
         self.noise = self.rng.normal(size=p.shape, scale=1., loc=0.)
         self.mixed = self._refresh(p, self.noise, theta=mixing_angle)
         
-        return self.mixed[:p.shape[0],:p.shape[1]]
+        return self.mixed[:p.shape[0], :p.shape[1]]
     
     def _refresh(self, p, noise, theta):
         """Mixes noise with momentum
