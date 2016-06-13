@@ -19,8 +19,20 @@ This directory contains the HMC code and test cases.
  - ~~HMC Sampler~~
  - ~~Unit Test: Simple Harmonic Oscillator (1D Gaussian)~~
  - ~~Unit Test: Bivariate Gaussian~~
+ - ~~Quantum Harmonic Oscillator Potential for Lattice QFT~~
+ - Generalise to Euclidean time for Lattice QFT
+ 	* ~~Gradient / Laplacian functions on the lattice~~
+ 	* ~~Unit Test: Gradient / Laplacian vs. expected values~~
+ 	* ~~Leap Frog algorithm on the lattice (position and momentum updates)~~
+ 	* Unit Test: Leap Frog moves on the lattice
+ 	* HMC on the Lattice - minimal changes: all in Leap Frog
+ 	* Unit Test: HMC on the Lattice
  - Practical Test: Quantum Harmonic Oscillator
- - Practical Test: Quantum Anharmonic Oscillator
+ 	* ground state
+ 	* two-point correlation functions
+ - Practical Test: Quantum Anharmonic Oscillator phi^4
+ 	* ground state
+ 	* two-point correlation functions
  - *Code on GPU (if time) & Unit Test*
  - *Unit Test (if time): v. high-dim Gaussian*
 
@@ -47,7 +59,8 @@ show as a dashed horizontal line.
 
 <a name="tests-bg"/>
 ### Sampling a Bivariate Gaussian
-A demonstration of the first 50 HMC moves when sampling a bivariate gaussian distribution. Normally these moves would be part of the *burn in* phase.
+A demonstration of the first 50 HMC moves when sampling a bivariate gaussian distribution. Normally these moves would be part of the *burn in* phase. An interesting thing to note is that this is equivalent to a simple harmonic oscillator based in a point-like lattice (i.e. no lattice!) of two dimensions. The covariance matrix can be diagonalised and linearly decomposed into two separate oscillators and then they can be considered as two separated point oscillators.
+
 <p align="center">
 	<img src="./plots/HMC_gauss_2d.png" width="700" height="700" />
 </p>
