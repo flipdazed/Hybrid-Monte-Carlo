@@ -26,8 +26,7 @@ class Leap_Frog(object):
         self.duE = duE
         
         self.save_path = save_path
-        self.p_ar = [] # data for plots
-        self.x_ar = [] # data for plots
+        self.newPaths() # create blank lists
         pass
     
     def integrate(self, p0, x0):
@@ -45,8 +44,9 @@ class Leap_Frog(object):
         Returns
             (x,p) :: tuple :: momentum, position
         """
-        self.p, self.x = p0,x0
-        if self.save_path: self._storeSteps() # store zeroth step
+        self.p, self.x = p0, x0
+        if self.save_path:
+            self._storeSteps() # store zeroth step
         
         for step in xrange(0, self.n_steps):
             self._moveP(frac_step=0.5)
@@ -54,15 +54,7 @@ class Leap_Frog(object):
             self._moveP(frac_step=0.5)
             if self.save_path: self._storeSteps() # store moves
         
-        # make into a 3-tensor of (path, column x/p, 1)
-        # last shape required to preserve as column vector for np. matrix mul
-        if self.save_path: 
-            self.p_ar = np.asarray(self.p_ar).reshape(
-                (len(self.p_ar), self.p.shape[0], self.p.shape[1]))
-            self.x_ar = np.asarray(self.x_ar).reshape(
-                (len(self.x_ar), self.x.shape[0], self.x.shape[1]))
-        
-        # remember that any usage of self.p,self.x will be stored as a pointer
+        # remember that any usage of self.p, self.x will be stored as a pointer
         # must slice or use a copy(self.p) to "freeze" the current value in mem
         return self.p, self.x
     
@@ -126,9 +118,11 @@ class Leap_Frog(object):
             for index in np.ndindex(self.p.shape[1:]):
                 self.p[index] -= frac_step*self.step_size*self.duE(index)
         pass
-    def _storeSteps(self):
+    def _storeSteps(self, new=False):
         """Stores current momentum and position in lists
         
+        Optional Input
+            new :: bool :: reverts storage arrays to empty lists
         Expectations
             self.x_step :: float
             self.p_step :: float
@@ -136,7 +130,23 @@ class Leap_Frog(object):
         self.p_ar.append(copy(self.p))
         self.x_ar.append(copy(self.x))
         pass
-
+    
+    def newPaths(self):
+        """Initialises new path lists"""
+        self.p_ar = [] # data for plots
+        self.x_ar = [] # data for plots
+        pass
+    def pathToNumpy(self):
+        """converts the path to a numpy array
+        
+        make into a 3-tensor of (path, column x/p, 1)
+        last shape required to preserve as column vector for np. matrix mul
+        """
+        self.p_ar = np.asarray(self.p_ar).reshape(
+            (len(self.p_ar), self.p.shape[0], self.p.shape[1]))
+        self.x_ar = np.asarray(self.x_ar).reshape(
+            (len(self.x_ar), self.x.shape[0], self.x.shape[1]))
+        pass
 #
 class Tests(Pretty_Plotter):
     """Tests energy conservation"""
@@ -179,13 +189,15 @@ class Tests(Pretty_Plotter):
         
         # calculate original hamiltonian and set starting vals
         pi,xi = np.asarray([[4.]]), np.asarray([[1.]])
-        h_old = self.pot.hamiltonian(pi,xi)
+        h_old = self.pot.hamiltonian(pi, xi)
         
-        # initial vals required
-        w_bmk = 1.
-        diff = 0.
-        w_step = 0
-        w_size = 0
+        # initial vals required to print out values associated
+        # with the worst absolute deviation from perfect energy conservation
+        # (0 = no energy loss)
+        w_bmk = 1.  # worst benchmark value
+        diff = 0.   # absolute difference
+        w_step = 0  # worst steps
+        w_size = 0  # worst step size
         
         # set up a mesh grid of the steps and sizes
         step_sample, step_sizes = np.meshgrid(step_sample, step_sizes)
@@ -253,7 +265,10 @@ class Tests(Pretty_Plotter):
             else:
                 plt.show()
             pass
-        if save: plot(save=save)
+        if save == 'plot':
+            plot(save=False)
+        else:
+            plot(save=save)
         
         return passed
     
@@ -273,7 +288,7 @@ class Tests(Pretty_Plotter):
         def display(test_name, steps, x0, p0, pf, xf, p0f, x0f, pc, result): # print
             print '\n\n TEST: {}'.format(test_name)
             print ' initial (p, x): ({}, {})'.format(p0, x0)
-            print ' int.    (p, x): ({}, {})'.format(pf, xf)
+            print ' middle  (p, x): ({}, {})'.format(pf, xf)
             print ' final   (p, x): ({}, {})'.format(p0f, x0f)
             print ' phase change:    {}'.format(pc)
             print ' number of steps: {}'.format(steps)
@@ -281,13 +296,13 @@ class Tests(Pretty_Plotter):
             pass
         
         # params and ensure dynamic params correct
-        p0, x0 = 4., 1.
+        p0, x0 = np.asarray([[4.]]), np.asarray([[1.]])
         self.dynamics.n_steps = steps
         self.dynamics.step_size = 0.1
         self.dynamics.save_path = True
         
-        pf,xf = self.dynamics.integrate(p0, x0)
-        p0f,x0f = self.dynamics.integrate(-pf, xf) # time flip
+        pf, xf = self.dynamics.integrate(p0, x0)
+        p0f, x0f = self.dynamics.integrate(-pf, xf) # time flip
         
         p0f = -p0f # time flip to point in right time again
         
@@ -342,7 +357,11 @@ class Tests(Pretty_Plotter):
             
             norm = np.sqrt(change_p + change_x)
             steps = np.linspace(0, steps, steps+1, True)
-            plot(steps, norm)
+            
+            if save == 'plot':
+                plot(steps, norm[:,0], save=False)
+            else:
+                plot(steps, norm[:,0])
             
             self.dynamics.save_path = False
             
@@ -616,7 +635,7 @@ if __name__ == '__main__': # demo if run directly
         step_sample = np.linspace(1, 100, 10, True, dtype=int),
         step_sizes = np.linspace(0.01, 0.1, 5, True),
         # These values are for pretty pictures
-        save=False, # comment out to print figure
+        save='plot', # comment out to print figure
         # step_sample = np.linspace(1, 100, 100, True, dtype=int),
         # step_sizes = np.linspace(0.01, 0.5, 100, True),
         print_out = True # shows a small print out
@@ -624,5 +643,6 @@ if __name__ == '__main__': # demo if run directly
     r2 = tests.reversibility(
         steps = 1000,
         tol = 0.01,
+        save = 'plot',
         print_out = True # shows a small print out)
         )
