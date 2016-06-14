@@ -106,6 +106,9 @@ class Leap_Frog(object):
         Required Inputs
             p :: float :: current momentum
             x :: float :: current position
+        
+        Expectations
+            self.p :: field in the first dimension, lattice in `self.p.shape[1:]`
         """
         
         lattice_dims = self.p.shape[1:]
@@ -265,10 +268,12 @@ class Tests(Pretty_Plotter):
             else:
                 plt.show()
             pass
-        if save == 'plot':
-            plot(save=False)
-        else:
-            plot(save=save)
+        
+        if save:
+            if save == 'plot':
+                plot(save=False)
+            else:
+                plot(save=save)
         
         return passed
     
@@ -630,19 +635,24 @@ if __name__ == '__main__': # demo if run directly
     # fullDemo()
     integrator = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
     tests = Tests(dynamics = integrator)
+    
+    ##### 'save' option details
+    # Comment out all to save image
+    # 'plot' plots to screen
+    # False = do nothing
+    #####
     r1 = tests.constantEnergy(
         tol = 0.05,
         step_sample = np.linspace(1, 100, 10, True, dtype=int),
         step_sizes = np.linspace(0.01, 0.1, 5, True),
-        # These values are for pretty pictures
-        save='plot', # comment out to print figure
-        # step_sample = np.linspace(1, 100, 100, True, dtype=int),
-        # step_sizes = np.linspace(0.01, 0.5, 100, True),
+        save = False,
+        # save='plot',
         print_out = True # shows a small print out
         )
     r2 = tests.reversibility(
         steps = 1000,
         tol = 0.01,
-        save = 'plot',
+        save = False,
+        # save = 'plot',
         print_out = True # shows a small print out)
         )
