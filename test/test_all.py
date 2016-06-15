@@ -20,9 +20,10 @@ def testPotentials():
 def testDynamics():
     utils.newTest('dynamics')
     
+    pot = hmc.potentials.Simple_Harmonic_Oscillator(k = 1.)
     integrator = hmc.dynamics.Leap_Frog(duE = None, 
         n_steps = 100, step_size = 0.1) # grad set in test
-    tests = test_dynamics.Test(dynamics = integrator)
+    tests = test_dynamics.Test(dynamics = integrator, pot = pot)
     
     p, x = np.asarray([[4.]]), np.asarray([[1.]])
     assert tests.constantEnergy(p, x, tol = 0.05,

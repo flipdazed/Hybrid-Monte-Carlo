@@ -16,8 +16,8 @@ TEST_ID = 'dynamics'
 
 class Test(Pretty_Plotter):
     """Tests energy conservation"""
-    def __init__(self, dynamics, pot):
-        self.pot = pot
+    def __init__(self, dynamics):
+        self.pot = Simple_Harmonic_Oscillator(k = 1.)
         self.dynamics = dynamics
         self.dynamics.duE = self.pot.duE
         pass
@@ -91,7 +91,7 @@ class Test(Pretty_Plotter):
             utils.display(test_name='Constant Energy', outcome=passed,
                 details = {
                     'initial H(p, x): {}'.format(h_old):[],
-                    'worst   H(p, x): {}'.format(w_h_new):[
+                    'worst   H(p, x): {}'.format(h_new):[
                             'steps: {}'.format(w_step),
                             'step size: {}'.format(w_size)],
                     'np.abs(exp(-dH): {}'.format(w_h_new - h_old, w_bmk):[]
@@ -240,15 +240,12 @@ class Test(Pretty_Plotter):
 if __name__ == '__main__':
     utils.newTest(TEST_ID)
     integrator = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
-    pot = Simple_Harmonic_Oscillator(k = 1.)
-    tests = Test(dynamics = integrator, pot=pot)
+    tests = Test(dynamics = integrator)
+    
     p, x = np.asarray([[4.]]), np.asarray([[1.]])
     
-    dim = 3
-    n = 50
-    v = n**dim
-    x = np.random.random((n,)*dim)
-    p = np.random.random((n,)*dim)
+    x = np.asarray([4., 1., 0., 2., 3., 5., 1., 1.]).reshape(2, 2, 2)
+    p = np.asarray([1, 3, 5, 2]).reshape(1, 2, 2)
     
     ##### 'save' option details
     # Comment out all to save image

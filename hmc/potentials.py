@@ -1,4 +1,5 @@
 import numpy as np
+import sys, traceback
 
 from lattice import Periodic_Lattice
 
@@ -10,8 +11,8 @@ class Simple_Harmonic_Oscillator(object):
     Optional Inputs
         k :: float :: spring constant
     """
-    def __init__(self, k=1.):
-        self.k = k
+    def __init__(self, k=[[1.]]):
+        self.k = np.asarray(k)
         
         self.kE = lambda p: self.kineticEnergy(p)
         self.uE = lambda x: self.potentialEnergy(x)
@@ -20,19 +21,35 @@ class Simple_Harmonic_Oscillator(object):
         
         self.all = [self.kE, self.uE, self.dkE, self.duE]
         
-        self.mean = np.asarray([[0.]])
-        self.cov = np.asarray([[1.]])
+        self.mean = np.asarray([[0.]]).sum(axis=0)
+        self.cov = np.asarray([[1.]]).sum(axis=0)
         pass
+    
     def kineticEnergy(self, p):
-        return .5 * np.dot(p.T, p)
+        return .5 * np.square(p)
+    
     def potentialEnergy(self, x):
-        return .5 * self.k*np.dot(x.T, x)
+        return .5 * np.square(x)
+    
     def gradKineticEnergy(self, p):
         return p
+    
     def gradPotentialEnergy(self, x):
         return self.k*x
+    
     def hamiltonian(self, p, x):
-        h = self.kineticEnergy(p) + self.potentialEnergy(x)
+        h = np.asarray(self.kineticEnergy(p) + self.potentialEnergy(x))
+        try:
+            assert h.shape == (1,)*len(h.shape) # check 1 dimensional
+        except Exception, e:
+            _, _, tb = sys.exc_info()
+            print '\n hamiltonian() not scalar:'
+            traceback.print_tb(tb) # Fixed format
+            tb_info = traceback.extract_tb(tb)
+            filename, line, func, text = tb_info[-1]
+            print 'line {} in {}'.format(line, text)
+            print 'shape: {}'.format(h.shape)
+            sys.exit(1)
         return h.reshape(1)
 #
 class Multivariate_Gaussian(object):
@@ -94,7 +111,17 @@ class Multivariate_Gaussian(object):
         return np.dot(self.cov_inv, x)
     def hamiltonian(self, p, x):
         h = self.kineticEnergy(p) + self.potentialEnergy(x)
-        assert h.shape == (1,)*len(h.shape) # check 1 dimensional
+        try:
+            assert h.shape == (1,)*len(h.shape) # check 1 dimensional
+        except Exception, e:
+            _, _, tb = sys.exc_info()
+            print '\n hamiltonian() not scalar:'
+            traceback.print_tb(tb) # Fixed format
+            tb_info = traceback.extract_tb(tb)
+            filename, line, func, text = tb_info[-1]
+            print 'line {} in {}'.format(line, text)
+            print 'shape: {}'.format(h.shape)
+            sys.exit(1)
         return h.reshape(1)
 #
 class Quantum_Harmonic_Oscillator(object):
@@ -220,7 +247,17 @@ class Quantum_Harmonic_Oscillator(object):
     
     def hamiltonian(self, p):
         h = self.kineticEnergy(p) + self.potentialEnergy()
-        assert h.shape == (1,)*len(h.shape) # check 1 dimensional
+        try:
+            assert h.shape == (1,)*len(h.shape) # check 1 dimensional
+        except Exception, e:
+            _, _, tb = sys.exc_info()
+            print '\n hamiltonian() not scalar:'
+            traceback.print_tb(tb) # Fixed format
+            tb_info = traceback.extract_tb(tb)
+            filename, line, func, text = tb_info[-1]
+            print 'line {} in {}'.format(line, text)
+            print 'shape: {}'.format(h.shape)
+            sys.exit(1)
         return h.reshape(1)
 #
 if __name__ == '__main__':
