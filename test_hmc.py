@@ -3,14 +3,16 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 import subprocess
 
-import utils
+import test_utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
 from hmc.potentials import Simple_Harmonic_Oscillator, Multivariate_Gaussian
 from hmc.hmc import *
-from plotter import Pretty_Plotter
+from plotter import Pretty_Plotter, PLOT_LOC
 from plotter import *
+
+TEST_ID = 'HMC'
 
 class Test_HMC(Pretty_Plotter):
     """Tests for the HMC class
@@ -66,7 +68,8 @@ class Test_HMC(Pretty_Plotter):
         passed *= (np.abs(cov - act_cov) <= cov_tol).all()
         
         if print_out:
-            utils.display("HMC: Simple Harmonic Oscillator", passed,
+            minimal = (print_out == 'minimal')
+            test_utils.display("HMC: Simple Harmonic Oscillator", passed,
                 details = {
                     'mean':[
                         'target:    {}'.format(     act_mean),
@@ -79,7 +82,7 @@ class Test_HMC(Pretty_Plotter):
                         'tolerance  {}'.format(     cov_tol)
                         ]
                     },
-                minimal = False)
+                minimal = minimal)
         
         def plotPath(burn_in, samples, save=save):
             """Note that samples and burn_in contain the initial conditions"""
@@ -104,8 +107,8 @@ class Test_HMC(Pretty_Plotter):
                 linestyle='-', color='blue', label=r'Sampling')
             
             if save:
-                save_dir = './plots/'
-                subprocess.call(['mkdir', './plots/'])
+                save_dir = PLOT_LOC + 'plots/'
+                subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
                 save = save.split('.')
                 save = save[0] + '_path' + '.' + save[1] # add identifier
                 fig.savefig(save_dir+save)
@@ -146,8 +149,8 @@ class Test_HMC(Pretty_Plotter):
                 linestyle='-', color='blue', label=r'True Potential')
             
             if save:
-                save_dir = './plots/'
-                subprocess.call(['mkdir', './plots/'])
+                save_dir = PLOT_LOC + 'plots/'
+                subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
                 
                 save = save.split('.')
                 save = save[0] + '_pot' + '.' + save[1] # add identifier
@@ -211,8 +214,8 @@ class Test_HMC(Pretty_Plotter):
         # passed *= (np.abs(cov - act_cov) <= cov_tol).all()
         
         if print_out:
-            
-            utils.display("HMC: Bivariate Gaussian", passed,
+            minimal = (print_out == 'minimal')
+            test_utils.display("HMC: Bivariate Gaussian", passed,
                 details = {
                     'mean':[
                         'target:    {}'.format(     act_mean.reshape(np.prod(act_mean.shape))),
@@ -225,7 +228,7 @@ class Test_HMC(Pretty_Plotter):
                         'tolerance  {}'.format(     cov_tol.reshape(np.prod(cov_tol.shape)))
                         ]
                     },
-                minimal = False)
+                minimal = minimal)
         
         def plotPath(burn_in, samples, cov, mean, save=save):
             """Note that samples and burn_in contain the initial conditions"""
@@ -267,8 +270,8 @@ class Test_HMC(Pretty_Plotter):
             plt.grid(True)
             
             if save:
-                save_dir = './plots/'
-                subprocess.call(['mkdir', './plots/'])
+                save_dir = PLOT_LOC + 'plots/'
+                subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
             
                 fig.savefig(save_dir+save)
             else:
@@ -284,21 +287,22 @@ class Test_HMC(Pretty_Plotter):
         return passed, burn_in, samples
 #
 if __name__ == '__main__':
+    test_utils.newTest(TEST_ID)
     rng = np.random.RandomState(1234)
     m = Momentum(rng)
     r1 = m.test(print_out=False)
     test = Test_HMC(rng)
-    r2 = test.hmcSho1d(n_samples = 100, n_burn_in = 1000,
+    test.hmcSho1d(n_samples = 100, n_burn_in = 1000,
         tol = 5e-2,
         print_out = True,
         # save = 'plot'
         save = False,
         # save = 'HMC_oscillator_1d.png'
-        )
-    r3 = test.hmcGaus2d(n_samples = 100, n_burn_in = 50,
+        )[0]
+    test.hmcGaus2d(n_samples = 10000, n_burn_in = 50,
         tol = 5e-2,
         print_out = True,
         # save = 'plot'
         save = False,
         # save = 'HMC_gauss_2d.png'
-        )
+        )[0]

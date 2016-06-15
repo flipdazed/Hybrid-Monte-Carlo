@@ -4,13 +4,15 @@ import matplotlib.animation as animation
 import matplotlib.gridspec as gridspec
 import subprocess
 
-import utils
+import test_utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
 from hmc.dynamics import Leap_Frog
 from hmc.potentials import Simple_Harmonic_Oscillator
-from plotter import Pretty_Plotter
+from plotter import Pretty_Plotter, PLOT_LOC
+
+TEST_ID = 'dynamics'
 
 class Tests(Pretty_Plotter):
     """Tests energy conservation"""
@@ -82,7 +84,8 @@ class Tests(Pretty_Plotter):
             diffs.append(diff) # append to list for plotting
         
         if print_out:
-            utils.display(test_name='Constant Energy', outcome=passed,
+            minimal = (print_out == 'minimal')
+            test_utils.display(test_name='Constant Energy', outcome=passed,
                 details = {
                     'initial H(p, x): {}'.format(h_old):[],
                     'worst   H(p, x): {}'.format(h_new):[
@@ -90,7 +93,7 @@ class Tests(Pretty_Plotter):
                             'step size: {}'.format(w_size)],
                     'np.abs(exp(-dH): {}'.format(w_h_new - h_old, w_bmk):[]
                 },
-                minimal=False)
+                minimal=minimal)
         
         def plot(x = step_sample, y = step_sizes, z = diffs, save = save):
             self._teXify() # LaTeX
@@ -119,8 +122,8 @@ class Tests(Pretty_Plotter):
             ax[0].axhline(tol, color='red', linestyle='--')
             
             if save:
-                save_dir = '../results/plots/'
-                subprocess.call(['mkdir', '../results/plots/'])
+                save_dir = PLOT_LOC + 'plots/'
+                subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
             
                 fig.savefig(save_dir+save)
             else:
@@ -164,7 +167,8 @@ class Tests(Pretty_Plotter):
             )
         passed = (phase_change < tol)
         if print_out: 
-            utils.display(test_name="Reversibility of Integrator", 
+            minimal = (print_out == 'minimal')
+            test_utils.display(test_name="Reversibility of Integrator", 
             outcome=passed,
             details={
                 'initial (p, x): ({}, {})'.format(p0, x0):[],
@@ -173,7 +177,7 @@ class Tests(Pretty_Plotter):
                 'phase change:    {}'.format(phase_change):[],
                 'number of steps: {}'.format(self.dynamics.n_steps):[]
                 },
-            minimal=False)
+            minimal = minimal)
         
         def plot(steps, norm, save=save):
             
@@ -196,8 +200,8 @@ class Tests(Pretty_Plotter):
             #     linestyle='-', color='red', marker='+')
             
             if save:
-                save_dir = '../results/plots/'
-                subprocess.call(['mkdir', '../results/plots/'])
+                save_dir = PLOT_LOC + 'plots/'
+                subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
             
                 fig.savefig(save_dir+save)
             else:
@@ -229,6 +233,7 @@ class Tests(Pretty_Plotter):
 
 #
 if __name__ == '__main__':
+    test_utils.newTest(TEST_ID)
     integrator = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
     tests = Tests(dynamics = integrator)
     
@@ -237,7 +242,7 @@ if __name__ == '__main__':
     # 'plot' plots to screen
     # False = do nothing
     #####
-    r1 = tests.constantEnergy(
+    tests.constantEnergy(
         tol = 0.05,
         step_sample = np.linspace(1, 100, 10, True, dtype=int),
         step_sizes = np.linspace(0.01, 0.1, 5, True),
@@ -245,7 +250,8 @@ if __name__ == '__main__':
         # save='plot',
         print_out = True # shows a small print out
         )
-    r2 = tests.reversibility(
+    
+    tests.reversibility(
         steps = 1000,
         tol = 0.01,
         save = False,

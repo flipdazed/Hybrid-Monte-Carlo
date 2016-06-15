@@ -1,17 +1,11 @@
 import numpy as np
+import logging
+from logs import *
 
-from contextlib import contextmanager
-from StringIO import StringIO
-
-@contextmanager
-def captured_output():
-    new_out, new_err = StringIO(), StringIO()
-    old_out, old_err = sys.stdout, sys.stderr
-    try:
-        sys.stdout, sys.stderr = new_out, new_err
-        yield sys.stdout, sys.stderr
-    finally:
-        sys.stdout, sys.stderr = old_out, old_err
+def newTest(test_id):
+    logger.newtest('')
+    logger.newtest('>>> Testing: ' + test_id)
+    pass
 
 def display(test_name, outcome, details = False, minimal=False):
     """
@@ -23,16 +17,24 @@ def display(test_name, outcome, details = False, minimal=False):
         details     :: dict     :: {'detail':['subdetail1', 'subdetail2], 'detail2'}
         minimal     :: Bool     :: prints minimal results
     """
-    print '\n\n TEST: {}'.format(test_name)
+    if outcome: 
+        overview = logger.info
+        extra = logger.debug
+    else:
+        overview = logger.error
+        extra = logger.warn
+    
+    overview('')
+    overview(' {}'.format(test_name))
     
     if details and (not minimal):
         np.set_printoptions(precision=2, suppress=True)
         for detail, sub_details in details.iteritems():
-            print '\t ' + detail
+            extra('   ' + detail)
             for sub_detail in sub_details:
-                print '\t  ... ' + sub_detail
+                extra('    ... ' + sub_detail)
     
-    print ' OUTCOME: {}'.format(['Failed','Passed'][outcome])
+    overview(' OUTCOME: {}'.format(['Failed','Passed'][outcome]))
     pass
     
 if __name__ == '__main__':

@@ -2,13 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import subprocess
 
-import utils
+import test_utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
 from hmc.lattice import Periodic_Lattice
 from hmc.potentials import Multivariate_Gaussian, Quantum_Harmonic_Oscillator
-from plotter import Pretty_Plotter, viridis, magma, inferno, plasma
+from plotter import Pretty_Plotter, viridis, magma, inferno, plasma, PLOT_LOC
+
+TEST_ID = 'potentials'
 
 class Test(Pretty_Plotter):
     def __init__(self):
@@ -17,7 +19,7 @@ class Test(Pretty_Plotter):
         self.bg = Multivariate_Gaussian(mean = self.mean, cov = self.cov)
         pass
     
-    def testBG(self, save = 'potentials_Gaussian_2d.png'):
+    def testBG(self, save = 'potentials_Gaussian_2d.png', print_out = True):
         """Plots a test image of the Bivariate Gaussian"""
         passed = True
         self._teXify() # LaTeX
@@ -35,11 +37,13 @@ class Test(Pretty_Plotter):
             for i,j in zip(np.ravel(x), np.ravel(y))]))
         z = np.asarray(z).reshape(n, n)
         
-        utils.display('Bivariate Gaussian Potential', passed,
-            details = {
-                'Not a unit test':[]
-                },
-            minimal=False)
+        if print_out:
+            minimal = (print_out == 'minimal')
+            test_utils.display('Bivariate Gaussian Potential', passed,
+                details = {
+                    'Not a unit test':[]
+                    },
+                minimal = minimal)
         
         def plot(save=save):
             fig = plt.figure(figsize=(8,8))
@@ -57,8 +61,8 @@ class Test(Pretty_Plotter):
             ax.grid(False)
             
             if save:
-                save_dir = '../results/plots/'
-                subprocess.call(['mkdir', '../results/plots/'])
+                save_dir = PLOT_LOC + 'plots/'
+                subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
             
                 fig.savefig(save_dir+save)
             else:
@@ -87,7 +91,8 @@ class Test(Pretty_Plotter):
         gradient_f = self.qho.gradPotentialEnergy((sites-1,)*dim)
         
         if print_out:
-            utils.display('QHO Potential', passed,
+            minimal = (print_out == 'minimal')
+            test_utils.display('QHO Potential', passed,
                 details = {
                     'Not a unit test':[],
                     'Gradient':[
@@ -95,15 +100,16 @@ class Test(Pretty_Plotter):
                         '{}: {}'.format((sites-1,)*dim, gradient_f)],
                     'Potential Energy: {}'.format(pot_energy):[]
                     },
-                minimal=False)
+                minimal = minimal)
         return passed
 #
 if __name__ == '__main__':
+    test_utils.newTest(TEST_ID)
     test = Test()
-    t1 = test.testBG(
-        # save = 'plot'
-        save = False,
-        # save = 'potentials_Gaussian_2d.png'
-        )
-    t2 = test.testQHO()
+    test.testBG(
+            save = False
+            # save = 'plot'
+            # save = 'potentials_Gaussian_2d.png'
+            )
+    test.testQHO()
     

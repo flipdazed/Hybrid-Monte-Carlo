@@ -1,10 +1,12 @@
 import numpy as np
 
-import utils
+import test_utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
 from hmc.lattice import Periodic_Lattice
+
+TEST_ID = 'lattice'
 
 class Test(object):
     def __init__(self):
@@ -16,7 +18,7 @@ class Test(object):
         
         self.l = Periodic_Lattice(array=self.a1, spacing=1)
         
-    def testWrap(self):
+    def testWrap(self, print_out = True):
         """tests the wrapping function against expected values"""
         passed = True
         wi = self.l.wrapIdx
@@ -28,13 +30,16 @@ class Test(object):
         for idx, act in test: # iterate test values
             passed *= (a[wi(index=idx)] == act)
         
-        utils.display('Periodic Boundary', outcome=passed,
-            details = {'array storage checked':[],
-                'period indexing vs. known values':[]})
+        if print_out:
+            minimal = (print_out == 'minimal')
+            test_utils.display('Periodic Boundary', outcome=passed,
+                details = {'array storage checked':[],
+                    'period indexing vs. known values':[]},
+                minimal = minimal)
         
         return passed
         
-    def testLaplacian(self):
+    def testLaplacian(self, print_out = True):
         """tests the wrapping function against expected values"""
         passed = True
         a = self.a1 # shortcut
@@ -50,13 +55,17 @@ class Test(object):
             res = self.l.laplacian(position=pos, a_power=0)
             passed *= (res == act).all()
         
-        utils.display('Laplacian', outcome=passed,
-            details = {'checked vs. known values (Mathematica)':['wrapped boundary values included']})
+        if print_out:
+            minimal = (print_out == 'minimal')
+            test_utils.display('Laplacian', outcome=passed,
+                details = {'checked vs. known values (Mathematica)':['wrapped boundary values included']},
+                minimal = minimal)
         
         return passed
     
 #
 if __name__ == '__main__':
+    test_utils.newTest(TEST_ID)
     test = Test()
-    t1 = test.testWrap()
-    t2 = test.testLaplacian()
+    test.testWrap(print_out = True)
+    test.testLaplacian(print_out = True)
