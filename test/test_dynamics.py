@@ -4,7 +4,7 @@ import matplotlib.animation as animation
 import matplotlib.gridspec as gridspec
 import subprocess
 
-import test_utils
+import utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
@@ -14,7 +14,7 @@ from plotter import Pretty_Plotter, PLOT_LOC
 
 TEST_ID = 'dynamics'
 
-class Tests(Pretty_Plotter):
+class Test(Pretty_Plotter):
     """Tests energy conservation"""
     def __init__(self, dynamics):
         self.pot = Simple_Harmonic_Oscillator(k=1.)
@@ -85,7 +85,7 @@ class Tests(Pretty_Plotter):
         
         if print_out:
             minimal = (print_out == 'minimal')
-            test_utils.display(test_name='Constant Energy', outcome=passed,
+            utils.display(test_name='Constant Energy', outcome=passed,
                 details = {
                     'initial H(p, x): {}'.format(h_old):[],
                     'worst   H(p, x): {}'.format(h_new):[
@@ -168,7 +168,7 @@ class Tests(Pretty_Plotter):
         passed = (phase_change < tol)
         if print_out: 
             minimal = (print_out == 'minimal')
-            test_utils.display(test_name="Reversibility of Integrator", 
+            utils.display(test_name="Reversibility of Integrator", 
             outcome=passed,
             details={
                 'initial (p, x): ({}, {})'.format(p0, x0):[],
@@ -233,9 +233,9 @@ class Tests(Pretty_Plotter):
 
 #
 if __name__ == '__main__':
-    test_utils.newTest(TEST_ID)
+    utils.newTest(TEST_ID)
     integrator = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
-    tests = Tests(dynamics = integrator)
+    tests = Test(dynamics = integrator)
     
     ##### 'save' option details
     # Comment out all to save image

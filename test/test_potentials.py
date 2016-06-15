@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import subprocess
 
-import test_utils
+import utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
@@ -19,7 +19,7 @@ class Test(Pretty_Plotter):
         self.bg = Multivariate_Gaussian(mean = self.mean, cov = self.cov)
         pass
     
-    def testBG(self, save = 'potentials_Gaussian_2d.png', print_out = True):
+    def bivariateGaussian(self, save = 'potentials_Gaussian_2d.png', print_out = True):
         """Plots a test image of the Bivariate Gaussian"""
         passed = True
         self._teXify() # LaTeX
@@ -39,7 +39,7 @@ class Test(Pretty_Plotter):
         
         if print_out:
             minimal = (print_out == 'minimal')
-            test_utils.display('Bivariate Gaussian Potential', passed,
+            utils.display('Bivariate Gaussian Potential', passed,
                 details = {
                     'Not a unit test':[]
                     },
@@ -76,7 +76,7 @@ class Test(Pretty_Plotter):
                 plot(save=save)
         
         return passed
-    def testQHO(self, dim = 4, sites = 10, spacing = 1., save = False, print_out = True):
+    def qHO(self, dim = 4, sites = 10, spacing = 1., save = False, print_out = True):
         """checks that QHO can be initialised and all functions run"""
         np.set_printoptions(suppress=True)
         
@@ -92,7 +92,7 @@ class Test(Pretty_Plotter):
         
         if print_out:
             minimal = (print_out == 'minimal')
-            test_utils.display('QHO Potential', passed,
+            utils.display('QHO Potential', passed,
                 details = {
                     'Not a unit test':[],
                     'Gradient':[
@@ -104,12 +104,11 @@ class Test(Pretty_Plotter):
         return passed
 #
 if __name__ == '__main__':
-    test_utils.newTest(TEST_ID)
+    utils.newTest(TEST_ID)
     test = Test()
-    test.testBG(
+    test.bivariateGaussian(
             save = False
             # save = 'plot'
             # save = 'potentials_Gaussian_2d.png'
             )
-    test.testQHO()
-    
+    test.qHO()

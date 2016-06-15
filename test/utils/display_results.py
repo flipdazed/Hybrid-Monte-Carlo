@@ -2,6 +2,8 @@ import numpy as np
 import logging
 from logs import *
 
+logging.root.setLevel(logging.INFO)
+
 def newTest(test_id):
     logger.newtest('')
     logger.newtest('>>> Testing: ' + test_id)

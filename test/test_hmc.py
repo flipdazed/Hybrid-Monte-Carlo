@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 import subprocess
 
-import test_utils
+import utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
@@ -14,7 +14,7 @@ from plotter import *
 
 TEST_ID = 'HMC'
 
-class Test_HMC(Pretty_Plotter):
+class Test(Pretty_Plotter):
     """Tests for the HMC class
     
     Required Inputs
@@ -69,7 +69,7 @@ class Test_HMC(Pretty_Plotter):
         
         if print_out:
             minimal = (print_out == 'minimal')
-            test_utils.display("HMC: Simple Harmonic Oscillator", passed,
+            utils.display("HMC: Simple Harmonic Oscillator", passed,
                 details = {
                     'mean':[
                         'target:    {}'.format(     act_mean),
@@ -215,7 +215,7 @@ class Test_HMC(Pretty_Plotter):
         
         if print_out:
             minimal = (print_out == 'minimal')
-            test_utils.display("HMC: Bivariate Gaussian", passed,
+            utils.display("HMC: Bivariate Gaussian", passed,
                 details = {
                     'mean':[
                         'target:    {}'.format(     act_mean.reshape(np.prod(act_mean.shape))),
@@ -287,11 +287,11 @@ class Test_HMC(Pretty_Plotter):
         return passed, burn_in, samples
 #
 if __name__ == '__main__':
-    test_utils.newTest(TEST_ID)
+    utils.newTest(TEST_ID)
     rng = np.random.RandomState(1234)
     m = Momentum(rng)
     r1 = m.test(print_out=False)
-    test = Test_HMC(rng)
+    test = Test(rng)
     test.hmcSho1d(n_samples = 100, n_burn_in = 1000,
         tol = 5e-2,
         print_out = True,

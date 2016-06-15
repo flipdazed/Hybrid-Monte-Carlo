@@ -1,6 +1,6 @@
 import numpy as np
 
-import test_utils
+import utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
@@ -18,7 +18,7 @@ class Test(object):
         
         self.l = Periodic_Lattice(array=self.a1, spacing=1)
         
-    def testWrap(self, print_out = True):
+    def Wrap(self, print_out = True):
         """tests the wrapping function against expected values"""
         passed = True
         wi = self.l.wrapIdx
@@ -32,14 +32,14 @@ class Test(object):
         
         if print_out:
             minimal = (print_out == 'minimal')
-            test_utils.display('Periodic Boundary', outcome=passed,
+            utils.display('Periodic Boundary', outcome=passed,
                 details = {'array storage checked':[],
                     'period indexing vs. known values':[]},
                 minimal = minimal)
         
         return passed
         
-    def testLaplacian(self, print_out = True):
+    def Laplacian(self, print_out = True):
         """tests the wrapping function against expected values"""
         passed = True
         a = self.a1 # shortcut
@@ -57,7 +57,7 @@ class Test(object):
         
         if print_out:
             minimal = (print_out == 'minimal')
-            test_utils.display('Laplacian', outcome=passed,
+            utils.display('Laplacian', outcome=passed,
                 details = {'checked vs. known values (Mathematica)':['wrapped boundary values included']},
                 minimal = minimal)
         
@@ -65,7 +65,7 @@ class Test(object):
     
 #
 if __name__ == '__main__':
-    test_utils.newTest(TEST_ID)
+    utils.newTest(TEST_ID)
     test = Test()
-    test.testWrap(print_out = True)
-    test.testLaplacian(print_out = True)
+    test.Wrap(print_out = True)
+    test.Laplacian(print_out = True)
