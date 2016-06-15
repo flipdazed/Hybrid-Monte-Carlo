@@ -3,6 +3,12 @@ import numpy as np
 import hmc
 from hmc.dynamics import Leap_Frog
 from hmc.potentials import Simple_Harmonic_Oscillator
+from test.utils.logs import *
+
+from plotter import Pretty_Plotter, ANIM_LOC, PLOT_LOC
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import matplotlib.gridspec as gridspec
 #
 class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
     """Simulates Hamiltonian Dynamics using arbitrary integrator
@@ -77,8 +83,8 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         ax[0].plot(steps, kE_ar + uE_ar, linestyle='-', color='blue')
         
         if save:
-            save_dir = './plots/'
-            subprocess.call(['mkdir', './plots/'])
+            save_dir = PLOT_LOC + 'plots/'
+            subprocess.call(['mkdir', save_dir])
             
             fig.savefig(save_dir+save)
         else:
@@ -127,8 +133,8 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         ax[0].set_ylim([-1.,1.])
         
         # Intial parameters
-        pos = x_ar[0,:,:].reshape((1)) # expect 1D p and x
-        mom = p_ar[0,:,:].reshape((1)) # expect 1D p and x
+        pos = x_ar[0,:,:].reshape((1,)) # expect 1D p and x
+        mom = p_ar[0,:,:].reshape((1,)) # expect 1D p and x
         x = np.linspace(-6., pos, n, endpoint=True) # x range to clip wire
         wire = np.sin(6. * np.linspace(0, 2.*np.pi, n)) # wire is clipped at x[-1]
         # Lines: spring (sin curve); weight (rectangle)
@@ -198,8 +204,8 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
                                       interval=50, blit=False, init_func=init)
         
         if save:
-            save_dir = './animations/'
-            subprocess.call(['mkdir', './animations/'])
+            save_dir = ANIM_LOC + 'animations/'
+            subprocess.call(['mkdir', save_dir])
             
             if save.split('.')[-1] == 'gif':
                 tmp_dir = './temp/' # avoid removal of similar files
@@ -234,7 +240,12 @@ def fullDemo():
         - phase space for leap-frog integrator
         - energy functions
     """
+    logger.info('Demonstrating Hamiltonian Dynamics')
+    
+    logger.debug('Potential: SHO')
     pot = Simple_Harmonic_Oscillator(k=1.)
+    
+    logger.info('Integrator: Leap Frog')
     lf = Leap_Frog(
         duE = pot.duE,
         step_size = 0.1,
@@ -249,14 +260,19 @@ def fullDemo():
         potential = pot
         )
     
+    logger.debug('Running integration')
     test.run() # run dynamics
+    test.dynamics.pathToNumpy()
     
+    logger.info('Demonstrating Energy Drift')
     test.energy_drift( # show energy drift
         save=False,
         p_ar = test.dynamics.p_ar,
         x_ar = test.dynamics.x_ar
         )
     
+    logger.info('Plotting an animated demonstration')
+    logger.debug('Circular phase space characteristic of Symplectic integrators')
     test.full_anim( # animated demo
         save=False,
         p_ar = test.dynamics.p_ar,

@@ -34,7 +34,7 @@ class MyFormatter(logging.Formatter):
     # enought python to change them!
     err_fmt     = " %(msg)s"
     # dbg_fmt     = "WARN:  %(module)s: %(lineno)d: %(msg)s"
-    dbg_fmt     = " %(msg)s"
+    dbg_fmt     = " ... %(msg)s"
     info_fmt    = " %(msg)s"
     newtest     = " %(msg)s"
     

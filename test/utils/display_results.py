@@ -34,7 +34,7 @@ def display(test_name, outcome, details = False, minimal=False):
         for detail, sub_details in details.iteritems():
             extra('   ' + detail)
             for sub_detail in sub_details:
-                extra('    ... ' + sub_detail)
+                extra('   ' + sub_detail)
     
     overview(' OUTCOME: {}'.format(['Failed','Passed'][outcome]))
     pass
