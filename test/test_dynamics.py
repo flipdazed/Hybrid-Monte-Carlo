@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import subprocess
+from copy import copy
 
 import utils
 
@@ -45,15 +46,15 @@ class Test(Pretty_Plotter):
         diffs = []
         
         # calculate original hamiltonian and set starting vals
-        h_old = self.pot.hamiltonian(pi, xi)
+        h_old = self.pot.hamiltonian(p0, x0)
         
         # initial vals required to print out values associated
         # with the worst absolute deviation from perfect energy conservation
         # (0 = no energy loss)
-        w_bmk = 1.  # worst benchmark value
-        diff = 0.   # absolute difference
-        w_step = 0  # worst steps
-        w_size = 0  # worst step size
+        w_bmk  = 1.  # worst benchmark value
+        diff   = 0.  # absolute difference
+        w_step = 0   # worst steps
+        w_size = 0   # worst step size
         
         # set up a mesh grid of the steps and sizes
         step_sample, step_sizes = np.meshgrid(step_sample, step_sizes)
@@ -65,7 +66,8 @@ class Test(Pretty_Plotter):
             self.dynamics.step_size = step_size_i
             
             # obtain new duynamics and resultant hamiltonian
-            pf,xf = self.dynamics.integrate(p0, x0)
+            self.dynamics.newPaths()
+            pf,xf = self.dynamics.integrate(copy(p0), copy(x0))
             h_new = self.pot.hamiltonian(pf, xf)
             
             bench_mark = np.exp(-(h_old-h_new))
@@ -139,10 +141,14 @@ class Test(Pretty_Plotter):
         
         return passed
     
-    def reversibility(self, tol = 1e-3, steps = 2000, print_out = True, save = 'reversibility.png'):
+    def reversibility(self, p0, x0, tol = 1e-3, steps = 2000, print_out = True, save = 'reversibility.png'):
         """Checks the integrator is reversible
         by running and then reversing the integration and 
         verifying the same point in phase space
+        
+        Required Inputs
+            p0          :: lattice/np :: momentum
+            x0          :: lattice/np :: momentum
         
         Optional Inputs
             tol         :: float    :: tolerance level for hamiltonian changes
@@ -153,13 +159,13 @@ class Test(Pretty_Plotter):
         passed = True
         
         # params and ensure dynamic params correct
-        p0, x0 = np.asarray([[4.]]), np.asarray([[1.]])
         self.dynamics.n_steps = steps
         self.dynamics.step_size = 0.1
         self.dynamics.save_path = True
         
-        pf, xf = self.dynamics.integrate(p0, x0)
-        p0f, x0f = self.dynamics.integrate(-pf, xf) # time flip
+        self.dynamics.newPaths()
+        pm, xm = self.dynamics.integrate(copy(p0), copy(x0))
+        p0f, x0f = self.dynamics.integrate(-pm, xm) # time flip
         
         p0f = -p0f # time flip to point in right time again
         
@@ -168,17 +174,15 @@ class Test(Pretty_Plotter):
             )
         passed = (phase_change < tol)
         if print_out: 
-            minimal = (print_out == 'minimal')
             utils.display(test_name="Reversibility of Integrator", 
             outcome=passed,
             details={
                 'initial (p, x): ({}, {})'.format(p0, x0):[],
-                'middle  (p, x): ({}, {})'.format(pf, xf):[],
+                'middle  (p, x): ({}, {})'.format(pm, xm):[],
                 'final   (p, x): ({}, {})'.format(p0f, x0f):[],
                 'phase change:    {}'.format(phase_change):[],
                 'number of steps: {}'.format(self.dynamics.n_steps):[]
-                },
-            minimal = minimal)
+                })
         
         def plot(steps, norm, save=save):
             
@@ -244,8 +248,8 @@ if __name__ == '__main__':
     # 'plot' plots to screen
     # False = do nothing
     #####
-    tests.constantEnergy(
-        tol = 0.05, p0 = p, x0 = x,
+    tests.constantEnergy(p0 = copy(p), x0 = copy(x),
+        tol = 0.05,
         step_sample = np.linspace(1, 100, 10, True, dtype=int),
         step_sizes = np.linspace(0.01, 0.1, 5, True),
         save = False,
@@ -253,7 +257,7 @@ if __name__ == '__main__':
         print_out = True # shows a small print out
         )
     
-    tests.reversibility(
+    tests.reversibility(p0 = copy(p), x0 = copy(x),
         steps = 1000,
         tol = 0.01,
         save = False,

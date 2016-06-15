@@ -167,7 +167,6 @@ static void update_hmc(hmc_params_t* pars)
  * trajectory, the averaged measured values are printed out in fixed
  * intervals.
  **********************************************************************/
-
 double hmc(act_params_t *apars, hmc_params_t *hpars)
 {
     int isweep;
