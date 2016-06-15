@@ -1,4 +1,4 @@
-
+import numpy as np
 
 class Accept_Reject(object):
     """Contains accept-reject routines

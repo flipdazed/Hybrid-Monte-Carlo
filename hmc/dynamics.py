@@ -1,0 +1,150 @@
+import numpy as np
+from copy import copy
+
+from potentials import Simple_Harmonic_Oscillator
+
+class Leap_Frog(object):
+    """Leap Frog Integrator
+    
+    Required Inputs
+        duE  :: func :: Gradient of Potential Energy
+    
+    Optional Inputs
+        d   :: integration step size
+        l  :: leap frog integration steps (trajectory length)
+    
+    Note: Do not confuse x0,p0 with initial x0,p0 for HD
+    """
+    def __init__(self, duE, step_size = 0.1, n_steps = 250, save_path = False):
+        self.step_size = step_size
+        self.n_steps = n_steps
+        self.duE = duE
+        
+        self.save_path = save_path
+        self.newPaths() # create blank lists
+        pass
+    
+    def integrate(self, p0, x0):
+        """The Leap Frog Integration
+        
+        Required Input
+            p0  :: float :: initial momentum to start integration
+            x0  :: float :: initial position to start integration
+        
+        Expectations
+            save_path :: Bool :: save (p,x). IN PHASE: Start at (1,1)
+            self.x_step = x0 when class is instantiated
+            self.p_step = p0 when class is instantiated
+        
+        Returns
+            (x,p) :: tuple :: momentum, position
+        """
+        self.p, self.x = p0, x0
+        if self.save_path:
+            self._storeSteps() # store zeroth step
+        
+        for step in xrange(0, self.n_steps):
+            self._moveP(frac_step=0.5)
+            self._moveX()
+            self._moveP(frac_step=0.5)
+            if self.save_path: self._storeSteps() # store moves
+        
+        # remember that any usage of self.p, self.x will be stored as a pointer
+        # must slice or use a copy(self.p) to "freeze" the current value in mem
+        return self.p, self.x
+    
+    def integrateAlt(self, p0, x0):
+        """The Leap Frog Integration
+        
+        Required Input
+            p0  :: float :: initial momentum to start integration
+            x0  :: float :: initial position to start integration
+        
+        Expectations
+            save_path :: Bool :: save (p,x). OUT OF PHASE: Start at (.5,1)
+            self.x_step = x0 when class is instantiated
+            self.p_step = p0 when class is instantiated
+        
+        Returns
+            (x,p) :: tuple :: momentum, position
+        """
+        
+        self.p, self.x = p0,x0
+        self._moveP(frac_step=0.5)
+        self._moveX()
+        if self.save_path: self._storeSteps() # store moves
+        
+        for step in xrange(1, self.n_steps):
+            self._moveP()
+            self._moveX()
+            if self.save_path: self._storeSteps() # store moves
+        
+        self._moveP(frac_step=0.5)
+        
+        return self.p, self.x
+    
+    def _moveX(self, frac_step = 1.):
+        """Calculates a POSITION move for the Leap Frog integrator 
+        
+        Required Inputs
+            p :: float :: current momentum
+            x :: float :: current position
+        """
+        
+        # all addition can be done in place as it is a one-to-one operation
+        self.x += frac_step*self.step_size*self.p
+        pass
+    
+    def _moveP(self, frac_step = 1.):
+        """Calculates a MOMENTUM move for the Leap Frog integrator 
+        
+        Required Inputs
+            p :: float :: current momentum
+            x :: float :: current position
+        
+        Expectations
+            self.p :: field in the first dimension, lattice in `self.p.shape[1:]`
+        """
+        
+        lattice_dims = self.p.shape[1:]
+        if lattice_dims == (1,)*len(lattice_dims): # no lattice (a point)
+            self.p -= frac_step*self.step_size*self.duE(self.x)
+            
+        else: # lattice is present
+            # the first index is the field dimensions at each point
+            # all the remaining dimensions correspond to the lattice
+            for index in np.ndindex(self.p.shape[1:]):
+                self.p[index] -= frac_step*self.step_size*self.duE(index)
+        pass
+    def _storeSteps(self, new=False):
+        """Stores current momentum and position in lists
+        
+        Optional Input
+            new :: bool :: reverts storage arrays to empty lists
+        Expectations
+            self.x_step :: float
+            self.p_step :: float
+        """
+        self.p_ar.append(copy(self.p))
+        self.x_ar.append(copy(self.x))
+        pass
+    
+    def newPaths(self):
+        """Initialises new path lists"""
+        self.p_ar = [] # data for plots
+        self.x_ar = [] # data for plots
+        pass
+    def pathToNumpy(self):
+        """converts the path to a numpy array
+        
+        make into a 3-tensor of (path, column x/p, 1)
+        last shape required to preserve as column vector for np. matrix mul
+        """
+        self.p_ar = np.asarray(self.p_ar).reshape(
+            (len(self.p_ar), self.p.shape[0], self.p.shape[1]))
+        self.x_ar = np.asarray(self.x_ar).reshape(
+            (len(self.x_ar), self.x.shape[0], self.x.shape[1]))
+        pass
+#
+if __name__ == '__main__':
+    pass

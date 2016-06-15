@@ -1,15 +1,9 @@
 import numpy as np
 import copy
+import traceback, sys
 
-from potentials import Simple_Harmonic_Oscillator, Multivariate_Gaussian
-from h_dynamics import Leap_Frog
+from dynamics import Leap_Frog
 from metropolis import Accept_Reject
-
-from pretty_plotting import Pretty_Plotter, viridis, magma, inferno, plasma
-
-import matplotlib.pyplot as plt
-from scipy.stats import norm
-import subprocess
 
 class Hybrid_Monte_Carlo(object):
     """The Hybrid (Hamiltonian) Monte Carlo method
@@ -100,12 +94,18 @@ class Hybrid_Monte_Carlo(object):
         
         try:
             accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
-            if not accept: p, x = self.p, self.x
-        except Exception as e:
-            print h_new
-            print h_old
-            raise e
-            
+        except Exception, e:
+            _, _, tb = sys.exc_info()
+            print '\nError in moveHMC():'
+            traceback.print_tb(tb) # Fixed format
+            tb_info = traceback.extract_tb(tb)
+            filename, line, func, text = tb_info[-1]
+            print 'line {} in {}'.format(line, text)
+            print 'old hamiltonian: {}'.format(h_old)
+            print 'new hamiltonian: {}'.format(h_new)
+            sys.exit(1)
+        
+        if not accept: p, x = self.p, self.x
         return p,x
     
     def moveGHMC(self, mixing_angle, step_size = None, n_steps = None):
@@ -309,279 +309,5 @@ class Momentum(object):
         
         return result
 #
-class Test_HMC(Pretty_Plotter):
-    """Tests for the HMC class
-    
-    Required Inputs
-        rng :: np.random.RandomState :: random number generator
-    """
-    def __init__(self, rng):
-        self.rng = rng
-        
-        self.sho = Simple_Harmonic_Oscillator()
-        self.bg = Multivariate_Gaussian()
-        self.lf = Leap_Frog(duE = self.sho.duE, step_size = 0.1, n_steps = 20)
-        x0 = np.asarray([[0.]]) # start at 0 by default
-        
-        self.hmc = Hybrid_Monte_Carlo(x0, self.lf, self.sho, self.rng)
-        pass
-    
-    def hmcSho1d(self, n_samples = 10000, n_burn_in = 50, tol = 5e-2, print_out = True, save = 'HMC_oscillator_1d.png'):
-        """A test to sample the Simple Harmonic Oscillator
-        
-        Optional Inputs
-            tol     ::  float   :: tolerance level allowed
-            print_out   :: bool     :: print results to screen
-            save    :: string   :: file to save plot. False or '' gives no plot
-        """
-        passed = True
-        def display(test_name, act_mean, act_cov, mean, cov, mean_tol, cov_tol, result):
-            print '\n\n TEST: {}'.format(test_name)
-            print ' target mean: ', act_mean
-            print ' target cov: ', act_cov
-            print '\n empirical mean: ', mean
-            print ' empirical_cov: ', cov
-            print '\n mean tol: ', mean_tol
-            print ' cov tol: ', cov_tol
-            print '\n outcome: {}'.format(['Failed','Passed'][result])
-            pass
-        
-        x0 = np.asarray([[1.]])
-        dim = x0.shape[0] # dimension the column vector
-        self.lf.duE = self.sho.duE # reassign leapfrog gradient
-        self.hmc.__init__(x0, self.lf, self.sho, self.rng)
-        
-        act_mean = self.hmc.potential.mean
-        act_cov = self.hmc.potential.cov
-        
-        mean_tol = np.full(act_mean.shape, tol)
-        cov_tol = np.full(act_cov.shape, tol)
-        
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in)
-        burn_in, samples = samples # return the shape: (n, dim, 1)
-        
-        # flatten last dimension to a shape of (n, dim)
-        samples = np.asarray(samples).T.reshape(dim, -1).T
-        burn_in = np.asarray(burn_in).T.reshape(dim, -1).T
-        
-        mean = samples.mean(axis=0)
-        # covariance assumes observations in columns
-        # we have observations in rows so specify rowvar=0
-        cov = np.cov(samples, rowvar=0)
-        
-        passed *= (np.abs(mean - act_mean) <= mean_tol).all()
-        passed *= (np.abs(cov - act_cov) <= cov_tol).all()
-        
-        if print_out: 
-            np.set_printoptions(precision=2, suppress=True)
-            display("HMC: Simple Harmonic Oscillator",
-                act_mean, act_cov, mean, cov, mean_tol, cov_tol, passed)
-        
-        def plotPath(burn_in, samples, save=save):
-            """Note that samples and burn_in contain the initial conditions"""
-            self._teXify() # LaTeX
-            self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
-            self._updateRC()
-            
-            fig = plt.figure(figsize = (8*self.s, 8*self.s)) # make plot
-            ax =[]
-            ax.append(fig.add_subplot(111))
-            fig.suptitle(r'Example HMC path sampling the SHO potential',
-                fontsize=16)
-            ax[0].set_title(
-                r'{} Burn-in Samples shown in orange'.format(burn_in.shape[0]))
-            ax[0].set_ylabel(r'Sample, $n$')
-            ax[0].set_xlabel(r"Position, $x$")
-            
-            offst = burn_in.shape[0]+1 # burn-in samples
-            ax[0].plot(burn_in, np.arange(1, offst), #marker='x',
-                linestyle='-', color='orange', label=r'Burn In')
-            ax[0].plot(samples, np.arange(offst, offst + samples.shape[0]), #marker='x',
-                linestyle='-', color='blue', label=r'Sampling')
-            
-            if save:
-                save_dir = './plots/'
-                subprocess.call(['mkdir', './plots/'])
-                save = save.split('.')
-                save = save[0] + '_path' + '.' + save[1] # add identifier
-                fig.savefig(save_dir+save)
-            else:
-                plt.show()
-            pass
-        def plotPot(samples, save=save):
-            """Note that samples and burn_in contain the initial conditions"""
-            self._teXify() # LaTeX
-            self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
-            self._updateRC()
-            
-            n = 100 # size of linear space
-            x = np.linspace(-5,5,n)
-            
-            fig = plt.figure(figsize = (8*self.s, 8*self.s)) # make plot
-            ax =[]
-            ax.append(fig.add_subplot(111))
-            fig.suptitle(r'Sampled SHO Potential',
-                fontsize=16)
-            ax[0].set_title(
-                r'{} HMC samples. True potential in Blue.'.format(samples.shape[0]))
-            ax[0].set_ylabel(r'Sampled Potential, $e^{-V(x)}$')
-            ax[0].set_xlabel(r"Position, $x$")
-            
-            # fitted normal dist. parameters p[0] = mean, p[1] = stdev
-            p = norm.fit(samples)
-            fitted = norm.pdf(x, loc=p[0], scale=p[1])
-            actual = norm.pdf(x)
-            
-            n, bins, patches = ax[0].hist(samples, 50, normed=1, # histogram
-                facecolor='green', alpha=0.5, label=r'Sampled Data')
-            
-            ax[0].plot(x, fitted, # marker='x', # best fit
-                linestyle='-', color='orange', label=r'Fitted Potential')
-            
-            ax[0].plot(x, actual, # marker='x',
-                linestyle='-', color='blue', label=r'True Potential')
-            
-            if save:
-                save_dir = './plots/'
-                subprocess.call(['mkdir', './plots/'])
-                
-                save = save.split('.')
-                save = save[0] + '_pot' + '.' + save[1] # add identifier
-                fig.savefig(save_dir+save)
-            else:
-                plt.show()
-            pass
-        
-        if save: 
-            burn_in = np.asarray(burn_in).reshape(n_burn_in+1)
-            samples = np.asarray(samples).reshape(n_samples+1)
-            
-            # burn_in includes initial cond.
-            # samples inclues final burn_in as initial cond.
-            plotPath(burn_in[:50], samples=np.asarray([]), save=save)
-            plotPot(samples, save=save)
-        
-        return passed, burn_in, samples
-    
-    def hmcGaus2d(self, n_samples = 10000, n_burn_in = 50, tol = 5e-2, print_out = True, save = 'HMC_gauss_2d.png'):
-        """A test to sample the 2d Gaussian Distribution
-        
-        Optional Inputs
-            tol     ::  float   :: tolerance level allowed
-            print_out   :: bool     :: print results to screen
-            save    :: string   :: file to save plot. False or '' gives no plot
-        """
-        passed = True
-        def display(test_name, act_mean, act_cov, mean, cov, mean_tol, cov_tol, result):
-            print '\n\n TEST: {}'.format(test_name)
-            print ' target mean: ', act_mean
-            print ' target cov: ', act_cov
-            print '\n empirical mean: ', mean
-            print ' empirical_cov: ', cov
-            print '\n mean tol: ', mean_tol
-            print ' cov tol: ', cov_tol
-            print '\n outcome: {}'.format(['Failed','Passed'][result])
-            pass
-        
-        x0 = np.asarray([[-3.5], [4.]])
-        
-        dim = x0.shape[0] # dimension the column vector
-        self.lf.duE = self.bg.duE # reassign leapfrog gradient
-        self.hmc.__init__(x0, self.lf, self.bg, self.rng)
-        
-        act_mean = self.hmc.potential.mean
-        act_cov = self.hmc.potential.cov
-        
-        mean_tol = np.full(act_mean.shape, tol)
-        cov_tol = np.full(act_cov.shape, tol)
-        
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in)
-        burn_in, samples = samples # return the shape: (n, 2, 1)
-        
-        # flatten last dimension to a shape of (n, 2)
-        samples = np.asarray(samples).T.reshape(dim, -1).T
-        burn_in = np.asarray(burn_in).T.reshape(dim, -1).T
-        
-        mean = samples.mean(axis=0)
-        # covariance assumes observations in columns
-        # we have observations in rows so specify rowvar=0
-        cov = np.cov(samples, rowvar=0)
-        
-        passed *= (np.abs(mean - act_mean) <= mean_tol).all()
-        # passed *= (np.abs(cov - act_cov) <= cov_tol).all()
-        
-        if print_out: 
-            np.set_printoptions(precision=2, suppress=True)
-            display("HMC: Bivariate Gaussian Distribution",
-                act_mean, act_cov, mean, cov, mean_tol, cov_tol, passed)
-        
-        def plotPath(burn_in, samples, cov, mean, save=save):
-            """Note that samples and burn_in contain the initial conditions"""
-            
-            self._teXify() # LaTeX
-            self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
-            self.params['figure.subplot.top'] = 0.85
-            self._updateRC()
-            
-            n = 100    # n**2 is the number of points
-            
-            x = np.linspace(-5., 5., n, endpoint=True)
-            x,y = np.meshgrid(x, x)
-            
-            z = np.exp(-np.asarray([self.bg.uE(np.matrix([[i],[j]])) for i,j in zip(np.ravel(x), np.ravel(y))]))
-            z = np.asarray(z).reshape(n,n)
-            
-            fig = plt.figure(figsize=(8,8))
-            ax = fig.add_subplot(111)
-            
-            c = ax.contourf(x, y, z, 100, cmap=viridis)
-            l1 = ax.plot(burn_in[:,0], burn_in[:,1], 
-                color='blue',
-                marker='o', markerfacecolor='red'
-                )
-            # l2 = ax.plot(samples[:,0], samples[:,1],
-            #     color='blue',
-            #     # marker='o', markerfacecolor='r'
-            #     )
-                
-            ax.set_xlabel(r'$\mathrm{x_1}$')
-            ax.set_ylabel(r'$\mathrm{x_2}$')
-            
-            fig.suptitle(r'Sampling Multivariate Gaussian with HMC',
-                fontsize=self.s*self.ttfont)
-            ax.set_title(r'Showing the first 50 HMC moves for:\ $\mu=\begin{pmatrix}0 & 0\end{pmatrix}$, $\Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$',
-                fontsize=(self.tfont-4)*self.s)
-            
-            plt.grid(True)
-            
-            if save:
-                save_dir = './plots/'
-                subprocess.call(['mkdir', './plots/'])
-            
-                fig.savefig(save_dir+save)
-            else:
-                plt.show()
-            pass
-        
-        if save:
-            plotPath(burn_in, samples, cov, mean, save=save)
-            
-        return passed, burn_in, samples
-#
 if __name__ == '__main__':
-    rng = np.random.RandomState(1234)
-    m = Momentum(rng)
-    r1 = m.test(print_out=False)
-    test = Test_HMC(rng)
-    r2 = test.hmcSho1d(n_samples = 10000, n_burn_in = 1000,
-        tol = 5e-2,
-        print_out = True,
-        # save = False
-        save = 'HMC_oscillator_1d.png'
-        )
-    r3 = test.hmcGaus2d(n_samples = 10000, n_burn_in = 50,
-        tol = 5e-2,
-        print_out = True,
-        save = False
-        # save = 'HMC_gauss_2d.png'
-        )
+    pass

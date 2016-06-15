@@ -33,6 +33,8 @@ This directory contains the HMC code and test cases.
  - Practical Test: Quantum Anharmonic Oscillator phi^4
  	* ground state
  	* two-point correlation functions
+ - Extend to Kramers condition
+
  - *Code on GPU (if time) & Unit Test*
  - *Unit Test (if time): v. high-dim Gaussian*
 
