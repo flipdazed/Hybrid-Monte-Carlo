@@ -1,7 +1,8 @@
 import numpy as np
 
-from h_dynamics import Leap_Frog
-from potentials import Simple_Harmonic_Oscillator
+import hmc
+from hmc.dynamics import Leap_Frog
+from hmc.potentials import Simple_Harmonic_Oscillator
 #
 class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
     """Simulates Hamiltonian Dynamics using arbitrary integrator
