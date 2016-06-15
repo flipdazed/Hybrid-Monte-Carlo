@@ -7,6 +7,7 @@ import utils
 # these directories won't work unless 
 # the commandline interface for python unittest is used
 from hmc.dynamics import Leap_Frog
+from hmc.lattice import Periodic_Lattice
 from hmc.potentials import Simple_Harmonic_Oscillator
 from plotter import Pretty_Plotter, PLOT_LOC
 
@@ -15,19 +16,22 @@ TEST_ID = 'dynamics'
 class Test(Pretty_Plotter):
     """Tests energy conservation"""
     def __init__(self, dynamics):
-        self.pot = Simple_Harmonic_Oscillator(k=1.)
+        self.pot = Simple_Harmonic_Oscillator(k = 1.)
         self.dynamics = dynamics
         self.dynamics.duE = self.pot.duE
         pass
-    def constantEnergy(self, step_sample, step_sizes, tol = 1e-2, print_out = True, save = 'energy_conservation.png'):
+    
+    def constantEnergy(self, p0, x0, step_sample, step_sizes, tol = 1e-2, print_out = True, save = 'energy_conservation.png'):
         """Checks that the change in hamiltonian ~0
         for varying step_sizes and step_lengths
         
         Can also plot a pretty 2d contour plot
         
         Required Inputs
-            step_sample :: np.array :: array of steps lengths to test
-            step_sizes  :: np.array :: array of step sizes to test
+            p0          :: lattice/np :: momentum
+            x0          :: lattice/np :: momentum
+            step_sample :: np.array   :: array of steps lengths to test
+            step_sizes  :: np.array   :: array of step sizes to test
         
         Optional Inputs
             tol         :: float    :: tolerance level for hamiltonian changes
@@ -41,7 +45,6 @@ class Test(Pretty_Plotter):
         diffs = []
         
         # calculate original hamiltonian and set starting vals
-        pi,xi = np.asarray([[4.]]), np.asarray([[1.]])
         h_old = self.pot.hamiltonian(pi, xi)
         
         # initial vals required to print out values associated
@@ -62,8 +65,8 @@ class Test(Pretty_Plotter):
             self.dynamics.step_size = step_size_i
             
             # obtain new duynamics and resultant hamiltonian
-            pf,xf = self.dynamics.integrate(pi,xi)
-            h_new = self.pot.hamiltonian(pf,xf)
+            pf,xf = self.dynamics.integrate(p0, x0)
+            h_new = self.pot.hamiltonian(pf, xf)
             
             bench_mark = np.exp(-(h_old-h_new))
             
@@ -235,13 +238,14 @@ if __name__ == '__main__':
     integrator = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
     tests = Test(dynamics = integrator)
     
+    p, x = np.asarray([[4.]]), np.asarray([[1.]])
     ##### 'save' option details
     # Comment out all to save image
     # 'plot' plots to screen
     # False = do nothing
     #####
     tests.constantEnergy(
-        tol = 0.05,
+        tol = 0.05, p0 = p, x0 = x,
         step_sample = np.linspace(1, 100, 10, True, dtype=int),
         step_sizes = np.linspace(0.01, 0.1, 5, True),
         save = False,

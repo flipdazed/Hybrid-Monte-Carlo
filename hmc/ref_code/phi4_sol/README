@@ -1,0 +1,19 @@
+
+This directory contains a suggestion for the HMC code to 
+for simulating the phi**4 theory with the HMC algorithm
+as described in the lecture notes.
+
+As in the ``start'' directory, compile with make and run with
+
+phi4 infile
+
+List of program files:
+
+phi4.c       : main program
+lattice.h    : contains global variables, the field and its dimensions
+hopping.c    : initializes the hopping field
+ranlxd.c     : Luescher's random number generator
+gauss_rand.c : Routine to generate Gaussian random numbers, uses ranlux
+measure.c    : Measurement routines for some observables
+hmc.c        : Field update with the HMC algorithm
+
