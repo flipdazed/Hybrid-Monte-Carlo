@@ -122,7 +122,6 @@ class Periodic_Lattice(object):
         mod_index = tuple(( (i%s + s)%s for i,s in zip(index, self.get.shape)))
         return mod_index
     
-
 #
 if __name__ == '__main__':
     pass
