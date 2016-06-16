@@ -41,8 +41,7 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
         Required Inputs
             p :: np.matrix (col vector) :: momentum vector
         """
-        assert len(p.shape) == 2
-        return .5 * np.square(p).sum(axis=0)
+        return .5 * np.square(p).flatten().sum(axis=0)
     
     def potentialEnergy(self):
         """n-dim potential

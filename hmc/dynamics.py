@@ -115,7 +115,8 @@ class Leap_Frog(object):
         This needs to be corrected.
         """
         
-        lattice_dims = self.p.shape
+        # lattice is detemrined if > second index of p is all 1
+        lattice_dims = self.p.shape[1:]
         if lattice_dims == (1,)*len(lattice_dims): # no lattice (a point)
             self.p -= frac_step*self.step_size*self.duE(self.x)
             

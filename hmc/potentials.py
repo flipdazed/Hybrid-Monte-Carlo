@@ -33,7 +33,7 @@ class Simple_Harmonic_Oscillator(object):
         return p
     
     def gradPotentialEnergy(self, x):
-        return self.k*x
+        return self.k * x
     
     def hamiltonian(self, p, x):
         h = np.asarray(self.kineticEnergy(p) + self.potentialEnergy(x))
@@ -105,7 +105,18 @@ class Multivariate_Gaussian(object):
     
     def gradPotentialEnergy(self, x):
         """n-dim gradient"""
-        assert len(x.shape) == 2
+        try:
+            assert 2 == len(x.shape) # check 1 dimensional
+        except Exception, e:
+            _, _, tb = sys.exc_info()
+            print '\n expected position dims =2:'
+            traceback.print_tb(tb) # Fixed format
+            tb_info = traceback.extract_tb(tb)
+            filename, line, func, text = tb_info[-1]
+            print 'line {} in {}'.format(line, text)
+            print 'x: {}'.format(x)
+            sys.exit(1)
+        
         return np.dot(self.cov_inv, x)
     def hamiltonian(self, p, x):
         h = self.kineticEnergy(p) + self.potentialEnergy(x)
