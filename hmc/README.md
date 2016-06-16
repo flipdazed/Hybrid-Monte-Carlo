@@ -52,13 +52,11 @@ This directory contains the HMC code and test cases.
  - Plot: Quantum Path for AHO
  - Plot: Quantum Anharmonic Oscillator potential (phi^4)
 
- - *Code on GPU (if time) & Unit Test*
- - *Unit Test (if time): v. high-dim Gaussian*
-
 <a name="td-corr"/>
 ## Correlation Functions
 ### Implementation
  - TBD
+ 
 ### Results
  - Plot: Two point correlation function for QHO vs. separation
  - Plot: Two point correlation function for AHO vs. separation
@@ -68,6 +66,7 @@ This directory contains the HMC code and test cases.
 ### Implementation
  - Implement autocorrelation function (approach TBD)
  - Implement existing algorithm into python from matlab for error analysis
+ 
 ### Results
  - .TBC
  - Plot: Errors vs. ?
