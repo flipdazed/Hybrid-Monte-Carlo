@@ -9,8 +9,10 @@ import utils
 # the commandline interface for python unittest is used
 from hmc.dynamics import Leap_Frog
 from hmc.lattice import Periodic_Lattice
-from hmc.potentials import Simple_Harmonic_Oscillator
+from hmc.potentials import Simple_Harmonic_Oscillator, Quantum_Harmonic_Oscillator
 from plotter import Pretty_Plotter, PLOT_LOC
+
+from hmc.lattice import Periodic_Lattice
 
 TEST_ID = 'dynamics'
 
@@ -244,12 +246,6 @@ if __name__ == '__main__':
     tests = Test(dynamics = integrator, pot=pot)
     p, x = np.asarray([[4.]]), np.asarray([[1.]])
     
-    dim = 3
-    n = 50
-    v = n**dim
-    x = np.random.random((n,)*dim)
-    p = np.random.random((n,)*dim)
-    
     ##### 'save' option details
     # Comment out all to save image
     # 'plot' plots to screen
@@ -264,10 +260,16 @@ if __name__ == '__main__':
         print_out = True # shows a small print out
         )
     
-    # tests.reversibility(p0 = copy(p), x0 = copy(x),
-    #     steps = 1000,
-    #     tol = 0.01,
-    #     save = False,
-    #     # save = 'plot',
-    #     print_out = True # shows a small print out)
-    #     )
+    tests.reversibility(p0 = copy(p), x0 = copy(x),
+        steps = 1000,
+        tol = 0.01,
+        save = False,
+        # save = 'plot',
+        print_out = True # shows a small print out)
+        )
+    
+    dim = 3
+    n = 50
+    v = n**dim
+    x = np.random.random((n,)*dim)
+    p = np.random.random((n,)*dim)

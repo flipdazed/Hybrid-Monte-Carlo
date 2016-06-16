@@ -104,16 +104,23 @@ class Leap_Frog(object):
         
         Expectations
             self.p :: field in the first dimension, lattice in `self.p.shape[1:]`
+        
+        The momenta moves sweep through all the momentum field positions and
+        update them in turn using a numpy array iteration
+        
+        The separation between lattice and non-lattice theory is due to the
+        potentials used. The SHO and Multivariate Gaussian derviates do not accept
+        position indices for gradient terms and have an analytical derivative term.
+        
+        This needs to be corrected.
         """
         
-        lattice_dims = self.p.shape[1:]
+        lattice_dims = self.p.shape
         if lattice_dims == (1,)*len(lattice_dims): # no lattice (a point)
             self.p -= frac_step*self.step_size*self.duE(self.x)
             
         else: # lattice is present
-            # the first index is the field dimensions at each point
-            # all the remaining dimensions correspond to the lattice
-            for index in np.ndindex(self.p.shape[1:]):
+            for index in np.ndindex(self.p.shape):
                 self.p[index] -= frac_step*self.step_size*self.duE(index)
         pass
     def _storeSteps(self, new=False):
