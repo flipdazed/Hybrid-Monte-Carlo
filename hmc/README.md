@@ -102,5 +102,4 @@ A demonstration of the first 50 HMC moves when sampling a bivariate gaussian dis
 
 <a name="ak"/>
 ## Code Acknowledgements
-Always helpful to see existing implementations to guide new implementations
-See `../ref_code` for code snippets I found useful
+See `../ref_code` for code snippets I found useful: Always helpful to see existing implementations to guide new implementations.
