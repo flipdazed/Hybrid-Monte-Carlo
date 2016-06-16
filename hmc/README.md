@@ -81,14 +81,14 @@ conservation of energy shown by the circular phase space path and near stationar
 
 Animated Summary | Energy Drift
 :---:|:---:
-<img src="./results/animations/ham_dynamics.gif" width="500" height="500" />  |  <img src="./results/plots/energy_drift.png" width="500" height="500" />
+<img src="../results/animations/ham_dynamics.gif" width="500" height="500" />  |  <img src="../results/plots/energy_drift.png" width="500" height="500" />
 
 <a name="tests-lf"/>
 ### Energy Drift for varying Leap-Frog Parameters
 A contour plot showing the small energy loss encountered for different Leap-Frog parameters. Tested using the Simple Harmonic Oscillator. Acceptable tolerance level is
 show as a dashed horizontal line.
 <p align="center">
-	<img src="./results/plots/energy_conservation.png" width="700" height="700" />
+	<img src="../results/plots/energy_conservation.png" width="700" height="700" />
 </p>
 
 
@@ -97,10 +97,10 @@ show as a dashed horizontal line.
 A demonstration of the first 50 HMC moves when sampling a bivariate gaussian distribution. Normally these moves would be part of the *burn in* phase. An interesting thing to note is that this is equivalent to a simple harmonic oscillator based in a point-like lattice (i.e. no lattice!) of two dimensions. The covariance matrix can be diagonalised and linearly decomposed into two separate oscillators and then they can be considered as two separated point oscillators.
 
 <p align="center">
-	<img src="./results/plots/HMC_gauss_2d.png" width="700" height="700" />
+	<img src="../results/plots/HMC_gauss_2d.png" width="700" height="700" />
 </p>
 
 <a name="ak"/>
 ## Code Acknowledgements
 Always helpful to see existing implementations to guide new implementations
-See `./ref_code` for code snippets I found useful
+See `../ref_code` for code snippets I found useful
