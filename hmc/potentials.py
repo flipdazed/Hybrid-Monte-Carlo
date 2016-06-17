@@ -1,6 +1,8 @@
 import numpy as np
 import sys, traceback
 
+import .checks
+
 class Simple_Harmonic_Oscillator(object):
     """Simple Harmonic Oscillator
     
@@ -37,17 +39,11 @@ class Simple_Harmonic_Oscillator(object):
     
     def hamiltonian(self, p, x):
         h = np.asarray(self.kineticEnergy(p) + self.potentialEnergy(x))
-        try:
-            assert h.shape == (1,)*len(h.shape) # check 1 dimensional
-        except Exception, e:
-            _, _, tb = sys.exc_info()
-            print '\n hamiltonian() not scalar:'
-            traceback.print_tb(tb) # Fixed format
-            tb_info = traceback.extract_tb(tb)
-            filename, line, func, text = tb_info[-1]
-            print 'line {} in {}'.format(line, text)
-            print 'shape: {}'.format(h.shape)
-            sys.exit(1)
+        
+        # check 1 dimensional
+        checks.tryAssertEqual(val1=h.shape, val2=(1,)*len(h.shape),
+             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
+        
         return h.reshape(1)
 #
 class Multivariate_Gaussian(object):
@@ -85,7 +81,8 @@ class Multivariate_Gaussian(object):
         Required Inputs
             p :: np.matrix (col vector) :: momentum vector
         """
-        assert len(p.shape) == 2
+        checks.tryAssertEqual(val1=len(p.shape), val2=2,
+             ' expected momentum dims = 2.\n> x: {}'.format(x))
         return .5 * np.square(p).sum(axis=0)
     
     def potentialEnergy(self, x):
@@ -94,43 +91,34 @@ class Multivariate_Gaussian(object):
         Required Inputs
             x :: np.matrix (col vector) :: position vector
         """
-        assert x.shape == self.mean.shape
+        checks.tryAssertEqual(val1=x.shape, val2=self.mean.shape,
+            ' expected x.shape = self.mean.shape\n> x: {}, mu: {}'.format(
+            x.shape, self.mean.shape))
         x -= self.mean
         return .5 * ( np.dot(x.T, self.cov_inv) * x).sum(axis=0)
     
     def gradKineticEnergy(self, p):
         """n-dim Kinetic Energy"""
-        assert len(p.shape) == 2
+        
+        checks.tryAssertEqual(val1=len(p.shape), val2=2,
+             ' expected momentum dims = 2.\n> x: {}'.format(x))
+        
         return p
     
     def gradPotentialEnergy(self, x):
         """n-dim gradient"""
-        try:
-            assert 2 == len(x.shape) # check 1 dimensional
-        except Exception, e:
-            _, _, tb = sys.exc_info()
-            print '\n expected position dims =2:'
-            traceback.print_tb(tb) # Fixed format
-            tb_info = traceback.extract_tb(tb)
-            filename, line, func, text = tb_info[-1]
-            print 'line {} in {}'.format(line, text)
-            print 'x: {}'.format(x)
-            sys.exit(1)
+        
+        checks.tryAssertEqual(val1=len(x.shape), val2=2,
+             ' expected position dims = 2.\n> x: {}'.format(x))
         
         return np.dot(self.cov_inv, x)
     def hamiltonian(self, p, x):
         h = self.kineticEnergy(p) + self.potentialEnergy(x)
-        try:
-            assert h.shape == (1,)*len(h.shape) # check 1 dimensional
-        except Exception, e:
-            _, _, tb = sys.exc_info()
-            print '\n hamiltonian() not scalar:'
-            traceback.print_tb(tb) # Fixed format
-            tb_info = traceback.extract_tb(tb)
-            filename, line, func, text = tb_info[-1]
-            print 'line {} in {}'.format(line, text)
-            print 'shape: {}'.format(h.shape)
-            sys.exit(1)
+        
+        # check 1 dimensional
+        checks.tryAssertEqual(val1=h.shape, val2=(1,)*len(h.shape),
+             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
+        
         return h.reshape(1)
 #
 class Quantum_Harmonic_Oscillator(object):
@@ -170,17 +158,9 @@ class Quantum_Harmonic_Oscillator(object):
     
     def hamiltonian(self, p, x):
         h = np.asarray(self.kineticEnergy(p) + self.potentialEnergy(x))
-        try:
-            assert h.shape == (1,)*len(h.shape) # check 1 dimensional
-        except Exception, e:
-            _, _, tb = sys.exc_info()
-            print '\n hamiltonian() not scalar:'
-            traceback.print_tb(tb) # Fixed format
-            tb_info = traceback.extract_tb(tb)
-            filename, line, func, text = tb_info[-1]
-            print 'line {} in {}'.format(line, text)
-            print 'shape: {}'.format(h.shape)
-            sys.exit(1)
+        # check 1 dimensional
+        checks.tryAssertEqual(val1=h.shape, val2=(1,)*len(h.shape),
+             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
         return h.reshape(1)
 #
 if __name__ == '__main__':

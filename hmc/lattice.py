@@ -1,6 +1,8 @@
 import numpy as np
 import traceback, sys
 
+import .checks
+
 class Periodic_Lattice(object):
     """Creates an n-dimensional ring that joins on boundaries w/ numpy
     
@@ -27,11 +29,14 @@ class Periodic_Lattice(object):
         Expectations
             position is a tuple that gives current point in the n-dim lattice
         """
-        try:
-            assert len(position) == self.d
-        except Exception as e:
-            raise ValueError("mismatch of indices...\nshape received: {}\nshape expected: {}".format(position, self.get.shape))
-        position = np.asarray(position)
+        
+        # check that the tuple recieved is the same length as the 
+        # shape of the target array: Should do gradient over all dims
+        # gradient should be an array of the length of degrees of freedom 
+        checks.tryAssertEqual(val1=len(position), val2=self.d,
+             "mismatch of indices...\nshape received: {}\nshape expected: {}".format(
+             position, self.get.shape)
+             )
         
         lap = []
         position = np.asarray(position)
@@ -68,11 +73,11 @@ class Periodic_Lattice(object):
         Expectations
             position is a tuple that gives current point in the n-dim lattice
         """
-        try:
-            assert len(position) == self.d
-        except Exception as e:
-            raise ValueError("mismatch of indices...\nshape received: {}\nshape expected: {}".format(position, self.get.shape))
-        position = np.asarray(position)
+        
+        checks.tryAssertEqual(val1=len(position), val2=self.d,
+             "mismatch of indices...\nshape received: {}\nshape expected: {}".format(
+             position, self.get.shape)
+             )
         
         grad = []
         for axis in xrange(self.d): # iterate through axes (lattice dimensions)
@@ -107,17 +112,10 @@ class Periodic_Lattice(object):
         
         This is NOT compatible with slicing
         """
-        try:
-            assert len(index) == len(self.get.shape)
-        except AssertionError, e:
-            _, _, tb = sys.exc_info()
-            print '\nError in wrapIdx():'
-            traceback.print_tb(tb) # Fixed format
-            tb_info = traceback.extract_tb(tb)
-            filename, line, func, text = tb_info[-1]
-            print 'line {} in {}'.format(line, text)
-            raise ValueError('req length: {}, length: {}'.format(len(index), len(self.get.shape)))
-            sys.exit(1)
+        
+        checks.tryAssertEqual(val1=len(index), val2=len(self.get.shape),
+             'req length: {}, length: {}'.format(len(index), len(self.get.shape))
+             )
         
         mod_index = tuple(( (i%s + s)%s for i,s in zip(index, self.get.shape)))
         return mod_index
