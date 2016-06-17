@@ -19,7 +19,7 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
         phi_3   :: phi_3 coupling constant
         phi_4   :: phi_4 coupling constant
     """
-    def __init__(self, lattice, m=1., phi_3=0., phi_4=0., nabla=True):
+    def __init__(self, lattice, m=1., phi_3=0., phi_4=0., nabla=False):
         self.m = m
         self.lattice = lattice
         self.nabla = nabla
@@ -61,76 +61,83 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
         """
         lattice = self.lattice.get # shortcut for brevity
         
-        euclidean_action = 0.
+        x_sq_sum = np.power(lattice.flatten(), 2).sum()
         
         # avoids the need to iteratively evaluate in the loop
         # although more lines of code
         if nabla: 
+            
+            p_sq_sum = 0.
             # sum (integrate) across euclidean-space (i.e. all lattice sites)
             for idx in np.ndindex(lattice.shape):
-                x_sq = np.dot(lattice[idx])
                 
-                # ensure that it is a scalar
-                try:
-                    assert x_sq.shape == ()
+                x = lattice[idx] # iterates single points of the lattice
                 
-                #### free action S_0: 1/2 \phi(m^2 - \nabla)\phi 
-                k_e = - .5 * self.lattice.laplacian(idx, a_power=1)  # lap^2_L
-                k_e *= np.dot(lattice[idx], k_e) # 2nd x term not acted on by Lap_L^2
+                # kinetic term: - x * (Lattice laplacian of x) * lattice spacing
+                p_sq = self.lattice.laplacian(idx, a_power=1) 
                 
                 # gradient should be an array of the length of degrees of freedom 
-                checks.tryAssertEqual(val1=k_e.shape, val2=(self.lattice.d,),
-                     ' kinetic energy shape should be 1D array' \
+                checks.tryAssertEqual(val1=p_sq.shape, val2=(self.lattice.d,),
+                     ' laplacian shape should be 1D array' \
                      + '\nequal in length to the number of lattice dimensions.' \
-                     + '\n> k_e shape: {}'.format(h.shape) \
+                     + '\n> p_sq shape: {}'.format(p_sq.shape) \
                      + '\n> lattice dimensions: {}'.format((self.lattice.d,))
                      )
                 
-                u_0 = .5 * self.m**2    # mass term: 1/2 * m^2
-                u_0 *= x_sq             # position at t=i: x(t)^2
-                u_0 *= self.lattice.spacing
-                ### End free action
+                p_sq_sum += np.dot(x.T, p_sq)
                 
-                # phi^3 term
-                u_3 = self.phi_3 * x_sq * lattice[idx]
-                u_3 /= np.math.factorial(3)
+                # x.p_sq is a scalar
+                checks.tryAssertEqual(val1=p_sq_sum, val2=(),
+                     'p_sq * x should be scalar.' \
+                     + '\n> p_sq \n> x: {}'.format(p_sq, x)
+                     )
+            
+            #### free action S_0: 1/2 \phi(m^2 - \nabla)\phi 
+            kinetic *= - .5 * p_sq_sum
+            u_0 = .5 * self.m**2 * x_sq_sum
+            ### End free action
+        
+        else: # this part use the action not integrated by parts
+            
+            v_sq_sum = 0. # initiate velocity squared
+            # sum (integrate) across euclidean-space (i.e. all lattice sites)
+            for idx in np.ndindex(lattice.shape):
                 
-                # phi^4 terms
-                u_4 = self.phi_4 * np.dot(x_sq.T, x_sq)
-                u_4 /= np.math.factorial(4)
+                # sum velocity squared
+                v_sq = self.lattice.gradSquared(idx, a_power=1)
                 
-                euclidean_action += k_e + u_0 + u_3 + u_4
+                # gradient should be an array of the length of degrees of freedom 
+                checks.tryAssertEqual(val1=v_sq.shape, val2=(),
+                     ' derivative^2 shape should be scalar' \
+                     + '\n> v_sq shape: {}'.format(v_sq_sum.shape)
+                     )
+                
+                # sum to previous
+                v_sq_sum +=  v_sq
+            
+            #### free action S_0: m/2 \phi(v^2 + m)\phi
+            kinetic *= .5 * self.m * v_sq_sum
+            u_0 = .5 * self.m**2 * x**2
+            ### End free action
+        
+        # Add interation terms if required
+        if self.phi_3: # phi^3 term
+            x_3_sum = np.power(lattice.flatten(), 3).sum()
+            u_3 = self.phi_3 * x_3_sum / np.math.factorial(3)
         else:
-            # sum (integrate) across euclidean-space (i.e. all lattice sites)
-            for idx in np.ndindex(lattice.shape):
-                x_sq = np.dot(lattice[idx])
-                
-                #### free action S_0: m/2 \phi(v^2 + m)\phi
-                k_e = - .5 * self.lattice.gradSquared(idx, a_power=1)  # v^2
-                k_e *= np.dot(lattice[idx], k_e) # 2nd x term not acted on by Lap_L^2
-                
-                # gradient should be an array of the length of degrees of freedom 
-                checks.tryAssertEqual(val1=k_e.shape, val2=(self.lattice.d,),
-                     ' kinetic energy shape should be 1D array' \
-                     + '\nequal in length to the number of lattice dimensions.' \
-                     + '\n> k_e shape: {}'.format(h.shape) \
-                     + '\n> lattice dimensions: {}'.format((self.lattice.d,))
-                     )
-                
-                u_0 = .5 * self.m**2    # mass term: 1/2 * m^2
-                u_0 *= x_sq             # position at t=i: x(t)^2
-                u_0 *= self.lattice.spacing
-                ### End free action
-                
-                # phi^3 term
-                u_3 = self.phi_3 * x_sq * lattice[idx]
-                u_3 /= np.math.factorial(3)
-                
-                # phi^4 terms
-                u_4 = self.phi_4 * np.dot(x_sq.T, x_sq)
-                u_4 /= np.math.factorial(4)
-                
-                euclidean_action += k_e + u_0 + u_3 + u_4
+            u_3 = 0.
+        
+        if self.phi_4: # phi^4 term
+            x_4_sum = np.power(lattice.flatten(), 4).sum()
+            u_3 = self.phi_3 * x_4_sum / np.math.factorial(4)
+        else:
+            u_4 = 0.
+        
+        # the potential terms in the action
+        potential = u_0 + u_3 + u_4
+        
+        # multiply the potential by the lattice spacing as required
+        euclidean_action = kinetic + self.lattice.spacing * potential
         
         return euclidean_action
     
@@ -147,27 +154,92 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
         Required Inputs
             idx   :: integer :: lattice position
         """
-        lattice = self.lattice.get # shortcut
+        lattice = self.lattice.get # shortcut for brevity
         
-        x_sq = np.dot(lattice[idx].T, lattice[idx])
+        derivative = 0.
         
-        # kinetic term:  p/m = m * v[i] = sqrt(v[i]^2)
-        # dh_dp = self.m * np.sqrt(self.lattice.gradSquared(idx, a_power=2))
-        dke_dx = -.5* self.lattice.laplacian(idx, a_power=1)
+        # avoids the need to iteratively evaluate in the loop
+        # although more lines of code
+        if nabla: 
+                
+            x = lattice[idx] # iterates single points of the lattice
+            
+            # x is a scalar
+            checks.tryAssertEqual(val1=x, val2=(),
+                 ' x should be scalar.' + '\n> x: {}'.format(x_sq))
+            
+            #### free action S_0: 1/2 \phi(m^2 - \nabla)\phi 
+            
+            # kinetic term: - x * (Lattice laplacian of x) * lattice spacing /2
+            k_e = - .5 * x * self.lattice.laplacian(idx, a_power=1)
+            
+            # gradient should be an array of the length of degrees of freedom 
+            checks.tryAssertEqual(val1=k_e.shape, val2=(self.lattice.d,),
+                 ' kinetic energy shape should be 1D array' \
+                 + '\nequal in length to the number of lattice dimensions.' \
+                 + '\n> k_e shape: {}'.format(h.shape) \
+                 + '\n> lattice dimensions: {}'.format((self.lattice.d,))
+                 )
+            
+            u_0 = .5 * self.m**2    # mass term: 1/2 * m^2
+            u_0 *= x**2             # position at t=i: x(t)^2
+            
+            ### End free action
+            
+            # phi^3 term
+            u_3 = self.phi_3 * x**3 / np.math.factorial(3)
+            
+            # phi^4 term
+            u_4 = self.phi_4 * x**4 / np.math.factorial(4)
+            
+            # the potential in the action U(x)
+            u = u_0 + u_3 + u_4
+            
+            # multiply the potential by the lattice spacing as required
+            euclidean_action = k_e + u
+    
+    else: # this part use the action not integrated by parts
         
-        # mass term (phi^2)
-        du0_dx = self.m**2 * lattice[idx] * self.lattice.spacing
+        # sum (integrate) across euclidean-space (i.e. all lattice sites)
+        for idx in np.ndindex(lattice.shape):
+            
+            x = lattice[idx] # iterates single points of the lattice
+            
+            # x is a scalar
+            checks.tryAssertEqual(val1=x, val2=(),
+                 ' x should be scalar.' + '\n> x: {}'.format(x_sq))
+                 
+            #### free action S_0: m/2 \phi(v^2 + m)\phi
+            
+            # kinetic term 1/2 m v^2 * lattice spacing
+            v =  self.lattice.gradSquared(idx, a_power=1)
+            k_e *= .5 * self.m * v**2
+            
+            # gradient should be an array of the length of degrees of freedom 
+            checks.tryAssertEqual(val1=k_e.shape, val2=(self.lattice.d,),
+                 ' kinetic energy shape should be 1D array' \
+                 + '\nequal in length to the number of lattice dimensions.' \
+                 + '\n> k_e shape: {}'.format(h.shape) \
+                 + '\n> lattice dimensions: {}'.format((self.lattice.d,))
+                 )
+            
+            # mass term: 1/2 m^2 x^2
+            u_0 = .5 * self.m**2 * x**2
+            ### End free action
+            
+            # phi^3 term
+            u_3 = self.phi_3 * x**3 / np.math.factorial(3)
+            
+            # phi^4 term
+            u_4 = self.phi_4 * x**4 / np.math.factorial(4)
+            
+            # the potential in the action U(x)
+            u = u_0 + u_3 + u_4
+            
+            # multiply the potential by the lattice spacing as required
+            euclidean_action = k_e + self.lattice.spacing * u
         
-        # phi^3
-        du3_dx = self.phi_3 * x_sq
-        du3_dx /= np.math.factorial(2)
-        
-        # phi^4
-        du4_dx = self.phi_4 * x_sq * lattice[idx]
-        du4_dx /= np.math.factorial(3)
-        
-        dS_dx = dke_dx + du0_dx + du3_dx + du4_dx
-        return dS_dx
+        return derivative
     
     def hamiltonian(self, p):
         h = self.kineticEnergy(p) + self.potentialEnergy()

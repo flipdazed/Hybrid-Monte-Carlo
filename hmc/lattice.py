@@ -38,9 +38,11 @@ class Periodic_Lattice(object):
              position, self.get.shape)
              )
         
-        lap = []
+        lap = np.empty(self.d)
         position = np.asarray(position)
-        for axis in xrange(self.d): # iterate through axes (lattice dimensions)
+        
+        # iterate through axes (lattice dimensions)
+        for axis in xrange(self.d):
             # lattice shift operators
             # mask is a boolean mask that only contains True on the index = axis
             mask = np.in1d(np.arange(position.size), axis)
@@ -50,14 +52,21 @@ class Periodic_Lattice(object):
             pos = self.wrapIdx(position)
             minus = self.wrapIdx(position - mask)
             
-            lap_i = self.get[plus] - 2.*self.get[pos] + self.get[minus]
-            if a_power: lap_i /= self.spacing**a_power # lattice spacing
-            lap.append(lap_i)
-            # next dimension
+            # calculate the gradient in each dimension i
+            lap[axis] = self.get[plus] - 2.*self.get[pos] + self.get[minus]
+            
+            # multiply by x_i corresponding the dimension i
+            lap[axis] *= self.get[pos]
         
-        return np.asarray(lap)
+        # euclidean space so trivial metric
+        lap = lap.sum()
+        
+        # multiply by approciate power of lattice spacing
+        if a_power: lap /= self.spacing**a_power
+        
+        return lap
     
-    def gradSquared(self, position, a_power=0):
+    def gradSquared(self, position, a_power=0, symmetric=False):
         """lattice gradient^2 for a point with a periodic boundary
         
         The gradient is squared to be symmetric and avoid non differentiability
@@ -80,28 +89,36 @@ class Periodic_Lattice(object):
              )
         
         grad = []
-        for axis in xrange(self.d): # iterate through axes (lattice dimensions)
-            # lattice shift operators
+        position = np.asarray(position)
+        forwards = np.empty(self.d)
+        if symmetric: backwards = np.empty(self.d) # only assign if symmetric
+        
+        # iterate through axes (lattice dimensions)
+        for axis in xrange(self.d):
+            # lattice shift operator
             # mask is a boolean mask that only contains True on the index = axis
             mask = np.in1d(np.arange(position.size), axis)
             
             # enforce periodic boundary
             plus = self.wrapIdx(position + mask)
             pos = self.wrapIdx(position)
-            minus = self.wrapIdx(position - mask)
             
-            g = (self.get[plus] - self.get[pos])*(self.get[pos] - self.get[minus])
-            # doesn't work if gradient changes direction between forward/backwards
-            if g<0:
-                g = (self.get[plus] - self.get[minus])**2 # use central difference
-                if a_power: g /= (2*self.spacing)**a_power # lattice spacing
-            else:
-                if a_power: g /= self.spacing**a_power # lattice spacing
+            # calculate the forwards gradient
+            forwards[axis] = self.get[plus] - self.get[pos]
             
-            grad.append(g)
-            # next dimension
+            if symmetric: # calculate the backwards gradient
+                minus = self.wrapIdx(position - mask)
+                backwards[axis] = self.get[pos] - self.get[minus]
+            
+        if symmetric:
+            grad = np.dot(forwards.T, backwards)
+        else:
+            grad = np.dot(forwards.T, forwards)
         
-        return np.asarray(grad)
+        # lattice spacing
+        if a_power: grad /= self.spacing**a_power
+        
+        return grad
     
     def wrapIdx(self, index):
         """returns periodic lattice index 
