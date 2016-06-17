@@ -1,7 +1,6 @@
 import numpy as np
-import traceback, sys
 
-import checks
+from . import checks
 
 class Periodic_Lattice(object):
     """Creates an n-dimensional ring that joins on boundaries w/ numpy
@@ -40,7 +39,8 @@ class Periodic_Lattice(object):
         
         lap = np.empty(self.d)
         position = np.asarray(position) # current location
-        two_x = 2.*self.get[position]   # current value*2
+        pos = self.wrapIdx(position)
+        two_x = 2.*self.get[pos]        # current value*2
         
         # iterate through axes (lattice dimensions)
         for axis in xrange(self.d):
@@ -82,8 +82,8 @@ class Periodic_Lattice(object):
         """
         
         checks.tryAssertEqual(len(position), self.d,
-             "mismatch of indices...\nshape received: {}\nshape expected: {}".format(
-             position, self.get.shape)
+             "mismatch of dims...\ndim received: {}\ndim expected: {}".format(
+             len(position), self.d)
              )
         
         grad = []

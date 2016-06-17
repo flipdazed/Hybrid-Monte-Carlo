@@ -289,10 +289,9 @@ class Test(Pretty_Plotter):
 if __name__ == '__main__':
     utils.newTest(TEST_ID)
     rng = np.random.RandomState(1234)
-    m = Momentum(rng)
-    r1 = m.test(print_out=False)
+    
     test = Test(rng)
-    test.hmcSho1d(n_samples = 100, n_burn_in = 1000,
+    test.hmcSho1d(n_samples = 10000, n_burn_in = 1000,
         tol = 5e-2,
         print_out = True,
         # save = 'plot'

@@ -18,7 +18,7 @@ class Test(object):
         
         self.l = Periodic_Lattice(array=self.a1, spacing=1)
         
-    def Wrap(self, print_out = True):
+    def wrap(self, print_out = True):
         """tests the wrapping function against expected values"""
         passed = True
         wi = self.l.wrapIdx
@@ -31,25 +31,23 @@ class Test(object):
             passed *= (a[wi(index=idx)] == act)
         
         if print_out:
-            minimal = (print_out == 'minimal')
             utils.display('Periodic Boundary', outcome=passed,
                 details = {'array storage checked':[],
-                    'period indexing vs. known values':[]},
-                minimal = minimal)
+                    'period indexing vs. known values':[]})
         
         return passed
     
-    def Laplacian(self, print_out = True):
-        """tests the wrapping function against expected values"""
+    def laplacian(self, print_out = True):
+        """tests the laplacian function against expected values"""
         passed = True
         a = self.a1 # shortcut
         passed *= (self.l.get == self.a1).all() # check both are equal
-        test = [[(1,1), np.asarray([0., 0.]).sum()],
-                [(3,3), np.asarray([-40., -4.]).sum()] ,
-                [(4,4), np.asarray([40., 4.]).sum()], # [index, expected value]
-                [(3,4), np.asarray([-40., 4.]).sum()],
-                [(4,3), np.asarray([40., -4.]).sum()],
-                [(2,3), np.asarray([0., -4.]).sum()]]
+        test = [[(1,1), np.asarray([  0.,  0.]).sum()], # 11
+                [(3,3), np.asarray([-40., -4.]).sum()], # 44
+                [(4,4), np.asarray([ 40.,  4.]).sum()], # 11
+                [(3,4), np.asarray([-40.,  4.]).sum()], # 41
+                [(4,3), np.asarray([ 40., -4.]).sum()], # 14
+                [(2,3), np.asarray([  0., -4.]).sum()]] # 34
         
         store = []
         for pos, act in test: # iterate test values
@@ -58,18 +56,52 @@ class Test(object):
             if print_out: store.append([pos, res, act])
         
         if print_out:
-            minimal = (print_out == 'minimal')
             utils.display('Laplacian', outcome=passed,
                 details = {'checked vs. known values (Mathematica)':[
                     'pos: {}, res: {}, act: {}'.format(*vals) for vals in store
-                ]},
-                minimal = minimal)
+                ]})
         
         return passed
     
+    def gradSquared(self, symmetric, print_out = True):
+        """tests the gradient squared function against expected values"""
+        passed = True
+        a = self.a1 # shortcut
+        passed *= (self.l.get == self.a1).all() # check both are equal
+        if symmetric:
+            test = [[(1, 1),  101.],   # 11
+                    [(3, 3), -303.],   # 44
+                    [(4, 4), -303.],   # 11
+                    [(3, 4), -303.],   # 41
+                    [(4, 3), -303.],   # 14
+                    [(2, 3),   97.]]   # 134
+        else:
+            test = [[(1,1), np.square(np.asarray([ 10.,   1.])).sum()],  # 11
+                    [(3,3), np.square(np.asarray([-30., - 3.])).sum()],  # 44
+                    [(4,4), np.square(np.asarray([ 10.,   1.])).sum()],  # 11
+                    [(3,4), np.square(np.asarray([-30.,   1.])).sum()],  # 41
+                    [(4,3), np.square(np.asarray([ 10., - 3.])).sum()],  # 14
+                    [(2,3), np.square(np.asarray([ -3.,  10.])).sum()]]  # 34
+        
+        store = []
+        for pos, act in test: # iterate test values
+            res = self.l.gradSquared(position = pos, a_power = 0, symmetric = symmetric)
+            passed *= (res == act).all()
+            if print_out: store.append([pos, res, act])
+        
+        if print_out:
+            sym = 'symmetric' if symmetric else 'non symmetric'
+            utils.display('Gradient Squared : ({})'.format(sym), outcome=passed,
+                details = {'checked vs. known values (Mathematica)':[
+                    'pos: {}, res: {}, act: {}'.format(*vals) for vals in store
+                ]})
+        
+        return passed
 #
 if __name__ == '__main__':
     utils.newTest(TEST_ID)
     test = Test()
-    test.Wrap(print_out = True)
-    test.Laplacian(print_out = True)
+    test.wrap(print_out = True)
+    test.laplacian(print_out = True)
+    test.gradSquared(symmetric = False, print_out = True)
+    test.gradSquared(symmetric = True, print_out = True)

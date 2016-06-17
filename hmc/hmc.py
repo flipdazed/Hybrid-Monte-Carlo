@@ -1,6 +1,5 @@
 import numpy as np
 import copy
-import traceback, sys
 
 from dynamics import Leap_Frog
 from metropolis import Accept_Reject

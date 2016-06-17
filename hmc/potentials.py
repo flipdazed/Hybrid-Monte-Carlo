@@ -1,7 +1,6 @@
 import numpy as np
-import sys, traceback
 
-import checks
+from . import checks
 
 class Simple_Harmonic_Oscillator(object):
     """Simple Harmonic Oscillator
@@ -82,7 +81,7 @@ class Multivariate_Gaussian(object):
             p :: np.matrix (col vector) :: momentum vector
         """
         checks.tryAssertEqual(len(p.shape), 2,
-             ' expected momentum dims = 2.\n> x: {}'.format(x))
+             ' expected momentum dims = 2.\n> p: {}'.format(p))
         return .5 * np.square(p).sum(axis=0)
     
     def potentialEnergy(self, x):

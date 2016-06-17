@@ -1,9 +1,10 @@
 from .hmc import *
-import dynamics
-import lattice
-import metropolis
-import potentials
-import lattice_pots
+from . import dynamics
+from . import lattice
+from . import metropolis
+from . import potentials
+from . import lattice_pots
+from . import checks
 
 __all__ = [
     'dynamics',
@@ -11,5 +12,6 @@ __all__ = [
     'metropolis',
     'potentials',
     'lattice_pots'
-    'hmc'
+    'hmc',
+    'checks'
     ]

@@ -9,7 +9,7 @@ import utils
 from hmc.lattice import Periodic_Lattice
 from hmc.potentials import Multivariate_Gaussian, Quantum_Harmonic_Oscillator
 from plotter import Pretty_Plotter, viridis, magma, inferno, plasma, PLOT_LOC
-
+from hmc.lattice_pots import Lattice_Quantum_Harmonic_Oscillator as LQHO
 TEST_ID = 'potentials'
 
 class Test(Pretty_Plotter):
@@ -76,7 +76,7 @@ class Test(Pretty_Plotter):
                 plot(save=save)
         
         return passed
-    def qHO(self, dim = 4, sites = 10, spacing = 1., save = False, print_out = True):
+    def lattice_qHO(self, dim = 4, sites = 10, spacing = 1., save = False, print_out = True):
         """checks that QHO can be initialised and all functions run"""
         np.set_printoptions(suppress=True)
         
@@ -84,11 +84,15 @@ class Test(Pretty_Plotter):
         shape = (sites,)*dim
         raw_lattice = np.arange(sites**dim).reshape(shape)
         self.lattice = Periodic_Lattice(array = raw_lattice, spacing = 1.)
-        self.qho = Quantum_Harmonic_Oscillator(self.lattice)
+        self.qho = LQHO(self.lattice)
         
-        pot_energy = self.qho.potentialEnergy()
-        gradient_i = self.qho.gradPotentialEnergy((0,)*dim)
-        gradient_f = self.qho.gradPotentialEnergy((sites-1,)*dim)
+        for n in (1,0):
+            pot_energy = self.qho.potentialEnergy(nabla=n)
+            gradient_i = self.qho.gradPotentialEnergy((0,)*dim, nabla=n)
+            gradient_f = self.qho.gradPotentialEnergy((sites-1,)*dim, nabla=n)
+        pot_energy = self.qho.uE()
+        gradient_i = self.qho.duE((0,)*dim)
+        gradient_f = self.qho.duE((sites-1,)*dim)
         
         if print_out:
             minimal = (print_out == 'minimal')
@@ -111,4 +115,4 @@ if __name__ == '__main__':
             # save = 'plot'
             # save = 'potentials_Gaussian_2d.png'
             )
-    test.qHO()
+    test.lattice_qHO()

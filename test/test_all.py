@@ -14,7 +14,7 @@ def testPotentials():
     utils.newTest('potentials')
     test = test_potentials.Test()
     assert test.bivariateGaussian(save = False)
-    assert test.qHO()
+    assert test.lattice_qHO()
     pass
 
 def testDynamics():
@@ -38,15 +38,17 @@ def testDynamics():
 def testLattice():
     utils.newTest('lattice')
     test = test_lattice.Test()
-    assert test.Wrap(print_out = True)
-    assert test.Laplacian(print_out = True)
+    assert test.wrap(print_out = True)
+    assert test.laplacian(print_out = True)
+    assert test.gradSquared(symmetric = False, print_out = True)
+    assert test.gradSquared(symmetric = True, print_out = True)
     pass
 
 def testHMC():
     utils.newTest('hmc')
     test = test_hmc.Test(rng)
     
-    assert test.hmcSho1d(n_samples = 10000, n_burn_in = 1000,
+    assert test.hmcSho1d(n_samples = 10000, n_burn_in = 50,
         tol = 5e-2, print_out = True, save = False)[0]
     assert test.hmcGaus2d(n_samples = 10000, n_burn_in = 50,
         tol = 5e-2, print_out = True, save = False)[0]

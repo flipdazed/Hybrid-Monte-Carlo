@@ -1,8 +1,7 @@
 import numpy as np
-import sys, traceback
 
 from lattice import Periodic_Lattice
-import checks
+from . import checks
 
 class Lattice_Quantum_Harmonic_Oscillator(object):
     """Quantum Harmonic Oscillator on a lattice
@@ -30,7 +29,7 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
         # nabla and non nabla action by reseting self.nabla = False|True
         # at the class.object level
         self.kE  = lambda p: self.kineticEnergy(p)
-        self.uE  = lambda i: self.potentialEnergy(i, nabla=self.nabla)
+        self.uE  = lambda  : self.potentialEnergy(nabla=self.nabla)
         self.dkE = lambda p: self.gradKineticEnergy(p)
         self.duE = lambda i: self.gradPotentialEnergy(i, nabla=self.nabla)
         
@@ -67,7 +66,7 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
         # although more lines of code
         if nabla: 
             
-            p_sq_sum = 0.
+            p_sq_sum = np.array(0.)
             # sum (integrate) across euclidean-space (i.e. all lattice sites)
             for idx in np.ndindex(lattice.shape):
                 
@@ -77,29 +76,27 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
                 p_sq = self.lattice.laplacian(idx, a_power=1) 
                 
                 # gradient should be an array of the length of degrees of freedom 
-                checks.tryAssertEqual(p_sq.shape, (self.lattice.d,),
-                     ' laplacian shape should be 1D array' \
-                     + '\nequal in length to the number of lattice dimensions.' \
-                     + '\n> p_sq shape: {}'.format(p_sq.shape) \
-                     + '\n> lattice dimensions: {}'.format((self.lattice.d,))
-                     )
+                checks.tryAssertEqual(p_sq.shape, (),
+                     ' laplacian shape should be scalar' \
+                     + '\n> p_sq shape: {}'.format(p_sq.shape))
                 
                 p_sq_sum += np.dot(x.T, p_sq)
                 
                 # x.p_sq is a scalar
-                checks.tryAssertEqual(p_sq_sum, (),
+                checks.tryAssertEqual(p_sq_sum.shape, (),
                      'p_sq * x should be scalar.' \
-                     + '\n> p_sq \n> x: {}'.format(p_sq, x)
+                     + '\n> p_sq: {} \n> x: {}'.format(p_sq, x.T)
+                     + '\n> p_sq_sum {}'.format(p_sq_sum)
                      )
             
             #### free action S_0: 1/2 \phi(m^2 - \nabla)\phi 
-            kinetic *= - .5 * p_sq_sum
+            kinetic = - .5 * p_sq_sum
             u_0 = .5 * self.m**2 * x_sq_sum
             ### End free action
         
         else: # this part use the action not integrated by parts
             
-            v_sq_sum = 0. # initiate velocity squared
+            v_sq_sum = np.array(0.) # initiate velocity squared
             # sum (integrate) across euclidean-space (i.e. all lattice sites)
             for idx in np.ndindex(lattice.shape):
                 
@@ -116,8 +113,8 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
                 v_sq_sum +=  v_sq
             
             #### free action S_0: m/2 \phi(v^2 + m)\phi
-            kinetic *= .5 * self.m * v_sq_sum
-            u_0 = .5 * self.m**2 * x**2
+            kinetic = .5 * self.m * v_sq_sum
+            u_0 = .5 * self.m**2 * x_sq_sum
             ### End free action
         
         # Add interation terms if required
@@ -165,8 +162,8 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
             x = lattice[idx] # iterates single points of the lattice
             
             # x is a scalar
-            checks.tryAssertEqual(x, (),
-                 ' x should be scalar.' + '\n> x: {}'.format(x_sq))
+            checks.tryAssertEqual(x.shape, (),
+                 ' x should be scalar.' + '\n> x: {}'.format(x))
             
             #### free action S_0: 1/2 \phi(m^2 - \nabla)\phi 
             
@@ -174,11 +171,10 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
             k_e = - .5 * x * self.lattice.laplacian(idx, a_power=1)
             
             # gradient should be an array of the length of degrees of freedom 
-            checks.tryAssertEqual(k_e.shape, (self.lattice.d,),
-                 ' kinetic energy shape should be 1D array' \
-                 + '\nequal in length to the number of lattice dimensions.' \
-                 + '\n> k_e shape: {}'.format(h.shape) \
-                 + '\n> lattice dimensions: {}'.format((self.lattice.d,))
+            checks.tryAssertEqual(k_e.shape, (),
+                 ' kinetic energy shape should be scalar' \
+                 + '\n> k_e shape: {}'.format(k_e.shape) \
+                 + '\n> lattice dimensions: {}'.format(())
                  )
             
             u_0 = .5 * self.m**2    # mass term: 1/2 * m^2
@@ -196,18 +192,19 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
             u = u_0 + u_3 + u_4
             
             # multiply the potential by the lattice spacing as required
-            euclidean_action = k_e + u
+            derivative = k_e + u
         
         else: # this part use the action not integrated by parts
             
+            k_e = np.array(0.)
             # sum (integrate) across euclidean-space (i.e. all lattice sites)
             for idx in np.ndindex(lattice.shape):
                 
                 x = lattice[idx] # iterates single points of the lattice
                 
                 # x is a scalar
-                checks.tryAssertEqual(x, (),
-                     ' x should be scalar.' + '\n> x: {}'.format(x_sq))
+                checks.tryAssertEqual(x.shape, (),
+                     ' x should be scalar.' + '\n> x: {}'.format(x))
                  
                 #### free action S_0: m/2 \phi(v^2 + m)\phi
                 
@@ -216,11 +213,10 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
                 k_e *= .5 * self.m * v**2
                 
                 # gradient should be an array of the length of degrees of freedom 
-                checks.tryAssertEqual(k_e.shape, (self.lattice.d,),
-                     ' kinetic energy shape should be 1D array' \
-                     + '\nequal in length to the number of lattice dimensions.' \
-                     + '\n> k_e shape: {}'.format(h.shape) \
-                     + '\n> lattice dimensions: {}'.format((self.lattice.d,))
+                checks.tryAssertEqual(k_e.shape, (),
+                     ' kinetic energy shape should be scalar' \
+                     + '\n> k_e shape: {}'.format(k_e.shape) \
+                     + '\n> lattice dimensions: {}'.format(())
                      )
                 
                 # mass term: 1/2 m^2 x^2
@@ -237,21 +233,13 @@ class Lattice_Quantum_Harmonic_Oscillator(object):
                 u = u_0 + u_3 + u_4
                 
                 # multiply the potential by the lattice spacing as required
-                euclidean_action = k_e + self.lattice.spacing * u
+                derivative = k_e + self.lattice.spacing * u
             
         return derivative
     
     def hamiltonian(self, p):
         h = self.kineticEnergy(p) + self.potentialEnergy()
-        try:
-            assert h.shape == (1,)*len(h.shape) # check 1 dimensional
-        except Exception, e:
-            _, _, tb = sys.exc_info()
-            print '\n hamiltonian() not scalar:'
-            traceback.print_tb(tb) # Fixed format
-            tb_info = traceback.extract_tb(tb)
-            filename, line, func, text = tb_info[-1]
-            print 'line {} in {}'.format(line, text)
-            print 'shape: {}'.format(h.shape)
-            sys.exit(1)
+        # check 1 dimensional
+        checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
+             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
         return h.reshape(1)
