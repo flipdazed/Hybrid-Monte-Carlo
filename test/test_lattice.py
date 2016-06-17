@@ -38,27 +38,31 @@ class Test(object):
                 minimal = minimal)
         
         return passed
-        
+    
     def Laplacian(self, print_out = True):
         """tests the wrapping function against expected values"""
         passed = True
         a = self.a1 # shortcut
         passed *= (self.l.get == self.a1).all() # check both are equal
-        test = [[(1,1), np.asarray([0., 0.])],
-                [(3,3), np.asarray([-40., -4.])] ,
-                [(4,4), np.asarray([40., 4.])], # [index, expected value]
-                [(3,4), np.asarray([-40., 4.])],
-                [(4,3), np.asarray([40., -4.])],
-                [(2,3), np.asarray([0., -4.])]]
+        test = [[(1,1), np.asarray([0., 0.]).sum()],
+                [(3,3), np.asarray([-40., -4.]).sum()] ,
+                [(4,4), np.asarray([40., 4.]).sum()], # [index, expected value]
+                [(3,4), np.asarray([-40., 4.]).sum()],
+                [(4,3), np.asarray([40., -4.]).sum()],
+                [(2,3), np.asarray([0., -4.]).sum()]]
         
+        store = []
         for pos, act in test: # iterate test values
             res = self.l.laplacian(position=pos, a_power=0)
             passed *= (res == act).all()
+            if print_out: store.append([pos, res, act])
         
         if print_out:
             minimal = (print_out == 'minimal')
             utils.display('Laplacian', outcome=passed,
-                details = {'checked vs. known values (Mathematica)':['wrapped boundary values included']},
+                details = {'checked vs. known values (Mathematica)':[
+                    'pos: {}, res: {}, act: {}'.format(*vals) for vals in store
+                ]},
                 minimal = minimal)
         
         return passed

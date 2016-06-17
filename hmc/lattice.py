@@ -1,7 +1,7 @@
 import numpy as np
 import traceback, sys
 
-import .checks
+import checks
 
 class Periodic_Lattice(object):
     """Creates an n-dimensional ring that joins on boundaries w/ numpy
@@ -33,13 +33,14 @@ class Periodic_Lattice(object):
         # check that the tuple recieved is the same length as the 
         # shape of the target array: Should do gradient over all dims
         # gradient should be an array of the length of degrees of freedom 
-        checks.tryAssertEqual(val1=len(position), val2=self.d,
+        checks.tryAssertEqual(len(position), self.d,
              "mismatch of indices...\nshape received: {}\nshape expected: {}".format(
              position, self.get.shape)
              )
         
         lap = np.empty(self.d)
-        position = np.asarray(position)
+        position = np.asarray(position) # current location
+        two_x = 2.*self.get[position]   # current value*2
         
         # iterate through axes (lattice dimensions)
         for axis in xrange(self.d):
@@ -49,14 +50,10 @@ class Periodic_Lattice(object):
             
             # enforce periodic boundary
             plus = self.wrapIdx(position + mask)
-            pos = self.wrapIdx(position)
             minus = self.wrapIdx(position - mask)
             
             # calculate the gradient in each dimension i
-            lap[axis] = self.get[plus] - 2.*self.get[pos] + self.get[minus]
-            
-            # multiply by x_i corresponding the dimension i
-            lap[axis] *= self.get[pos]
+            lap[axis] = self.get[plus] - two_x + self.get[minus]
         
         # euclidean space so trivial metric
         lap = lap.sum()
@@ -64,6 +61,7 @@ class Periodic_Lattice(object):
         # multiply by approciate power of lattice spacing
         if a_power: lap /= self.spacing**a_power
         
+        # multiply again by current position to get x_i \nabla_jj x_i
         return lap
     
     def gradSquared(self, position, a_power=0, symmetric=False):
@@ -83,7 +81,7 @@ class Periodic_Lattice(object):
             position is a tuple that gives current point in the n-dim lattice
         """
         
-        checks.tryAssertEqual(val1=len(position), val2=self.d,
+        checks.tryAssertEqual(len(position), self.d,
              "mismatch of indices...\nshape received: {}\nshape expected: {}".format(
              position, self.get.shape)
              )
@@ -130,7 +128,7 @@ class Periodic_Lattice(object):
         This is NOT compatible with slicing
         """
         
-        checks.tryAssertEqual(val1=len(index), val2=len(self.get.shape),
+        checks.tryAssertEqual(len(index), len(self.get.shape),
              'req length: {}, length: {}'.format(len(index), len(self.get.shape))
              )
         
