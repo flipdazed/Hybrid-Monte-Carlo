@@ -9,7 +9,7 @@ import utils
 from hmc.lattice import Periodic_Lattice
 from hmc.potentials import Multivariate_Gaussian, Quantum_Harmonic_Oscillator
 from plotter import Pretty_Plotter, viridis, magma, inferno, plasma, PLOT_LOC
-from hmc.lattice_pots import Lattice_Quantum_Harmonic_Oscillator as LQHO
+from hmc.lattice_pots import Quantum_Harmonic_Oscillator as QHO
 TEST_ID = 'potentials'
 
 class Test(Pretty_Plotter):
@@ -84,7 +84,7 @@ class Test(Pretty_Plotter):
         shape = (sites,)*dim
         raw_lattice = np.arange(sites**dim).reshape(shape)
         self.lattice = Periodic_Lattice(array = raw_lattice, spacing = 1.)
-        self.qho = LQHO(self.lattice)
+        self.qho = QHO(self.lattice)
         
         for n in (1,0):
             pot_energy = self.qho.potentialEnergy(nabla=n)

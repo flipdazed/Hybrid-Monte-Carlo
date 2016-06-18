@@ -3,7 +3,7 @@ import numpy as np
 from lattice import Periodic_Lattice
 from . import checks
 
-class Lattice_Quantum_Harmonic_Oscillator(object):
+class Quantum_Harmonic_Oscillator(object):
     """Quantum Harmonic Oscillator on a lattice
     
     H = \frac{m}{2}\dot{x}^2 + V(x)
