@@ -39,7 +39,7 @@ class Periodic_Lattice(object):
         
         lap = np.empty(self.d)
         position = np.asarray(position) # current location
-        pos = self.wrapIdx(position)
+        pos = self.wrapIdx(position)    # current location (periodic)
         two_x = 2.*self.get[pos]        # current value*2
         
         # iterate through axes (lattice dimensions)
@@ -63,6 +63,37 @@ class Periodic_Lattice(object):
         
         # multiply again by current position to get x_i \nabla_jj x_i
         return lap
+    
+    def gradLaplacian(self, position, a_power=0):
+        """gradient of the lattice Laplacian for a point 
+            with a periodic boundary
+        
+        Required Inputs
+            position :: (integer,) :: determines the position of the array
+        
+        Optional Inputs
+            a_power  :: integer :: divide by (lattice spacing)^a_power
+        
+        Expectations
+            position is a tuple that gives current point in the n-dim lattice
+        """
+        
+        # check that the tuple recieved is the same length as the 
+        # shape of the target array: Should do gradient over all dims
+        # gradient should be an array of the length of degrees of freedom 
+        checks.tryAssertEqual(len(position), self.d,
+             "mismatch of indices...\nshape received: {}\nshape expected: {}".format(
+             position, self.get.shape)
+             )
+        
+        g_lap = np.empty(self.d)
+        position = np.asarray(position)
+        pos = self.wrapIdx(position)    # current location
+        two_x = 2.*self.get[pos]        # current value*2
+        
+        lap = self.laplacian(position, a_power=a_power) - 2
+        
+        pass
     
     def gradSquared(self, position, a_power=0, symmetric=False):
         """lattice gradient^2 for a point with a periodic boundary
@@ -117,7 +148,6 @@ class Periodic_Lattice(object):
         if a_power: grad /= self.spacing**a_power
         
         return grad
-    
     def wrapIdx(self, index):
         """returns periodic lattice index 
         for a given iterable index
