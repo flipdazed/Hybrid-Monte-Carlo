@@ -9,7 +9,7 @@ import utils
 # the commandline interface for python unittest is used
 from hmc.dynamics import Leap_Frog
 from hmc.lattice import Periodic_Lattice
-from hmc.continuum.potentials import Simple_Harmonic_Oscillator
+from hmc.potentials import Simple_Harmonic_Oscillator
 from hmc.potentials import Quantum_Harmonic_Oscillator
 from plotter import Pretty_Plotter, PLOT_LOC
 

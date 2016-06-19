@@ -7,7 +7,7 @@ import utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
-from hmc.continuum.potentials import Simple_Harmonic_Oscillator, Multivariate_Gaussian
+from hmc.potentials import Simple_Harmonic_Oscillator, Multivariate_Gaussian
 from hmc.hmc import *
 from plotter import Pretty_Plotter, PLOT_LOC
 from plotter import *

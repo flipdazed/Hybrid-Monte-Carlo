@@ -4,7 +4,6 @@ from . import lattice
 from . import metropolis
 from . import potentials
 from . import checks
-from . import continuum
 
 __all__ = [
     'dynamics',
@@ -12,6 +11,5 @@ __all__ = [
     'metropolis',
     'potentials',
     'hmc',
-    'checks',
-    'continuum'
+    'checks'
     ]

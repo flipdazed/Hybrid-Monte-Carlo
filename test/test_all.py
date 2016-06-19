@@ -3,7 +3,7 @@ rng = np.random.RandomState(1234)
 
 import utils
 import hmc
-from hmc.continuum.potentials import Simple_Harmonic_Oscillator
+from hmc.potentials import Simple_Harmonic_Oscillator
 from hmc.dynamics import Leap_Frog
 
 import test_potentials
