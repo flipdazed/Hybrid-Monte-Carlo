@@ -16,7 +16,7 @@ This directory contains the HMC code and test cases.
 # To Do
 
 <a name="td-1d"/>
-## 1D Lattice Quantum Theory
+## 1D Continuum
 ### Implementation
  - ~~Hamiltonian Dynamics: Leap-Frog Integration~~
  - ~~Practical Test: Simple Harmonic Oscillator~~
@@ -29,8 +29,6 @@ This directory contains the HMC code and test cases.
  - ~~Unit Test: Bivariate Gaussian~~
  - ~~Plot: Sampled MVG Potential for 2D (easy gen. to nD)~~
  - ~~Plot: Sampled SHO Potential for 1D~~
- - Plot: Quantum Harmonic Oscillator Potential for 1D
- - Extend to Kramers condition on the Lattice
 
 <a name="td-nd"/>
 ## nD Lattice Quantum Field Theory
