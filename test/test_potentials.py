@@ -7,9 +7,9 @@ import utils
 # these directories won't work unless 
 # the commandline interface for python unittest is used
 from hmc.lattice import Periodic_Lattice
-from hmc.potentials import Multivariate_Gaussian, Quantum_Harmonic_Oscillator
+from hmc.continuum.potentials import Multivariate_Gaussian
 from plotter import Pretty_Plotter, viridis, magma, inferno, plasma, PLOT_LOC
-from hmc.lattice_pots import Quantum_Harmonic_Oscillator as QHO
+from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 TEST_ID = 'potentials'
 
 class Test(Pretty_Plotter):

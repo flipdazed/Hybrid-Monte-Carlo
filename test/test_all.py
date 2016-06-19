@@ -3,6 +3,8 @@ rng = np.random.RandomState(1234)
 
 import utils
 import hmc
+from hmc.continuum.potentials import Simple_Harmonic_Oscillator
+from hmc.dynamics import Leap_Frog
 
 import test_potentials
 import test_dynamics
@@ -20,11 +22,11 @@ def testPotentials():
 def testDynamics():
     utils.newTest('dynamics')
     
-    pot = hmc.potentials.Simple_Harmonic_Oscillator(k = 1.)
-    integrator = hmc.dynamics.Leap_Frog(duE = None, 
+    pot = Simple_Harmonic_Oscillator(k = 1.)
+    integrator = Leap_Frog(duE = None, 
         n_steps = 100, step_size = 0.1) # grad set in test
-    tests = test_dynamics.Test(dynamics = integrator, pot = pot)
     
+    tests = test_dynamics.Continuum(dynamics = integrator, pot = pot)
     p, x = np.asarray([[4.]]), np.asarray([[1.]])
     assert tests.constantEnergy(p, x, tol = 0.05,
         step_sample = np.linspace(1, 100, 10, True, dtype=int),
@@ -33,6 +35,7 @@ def testDynamics():
     
     assert tests.reversibility(p, x, steps = 1000, tol = 0.01, 
         save = False, print_out = True)
+    
     pass
 
 def testLattice():
@@ -47,11 +50,11 @@ def testLattice():
 def testHMC():
     utils.newTest('hmc')
     test = test_hmc.Test(rng)
-    
-    assert test.hmcSho1d(n_samples = 10000, n_burn_in = 50,
+
+    assert test.hmcSho1d(n_samples = 1000, n_burn_in = 50,
         tol = 5e-2, print_out = True, save = False)[0]
-    assert test.hmcGaus2d(n_samples = 10000, n_burn_in = 50,
-        tol = 5e-2, print_out = True, save = False)[0]
+    assert test.hmcGaus2d(n_samples = 1000, n_burn_in = 50,
+        tol = 5e-1, print_out = True, save = False)[0]
     pass
 
 def testMomentum():

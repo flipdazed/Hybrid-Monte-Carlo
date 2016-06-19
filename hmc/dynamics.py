@@ -1,8 +1,6 @@
 import numpy as np
 from copy import copy
 
-from potentials import Simple_Harmonic_Oscillator
-
 class Leap_Frog(object):
     """Leap Frog Integrator
     
