@@ -1,10 +1,12 @@
+from copy import copy
 import numpy as np
 rng = np.random.RandomState(1234)
 
 import utils
 import hmc
-from hmc.potentials import Simple_Harmonic_Oscillator
+from hmc.potentials import Simple_Harmonic_Oscillator, Klein_Gordon
 from hmc.dynamics import Leap_Frog
+from hmc.lattice import Periodic_Lattice
 
 import test_potentials
 import test_dynamics
@@ -19,23 +21,55 @@ def testPotentials():
     assert test.lattice_qHO()
     pass
 
-def testDynamics():
-    utils.newTest('dynamics')
+def testContinuumDynamics():
+    utils.newTest('continuous dynamics')
     
-    pot = Simple_Harmonic_Oscillator(k = 1.)
-    integrator = Leap_Frog(duE = None, 
-        n_steps = 100, step_size = 0.1) # grad set in test
+    n_steps     = 100
+    step_size   = .1
+    tol         = .05
     
+    pot = Simple_Harmonic_Oscillator()
+    integrator = Leap_Frog(duE = None,
+        n_steps = n_steps, step_size = step_size) # grad set in test
     tests = test_dynamics.Continuum(dynamics = integrator, pot = pot)
+    
     p, x = np.asarray([[4.]]), np.asarray([[1.]])
-    assert tests.constantEnergy(p, x, tol = 0.05,
-        step_sample = np.linspace(1, 100, 10, True, dtype=int),
-        step_sizes = np.linspace(0.01, 0.1, 5, True),
+    
+    assert tests.constantEnergy(p, x, tol = tol,
+        step_sample = np.linspace(1, n_steps, 10, True, dtype=int),
+        step_sizes = np.linspace(0.01, step_size, 5, True),
         save = False, print_out = True)
     
-    assert tests.reversibility(p, x, steps = 1000, tol = 0.01, 
+    assert tests.reversibility(p, x, steps = n_steps*10, tol = tol, 
+        save = False, print_out = True)
+    pass
+
+def testLatticeDynamics():
+    utils.newTest('lattice dynamics')
+    
+    n           = 10
+    spacing     = 1.
+    n_steps     = 500
+    step_size   = .01
+    dim         = 1
+    tol         = .05
+    
+    pot = Klein_Gordon()
+    integrator = Leap_Frog(lattice=True, duE = None,    # grad set in test
+        n_steps = n_steps, step_size = step_size)
+    tests = test_dynamics.Lattice(dynamics = integrator, pot = pot)
+    
+    x_nd = np.random.random((n,)*dim)
+    p0 = np.random.random((n,)*dim)
+    x0 = Periodic_Lattice(array=x_nd, spacing=spacing)
+    
+    assert tests.constantEnergy(p0, x0, tol = tol,
+        step_sample = [n_steps],
+        step_sizes = [step_size],
         save = False, print_out = True)
     
+    assert tests.reversibility(p0, x0, steps = n_steps, tol = tol, 
+        save = False, print_out = True)
     pass
 
 def testLattice():
@@ -50,11 +84,15 @@ def testLattice():
 def testHMC():
     utils.newTest('hmc')
     test = test_hmc.Test(rng)
-
-    assert test.hmcSho1d(n_samples = 1000, n_burn_in = 50,
-        tol = 5e-2, print_out = True, save = False)[0]
-    assert test.hmcGaus2d(n_samples = 1000, n_burn_in = 50,
-        tol = 5e-1, print_out = True, save = False)[0]
+    
+    n_samples   = 1000
+    n_burn_in   = 50
+    tol         = 5e-1
+    
+    assert test.hmcSho1d(n_samples = n_samples, n_burn_in = n_burn_in,
+        tol = tol, print_out = True, save = False)[0]
+    assert test.hmcGaus2d(n_samples = n_samples, n_burn_in = n_burn_in,
+        tol = tol, print_out = True, save = False)[0]
     pass
 
 def testMomentum():
@@ -75,7 +113,8 @@ def testMomentum():
 
 if __name__ == '__main__':
     testPotentials()
-    testDynamics()
+    testContinuumDynamics()
+    testLatticeDynamics()
     testLattice()
     testHMC()
     testMomentum()

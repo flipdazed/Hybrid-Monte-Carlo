@@ -42,18 +42,11 @@ class Leap_Frog(object):
         if self.save_path:
             self._storeSteps() # store zeroth step
         
-        # print "     ... begin integration"
         for step in xrange(0, self.n_steps):
-            # print "         > step: {}".format(step)
-            # b = copy(self.x.get)
             self._moveP(frac_step=0.5)
             self._moveX()
             self._moveP(frac_step=0.5)
-            # print self.p - b
-            # print self.p
-            # print self.x.get
             if self.save_path: self._storeSteps() # store moves
-        # print "     ... end integration"
         
         # remember that any usage of self.p, self.x will be stored as a pointer
         # must slice or use a copy(self.p) to "freeze" the current value in mem
@@ -126,7 +119,6 @@ class Leap_Frog(object):
         
         This needs to be corrected.
         """
-        # print "         > P Move"
         
         if not self.lattice:
             self.p -= frac_step*self.step_size*self.duE(self.x)

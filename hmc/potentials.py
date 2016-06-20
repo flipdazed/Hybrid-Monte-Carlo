@@ -14,8 +14,9 @@ class Klein_Gordon(object):
         phi_3   :: phi_3 coupling constant
         phi_4   :: phi_4 coupling constant
     """
-    def __init__(self, m=1., phi_3=0., phi_4=0.):
+    def __init__(self, m=1., phi_3=0., phi_4=0., debug=False):
         self.name = 'Klein-Gordon'
+        self.debug = debug
         self.m = m
         self.phi_3 = phi_3      # phi^3 coupling const.
         self.phi_4 = phi_4      # phi^4 coupling const.
@@ -101,7 +102,11 @@ class Klein_Gordon(object):
         # multiply the potential by the lattice spacing as required
         euclidean_action = kinetic + positions.spacing * potential
         
-        return [euclidean_action, kinetic, potential*positions.spacing]
+        if self.debug: # allows for debugging
+            ret_val = [euclidean_action, kinetic, potential*positions.spacing]
+        else:
+            ret_val = euclidean_action
+        return ret_val
     
     def gradKineticEnergy(self, p):
         """Gradient w.r.t. conjugate momentum
@@ -121,14 +126,10 @@ class Klein_Gordon(object):
             idx   :: integer :: lattice position
             positions :: class :: see lattice.py for info
         """
-        lattice = positions.get # shortcut for brevity
         
-        # used in both klein_gordon and non klein_gordon
-        x_sum = lattice.flatten().sum()
-        
-        p_sq_sum = np.array(0.)
-        # # sum (integrate) across euclidean-space (i.e. all lattice sites)
-        # for idx in np.ndindex(lattice.shape):
+        # don't want the whole lattice in here!
+        # the laplacian indexs the other elements
+        x = positions.get[idx]
         
         # gradient of kinetic term x \klein_gordon^2 x = 2 \klein_gordon^2 x
         p_sq = positions.laplacian(idx, a_power=1)
@@ -138,31 +139,19 @@ class Klein_Gordon(object):
              ' laplacian shape should be scalar' \
              + '\n> p_sq shape: {}'.format(p_sq.shape))
         
-        # sum across indices
-        p_sq_sum += p_sq
-            
-        # x.p_sq is a scalar
-        checks.tryAssertEqual(p_sq_sum.shape, (),
-             'p_sq * x should be scalar.' \
-             + '\n> p_sq: {}'.format(p_sq)
-             + '\n> p_sq_sum {}'.format(p_sq_sum)
-             )
-        
         #### grad of free action S_0: 2/2 * (m^2 - \klein_gordon^2)\phi
-        kinetic = - p_sq_sum
-        u_0 = self.m * x_sum # derivative taken
+        kinetic = - p_sq
+        u_0 = self.m * x # derivative taken
         ### End free action
         
         # Add interation terms if required
         if self.phi_3: # phi^3 term
-            x_sq_sum = np.power(lattice.flatten(), 2).sum()
-            u_3 = self.phi_3 * x_sq_sum / np.math.factorial(2)
+            u_3 = self.phi_3 * x**2 / np.math.factorial(2)
         else:
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            x_3_sum = np.power(lattice.flatten(), 3).sum()
-            u_4 = self.phi_4 * x_3_sum / np.math.factorial(3)
+            u_4 = self.phi_4 * x**3 / np.math.factorial(3)
         else:
             u_4 = 0.
         
@@ -181,7 +170,11 @@ class Klein_Gordon(object):
             p :: np.array (nd) :: momentum array
             positions :: class :: see lattice.py for info
         """
-        h = self.kineticEnergy(p) + self.potentialEnergy(positions)[0]
+        if self.debug:
+            h = self.kineticEnergy(p) + self.potentialEnergy(positions)[0]
+        else:
+            h = self.kineticEnergy(p) + self.potentialEnergy(positions)
+        
         # check 1 dimensional
         checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
              ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
@@ -199,8 +192,9 @@ class Quantum_Harmonic_Oscillator(object):
         phi_3   :: phi_3 coupling constant
         phi_4   :: phi_4 coupling constant
     """
-    def __init__(self, m=1., phi_3=0., phi_4=0.):
+    def __init__(self, m=1., phi_3=0., phi_4=0., debug=False):
         self.name = 'QHO'
+        self.debug = debug
         self.m = m
         self.phi_3 = phi_3      # phi^3 coupling const.
         self.phi_4 = phi_4      # phi^4 coupling const.
@@ -278,7 +272,13 @@ class Quantum_Harmonic_Oscillator(object):
         
         # multiply the potential by the lattice spacing as required
         euclidean_action = kinetic + positions.spacing * potential
-        return [euclidean_action, kinetic, potential*positions.spacing]
+        
+        if self.debug: # alows for debugging
+            ret_val = [euclidean_action, kinetic, potential*positions.spacing]
+        else:
+            ret_val = euclidean_action
+        
+        return ret_val
     
     def gradKineticEnergy(self, p):
         """Gradient w.r.t. conjugate momentum
@@ -298,15 +298,11 @@ class Quantum_Harmonic_Oscillator(object):
             idx   :: integer :: lattice position
             positions :: class :: see lattice.py for info
         """
-        lattice = positions.get # shortcut for brevity
         
-        # used in both klein_gordon and non klein_gordon
-        x_sum = lattice.flatten().sum()
+        # don't want the whole lattice in here!
+        # the laplacian indexs the other elements
+        x = positions.get[idx]
         
-        v_sq_sum = np.array(0.)
-        # # sum (integrate) across euclidean-space (i.e. all lattice sites)
-        # for idx in np.ndindex(lattice.shape):
-            
         # derivative of velocity squared
         # the derivative of the velocity squared is actually
         # identical to - \klein_gordon^2
@@ -318,30 +314,19 @@ class Quantum_Harmonic_Oscillator(object):
              + '\n> v_sq shape: {}'.format(v_sq.shape)
              )
         
-        # sum to previous
-        v_sq_sum += v_sq
-        
-        # gradient should be an array of the length of degrees of freedom 
-        checks.tryAssertEqual(v_sq_sum.shape, (),
-             ' derivative^2 shape should be scalar' \
-             + '\n> v_sq shape: {}'.format(v_sq_sum.shape)
-             )
-        
         #### free action S_0: m/2 \phi(v^2 + m)\phi
-        kinetic = - self.m * v_sq_sum
-        u_0 = self.m * x_sum
+        kinetic = - self.m * v_sq
+        u_0 = self.m * x
         ### End free action
         
         # Add interation terms if required
         if self.phi_3: # phi^3 term
-            x_sq_sum = np.power(lattice.flatten(), 2).sum()
-            u_3 = self.phi_3 * x_sq_sum / np.math.factorial(2)
+            u_3 = self.phi_3 * x**2 / np.math.factorial(2)
         else:
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            x_3_sum = np.power(lattice.flatten(), 3).sum()
-            u_4 = self.phi_4 * x_3_sum / np.math.factorial(3)
+            u_4 = self.phi_4 * x**3 / np.math.factorial(3)
         else:
             u_4 = 0.
         
@@ -360,7 +345,11 @@ class Quantum_Harmonic_Oscillator(object):
             p :: np.array (nd) :: momentum array
             positions :: class :: see lattice.py for info
         """
-        h = self.kineticEnergy(p) + self.potentialEnergy(positions)[0]
+        if self.debug:
+            h = self.kineticEnergy(p) + self.potentialEnergy(positions)[0]
+        else:
+            h = self.kineticEnergy(p) + self.potentialEnergy(positions)
+        
         # check 1 dimensional
         checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
              ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
