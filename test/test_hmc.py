@@ -7,6 +7,7 @@ import utils
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
+from hmc.lattice import Periodic_Lattice
 from hmc.potentials import Simple_Harmonic_Oscillator, Multivariate_Gaussian, Quantum_Harmonic_Oscillator, Klein_Gordon
 from hmc.hmc import *
 from plotter import Pretty_Plotter, PLOT_LOC
@@ -23,6 +24,7 @@ class Test(Pretty_Plotter):
     def __init__(self, rng):
         self.rng = rng
         
+        self.qho = Quantum_Harmonic_Oscillator()
         self.sho = Simple_Harmonic_Oscillator()
         self.bg = Multivariate_Gaussian()
         self.lf = Leap_Frog(duE = self.sho.duE, step_size = 0.1, n_steps = 20)
@@ -294,10 +296,12 @@ class Test(Pretty_Plotter):
             save    :: string   :: file to save plot. False or '' gives no plot
         """
         passed = True
-        
+        n = 10
+        dim = 1
+        spacing = 1.
         x_nd = np.random.random((n,)*dim)
         p0 = np.random.random((n,)*dim)
-        x0 = Periodic_Lattice(array=copy(self.x_nd), spacing=spacing)
+        x0 = Periodic_Lattice(array=x_nd, spacing=spacing)
         
         self.lf.duE = self.qho.duE # reassign leapfrog gradient
         self.lf.lattice = True

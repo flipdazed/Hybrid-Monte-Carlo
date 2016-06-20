@@ -28,7 +28,10 @@ class Hybrid_Monte_Carlo(object):
         self.accept = Accept_Reject(self.rng)
         
         self.x = self.x0
-        self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
+        if hasattr(self.x0, 'get'):
+            self.p = self.momentum.fullRefresh(self.x0.get) # intial mom. sample
+        else:
+            self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
         assert self.x.shape == self.p.shape
         
         pass

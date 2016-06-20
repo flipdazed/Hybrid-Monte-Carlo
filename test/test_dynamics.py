@@ -391,7 +391,7 @@ class Lattice(Pretty_Plotter):
                 plt.show()
             pass
         
-        def plot1d(x = step_sample, y1 = kins, y2 = pots, save = save):
+        def plot1d(x = step_sample, y1 = kins, y2 = pots, save = save, all_lines=False):
             self._teXify() # LaTeX
             self.params['text.latex.preamble'] = r"\usepackage{amsmath}"
             self._updateRC()
@@ -417,14 +417,15 @@ class Lattice(Pretty_Plotter):
             try:
                 h = ax[0].plot(steps, y1+np.asarray(action), label=r"$H' = T(\pi) + S(x,t)$",
                     color='blue', linewidth=5., alpha=0.2)
-                kE = ax[0].plot(steps, np.asarray(y1), label=r'$T(\pi)$',
-                    color='darkred', linewidth=3., linestyle='-', alpha=0.2)
-                uE = ax[0].plot(steps, np.asarray(action), label=r'$S(x,t) = \sum_{n} (T_S + V_S)$',
-                    color='darkgreen', linewidth=3., linestyle='-', alpha=0.2)
-                uE = ax[0].plot(steps, np.asarray(k), label=r'$\sum_{n} T_S$',
-                    color='red', linestyle='--')
-                uE = ax[0].plot(steps, np.asarray(u), label=r'$\sum_{n} V_S$',
-                    color='green', linestyle='--')
+                if all_lines:
+                    kE = ax[0].plot(steps, np.asarray(y1), label=r'$T(\pi)$',
+                        color='darkred', linewidth=3., linestyle='-', alpha=0.2)
+                    uE = ax[0].plot(steps, np.asarray(action), label=r'$S(x,t) = \sum_{n} (T_S + V_S)$',
+                        color='darkgreen', linewidth=3., linestyle='-', alpha=0.2)
+                    uE = ax[0].plot(steps, np.asarray(k), label=r'$\sum_{n} T_S$',
+                        color='red', linestyle='--')
+                    uE = ax[0].plot(steps, np.asarray(u), label=r'$\sum_{n} V_S$',
+                        color='green', linestyle='--')
                 ax[0].legend(loc='upper left', shadow=True, fontsize = self.axfont)
                 
             except Exception as e:
@@ -450,12 +451,16 @@ class Lattice(Pretty_Plotter):
                 if len(step_sample) > 1:
                     plot2d(save=False)
                 else:
-                    plot1d(save=False)
+                    plot1d(save=False,
+                        all_lines=True
+                        )
             else:
                 if len(step_sample) > 1:
                     plot2d(save=save)
                 else:
-                    plot1d(save=save)
+                    plot1d(save=save,
+                        all_lines=True
+                        )
         
         return passed
     
@@ -678,21 +683,21 @@ class Test(object):
             tests = Lattice(dynamics = self.integrator, pot=potential)
             save_name = self.save_name + '_conservation_1d_{}.png'.format(potential.name)
             tests.constantEnergy(
-                p0 = copy(self.p0), 
+                p0 = copy(self.p0),
                 x0 = copy(self.x0),
                 tol = self.tol,
                 step_sample = [self.n_steps],
                 step_sizes = [self.step_size],
                 save=self._save(save, save_name))
             
-            save_name = self.save_name + '_conservation_2d_{}.png'.format(potential.name)
-            tests.constantEnergy(
-                p0 = copy(self.p0),
-                x0 = copy(self.x0),
-                tol = self.tol,
-                step_sample = np.linspace(1, self.n_steps*2, 50, True, dtype=int),
-                step_sizes = np.linspace(0.001, self.step_size*2, 50, True),
-                save=self._save(save, save_name))
+            # save_name = self.save_name + '_conservation_2d_{}.png'.format(potential.name)
+            # tests.constantEnergy(
+            #     p0 = copy(self.p0),
+            #     x0 = copy(self.x0),
+            #     tol = self.tol,
+            #     step_sample = np.linspace(1, self.n_steps*2, 50, True, dtype=int),
+            #     step_sizes = np.linspace(0.001, self.step_size*2, 50, True),
+            #     save=self._save(save, save_name))
             
             save_name = self.save_name + '_reversibility_{}.png'.format(potential.name)
             tests.reversibility(
@@ -710,9 +715,9 @@ if __name__ == '__main__':
     n           = 10
     spacing     = 1.
     step_size   = .01
-    n_steps     = 100
+    n_steps     = 500
     
     test = Test(n_steps=n_steps, step_size=step_size)
     
-    test.continuum(save=True)
+    # test.continuum(save=True)
     test.lattice(save=True, dim=dim, n=n, spacing=spacing)
