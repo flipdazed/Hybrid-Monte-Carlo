@@ -13,10 +13,11 @@ class Leap_Frog(object):
     
     Note: Do not confuse x0,p0 with initial x0,p0 for HD
     """
-    def __init__(self, duE, step_size = 0.1, n_steps = 250, save_path = False):
+    def __init__(self, duE, step_size = 0.1, n_steps = 250, lattice=False, save_path = False):
         self.step_size = step_size
         self.n_steps = n_steps
         self.duE = duE
+        self.lattice = lattice
         
         self.save_path = save_path
         self.newPaths() # create blank lists
@@ -41,11 +42,16 @@ class Leap_Frog(object):
         if self.save_path:
             self._storeSteps() # store zeroth step
         
+        # print "     ... begin integration"
         for step in xrange(0, self.n_steps):
+            # print "         > step: {}".format(step)
             self._moveP(frac_step=0.5)
             self._moveX()
             self._moveP(frac_step=0.5)
+            # print self.p
+            # print self.x.get
             if self.save_path: self._storeSteps() # store moves
+        # print "     ... end integration"
         
         # remember that any usage of self.p, self.x will be stored as a pointer
         # must slice or use a copy(self.p) to "freeze" the current value in mem
@@ -88,9 +94,15 @@ class Leap_Frog(object):
             p :: float :: current momentum
             x :: float :: current position
         """
+        # print "         > X Move"
         
-        # all addition can be done in place as it is a one-to-one operation
-        self.x += frac_step*self.step_size*self.p
+        if not self.lattice:
+            # all addition can be done in place as it is a one-to-one operation
+            self.x += frac_step*self.step_size*self.p
+            
+        else: # lattice is present
+            # all addition can be done in place as it is a one-to-one operation
+            self.x.get += frac_step*self.step_size*self.p
         pass
     
     def _moveP(self, frac_step = 1.):
@@ -112,15 +124,14 @@ class Leap_Frog(object):
         
         This needs to be corrected.
         """
+        # print "         > P Move"
         
-        # lattice is detemrined if > second index of p is all 1
-        lattice_dims = self.p.shape[1:]
-        if lattice_dims == (1,)*len(lattice_dims): # no lattice (a point)
+        if not self.lattice:
             self.p -= frac_step*self.step_size*self.duE(self.x)
             
         else: # lattice is present
             for index in np.ndindex(self.p.shape):
-                self.p[index] -= frac_step*self.step_size*self.duE(index)
+                self.p[index] -= frac_step*self.step_size*self.duE(self.x, index)
         pass
     def _storeSteps(self, new=False):
         """Stores current momentum and position in lists
@@ -131,8 +142,12 @@ class Leap_Frog(object):
             self.x_step :: float
             self.p_step :: float
         """
-        self.p_ar.append(copy(self.p))
-        self.x_ar.append(copy(self.x))
+        if not self.lattice:
+            self.p_ar.append(copy(self.p))
+            self.x_ar.append(copy(self.x))
+        else: # lattice is present
+            self.p_ar.append(copy(self.p))
+            self.x_ar.append(copy(self.x.get))
         pass
     
     def newPaths(self):

@@ -1,16 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import cnames
 import subprocess
 from copy import copy
 
 import utils
+from hmc import checks
 
 # these directories won't work unless 
 # the commandline interface for python unittest is used
 from hmc.dynamics import Leap_Frog
 from hmc.lattice import Periodic_Lattice
 from hmc.potentials import Simple_Harmonic_Oscillator
-from hmc.potentials import Quantum_Harmonic_Oscillator
+from hmc.potentials import Quantum_Harmonic_Oscillator, Klein_Gordon
 from plotter import Pretty_Plotter, PLOT_LOC
 
 from hmc.lattice import Periodic_Lattice
@@ -68,6 +70,7 @@ class Continuum(Pretty_Plotter):
             # set new parameters
             self.dynamics.n_steps = n_steps_i
             self.dynamics.step_size = step_size_i
+            print "     ... n_steps: {}, size: {}".format(n_steps_i, step_size_i)
             
             # obtain new duynamics and resultant hamiltonian
             self.dynamics.newPaths()
@@ -91,16 +94,14 @@ class Continuum(Pretty_Plotter):
             diffs.append(diff) # append to list for plotting
         
         if print_out:
-            minimal = (print_out == 'minimal')
             utils.display(test_name='Constant Energy', outcome=passed,
                 details = {
                     'initial H(p, x): {}'.format(h_old):[],
                     'worst   H(p, x): {}'.format(w_h_new):[
                             'steps: {}'.format(w_step),
                             'step size: {}'.format(w_size)],
-                    'np.abs(exp(-dH): {}'.format(w_h_new - h_old, w_bmk):[]
-                },
-                minimal=minimal)
+                    'np.abs(exp(-dH)): {}'.format(w_bmk):[]
+                })
         
         def plot(x = step_sample, y = step_sizes, z = diffs, save = save):
             self._teXify() # LaTeX
@@ -271,10 +272,21 @@ class Lattice(Pretty_Plotter):
         """
         passed = True
         diffs = []
+        kins  = []
+        pots  = []
         
         # calculate original hamiltonian and set starting vals
         h_old = self.pot.hamiltonian(p0, x0)
+        kE0 = self.pot.kE(p0)
+        uE0 = self.pot.uE(x0)
         
+        checks.tryAssertEqual(h_old, kE0+uE0[0],
+             ' kin: {}, pot:{}, h:{}'.format(kE0, uE0[0], h_old) \
+             +'\n Diff: {}'.format(h_old - kE0+uE0[0])
+             )
+        
+        pots.append(uE0)
+        kins.append(kE0)
         # initial vals required to print out values associated
         # with the worst absolute deviation from perfect energy conservation
         # (0 = no energy loss)
@@ -295,6 +307,7 @@ class Lattice(Pretty_Plotter):
             # obtain new duynamics and resultant hamiltonian
             self.dynamics.newPaths()
             pf, xf = self.dynamics.integrate(copy(p0), copy(x0))
+            
             h_new = self.pot.hamiltonian(pf, xf)
             
             bench_mark = np.exp(-(h_old-h_new))
@@ -311,8 +324,22 @@ class Lattice(Pretty_Plotter):
             diff = np.abs(1. - bench_mark) # set new diff
             
             passed *= (diff <= tol).all()
+            
             diffs.append(diff) # append to list for plotting
-        
+            
+            if save:
+                kE_path = [self.pot.kE(i) for i in self.dynamics.p_ar]
+                uE_path = []
+                for i in self.dynamics.x_ar:
+                    x0.get = i
+                    uE_path.append(self.pot.uE(x0))
+                    
+                # print np.asarray([i for i in self.dynamics.x_ar])
+                # print np.asarray(uE_path)
+            kins = np.asarray([kE0] + kE_path)
+            pots = [uE0] + uE_path
+            
+            
         if print_out:
             minimal = (print_out == 'minimal')
             utils.display(test_name='Constant Energy', outcome=passed,
@@ -325,7 +352,7 @@ class Lattice(Pretty_Plotter):
                 },
                 minimal=minimal)
         
-        def plot(x = step_sample, y = step_sizes, z = diffs, save = save):
+        def plot2d(x = step_sample, y = step_sizes, z = diffs, save = save):
             self._teXify() # LaTeX
             fig = plt.figure(figsize=(8*self.s,8*self.s)) # make plot
             ax =[]
@@ -359,12 +386,50 @@ class Lattice(Pretty_Plotter):
             else:
                 plt.show()
             pass
+        def plot1d(x = step_sample, y1 = kins, y2 = pots, save = save):
+            self._teXify() # LaTeX
+            self.params['text.latex.preamble'] = r"\usepackage{amsmath}"
+            self._updateRC()
+            fig = plt.figure(figsize=(8*self.s,8*self.s)) # make plot
+            ax =[]
+            ax.append(fig.add_subplot(111))
+            
+            fig.suptitle(r'Increasing KE, $\sum T_S$, in the Action with Leap Frog moves', 
+                fontsize=self.ttfont)
+            ax[0].set_title(r'Potential: {}'.format(self.pot.name),
+                fontsize=self.ttfont-4)
+            ax[0].set_xlabel(r'Number of Integrator Steps, $n$')
+            ax[0].set_ylabel(r'Energy')
+            
+            steps = np.linspace(0, n_steps_i+1, n_steps_i+2, True)
+            action, k, u = zip(*y2)
+            
+            h = ax[0].plot(steps, y1+np.asarray(action), label=r"$H' = T(\pi) + S(x,t)$",
+                color='blue', linewidth=5., alpha=0.2)
+            kE = ax[0].plot(steps, np.asarray(y1), label=r'$T(\pi)$',
+                color='maroon', linewidth=3., linestyle='--', alpha=0.2)
+            uE = ax[0].plot(steps, np.asarray(action), label=r'$S(x,t) = \sum_{n} (T_S + V_S)$',
+                color='olivedrab', linewidth=3., linestyle='--', alpha=0.2)
+            uE = ax[0].plot(steps, np.asarray(k), label=r'$\sum_{n} T_S$',
+                color='r', linestyle='-')
+            uE = ax[0].plot(steps, np.asarray(u), label=r'$\sum_{n} V_S$',
+                color='g', linestyle='-')
+            ax[0].legend(loc='upper left', shadow=True, fontsize = self.axfont)
+            
+            if save:
+                save_dir = PLOT_LOC + 'plots/'
+                subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
+            
+                fig.savefig(save_dir+save)
+            else:
+                plt.show()
+            pass
         
         if save:
             if save == 'plot':
-                plot(save=False)
+                plot1d(save=False)
             else:
-                plot(save=save)
+                plot1d(save=save)
         
         return passed
     
@@ -397,16 +462,16 @@ class Lattice(Pretty_Plotter):
         p0f = -p0f # time flip to point in right time again
         
         phase_change = np.linalg.norm( # calculate frobenius norm
-            np.asarray([[p0f], [x0f]]) - np.asarray([[p0], [x0]])
+            np.asarray([[p0f], [x0f.get]]) - np.asarray([[p0], [x0.get]])
             )
         passed = (phase_change < tol)
         if print_out: 
             utils.display(test_name="Reversibility of Integrator", 
             outcome=passed,
             details={
-                'initial (p, x): ({}, {})'.format(p0, x0):[],
+                'initial (p, x): ({}, {})'.format(p0, x0.get):[],
                 'middle  (p, x): ({}, {})'.format(pm, xm):[],
-                'final   (p, x): ({}, {})'.format(p0f, x0f):[],
+                'final   (p, x): ({}, {})'.format(p0f, x0f.get):[],
                 'phase change:    {}'.format(phase_change):[],
                 'number of steps: {}'.format(self.dynamics.n_steps):[]
                 })
@@ -464,8 +529,8 @@ class Lattice(Pretty_Plotter):
         return passed
 #
 if __name__ == '__main__':
-    utils.newTest(TEST_ID_Continuum)
-    
+    # utils.newTest(TEST_ID_Continuum)
+    #
     # integrator = Leap_Frog(duE = None, n_steps = 100, step_size = 0.1) # grad set in test
     # pot = Simple_Harmonic_Oscillator(k = 1.)
     # tests = Test(dynamics = integrator, pot=pot)
@@ -494,22 +559,67 @@ if __name__ == '__main__':
     #     )
     
     utils.newTest(TEST_ID_Lattice)
-    dim         = 3
+    dim         = 1
     n           = 10
-    spacing     = 1
-    step_size   = 0.1
+    spacing     = .1
+    step_size   = .1
+    n_steps     = 100
     
     # check that change in step_size time:
     # ~1/(lattice time length)
-    assert (np.abs(1. -  n/spacing * step_size) <= .1)
+    # cond = np.abs(1. -  n/spacing*step_size)
+    # checks.tryAssertLtEqual(cond, .1,
+    #      ' n:{}, a:{}, step_size:{}'.format(n, spacing, step_size) \
+    #      +'\n Result: {}'.format(cond)
+    #      )
     
     v = n**dim
     x = np.random.random((n,)*dim)
-    p = np.random.random((n,)*dim)
+    p0 = np.random.random((n,)*dim)
     
-    x = Periodic_Lattice(array=x, spacing=spacing)
-    qho = Quantum_Harmonic_Oscillator(lattice=x)
+    x0 = Periodic_Lattice(array=copy(x), spacing=spacing)
+    print 'QHO'
+    qho = Quantum_Harmonic_Oscillator()
     integrator = Leap_Frog(duE = None,
-        n_steps = 100,
-        step_size = 0.1)
-    tests = Test(dynamics = integrator, pot=qho)
+        n_steps = n_steps,
+        step_size = step_size,
+        lattice = True,
+        save_path=True)
+
+    tests = Lattice(dynamics = integrator, pot=qho)
+    tests.constantEnergy(p0 = copy(p0), x0 = copy(x0),
+        tol = 0.05,
+        step_sample = [n_steps],
+        step_sizes = [step_size],
+        # save = False,
+        # save='plot',
+        save = 'energy_cons_QHO_pot_bug.png',
+        print_out = True # shows a small print out
+        )
+    
+    print 'KG'
+    x0 = Periodic_Lattice(array=copy(x), spacing=spacing)
+    qho = Klein_Gordon()
+    integrator = Leap_Frog(duE = None,
+        n_steps = n_steps,
+        step_size = step_size,
+        lattice = True,
+        save_path=True)
+    
+    tests = Lattice(dynamics = integrator, pot=qho)
+    tests.constantEnergy(p0 = copy(p0), x0 = copy(x0),
+        tol = 0.05,
+        step_sample = [n_steps],
+        step_sizes = [step_size],
+        # save = False,
+        # save='plot',
+        save = 'energy_cons_KG_pot_bug.png',
+        print_out = True # shows a small print out
+        )
+    # tests.reversibility(p0 = copy(p), x0 = copy(x),
+    #     steps = 100,
+    #     tol = 0.01,
+    #     save = False,
+    #     # save = 'plot',
+    #     print_out = True # shows a small print out)
+    #     )

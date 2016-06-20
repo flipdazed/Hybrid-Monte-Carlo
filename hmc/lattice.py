@@ -61,7 +61,6 @@ class Periodic_Lattice(object):
         # multiply by approciate power of lattice spacing
         if a_power: lap /= self.spacing**a_power
         
-        # multiply again by current position to get x_i \nabla_jj x_i
         return lap
     
     def gradLaplacian(self, position, a_power=0):
@@ -86,14 +85,9 @@ class Periodic_Lattice(object):
              position, self.get.shape)
              )
         
-        g_lap = np.empty(self.d)
-        position = np.asarray(position)
-        pos = self.wrapIdx(position)    # current location
-        two_x = 2.*self.get[pos]        # current value*2
+        lap = self.laplacian(position, a_power=a_power)
         
-        lap = self.laplacian(position, a_power=a_power) - 2
-        
-        pass
+        return lap
     
     def gradSquared(self, position, a_power=0, symmetric=False):
         """lattice gradient^2 for a point with a periodic boundary

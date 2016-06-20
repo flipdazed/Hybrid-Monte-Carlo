@@ -15,13 +15,12 @@ class Pretty_Plotter(object):
         self.tfont  = 14*self.s                 # subplot titles
         self.ttfont = 16*self.s                 # figure title
         
-        rcParams['text.latex.preamble']=[r"\usepackage{lmodern}"]
-        
         # Customising Options
         self.params = {'text.usetex' : True,
                   'font.size' : 11,
                   'font.family' : 'lmodern',
                   'text.latex.unicode': True,
+                  'text.latex.preamble': [r"\usepackage{lmodern}"],
                   # 'text.latex.preamble': [r"\usepackage{hyperref}"], # doesn't work
                   # 'text.latex.preamble': [r"\usepackage{amsmath}"],
                   'figure.figsize' : self.fig_dims,
