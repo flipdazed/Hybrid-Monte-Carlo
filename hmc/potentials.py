@@ -127,25 +127,20 @@ class Klein_Gordon(object):
         x_sum = lattice.flatten().sum()
         
         p_sq_sum = np.array(0.)
-        # sum (integrate) across euclidean-space (i.e. all lattice sites)
-        for idx in np.ndindex(lattice.shape):
-            x = lattice[idx] # iterates single points of the lattice
-            
-            # x is a scalar
-            checks.tryAssertEqual(x.shape, (),
-                 ' x should be scalar.' + '\n> x: {}'.format(x))
-            
-            # gradient of kinetic term x \klein_gordon^2 x = 2 \klein_gordon^2 x
-            p_sq = positions.gradLaplacian(idx, a_power=1) 
-            
-            # gradient should be an array of the length of degrees of freedom 
-            checks.tryAssertEqual(p_sq.shape, (),
-                 ' laplacian shape should be scalar' \
-                 + '\n> p_sq shape: {}'.format(p_sq.shape))
-            
-            # sum across indices
-            p_sq_sum += p_sq
+        # # sum (integrate) across euclidean-space (i.e. all lattice sites)
+        # for idx in np.ndindex(lattice.shape):
         
+        # gradient of kinetic term x \klein_gordon^2 x = 2 \klein_gordon^2 x
+        p_sq = positions.laplacian(idx, a_power=1)
+        
+        # gradient should be an array of the length of degrees of freedom 
+        checks.tryAssertEqual(p_sq.shape, (),
+             ' laplacian shape should be scalar' \
+             + '\n> p_sq shape: {}'.format(p_sq.shape))
+        
+        # sum across indices
+        p_sq_sum += p_sq
+            
         # x.p_sq is a scalar
         checks.tryAssertEqual(p_sq_sum.shape, (),
              'p_sq * x should be scalar.' \
@@ -175,8 +170,8 @@ class Klein_Gordon(object):
         potential = u_0 + u_3 + u_4
             
         # multiply the potential by the lattice spacing as required
-        derivative = kinetic + positions.spacing * potential
-            
+        derivative = kinetic + (positions.spacing * potential)
+        # print 'kinetic, {}\npot: {}\n\n'.format(kinetic, potential)
         return derivative
     
     def hamiltonian(self, p, positions):
@@ -309,30 +304,23 @@ class Quantum_Harmonic_Oscillator(object):
         x_sum = lattice.flatten().sum()
         
         v_sq_sum = np.array(0.)
-        # sum (integrate) across euclidean-space (i.e. all lattice sites)
-        for idx in np.ndindex(lattice.shape):
+        # # sum (integrate) across euclidean-space (i.e. all lattice sites)
+        # for idx in np.ndindex(lattice.shape):
             
-            x = lattice[idx] # iterates single points of the lattice
-            
-            # x is a scalar
-            checks.tryAssertEqual(x.shape, (),
-                 ' x should be scalar.' + '\n> x: {}'.format(x))
-            
-            # derivative of velocity squared
-            # the derivative of the velocity squared is actually
-            # identical to - \klein_gordon^2
-            v_sq =  positions.gradLaplacian(idx, a_power=1)
-            v_sq *= -1
-            
-            # gradient should be an array of the length of degrees of freedom 
-            checks.tryAssertEqual(v_sq.shape, (),
-                 ' derivative^2 shape should be scalar' \
-                 + '\n> v_sq shape: {}'.format(v_sq.shape)
-                 )
-            
-            # sum to previous
-            v_sq_sum +=  v_sq
-            
+        # derivative of velocity squared
+        # the derivative of the velocity squared is actually
+        # identical to - \klein_gordon^2
+        v_sq =  positions.laplacian(idx, a_power=1)
+        
+        # gradient should be an array of the length of degrees of freedom 
+        checks.tryAssertEqual(v_sq.shape, (),
+             ' derivative^2 shape should be scalar' \
+             + '\n> v_sq shape: {}'.format(v_sq.shape)
+             )
+        
+        # sum to previous
+        v_sq_sum += v_sq
+        
         # gradient should be an array of the length of degrees of freedom 
         checks.tryAssertEqual(v_sq_sum.shape, (),
              ' derivative^2 shape should be scalar' \
@@ -340,7 +328,7 @@ class Quantum_Harmonic_Oscillator(object):
              )
         
         #### free action S_0: m/2 \phi(v^2 + m)\phi
-        kinetic = self.m * v_sq_sum
+        kinetic = - self.m * v_sq_sum
         u_0 = self.m * x_sum
         ### End free action
         
@@ -361,7 +349,7 @@ class Quantum_Harmonic_Oscillator(object):
         potential = u_0 + u_3 + u_4
             
         # multiply the potential by the lattice spacing as required
-        derivative = kinetic + positions.spacing * potential
+        derivative = kinetic + (positions.spacing * potential)
             
         return derivative
     

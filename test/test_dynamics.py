@@ -367,7 +367,8 @@ class Lattice(Pretty_Plotter):
             ax[0].set_ylabel(r'Integrator Step Size, $\epsilon$')
             
             z = np.asarray(z).reshape(*x.shape)
-            p = ax[0].contourf(x, y, z, 500)
+            p = ax[0].contourf(x, y, z, 200,
+                norm=LogNorm(vmin=z.min(), vmax=z.max()))
             
             # add colorbar and label
             cbar = plt.colorbar(p, ax=ax[0], shrink=0.9)
@@ -407,15 +408,15 @@ class Lattice(Pretty_Plotter):
             h = ax[0].plot(steps, y1+np.asarray(action), label=r"$H' = T(\pi) + S(x,t)$",
                 color='blue', linewidth=5., alpha=0.2)
             kE = ax[0].plot(steps, np.asarray(y1), label=r'$T(\pi)$',
-                color='maroon', linewidth=3., linestyle='--', alpha=0.2)
+                color='darkred', linewidth=3., linestyle='-', alpha=0.2)
             uE = ax[0].plot(steps, np.asarray(action), label=r'$S(x,t) = \sum_{n} (T_S + V_S)$',
-                color='olivedrab', linewidth=3., linestyle='--', alpha=0.2)
+                color='darkgreen', linewidth=3., linestyle='-', alpha=0.2)
             uE = ax[0].plot(steps, np.asarray(k), label=r'$\sum_{n} T_S$',
-                color='r', linestyle='-')
+                color='red', linestyle='--')
             uE = ax[0].plot(steps, np.asarray(u), label=r'$\sum_{n} V_S$',
-                color='g', linestyle='-')
+                color='green', linestyle='--')
             ax[0].legend(loc='upper left', shadow=True, fontsize = self.axfont)
-            
+            # ax[0].set_yscale("log", nonposx='clip')
             if save:
                 save_dir = PLOT_LOC + 'plots/'
                 subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
@@ -427,9 +428,9 @@ class Lattice(Pretty_Plotter):
         
         if save:
             if save == 'plot':
-                plot1d(save=False)
+                plot2d(save=False)
             else:
-                plot1d(save=save)
+                plot2d(save=save)
         
         return passed
     
@@ -561,9 +562,9 @@ if __name__ == '__main__':
     utils.newTest(TEST_ID_Lattice)
     dim         = 1
     n           = 10
-    spacing     = .1
-    step_size   = .1
-    n_steps     = 100
+    spacing     = 1.
+    step_size   = 0.01
+    n_steps     = 600
     
     # check that change in step_size time:
     # ~1/(lattice time length)
@@ -577,25 +578,25 @@ if __name__ == '__main__':
     x = np.random.random((n,)*dim)
     p0 = np.random.random((n,)*dim)
     
-    x0 = Periodic_Lattice(array=copy(x), spacing=spacing)
-    print 'QHO'
-    qho = Quantum_Harmonic_Oscillator()
-    integrator = Leap_Frog(duE = None,
-        n_steps = n_steps,
-        step_size = step_size,
-        lattice = True,
-        save_path=True)
-
-    tests = Lattice(dynamics = integrator, pot=qho)
-    tests.constantEnergy(p0 = copy(p0), x0 = copy(x0),
-        tol = 0.05,
-        step_sample = [n_steps],
-        step_sizes = [step_size],
-        # save = False,
-        # save='plot',
-        save = 'energy_cons_QHO_pot_bug.png',
-        print_out = True # shows a small print out
-        )
+    # x0 = Periodic_Lattice(array=copy(x), spacing=spacing)
+    # print 'QHO'
+    # qho = Quantum_Harmonic_Oscillator()
+    # integrator = Leap_Frog(duE = None,
+    #     n_steps = n_steps,
+    #     step_size = step_size,
+    #     lattice = True,
+    #     save_path=True)
+    #
+    # tests = Lattice(dynamics = integrator, pot=qho)
+    # tests.constantEnergy(p0 = copy(p0), x0 = copy(x0),
+    #     tol = 0.05,
+    #     step_sample = [n_steps],
+    #     step_sizes = [step_size],
+    #     # save = False,
+    #     # save='plot',
+    #     save = 'energy_cons_QHO_pot_bug.png',
+    #     print_out = True # shows a small print out
+    #     )
     
     print 'KG'
     x0 = Periodic_Lattice(array=copy(x), spacing=spacing)
@@ -609,11 +610,13 @@ if __name__ == '__main__':
     tests = Lattice(dynamics = integrator, pot=qho)
     tests.constantEnergy(p0 = copy(p0), x0 = copy(x0),
         tol = 0.05,
-        step_sample = [n_steps],
-        step_sizes = [step_size],
+        # step_sample = [n_steps],
+        # step_sizes = [step_size],
+        step_sample = np.linspace(1, 1000, 10, True, dtype=int),
+        step_sizes = np.linspace(0.01, 0.1, 10, True),
         # save = False,
         # save='plot',
-        save = 'energy_cons_KG_pot_bug.png',
+        save = 'energy_conservation_lattice_KG.png',
         print_out = True # shows a small print out
         )
     # tests.reversibility(p0 = copy(p), x0 = copy(x),

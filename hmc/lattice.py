@@ -63,32 +63,6 @@ class Periodic_Lattice(object):
         
         return lap
     
-    def gradLaplacian(self, position, a_power=0):
-        """gradient of the lattice Laplacian for a point 
-            with a periodic boundary
-        
-        Required Inputs
-            position :: (integer,) :: determines the position of the array
-        
-        Optional Inputs
-            a_power  :: integer :: divide by (lattice spacing)^a_power
-        
-        Expectations
-            position is a tuple that gives current point in the n-dim lattice
-        """
-        
-        # check that the tuple recieved is the same length as the 
-        # shape of the target array: Should do gradient over all dims
-        # gradient should be an array of the length of degrees of freedom 
-        checks.tryAssertEqual(len(position), self.d,
-             "mismatch of indices...\nshape received: {}\nshape expected: {}".format(
-             position, self.get.shape)
-             )
-        
-        lap = self.laplacian(position, a_power=a_power)
-        
-        return lap
-    
     def gradSquared(self, position, a_power=0, symmetric=False):
         """lattice gradient^2 for a point with a periodic boundary
         

@@ -45,9 +45,11 @@ class Leap_Frog(object):
         # print "     ... begin integration"
         for step in xrange(0, self.n_steps):
             # print "         > step: {}".format(step)
+            # b = copy(self.x.get)
             self._moveP(frac_step=0.5)
             self._moveX()
             self._moveP(frac_step=0.5)
+            # print self.p - b
             # print self.p
             # print self.x.get
             if self.save_path: self._storeSteps() # store moves
@@ -119,7 +121,7 @@ class Leap_Frog(object):
         update them in turn using a numpy array iteration
         
         The separation between lattice and non-lattice theory is due to the
-        potentials used. The SHO and Multivariate Gaussian derviates do not accept
+        potentials used. The SHO and Multivariate Gaussian derivatives do not accept
         position indices for gradient terms and have an analytical derivative term.
         
         This needs to be corrected.
