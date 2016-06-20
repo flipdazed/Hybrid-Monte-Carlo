@@ -111,7 +111,7 @@ class Continuum(Pretty_Plotter):
             
             fig.suptitle(r'Energy Drift as a function of Integrator Parameters', 
                 fontsize=self.ttfont)
-            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, self.tol),
+            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, tol),
                 fontsize=self.ttfont-4)
             ax[0].set_xlabel(r'Number of Integrator Steps, $n$')
             ax[0].set_ylabel(r'Integrator Step Size, $\epsilon$')
@@ -126,7 +126,7 @@ class Continuum(Pretty_Plotter):
             # ax[0].plot(step_sample, np.asarray(diffs), linestyle='-', color='blue')
             # ax[0].plot(step_sample, np.full(step_sample.shape, tol),
             # linestyle='--', color='red', label='tolerance')
-            ax[0].axhline(tol, color='red', linestyle='--')
+            # ax[0].axhline(tol, color='red', linestyle='--')
             
             if save:
                 save_dir = PLOT_LOC + 'plots/'
@@ -199,7 +199,7 @@ class Continuum(Pretty_Plotter):
             ax.append(fig.add_subplot(111))
             fig.suptitle(r'Magnitude of Change in Phase Space, $\Delta\mathcal{P}(x,p)$',
                 fontsize=self.ttfont)
-            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, self.tol),
+            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, tol),
                 fontsize=self.ttfont-4)
             ax[0].set_xlabel(r'Integration Step, $n$')
             ax[0].set_ylabel(r"$|\Delta\mathcal{P}(x,p)| = \sqrt{(p_{t} + p_{\text{-}t})^2 + (x_{t} - x_{\text{-}t})^2}$")
@@ -280,10 +280,11 @@ class Lattice(Pretty_Plotter):
         kE0 = self.pot.kE(p0)
         uE0 = self.pot.uE(x0)
         
-        if len(step_sample) > 1:
+        if len(uE0) > 1:
             check_uE0 = uE0[0]
         else:
             check_uE0 = uE0
+        
         checks.tryAssertEqual(h_old, kE0+check_uE0,
              ' kin: {}, pot:{}, h:{}'.format(kE0, check_uE0, h_old) \
              +'\n Diff: {}'.format(h_old - kE0+check_uE0)
@@ -363,7 +364,7 @@ class Lattice(Pretty_Plotter):
             
             fig.suptitle(r'Energy Drift as a function of Integrator Parameters', 
                 fontsize=self.ttfont)
-            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, self.tol),
+            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, tol),
                 fontsize=self.ttfont-4)
             ax[0].set_xlabel(r'Number of Integrator Steps, $n$')
             ax[0].set_ylabel(r'Integrator Step Size, $\epsilon$')
@@ -379,7 +380,7 @@ class Lattice(Pretty_Plotter):
             # ax[0].plot(step_sample, np.asarray(diffs), linestyle='-', color='blue')
             # ax[0].plot(step_sample, np.full(step_sample.shape, tol),
             # linestyle='--', color='red', label='tolerance')
-            ax[0].axhline(tol, color='red', linestyle='--')
+            # ax[0].axhline(tol, color='red', linestyle='--')
             
             if save:
                 save_dir = PLOT_LOC + 'plots/'
@@ -401,7 +402,7 @@ class Lattice(Pretty_Plotter):
             
             fig.suptitle(r"Components of Hamiltonian, $H'$, during Leap Frog integration",
                 fontsize=self.ttfont)
-            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, self.tol),
+            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, tol),
                 fontsize=self.ttfont-4)
             ax[0].set_xlabel(r'Number of Integrator Steps, $n$')
             ax[0].set_ylabel(r'Energy')
@@ -452,9 +453,9 @@ class Lattice(Pretty_Plotter):
                     plot1d(save=False)
             else:
                 if len(step_sample) > 1:
-                    plot2d(save=False)
+                    plot2d(save=save)
                 else:
-                    plot1d(save=False)
+                    plot1d(save=save)
         
         return passed
     
@@ -512,7 +513,7 @@ class Lattice(Pretty_Plotter):
             ax.append(fig.add_subplot(111))
             fig.suptitle(r'Magnitude of Change in Phase Space, $\Delta\mathcal{P}(x,p)$',
                 fontsize=self.ttfont)
-            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, self.tol),
+            ax[0].set_title(r'Potential: {}, Tolerance level: {}'.format(self.pot.name, tol),
                 fontsize=self.ttfont-4)
             ax[0].set_xlabel(r'Integration Step, $n$')
             ax[0].set_ylabel(r"$|\Delta\mathcal{P}(x,p)| = \sqrt{(p_{t} + p_{\text{-}t})^2 + (x_{t} - x_{\text{-}t})^2}$")
@@ -686,11 +687,11 @@ class Test(object):
             
             save_name = self.save_name + '_conservation_2d_{}.png'.format(potential.name)
             tests.constantEnergy(
-                p0 = copy(self.p0), 
+                p0 = copy(self.p0),
                 x0 = copy(self.x0),
                 tol = self.tol,
-                step_sample = np.linspace(1, self.n_steps*2, 100, True, dtype=int),
-                step_sizes = np.linspace(0.001, self.step_size*2, 100, True),
+                step_sample = np.linspace(1, self.n_steps*2, 50, True, dtype=int),
+                step_sizes = np.linspace(0.001, self.step_size*2, 50, True),
                 save=self._save(save, save_name))
             
             save_name = self.save_name + '_reversibility_{}.png'.format(potential.name)
@@ -709,9 +710,9 @@ if __name__ == '__main__':
     n           = 10
     spacing     = 1.
     step_size   = .01
-    n_steps     = 500
+    n_steps     = 100
     
     test = Test(n_steps=n_steps, step_size=step_size)
     
-    test.continuum()
-    test.lattice(dim=dim, n=n, spacing=spacing)
+    test.continuum(save=True)
+    test.lattice(save=True, dim=dim, n=n, spacing=spacing)
