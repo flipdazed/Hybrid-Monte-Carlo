@@ -1,6 +1,7 @@
 import numpy as np
 import copy
 
+from . import checks
 from dynamics import Leap_Frog
 from metropolis import Accept_Reject
 
@@ -30,9 +31,15 @@ class Hybrid_Monte_Carlo(object):
         self.x = self.x0
         if hasattr(self.x0, 'get'):
             self.p = self.momentum.fullRefresh(self.x0.get) # intial mom. sample
+            shapes = (self.x.get.shape,self.p.shape)
         else:
             self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
-        assert self.x.shape == self.p.shape
+            shapes = (self.x.shape,self.p.shape)
+        
+        checks.tryAssertEqual(*shapes,
+             error_msg=' x.shape != p.shape' \
+             +'\n x: {}, p: {}'.format(*shapes)
+             )
         
         pass
     
@@ -51,16 +58,16 @@ class Hybrid_Monte_Carlo(object):
         
         for step in xrange(n_burn_in): # burn in
             self.p, self.x = self.moveHMC()
-            self.burn_in_p.append(copy.copy(self.p))
-            self.burn_in.append(copy.copy(self.x))
+            self.burn_in_p.append(copy.deepcopy(self.p))
+            self.burn_in.append(copy.deepcopy(self.x))
         
         self.samples_p = [copy.copy(self.p)]
         self.samples = [copy.copy(self.x)]
         
         for step in xrange(n_samples):
             p, x = self.moveHMC()
-            self.samples_p.append(copy.copy(self.p))
-            self.samples.append(copy.copy(self.x))
+            self.samples_p.append(copy.deepcopy(self.p))
+            self.samples.append(copy.deepcopy(self.x))
         
         return (self.burn_in_p, self.samples_p), (self.burn_in, self.samples)
     
@@ -85,7 +92,8 @@ class Hybrid_Monte_Carlo(object):
         p,x = self.p, self.x # initial temp. proposal p,x
         h_old = self.potential.hamiltonian(p, x)
         
-        p = -self.momentum.fullRefresh(p) # mixing matrix adds a flip
+        for idx in np.ndindex(self.p.shape):
+            p[idx] = -self.momentum.fullRefresh(p[idx]) # mixing matrix adds a flip
         
         if (step_size is not None): self.dynamics.step_size = step_size
         if (n_steps is not None): self.dynamics.n_steps = step_size
@@ -177,7 +185,8 @@ class Momentum(object):
         self.noise = self.rng.normal(size=p.shape, scale=1., loc=0.)
         self.mixed = self._refresh(p, self.noise, theta=mixing_angle)
         
-        return self.mixed[:p.shape[0], :p.shape[1]]
+        ret_val = np.asarray(self.mixed[:p.size, :1]).reshape(p.shape)
+        return ret_val
     
     def _refresh(self, p, noise, theta):
         """Mixes noise with momentum
@@ -188,9 +197,12 @@ class Momentum(object):
             theta   :: float    :: mixing angle
         """
         
-        self.rot = self._rotationMatrix(n_dim=p.shape[0], theta=theta)
+        self.rot = self._rotationMatrix(n_dim=p.size, theta=theta)
         
-        unmixed = np.bmat([[p],[noise]])
+        p = np.matrix(p.ravel()).T          # column A
+        noise = np.matrix(noise.ravel()).T  # column B
+        
+        unmixed = np.bmat([[p],[noise]])    # column [[A],[B]]
         flipped = self.flip(unmixed)
         
         # matix multiplication

@@ -3,7 +3,7 @@ import numpy as np
 from . import checks
 
 class Klein_Gordon(object):
-    """Klein Gordon Pontential on a lattice
+    """Klein Gordon Potential on a lattice
     
     H = \frac{m}{2}\dot{x}^2 + V(x)
     
@@ -92,7 +92,7 @@ class Klein_Gordon(object):
         
         if self.phi_4: # phi^4 term
             x_4_sum = np.power(lattice.flatten(), 4).sum()
-            u_3 = self.phi_3 * x_4_sum / np.math.factorial(4)
+            u_4 = self.phi_4 * x_4_sum / np.math.factorial(4)
         else:
             u_4 = 0.
         
@@ -107,14 +107,6 @@ class Klein_Gordon(object):
         else:
             ret_val = euclidean_action
         return ret_val
-    
-    def gradKineticEnergy(self, p):
-        """Gradient w.r.t. conjugate momentum
-        
-        Required Inputs
-            p :: np.array (nd) :: momentum array
-        """
-        return p
     
     def gradPotentialEnergy(self, positions, idx):
         """Gradient of the action
@@ -263,7 +255,7 @@ class Quantum_Harmonic_Oscillator(object):
         
         if self.phi_4: # phi^4 term
             x_4_sum = np.power(lattice.flatten(), 4).sum()
-            u_3 = self.phi_3 * x_4_sum / np.math.factorial(4)
+            u_4 = self.phi_4 * x_4_sum / np.math.factorial(4)
         else:
             u_4 = 0.
         
@@ -279,14 +271,6 @@ class Quantum_Harmonic_Oscillator(object):
             ret_val = euclidean_action
         
         return ret_val
-    
-    def gradKineticEnergy(self, p):
-        """Gradient w.r.t. conjugate momentum
-        
-        Required Inputs
-            p :: np.array (nd) :: momentum array
-        """
-        return p
     
     def gradPotentialEnergy(self, positions, idx):
         """Gradient of the action
@@ -383,10 +367,6 @@ class Simple_Harmonic_Oscillator(object):
     
     def potentialEnergy(self, x):
         return .5 * np.square(x)
-    
-    def gradKineticEnergy(self, p):
-        return p
-    
     def gradPotentialEnergy(self, x, *discard):
         """
         
@@ -459,14 +439,6 @@ class Multivariate_Gaussian(object):
             x.shape, self.mean.shape))
         x -= self.mean
         return .5 * ( np.dot(x.T, self.cov_inv) * x).sum(axis=0)
-    
-    def gradKineticEnergy(self, p):
-        """n-dim Kinetic Energy"""
-        
-        checks.tryAssertEqual(len(p.shape), 2,
-             ' expected momentum dims = 2.\n> x: {}'.format(x))
-        
-        return p
     
     def gradPotentialEnergy(self, x, *discard):
         """n-dim gradient

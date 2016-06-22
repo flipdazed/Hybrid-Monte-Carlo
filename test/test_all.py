@@ -22,7 +22,7 @@ def testPotentials():
     pass
 
 def testContinuumDynamics():
-    utils.newTest('continuous dynamics')
+    utils.newTest('hmc.dynamics (continuum)')
     
     n_steps     = 100
     step_size   = .1
@@ -45,7 +45,7 @@ def testContinuumDynamics():
     pass
 
 def testLatticeDynamics():
-    utils.newTest('lattice dynamics')
+    utils.newTest('hmc.dynamics  (lattice)')
     
     n           = 10
     spacing     = 1.
@@ -70,6 +70,7 @@ def testLatticeDynamics():
     
     assert tests.reversibility(p0, x0, steps = n_steps, tol = tol, 
         save = False, print_out = True)
+    
     pass
 
 def testLattice():

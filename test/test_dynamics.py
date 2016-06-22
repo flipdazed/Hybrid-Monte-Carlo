@@ -270,6 +270,7 @@ class Lattice(Pretty_Plotter):
         Returns
             passed :: bool :: True if passed
         """
+        
         passed = True
         diffs = []
         kins  = []
@@ -280,7 +281,7 @@ class Lattice(Pretty_Plotter):
         kE0 = self.pot.kE(p0)
         uE0 = self.pot.uE(x0)
         
-        if len(uE0) > 1:
+        if uE0.size > 1:
             check_uE0 = uE0[0]
         else:
             check_uE0 = uE0
@@ -342,7 +343,7 @@ class Lattice(Pretty_Plotter):
                 kins = np.asarray([kE0] + kE_path)
                 pots = [uE0] + uE_path
             
-            
+        
         if print_out:
             minimal = (print_out == 'minimal')
             utils.display(test_name='Constant Energy', outcome=passed,
@@ -448,14 +449,14 @@ class Lattice(Pretty_Plotter):
         
         if save:
             if save == 'plot':
-                if len(step_sample) > 1:
+                if step_sample.size > 1:
                     plot2d(save=False)
                 else:
                     plot1d(save=False,
                         all_lines=True
                         )
             else:
-                if len(step_sample) > 1:
+                if step_sample.size > 1:
                     plot2d(save=save)
                 else:
                     plot1d(save=save,
@@ -496,6 +497,7 @@ class Lattice(Pretty_Plotter):
             np.asarray([[p0f], [x0f.get]]) - np.asarray([[p0], [x0.get]])
             )
         passed = (phase_change < tol)
+        
         if print_out: 
             utils.display(test_name="Reversibility of Integrator", 
             outcome=passed,
