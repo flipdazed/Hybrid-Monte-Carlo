@@ -14,11 +14,14 @@ import test_hmc
 import test_lattice
 import test_momentum
 
+import logging
+logging.root.setLevel(logging.DEBUG)
+
 def testPotentials():
-    utils.newTest('potentials')
     test = test_potentials.Test()
-    assert test.bivariateGaussian(save = False)
-    assert test.lattice_qHO()
+    utils.newTest(test.id)
+    assert test.bvg()
+    assert test.qho()
     pass
 
 def testContinuumDynamics():

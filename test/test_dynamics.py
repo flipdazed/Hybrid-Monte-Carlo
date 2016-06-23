@@ -345,7 +345,6 @@ class Lattice(Pretty_Plotter):
             
         
         if print_out:
-            minimal = (print_out == 'minimal')
             utils.display(test_name='Constant Energy', outcome=passed,
                 details = {
                     'initial H(p, x): {}'.format(h_old):[],
@@ -353,8 +352,7 @@ class Lattice(Pretty_Plotter):
                             'steps: {}'.format(w_step),
                             'step size: {}'.format(w_size)],
                     'np.abs(exp(-dH): {}'.format(w_h_new - h_old, w_bmk):[]
-                },
-                minimal=minimal)
+                })
         
         def plot2d(x = step_sample, y = step_sizes, z = diffs, save = save):
             self._teXify() # LaTeX

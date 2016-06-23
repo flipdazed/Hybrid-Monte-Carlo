@@ -1,5 +1,6 @@
 from pretty_plotting import Pretty_Plotter
 from colours import *
 
-PLOT_LOC = './results/'
-ANIM_LOC = './results/'
+# path is relative to the main directory at ../
+PLOT_LOC = './results/plots/'
+ANIM_LOC = './results/animations/'

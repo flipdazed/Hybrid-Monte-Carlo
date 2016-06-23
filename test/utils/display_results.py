@@ -3,6 +3,7 @@ import logging
 from logs import *
 
 logging.root.setLevel(logging.INFO)
+np.set_printoptions(suppress=True)
 
 def newTest(test_id):
     logger.newtest('')

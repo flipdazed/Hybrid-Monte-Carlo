@@ -4,115 +4,95 @@ import subprocess
 
 import utils
 
-# these directories won't work unless 
-# the commandline interface for python unittest is used
+from hmc import checks
 from hmc.lattice import Periodic_Lattice
-from hmc.potentials import Multivariate_Gaussian
-from plotter import Pretty_Plotter, viridis, magma, inferno, plasma, PLOT_LOC
+from hmc.potentials import Multivariate_Gaussian as MVG
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
-TEST_ID = 'potentials'
 
-class Test(Pretty_Plotter):
-    def __init__(self):
-        self.mean = np.asarray([[0.], [0.]])
-        self.cov = np.asarray([[1.0,0.8],[0.8,1.0]])
-        self.bg = Multivariate_Gaussian(mean = self.mean, cov = self.cov)
+class Test(object):
+    def __init__(self, print_out=True):
+        self.id = 'initialise potentials'
+        self.print_out = print_out
+        self.fns = { 'potentialEnergy':'uE',
+                'gradPotentialEnergy':'duE',
+                'kineticEnergy':'kE'}
         pass
     
-    def bivariateGaussian(self, save = 'potentials_Gaussian_2d.png', print_out = True):
+    def bvg(self):
         """Plots a test image of the Bivariate Gaussian"""
         passed = True
-        self._teXify() # LaTeX
-        self.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
-        self.params['figure.subplot.top'] = 0.85
-        self._updateRC()
         
-        n = 200 # n**2 is the number of points
-        cov = self.bg.cov
-        mean = self.bg.mean
+        mean = np.asarray([[0.], [0.]])
+        cov = np.asarray([[1.0,0.8],[0.8,1.0]])
         
-        x = np.linspace(-5., 5., n, endpoint=True)
-        x,y = np.meshgrid(x,x)
-        z = np.exp(-np.asarray([self.bg.uE(np.matrix([[i],[j]])) \
-            for i,j in zip(np.ravel(x), np.ravel(y))]))
-        z = np.asarray(z).reshape(n, n)
+        self.pot = MVG(mean = mean, cov = cov)
+        self.x = np.asarray([[-3.5], [4.]])
+        self.p = np.asarray([[ 1.],  [2.]])
+        idx_list = ['one_iteration_garbage']
         
-        if print_out:
-            minimal = (print_out == 'minimal')
-            utils.display('Bivariate Gaussian Potential', passed,
-                details = {
-                    'Not a unit test':[]
-                    },
-                minimal = minimal)
-        
-        def plot(save=save):
-            fig = plt.figure(figsize=(8,8))
-            ax = fig.add_subplot(111)
-            c = ax.contourf(x, y, z, 100, cmap=plasma)
-        
-            ax.set_xlabel(r'$x_1$')
-            ax.set_ylabel(r'$x_2$')
-            fig.suptitle(r'Test plot of a 2D Multivariate (Bivariate) Gaussian',
-                 fontsize=self.ttfont*self.s)
-            ax.set_title(
-            r'Parameters: $\mu=\begin{pmatrix}0 & 0\end{pmatrix}$, $\Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$',
-                fontsize=(self.tfont-4)*self.s)
-        
-            ax.grid(False)
-            
-            if save:
-                save_dir = PLOT_LOC + 'plots/'
-                subprocess.call(['mkdir', PLOT_LOC + 'plots/'])
-            
-                fig.savefig(save_dir+save)
-            else:
-                plt.show()
-            pass
-        
-        if save:
-            if save == 'plot':
-                plot(save=False)
-            elif save:
-                plot(save=save)
-        
+        passed = self._TestFns("BVG Potential", passed, self.x, self.p)
         return passed
-    def lattice_qHO(self, dim = 4, sites = 10, spacing = 1., save = False, print_out = True):
+    
+    def qho(self, dim = 4, sites = 10, spacing = 1.):
         """checks that QHO can be initialised and all functions run"""
-        np.set_printoptions(suppress=True)
         
         passed = True
         shape = (sites,)*dim
         raw_lattice = np.arange(sites**dim).reshape(shape)
-        self.lattice = Periodic_Lattice(array = raw_lattice, spacing = 1.)
-        self.qho = QHO(self.lattice)
         
-        for n in (1,0):
-            pot_energy = self.qho.potentialEnergy(nabla=n)
-            gradient_i = self.qho.gradPotentialEnergy((0,)*dim, nabla=n)
-            gradient_f = self.qho.gradPotentialEnergy((sites-1,)*dim, nabla=n)
-        pot_energy = self.qho.uE()
-        gradient_i = self.qho.duE((0,)*dim)
-        gradient_f = self.qho.duE((sites-1,)*dim)
+        self.pot = QHO()
+        self.x = Periodic_Lattice(array = raw_lattice, spacing = 1.)
+        self.p = np.asarray(shape)
+        idx_list = [(0,)*dim, (sites,)*dim, (sites-1,)*dim]
         
-        if print_out:
-            minimal = (print_out == 'minimal')
-            utils.display('QHO Potential', passed,
+        passed = self._TestFns("QHO Potential", passed, self.x, self.p, idx_list)
+        
+        return passed
+    
+    def _TestFns(self, name, passed, x, p, idx_list=[0]):
+        """Returns a list of functions for the current potential
+        
+        Required Inputs:
+            name     :: string           :: name of the test
+            passed   :: bool             :: current pass state
+            idx_list :: tuple (np shape) :: test indices for lattice gradients
+        
+        Expectations:
+            self.pot :: contains the potential
+        
+        Return value is:
+            [(full name function_i, abbbrev. name function_i), ... ]
+        """
+        
+        assert hasattr(self, 'pot')
+        
+        # get a list of the functions from the potential
+        f_list = [getattr(self.pot, abbrev) for full,abbrev in self.fns.iteritems()]
+        
+        # create a list of passed functions
+        passed_fns = []
+        failed_fns = []
+        for i in f_list: # iterate functions
+            for idx in idx_list:                # iterate through indices
+                try:
+                    i_ret = i(x=x, p=p, idx=idx)
+                    passed_fns.append(i.__name__+':{}'.format(idx))
+                except Exception as e:
+                    passed = False
+                    checks.fullTrace()
+                    failed_fns.append(i.__name__+':{} :: {}'.format(idx, e))
+        
+        if self.print_out:
+            utils.display(name, passed,
                 details = {
-                    'Not a unit test':[],
-                    'Gradient':[
-                        '{}: {}'.format((0,)*dim, gradient_i),
-                        '{}: {}'.format((sites-1,)*dim, gradient_f)],
-                    'Potential Energy: {}'.format(pot_energy):[]
-                    },
-                minimal = minimal)
+                    'passed functions':passed_fns,
+                    'failed functions':failed_fns
+                    })
+        
         return passed
 #
 if __name__ == '__main__':
     utils.newTest(TEST_ID)
     test = Test()
-    test.bivariateGaussian(
-            save = False
-            # save = 'plot'
-            # save = 'potentials_Gaussian_2d.png'
-            )
-    test.lattice_qHO()
+    test.bvg()
+    test.qho()

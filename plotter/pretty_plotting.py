@@ -1,5 +1,8 @@
 # Begin my own plotter class
 from matplotlib import rcParams
+import matplotlib.pyplot as plt
+
+import subprocess
 
 class Pretty_Plotter(object):
     """contains things to make plots look nice"""
@@ -35,7 +38,25 @@ class Pretty_Plotter(object):
               
         self._updateRC()
         pass
+    
     def _updateRC(self):
         """updates with new poshness"""
         rcParams.update(self.params) # updates the default parameters
+        pass
+    
+    def save_or_show(self, save, d):
+        """Will either print to screen or save to location save
+        
+        Required Inputs
+            save :: string / bool :: save location or '' / False
+            d    :: string :: directory to save in if save != False
+        """
+        if save:
+            save_dir = d
+            subprocess.call(['mkdir', d])
+            
+            fig = plt.gcf()
+            fig.savefig(save_dir+save)
+        else:
+            plt.show()
         pass

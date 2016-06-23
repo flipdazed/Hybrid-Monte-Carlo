@@ -2,7 +2,52 @@ import numpy as np
 
 from . import checks
 
-class Klein_Gordon(object):
+__all__ = [ 'Klein_Gordon',
+            'Quantum_Harmonic_Oscillator',
+            'Simple_Harmonic_Oscillator',
+            'Multivariate_Gaussian']
+
+class Shared(object):
+    """Shared methods"""
+    def __init__(self):
+        self.all = [self.kE, self.uE, self.duE]
+        self.kE.__name__  = 'Conjugate HMC Kinetic Energy'
+        self.uE.__name__  = 'Action (HMC Potential)'
+        self.duE.__name__ = 'Gradient of Action (HMC Potential)'
+        pass
+    
+    def _lattice(self):
+        self.kE  = lambda p, *args, **kwargs: self.kineticEnergy(p=p)
+        self.uE  = lambda x, *args, **kwargs: self.potentialEnergy(positions=x)
+        self.duE = lambda x, idx, *args, **kwargs: self.gradPotentialEnergy(positions=x, idx=idx)
+        pass
+    
+    def _nonLattice(self):
+        self.kE = lambda p, *args, **kwargs: self.kineticEnergy(p=p)
+        self.uE = lambda x, *args, **kwargs: self.potentialEnergy(x=x)
+        self.duE = lambda x, *args, **kwargs: self.gradPotentialEnergy(x=x)
+        pass
+    
+    def hamiltonian(self, p, x):
+        """Returns the Hamiltonian
+        
+        Required Inputs
+            p :: np.array (nd) :: momentum array
+            x :: class :: see lattice.py for info
+        """
+        if not hasattr(self, 'debug'): self.debug = False
+        if self.debug:
+            h = self.kineticEnergy(p) + self.potentialEnergy(x)[0]
+        else:
+            h = self.kineticEnergy(p) + self.potentialEnergy(x)
+        
+        # check 1 dimensional
+        checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
+             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
+        return h.reshape(1)
+    
+#
+class Klein_Gordon(Shared):
     """Klein Gordon Potential on a lattice
     
     H = \frac{m}{2}\dot{x}^2 + V(x)
@@ -21,12 +66,8 @@ class Klein_Gordon(object):
         self.phi_3 = phi_3      # phi^3 coupling const.
         self.phi_4 = phi_4      # phi^4 coupling const.
         
-        self.kE  = lambda p: self.kineticEnergy(p)
-        self.uE  = lambda x: self.potentialEnergy(x)
-        self.dkE = lambda p: self.gradKineticEnergy(p)
-        self.duE = lambda i, x: self.gradPotentialEnergy(i, x)
-        
-        self.all = [self.kE, self.uE, self.dkE, self.duE]
+        super(Klein_Gordon, self)._lattice()
+        super(Klein_Gordon, self).__init__()
         pass
     
     def kineticEnergy(self, p):
@@ -119,6 +160,8 @@ class Klein_Gordon(object):
             positions :: class :: see lattice.py for info
         """
         
+        idx = positions.wrapIdx(idx)
+        
         # don't want the whole lattice in here!
         # the laplacian indexs the other elements
         x = positions.get[idx]
@@ -155,24 +198,8 @@ class Klein_Gordon(object):
         # print 'kinetic, {}\npot: {}\n\n'.format(kinetic, potential)
         return derivative
     
-    def hamiltonian(self, p, positions):
-        """Returns the Hamiltonian
-        
-        Required Inputs
-            p :: np.array (nd) :: momentum array
-            positions :: class :: see lattice.py for info
-        """
-        if self.debug:
-            h = self.kineticEnergy(p) + self.potentialEnergy(positions)[0]
-        else:
-            h = self.kineticEnergy(p) + self.potentialEnergy(positions)
-        
-        # check 1 dimensional
-        checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
-             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
-        return h.reshape(1)
 #
-class Quantum_Harmonic_Oscillator(object):
+class Quantum_Harmonic_Oscillator(Shared):
     """Quantum Harmonic Oscillator on a lattice
     
     H = \frac{m}{2}\dot{x}^2 + V(x)
@@ -191,12 +218,8 @@ class Quantum_Harmonic_Oscillator(object):
         self.phi_3 = phi_3      # phi^3 coupling const.
         self.phi_4 = phi_4      # phi^4 coupling const.
         
-        self.kE  = lambda p: self.kineticEnergy(p)
-        self.uE  = lambda x: self.potentialEnergy(x)
-        self.dkE = lambda p: self.gradKineticEnergy(p)
-        self.duE = lambda i, x: self.gradPotentialEnergy(i, x)
-        
-        self.all = [self.kE, self.uE, self.dkE, self.duE]
+        super(Quantum_Harmonic_Oscillator, self)._lattice()
+        super(Quantum_Harmonic_Oscillator, self).__init__()
         pass
     
     def kineticEnergy(self, p):
@@ -283,6 +306,7 @@ class Quantum_Harmonic_Oscillator(object):
             positions :: class :: see lattice.py for info
         """
         
+        idx = positions.wrapIdx(idx)
         # don't want the whole lattice in here!
         # the laplacian indexs the other elements
         x = positions.get[idx]
@@ -322,24 +346,8 @@ class Quantum_Harmonic_Oscillator(object):
             
         return derivative
     
-    def hamiltonian(self, p, positions):
-        """Returns the Hamiltonian
-        
-        Required Inputs
-            p :: np.array (nd) :: momentum array
-            positions :: class :: see lattice.py for info
-        """
-        if self.debug:
-            h = self.kineticEnergy(p) + self.potentialEnergy(positions)[0]
-        else:
-            h = self.kineticEnergy(p) + self.potentialEnergy(positions)
-        
-        # check 1 dimensional
-        checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
-             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
-        return h.reshape(1)
 #
-class Simple_Harmonic_Oscillator(object):
+class Simple_Harmonic_Oscillator(Shared):
     """Simple Harmonic Oscillator
     
     The potential is given by: F(x) = k*x
@@ -351,12 +359,8 @@ class Simple_Harmonic_Oscillator(object):
         self.name = 'SHO'
         self.k = np.asarray(k)
         
-        self.kE = lambda p: self.kineticEnergy(p)
-        self.uE = lambda x: self.potentialEnergy(x)
-        self.dkE = lambda p: self.gradKineticEnergy(p)
-        self.duE = lambda x: self.gradPotentialEnergy(x)
-        
-        self.all = [self.kE, self.uE, self.dkE, self.duE]
+        super(Simple_Harmonic_Oscillator, self)._nonLattice()
+        super(Simple_Harmonic_Oscillator, self).__init__()
         
         self.mean = np.asarray([[0.]]).sum(axis=0)
         self.cov = np.asarray([[1.]]).sum(axis=0)
@@ -367,7 +371,7 @@ class Simple_Harmonic_Oscillator(object):
     
     def potentialEnergy(self, x):
         return .5 * np.square(x)
-    def gradPotentialEnergy(self, x, *discard):
+    def gradPotentialEnergy(self, x):
         """
         
         Required Inputs
@@ -379,16 +383,8 @@ class Simple_Harmonic_Oscillator(object):
         """
         return self.k * x
     
-    def hamiltonian(self, p, x):
-        h = np.asarray(self.kineticEnergy(p) + self.potentialEnergy(x))
-        
-        # check 1 dimensional
-        checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
-             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
-        
-        return h.reshape(1)
 #
-class Multivariate_Gaussian(object):
+class Multivariate_Gaussian(Shared):
     """Multivariate Gaussian Distribution
     
     The potential is given by the n-dimensional gaussian
@@ -410,12 +406,8 @@ class Multivariate_Gaussian(object):
         
         self.cov_inv = self.cov.I # calculate inverse (save comp. time)
         
-        self.kE = lambda p: self.kineticEnergy(p)
-        self.uE = lambda x: self.potentialEnergy(x)
-        self.dkE = lambda p: self.gradKineticEnergy(p)
-        self.duE = lambda x: self.gradPotentialEnergy(x)
-        
-        self.all = [self.kE, self.uE, self.dkE, self.duE]
+        super(Multivariate_Gaussian, self)._nonLattice()
+        super(Multivariate_Gaussian, self).__init__()
         pass
     
     def kineticEnergy(self, p):
@@ -440,7 +432,7 @@ class Multivariate_Gaussian(object):
         x -= self.mean
         return .5 * ( np.dot(x.T, self.cov_inv) * x).sum(axis=0)
     
-    def gradPotentialEnergy(self, x, *discard):
+    def gradPotentialEnergy(self, x):
         """n-dim gradient
         
         Notes
@@ -452,14 +444,6 @@ class Multivariate_Gaussian(object):
              ' expected position dims = 2.\n> x: {}'.format(x))
         
         return np.dot(self.cov_inv, x)
-    def hamiltonian(self, p, x):
-        h = self.kineticEnergy(p) + self.potentialEnergy(x)
-        
-        # check 1 dimensional
-        checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
-             ' hamiltonian() not scalar.\n> shape: {}'.format(h.shape))
-        
-        return h.reshape(1)
 #
 if __name__ == '__main__':
     pass
