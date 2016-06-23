@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from HMC_qho_1d import Model
+from hmc_qho_1d import Model
 from scipy.stats import norm
 
 def plot(samples, save='hmc_qho_1d_pot.py'):
@@ -19,12 +19,12 @@ def plot(samples, save='hmc_qho_1d_pot.py'):
     ax.append(fig.add_subplot(111))
     
     name = "QHO"
-    fig.suptitle(r'Sampled {} Potential'.format(name), fontsize=16)
+    fig.suptitle(r'Sampled {} Ground State Potential'.format(name), fontsize=16)
     
     ax[0].set_title(
         r'{} HMC samples'.format(samples.shape[0]-1))
     
-    ax[0].set_ylabel(r'Sampled Potential, $e^{-V(x)}$')
+    ax[0].set_ylabel(r'Sampled Potential, $V(x)$')
     ax[0].set_xlabel(r"Position, $x$")
     
     n = 100 # size of linear space
@@ -38,7 +38,7 @@ def plot(samples, save='hmc_qho_1d_pot.py'):
     c = np.sqrt(w / np.pi) # this is the theory
     actual = np.exp(-x**2*1.1)*c
     
-    theory = r'$|\psi(x)|^2 = \sqrt{\frac{\omega}{\pi}}e^{-\omega x^2}$ for $\omega=\sqrt{\frac{5}{4}}$'
+    theory = r'$|\psi_0(x)|^2 = \sqrt{\frac{\omega}{\pi}}e^{-\omega x^2}$ for $\omega=\sqrt{\frac{5}{4}}$'
     
     n, bins, patches = ax[0].hist(samples.ravel(), 50, normed=1, # histogram
         facecolor='green', alpha=0.2, label=r'Sampled Data')

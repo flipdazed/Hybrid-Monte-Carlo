@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from HMC_sho_1d import Model
+from hmc_sho_1d import Model
 from scipy.stats import norm
     
 def plot(samples, save='hmc_sho_1d_pot.png'):
@@ -36,14 +36,21 @@ def plot(samples, save='hmc_sho_1d_pot.png'):
     fitted = norm.pdf(x, loc=p[0], scale=p[1])
     actual = norm.pdf(x)
     
-    n, bins, patches = ax[0].hist(samples, 50, normed=1, # histogram
-        facecolor='green', alpha=0.5, label=r'Sampled Data')
+    theory = r'$f(x) = \sqrt{\frac{\omega}{\pi}}e^{-\omega x^2}$ for $\omega=\frac{1}{2}$'
     
+    n, bins, patches = ax[0].hist(samples, 50, normed=1, # histogram
+        facecolor='green', alpha=0.2, label=r'Sampled Data')
+        
     ax[0].plot(x, fitted, # marker='x', # best fit
-        linestyle='-', color='orange', label=r'Fitted Potential')
+        linestyle='-', color='red', linewidth=2., alpha=0.6,
+        label=r'Fitted Potential')
     
     ax[0].plot(x, actual, # marker='x',
-        linestyle='-', color='blue', label=r'True Potential')
+        linestyle='--', color='blue', linewidth=2., alpha=0.6,
+        label=r'Theory: {}'.format(theory))
+    
+    ax[0].legend(loc='upper left', shadow=True, fontsize = pp.axfont)
+    ax[0].grid(False)
     
     pp.save_or_show(save, PLOT_LOC)
     pass
@@ -54,7 +61,9 @@ if __name__ == '__main__':
     n_samples = 1000
     
     model = Model()
+    print 'Running Model'
     model.run(n_samples=n_samples, n_burn_in=n_burn_in)
+    print 'Finished Running Model'
     
     samples = np.asarray(model.samples).reshape(n_samples+1)
     

@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from HMC_mvg_2d import Model
+from hmc_mvg_2d import Model
 
 def plot(burn_in, samples, bg_xyz, save='hmc_mvg_2d_pot.png'):
     """Note that samples and burn_in contain the initial conditions"""
