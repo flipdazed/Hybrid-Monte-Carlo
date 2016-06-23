@@ -37,9 +37,9 @@ class Shared(object):
         """
         if not hasattr(self, 'debug'): self.debug = False
         if self.debug:
-            h = self.kineticEnergy(p) + self.potentialEnergy(x)[0]
+            h = self.kE(p) + self.uE(x)[0]
         else:
-            h = self.kineticEnergy(p) + self.potentialEnergy(x)
+            h = self.kE(p) + self.uE(x)
         
         # check 1 dimensional
         checks.tryAssertEqual(h.shape, (1,)*len(h.shape),
@@ -361,9 +361,6 @@ class Simple_Harmonic_Oscillator(Shared):
         
         super(Simple_Harmonic_Oscillator, self)._nonLattice()
         super(Simple_Harmonic_Oscillator, self).__init__()
-        
-        self.mean = np.asarray([[0.]]).sum(axis=0)
-        self.cov = np.asarray([[1.]]).sum(axis=0)
         pass
     
     def kineticEnergy(self, p):
@@ -396,8 +393,8 @@ class Multivariate_Gaussian(Shared):
     """
     def __init__(self, mean=[[0.], [0.]], cov=[[1.,.8],[.8,1.]]):
         self.name = 'MVG'
-        self.mean = np.matrix(mean) # use 1D matrix for vector to use linalg ops.
-        self.cov = np.matrix(cov)
+        self.mean = np.asarray(mean)
+        self.cov = np.asmatrix(cov)
         self.dim = self.mean.shape[1]
         
         self.dim_rng = np.arange(self.dim) # range of dimensions for iterating

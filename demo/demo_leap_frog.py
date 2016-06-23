@@ -83,7 +83,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         ax[0].plot(steps, kE_ar + uE_ar, linestyle='-', color='blue')
         
         if save:
-            save_dir = PLOT_LOC + 'plots/'
+            save_dir = '../' + PLOT_LOC
             subprocess.call(['mkdir', save_dir])
             
             fig.savefig(save_dir+save)
@@ -204,7 +204,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
                                       interval=50, blit=False, init_func=init)
         
         if save:
-            save_dir = ANIM_LOC + 'animations/'
+            save_dir = '../' + ANIM_LOC
             subprocess.call(['mkdir', save_dir])
             
             if save.split('.')[-1] == 'gif':
@@ -249,7 +249,7 @@ def fullDemo():
     lf = Leap_Frog(
         duE = pot.duE,
         step_size = 0.1,
-        # n_steps = 63,
+        # n_steps = 63, # 64 = full circle in phase space
         n_steps = 250,
         save_path = True
         )

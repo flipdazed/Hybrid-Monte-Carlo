@@ -92,7 +92,7 @@ class Test(object):
         return passed
 #
 if __name__ == '__main__':
-    utils.newTest(TEST_ID)
     test = Test()
+    utils.newTest(test.id)
     test.bvg()
     test.qho()

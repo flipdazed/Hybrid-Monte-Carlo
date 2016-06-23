@@ -148,12 +148,21 @@ class Cube(Pretty_Plotter):
 if __name__ == '__main__':
     
     cube = Cube()
+    
+    # draw the cube
     cube.drawBase()
+    
     # x, y, z = (width, height, depth)
+    # plot the labels to annotate points
     cube.plotLabels(r'$\vec{e}_{x_1}$', 0, -1, -1, (-20, -10))
     cube.plotLabels(r'$\vec{e}_{x_2}$', -1, -1, 0, (-20, 10))
     cube.plotLabels(r'$\vec{e}_{\pi}$', 1, 0, 1, (-15, 10))
     cube.plotLabels(r'$\phi(x_1, x_2, \pi)$', -1, -1, 1, (-15, 10))
-    cube.title(r'Introducing conjugate momenta, $\pi$, to a 2D $(x,\tau)$ Lattice')
+    
+    # plot the lattice spacing annotation
     cube.plotLatticeSpacing(r"$a=i\Delta t$")
+    
+    # main title
+    cube.title(r'Introducing conjugate momenta, $\pi$, to a 2D $(x,\tau)$ Lattice')
+    
     cube.save()

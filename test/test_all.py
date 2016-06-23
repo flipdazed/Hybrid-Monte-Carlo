@@ -93,10 +93,8 @@ def testHMC():
     n_burn_in   = 50
     tol         = 5e-1
     
-    assert test.hmcSho1d(n_samples = n_samples, n_burn_in = n_burn_in,
-        tol = tol, print_out = True, save = False)[0]
-    assert test.hmcGaus2d(n_samples = n_samples, n_burn_in = n_burn_in,
-        tol = tol, print_out = True, save = False)[0]
+    assert test.hmcSho1d(n_samples = n_samples, n_burn_in = n_burn_in, tol = tol)
+    assert test.hmcGaus2d(n_samples = n_samples, n_burn_in = n_burn_in, tol = tol)
     pass
 
 def testMomentum():
