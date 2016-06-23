@@ -86,15 +86,16 @@ def testLattice():
     pass
 
 def testHMC():
-    utils.newTest('hmc')
     test = test_hmc.Test(rng)
+    utils.newTest(test.id)
     
     n_samples   = 1000
-    n_burn_in   = 50
-    tol         = 5e-1
+    n_burn_in   = 15
+    tol         = 1e-1
     
     assert test.hmcSho1d(n_samples = n_samples, n_burn_in = n_burn_in, tol = tol)
     assert test.hmcGaus2d(n_samples = n_samples, n_burn_in = n_burn_in, tol = tol)
+    assert test.hmcQho(n_samples = n_samples/10, n_burn_in = n_burn_in, tol = tol)
     pass
 
 def testMomentum():

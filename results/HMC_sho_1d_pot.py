@@ -6,7 +6,7 @@ from plotter import Pretty_Plotter, PLOT_LOC
 from HMC_sho_1d import Model
 from scipy.stats import norm
     
-def plot(samples, save='HMC_sho_1d_pot.png'):
+def plot(samples, save='hmc_sho_1d_pot.png'):
     """Note that samples and burn_in contain the initial conditions"""
     
     pp = Pretty_Plotter()

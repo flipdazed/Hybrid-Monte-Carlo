@@ -28,7 +28,7 @@ class Test(object):
         
         pass
     
-    def hmcSho1d(self, n_samples = 1000, n_burn_in = 5, tol = 5e-2, print_out = True):
+    def hmcSho1d(self, n_samples = 1000, n_burn_in = 10, tol = 5e-2, print_out = True):
         """A test to sample the Simple Harmonic Oscillator
         
         Optional Inputs
@@ -83,7 +83,7 @@ class Test(object):
         
         return passed
     
-    def hmcGaus2d(self, n_samples = 1000, n_burn_in = 5, tol = 5e-2, print_out = True):
+    def hmcGaus2d(self, n_samples = 1000, n_burn_in = 10, tol = 5e-2, print_out = True):
         """A test to sample the 2d Gaussian Distribution
         
         Optional Inputs
@@ -204,9 +204,6 @@ if __name__ == '__main__':
     
     test = Test(rng)
     utils.newTest(test.id)
-    test.hmcSho1d(n_samples = 1000, n_burn_in = 10,
-        tol = 1e-1)
-    test.hmcGaus2d(n_samples = 1000, n_burn_in = 10,
-        tol = 1e-1)
-    test.hmcQho(n_samples = 100, n_burn_in = 10,
-        tol = 1e-1)
+    test.hmcSho1d(n_samples = 1000, n_burn_in = 10, tol = 1e-1)
+    test.hmcGaus2d(n_samples = 1000, n_burn_in = 10, tol = 1e-1)
+    test.hmcQho(n_samples = 100, n_burn_in = 10, tol = 1e-1)

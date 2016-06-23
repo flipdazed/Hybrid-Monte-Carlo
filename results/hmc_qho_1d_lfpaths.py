@@ -5,7 +5,7 @@ from plotter import Pretty_Plotter, PLOT_LOC
 
 from HMC_qho_1d import Model
 
-def plot(burn_in, samples, save='HMC_qho_1d_LFpaths.png'):
+def plot(burn_in, samples, save='hmc_qho_1d_lfpaths.png'):
     """Note that samples and burn_in contain the initial conditions"""
     
     pp = Pretty_Plotter()
