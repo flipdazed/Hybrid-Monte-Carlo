@@ -129,8 +129,8 @@ if '__main__' == __name__:
     
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
-    
+    print save_name
     plot(y1 = kins, y2 = pots, all_lines=True,
-        # save = save_name,
-        save = False
+        save = save_name
+        # save = False
         )

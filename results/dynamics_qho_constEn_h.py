@@ -8,7 +8,7 @@ step_size = .01
 
 print 'Running Model'
 pot = QHO()
-kins, pots = dynamicalEnergyChange(pot, n_steps, step_size)
+kins, pots = dynamics_qho_constEn_1d.dynamicalEnergyChange(pot, n_steps, step_size)
 print 'Finished Running Model'
 
 f_name = os.path.basename(__file__)
