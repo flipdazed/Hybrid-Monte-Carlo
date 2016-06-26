@@ -5,7 +5,7 @@ from copy import copy
 
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from hmc_lattice import Model
+from models.hmc.lattice import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 import dynamics_sho_rev

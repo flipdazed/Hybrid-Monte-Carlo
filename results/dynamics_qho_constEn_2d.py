@@ -6,7 +6,7 @@ from copy import copy
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 from matplotlib.colors import LogNorm
 
-from hmc_lattice import Model
+from models.hmc.lattice import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 def plot(x, y, z, save = 'dynamics_qho_constEn_2d.png'):
@@ -85,8 +85,8 @@ if '__main__' == __name__:
     
     step_sizes  = [.001, .5]
     steps       = [1, 500]
-    n_steps     = 100
-    n_sizes     = 100
+    n_steps     = 25
+    n_sizes     = 25
     
     steps = np.linspace(steps[0], steps[1], n_steps, True, dtype=int)
     step_sizes = np.linspace(step_sizes[0], step_sizes[1], n_sizes, True)

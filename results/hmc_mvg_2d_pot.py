@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from hmc_mvg_2d import Model
+from models.hmc.continuum import Model
+from hmc.potentials import Multivariate_Gaussian as MVG
 
 def plot(burn_in, samples, bg_xyz, save='hmc_mvg_2d_pot.png'):
     """Note that samples and burn_in contain the initial conditions"""
@@ -79,18 +80,24 @@ if __name__ == '__main__':
     n_burn_in = 5
     n_samples = 50
     
-    model = Model()
+    pot = MVG()
+    model = Model(pot=pot, dim=2)
+    
+    # adjust for nice plotting
+    model.sampler.x0[0] = -4.
+    model.sampler.x0[1] = 4.
+    
     model.run(n_samples=n_samples, n_burn_in=n_burn_in)
     
     # change shape from (n, 2) -> (2, n)
     samples = model.samples
     burn_in = model.burn_in
     
-    xyz = getPotential(model.pot.uE)
+    xyz = getPotential(pot.uE)
     
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
     plot(burn_in=burn_in, samples=samples, bg_xyz=xyz,
-        save=save_name
-        # save=False
+        # save=save_name
+        save=False
         )

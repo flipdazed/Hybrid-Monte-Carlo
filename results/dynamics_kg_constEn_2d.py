@@ -6,8 +6,8 @@ from hmc.potentials import Klein_Gordon as KG
 
 step_sizes  = [.001, .5]
 steps       = [1, 500]
-n_steps     = 100
-n_sizes     = 100
+n_steps     = 25
+n_sizes     = 25
 
 steps = np.linspace(steps[0], steps[1], n_steps, True, dtype=int)
 step_sizes = np.linspace(step_sizes[0], step_sizes[1], n_sizes, True)

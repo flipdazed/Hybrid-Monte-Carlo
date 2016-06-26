@@ -5,7 +5,8 @@ from copy import copy
 
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from hmc_sho_1d import Model
+from models.hmc.continuum import Model
+from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
 
 def plot(norm, save='dynamics_sho_rev.png'):
@@ -79,7 +80,7 @@ if __name__ == '__main__':
     n_steps = 5000000
     
     # set up the model
-    model = Model()
+    model = Model(pot=SHO())
     model.dynamics.save_path = True
     model.dynamics.n_steps = n_steps
     

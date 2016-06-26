@@ -1,24 +1,33 @@
-from hmc.potentials import Multivariate_Gaussian
+from hmc.lattice import Periodic_Lattice
 from hmc.hmc import *
 
 class Model():
-    """A model to sample the MVG
+    """A model to sample for lattice QFT
+    
+    Required Inputs
+        pot         :: potential class - see hmc.potentials
     
     Optional Inputs
         n_steps     :: int  :: default number of steps for dynamics
         step_size   :: int  :: default step size for dynamics
+        n           :: int  :: lattice sites in each dimension
+        spacing     :: float :: lattice spacing
     """
-    def __init__(self, n_steps=10, step_size=0.1):
+    def __init__(self, pot, n_steps=20, step_size=0.1, n=100, spacing=1.0):
         
-        self.x0 = np.asarray([[-3.5], [4.]])
+        dim = 1
+        self.n = n
+        self.x0 = np.random.random((n,)*dim)
+        self.x0 = Periodic_Lattice(array=self.x0, spacing=spacing)
         
         self.rng = np.random.RandomState(111)
         
-        self.pot = Multivariate_Gaussian()
+        self.pot = pot
         self.dynamics = Leap_Frog(
             duE = self.pot.duE,
             step_size = step_size,
-            n_steps = n_steps)
+            n_steps = n_steps,
+            lattice=True)
         
         self.sampler = Hybrid_Monte_Carlo(self.x0, self.dynamics, self.pot, self.rng)
     
@@ -35,7 +44,12 @@ class Model():
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)
-        dim = self.x0.shape[0] # dimension the column vector
-        self.samples = np.asarray(samples).T.reshape(dim, -1).T
-        self.burn_in = np.asarray(burn_in).T.reshape(dim, -1).T
+        # this line doesn't work!
+        # dim = self.x0.get.shape[0] # dimension the column vector
+        dim = 1
+        burn_in = np.asarray([i.get for i in burn_in]).reshape(n_burn_in+1, self.n)
+        samples = np.asarray([i.get for i in samples]).reshape(n_samples+1, self.n)
+        
+        self.samples = samples
+        self.burn_in = burn_in
         pass

@@ -3,7 +3,8 @@ import os
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from hmc_sho_1d import Model
+from models.hmc.continuum import Model
+from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
 def plot(burn_in, samples, save='hmc_sho_1d_path.png'):
     """Note that samples and burn_in contain the initial conditions"""
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     n_burn_in = 10
     n_samples = 25
     
-    model = Model()
+    model = Model(pot=SHO())
     model.run(n_samples=n_samples, n_burn_in=n_burn_in)
     
     burn_in = np.asarray(model.burn_in).reshape(n_burn_in+1)
