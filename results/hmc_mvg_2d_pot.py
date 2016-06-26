@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from models.hmc.continuum import Model
+from common.hmc.continuum import Model
 from hmc.potentials import Multivariate_Gaussian as MVG
 
 def plot(burn_in, samples, bg_xyz, save='hmc_mvg_2d_pot.png'):

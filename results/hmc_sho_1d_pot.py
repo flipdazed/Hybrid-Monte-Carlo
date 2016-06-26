@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from models.hmc.continuum import Model
+from common.hmc.continuum import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 from scipy.stats import norm
 

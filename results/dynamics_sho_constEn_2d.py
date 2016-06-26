@@ -5,7 +5,7 @@ from copy import copy
 
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from models.hmc.continuum import Model
+from common.hmc.continuum import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
 def plot(x, y, z, save = 'dynamics_sho_constEn_2d.png'):

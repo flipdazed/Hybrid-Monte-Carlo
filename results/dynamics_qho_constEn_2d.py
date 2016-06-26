@@ -6,7 +6,7 @@ from copy import copy
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 from matplotlib.colors import LogNorm
 
-from models.hmc.lattice import Model
+from common.hmc.lattice import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 def plot(x, y, z, save = 'dynamics_qho_constEn_2d.png'):

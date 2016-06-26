@@ -7,7 +7,7 @@ from copy import copy
 from hmc import checks
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from models.hmc.lattice import Model
+from common.hmc.lattice import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 def plot(y1, y2, all_lines = False, save = 'dynamics_qho_constEn_1d.png'):

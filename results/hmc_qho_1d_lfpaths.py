@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from models.hmc.lattice import Model
+from common.hmc.lattice import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 def plot(burn_in, samples, save='hmc_qho_1d_lfpaths.png'):

@@ -5,7 +5,7 @@ from copy import copy
 
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from models.hmc.continuum import Model
+from common.hmc.continuum import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
 
