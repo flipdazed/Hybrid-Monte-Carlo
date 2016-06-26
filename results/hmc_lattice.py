@@ -1,9 +1,11 @@
-from hmc.potentials import Quantum_Harmonic_Oscillator
 from hmc.lattice import Periodic_Lattice
 from hmc.hmc import *
 
 class Model():
     """A model to sample the QHO
+    
+    Required Inputs
+        pot         :: potential class - see hmc.potentials
     
     Optional Inputs
         n_steps     :: int  :: default number of steps for dynamics
@@ -11,7 +13,7 @@ class Model():
         n           :: int  :: lattice sites in each dimension
         spacing     :: float :: lattice spacing
     """
-    def __init__(self, n_steps=20, step_size=0.1, n=100, spacing=1.0):
+    def __init__(self, pot, n_steps=20, step_size=0.1, n=100, spacing=1.0):
         
         dim = 1
         self.n = n
@@ -20,7 +22,7 @@ class Model():
         
         self.rng = np.random.RandomState(111)
         
-        self.pot = Quantum_Harmonic_Oscillator()
+        self.pot = pot
         self.dynamics = Leap_Frog(
             duE = self.pot.duE,
             step_size = step_size,

@@ -3,7 +3,8 @@ import os
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from hmc_qho_1d import Model
+from hmc_lattice import Model
+from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 def plot(burn_in, samples, save='hmc_qho_1d_lfpaths.png'):
     """Note that samples and burn_in contain the initial conditions"""
@@ -45,7 +46,8 @@ if __name__ == '__main__':
     n_burn_in = 5
     n_samples = 5
     
-    model = Model()
+    pot = QHO()
+    model = Model(pot=pot)
     model.run(n_samples=n_samples, n_burn_in=n_burn_in)
     
     f_name = os.path.basename(__file__)
@@ -55,6 +57,6 @@ if __name__ == '__main__':
     samples = model.samples
     
     plot(burn_in[:n_burn_in+1], samples=samples,
-        # save=save_name
-        save=False
+        save=save_name
+        # save=False
     )

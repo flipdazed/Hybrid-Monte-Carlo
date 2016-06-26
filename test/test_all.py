@@ -4,7 +4,9 @@ rng = np.random.RandomState(1234)
 
 import utils
 import hmc
-from hmc.potentials import Simple_Harmonic_Oscillator, Klein_Gordon
+from hmc.potentials import Simple_Harmonic_Oscillator
+from hmc.potentials import Quantum_Harmonic_Oscillator
+from hmc.potentials import Klein_Gordon
 from hmc.dynamics import Leap_Frog
 from hmc.lattice import Periodic_Lattice
 
@@ -25,55 +27,75 @@ def testPotentials():
     pass
 
 def testContinuumDynamics():
-    utils.newTest('hmc.dynamics (continuum)')
-    
-    n_steps     = 100
-    step_size   = .1
+    step_size   = [0.01, .1]
+    n_steps     = [1, 500]
     tol         = .05
+    samples     = 5
+    
+    step_sample = np.linspace(n_steps[0], n_steps[1],
+        samples, True, dtype=int),
+    step_sizes = np.linspace(step_size[0], step_size[1],
+        samples, True)
     
     pot = Simple_Harmonic_Oscillator()
-    integrator = Leap_Frog(duE = None,
-        n_steps = n_steps, step_size = step_size) # grad set in test
-    tests = test_dynamics.Continuum(dynamics = integrator, pot = pot)
+    p0  = np.asarray([[4.]])
+    x0  = np.asarray([[1.]])
     
-    p, x = np.asarray([[4.]]), np.asarray([[1.]])
+    dynamics = Leap_Frog(
+        duE = pot.duE,
+        n_steps = n_steps[-1],
+        step_size = step_size[-1],
+        lattice = False)
     
-    assert tests.constantEnergy(p, x, tol = tol,
-        step_sample = np.linspace(1, n_steps, 10, True, dtype=int),
-        step_sizes = np.linspace(0.01, step_size, 5, True),
-        save = False, print_out = True)
+    test = test_dynamics.Constant_Energy(pot, dynamics, tol=tol)
+    utils.newTest(test.id)
+    assert test.continuum(p0, x0, step_sample, step_sizes)
     
-    assert tests.reversibility(p, x, steps = n_steps*10, tol = tol, 
-        save = False, print_out = True)
+    test = test_dynamics.Reversibility(pot, dynamics, tol=tol)
+    utils.newTest(test.id)
+    assert test.continuum(p0, x0)
+    
     pass
 
 def testLatticeDynamics():
-    utils.newTest('hmc.dynamics  (lattice)')
-    
+    dim         = 1
     n           = 10
     spacing     = 1.
-    n_steps     = 500
-    step_size   = .01
-    dim         = 1
-    tol         = .05
+    step_size   = [0.01, .1]
+    n_steps     = [1, 500]
     
-    pot = Klein_Gordon()
-    integrator = Leap_Frog(lattice=True, duE = None,    # grad set in test
-        n_steps = n_steps, step_size = step_size)
-    tests = test_dynamics.Lattice(dynamics = integrator, pot = pot)
+    samples     = 2
+    tol         = .05
     
     x_nd = np.random.random((n,)*dim)
     p0 = np.random.random((n,)*dim)
-    x0 = Periodic_Lattice(array=x_nd, spacing=spacing)
+    x0 = Periodic_Lattice(array=copy(x_nd), spacing=spacing)
     
-    assert tests.constantEnergy(p0, x0, tol = tol,
-        step_sample = [n_steps],
-        step_sizes = [step_size],
-        save = False, print_out = True)
+    step_sample = np.linspace(n_steps[0], n_steps[1],
+        samples, True, dtype=int),
+    step_sizes = np.linspace(step_size[0], step_size[1],
+        samples, True)
     
-    assert tests.reversibility(p0, x0, steps = n_steps, tol = tol, 
-        save = False, print_out = True)
+    def run(pot):
+        """run with arbitrary potentials"""
     
+        dynamics = Leap_Frog(
+            duE = pot.duE,
+            n_steps = n_steps[-1],
+            step_size = step_size[-1],
+            lattice = True)
+    
+        test = test_dynamics.Constant_Energy(pot, dynamics, tol=tol)
+        utils.newTest(test.id)
+        assert test.lattice(p0, x0, step_sample, step_sizes)
+    
+        test = test_dynamics.Reversibility(pot, dynamics, tol=tol)
+        utils.newTest(test.id)
+        assert test.lattice(p0, x0)
+        pass
+    
+    run(Klein_Gordon())
+    run(Quantum_Harmonic_Oscillator())
     pass
 
 def testLattice():
@@ -89,13 +111,12 @@ def testHMC():
     test = test_hmc.Test(rng)
     utils.newTest(test.id)
     
-    n_samples   = 1000
     n_burn_in   = 15
     tol         = 1e-1
     
-    assert test.hmcSho1d(n_samples = n_samples, n_burn_in = n_burn_in, tol = tol)
-    assert test.hmcGaus2d(n_samples = n_samples, n_burn_in = n_burn_in, tol = tol)
-    assert test.hmcQho(n_samples = n_samples/10, n_burn_in = n_burn_in, tol = tol)
+    assert test.hmcSho1d(n_samples = 1000, n_burn_in = n_burn_in, tol = tol)
+    # assert test.hmcGaus2d(n_samples = 10000, n_burn_in = n_burn_in, tol = tol)
+    assert test.hmcQho(n_samples = 100, n_burn_in = n_burn_in, tol = tol)
     pass
 
 def testMomentum():

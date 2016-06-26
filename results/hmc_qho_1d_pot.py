@@ -3,7 +3,8 @@ import os
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from hmc_qho_1d import Model
+from hmc_lattice import Model
+from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 from scipy.stats import norm
 
 def plot(samples, save='hmc_qho_1d_pot.py'):
@@ -62,7 +63,8 @@ if __name__ == '__main__':
     n_burn_in = 5
     n_samples = 100
     
-    model = Model()
+    pot = QHO()
+    model = Model(pot = pot)
     print 'Running Model'
     model.run(n_samples=n_samples, n_burn_in=n_burn_in)
     print 'Finished Running Model'
