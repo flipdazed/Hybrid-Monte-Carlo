@@ -5,7 +5,7 @@ from copy import copy
 
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from common.hmc.continuum import Model
+from common.hmc_model import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
 
@@ -79,18 +79,18 @@ if __name__ == '__main__':
     
     n_steps = 5000000
     
-    # set up the model
-    model = Model(pot=SHO())
-    model.dynamics.save_path = True
-    model.dynamics.n_steps = n_steps
-    
     # initial conditions - shoudn't matter much
     p0 = np.asarray([[4.]])
     x0 = np.asarray([[1.]])
     
-    print 'Running Model'
+    # set up the model
+    model = Model(x0, pot=SHO())
+    model.dynamics.save_path = True
+    model.dynamics.n_steps = n_steps
+    
+    print 'Running Model: {}'.format(__file__)
     norm = reverseIntegration(p0, x0, model, n_steps)
-    print 'Finished Running Model'
+    print 'Finished Running Model: {}'.format(__file__)
     
     # average change across all sites
     av_norm = norm.mean(axis=1)
@@ -99,6 +99,6 @@ if __name__ == '__main__':
     save_name = os.path.splitext(f_name)[0] + '.png'
     
     plot(av_norm, 
-        # save=False
-        save=save_name
+        save = save_name
+        # save = False
         )

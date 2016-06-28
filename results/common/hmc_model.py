@@ -1,22 +1,25 @@
+from hmc.lattice import Periodic_Lattice
 from hmc.hmc import *
 
 class Model():
-    """A model to sample for continuum potentials
+    """A model to sample from the potentials with LeapFrog
     
     Required Inputs
+        x0          :: position (lattice)
         pot         :: potential class - see hmc.potentials
     
     Optional Inputs
         n_steps     :: int  :: default number of steps for dynamics
         step_size   :: int  :: default step size for dynamics
-        dim         :: int  :: dimensions of singularity
+        spacing     :: float :: lattice spacing
     """
-    def __init__(self, pot, dim = 1,  n_steps=10, step_size=0.1):
-        self.pot = pot
+    def __init__(self, x0, pot, n_steps=20, step_size=0.1, spacing=1.):
         
-        self.x0 = np.random.random((dim,)+(1,))
+        self.x0 = Periodic_Lattice(x0, lattice_spacing=spacing)
+        
         self.rng = np.random.RandomState(111)
         
+        self.pot = pot
         self.dynamics = Leap_Frog(
             duE = self.pot.duE,
             step_size = step_size,
@@ -37,7 +40,6 @@ class Model():
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)
-        dim = self.x0.shape[0] # dimension the column vector
-        self.samples = np.asarray(samples).T.reshape(dim, -1).T
-        self.burn_in = np.asarray(burn_in).T.reshape(dim, -1).T
+        self.samples = np.asarray(samples).reshape(n_samples+1, -1)
+        self.burn_in = np.asarray(burn_in).reshape(n_burn_in+1, -1)
         pass

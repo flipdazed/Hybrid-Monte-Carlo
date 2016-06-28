@@ -7,7 +7,7 @@ from copy import copy
 from hmc import checks
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from common.hmc.lattice import Model
+from common.hmc_model import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 def plot(y1, y2, all_lines = False, save = 'dynamics_qho_constEn_1d.png'):
@@ -75,8 +75,10 @@ def dynamicalEnergyChange(pot, n_steps, step_size):
         step_sample :: int   :: sample array of integrator step lengths
         step_sizes  :: float :: sample array of integrator step sizes
     """
+    dim = 1; n=100
+    x0 = np.random.random((n,)*dim)
     
-    model = Model(
+    model = Model(x0,
         pot       = pot,
         n_steps   = n_steps, 
         step_size = step_size,
@@ -87,7 +89,7 @@ def dynamicalEnergyChange(pot, n_steps, step_size):
     
     # initial conditions - shoudn't matter much
     p0 = model.sampler.p
-    x0 = model.x0
+    x0 = model.sampler.x
     
     # calculate original hamiltonian and set starting vals
     h0    = model.pot.hamiltonian(p0, x0)
@@ -106,11 +108,7 @@ def dynamicalEnergyChange(pot, n_steps, step_size):
     pf, xf = model.dynamics.integrate(copy(p0), copy(x0))
     
     kE_path = [model.pot.kE(i) for i in model.dynamics.p_ar]
-    uE_path = []
-    
-    for i in model.dynamics.x_ar:
-        x0.get = i      # must pass as Periodic_Lattice() instance
-        uE_path.append(model.pot.uE(x0))
+    uE_path = [model.pot.uE(i) for i in model.dynamics.x_ar]
     
     kins = np.asarray([kE0] + kE_path)
     pots = [uE0] + uE_path
@@ -122,14 +120,14 @@ if '__main__' == __name__:
     n_steps   = 500
     step_size = .01
         
-    print 'Running Model'
+    print 'Running Model: {}'.format(__file__)
     pot = QHO()
     kins, pots = dynamicalEnergyChange(pot, n_steps, step_size)
-    print 'Finished Running Model'
+    print 'Finished Running Model: {}'.format(__file__)
     
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
-    print save_name
+    
     plot(y1 = kins, y2 = pots, all_lines=True,
         save = save_name
         # save = False

@@ -10,7 +10,7 @@ class Periodic_Lattice(np.ndarray):
     
     Only currently supports single point selections wrapped around the boundary
     """
-    def __new__(cls, input_array, lattice_spacing=None):
+    def __new__(cls, input_array, lattice_spacing=1.):
         """__new__ is called by numpy when and explicit constructor is used:
         obj = MySubClass(params) otherwise we must rely on __array_finalize
          """
@@ -30,9 +30,9 @@ class Periodic_Lattice(np.ndarray):
         index = self.latticeWrapIdx(index)
         return super(Periodic_Lattice, self).__getitem__(index)
     
-    def __setitem__(self, index):
+    def __setitem__(self, index, item):
         index = self.latticeWrapIdx(index)
-        return super(Periodic_Lattice, self).__setitem__(index)
+        return super(Periodic_Lattice, self).__setitem__(index, item)
     
     def __array_finalize__(self, obj):
         """ ndarray.__new__ passes __array_finalize__ the new object, 

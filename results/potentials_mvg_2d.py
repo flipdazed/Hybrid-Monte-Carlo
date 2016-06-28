@@ -41,7 +41,8 @@ def plot(x, y, z, save = 'potentials_Gaussian_2d.png'):
     pass
 #
 if __name__ == '__main__':
-     
+    
+    print "Running Model: {}".format(__file__) 
     # define the mean and covariance
     mean = np.asarray([[0.], [0.]])
     cov = np.asarray([[1.0,0.8], [0.8,1.0]])
@@ -64,8 +65,12 @@ if __name__ == '__main__':
     
     # reshape back into an NxN
     z = np.asarray(z).reshape(n, n)
+    print "Finished Running Model: {}".format(__file__)
     
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
-    plot(x,y,z, save=save_name)
+    plot(x,y,z,
+        save = save_name
+        # save = False
+        )
     

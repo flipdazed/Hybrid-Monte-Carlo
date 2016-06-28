@@ -41,7 +41,7 @@ class Test(object):
         raw_lattice = np.arange(sites**dim).reshape(shape)
         
         self.pot = QHO()
-        self.x = Periodic_Lattice(array = raw_lattice, spacing = 1.)
+        self.x = Periodic_Lattice(raw_lattice)
         self.p = np.asarray(shape)
         idx_list = [(0,)*dim, (sites,)*dim, (sites-1,)*dim]
         
@@ -49,7 +49,7 @@ class Test(object):
         
         return passed
     
-    def _TestFns(self, name, passed, x, p, idx_list=[0]):
+    def _TestFns(self, name, passed, x, p, idx_list=[(0,0)]):
         """Returns a list of functions for the current potential
         
         Required Inputs:

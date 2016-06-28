@@ -26,80 +26,43 @@ def testPotentials():
     assert test.qho()
     pass
 
-def testContinuumDynamics():
-    step_size   = [0.01, .1]
-    n_steps     = [1, 500]
-    tol         = .05
-    samples     = 5
-    
-    step_sample = np.linspace(n_steps[0], n_steps[1],
-        samples, True, dtype=int),
-    step_sizes = np.linspace(step_size[0], step_size[1],
-        samples, True)
-    
-    pot = Simple_Harmonic_Oscillator()
-    p0  = np.asarray([[4.]])
-    x0  = np.asarray([[1.]])
-    
-    dynamics = Leap_Frog(
-        duE = pot.duE,
-        n_steps = n_steps[-1],
-        step_size = step_size[-1],
-        lattice = False)
-    
-    test = test_dynamics.Constant_Energy(pot, dynamics, tol=tol)
-    utils.newTest(test.id)
-    assert test.continuum(p0, x0, step_sample, step_sizes)
-    
-    test = test_dynamics.Reversibility(pot, dynamics, tol=tol)
-    utils.newTest(test.id)
-    assert test.continuum(p0, x0)
-    
-    pass
 
-def testLatticeDynamics():
+def testDynamics():
     dim         = 1
     n           = 10
     spacing     = 1.
     step_size   = [0.01, .1]
     n_steps     = [1, 500]
     
-    samples     = 2
-    tol         = .05
+    samples     = 5
+    step_sample = np.linspace(n_steps[0], n_steps[1], samples, True, dtype=int),
+    step_sizes = np.linspace(step_size[0], step_size[1], samples, True)
     
     x_nd = np.random.random((n,)*dim)
     p0 = np.random.random((n,)*dim)
-    x0 = Periodic_Lattice(array=copy(x_nd), spacing=spacing)
+    x0 = Periodic_Lattice(x_nd)
     
-    step_sample = np.linspace(n_steps[0], n_steps[1],
-        samples, True, dtype=int),
-    step_sizes = np.linspace(step_size[0], step_size[1],
-        samples, True)
+    dynamics = Leap_Frog(
+        duE = None,
+        n_steps = n_steps[-1],
+        step_size = step_size[-1])
     
-    def run(pot):
-        """run with arbitrary potentials"""
-    
-        dynamics = Leap_Frog(
-            duE = pot.duE,
-            n_steps = n_steps[-1],
-            step_size = step_size[-1],
-            lattice = True)
-    
-        test = test_dynamics.Constant_Energy(pot, dynamics, tol=tol)
+    for pot in [Simple_Harmonic_Oscillator(), 
+        Klein_Gordon(), Quantum_Harmonic_Oscillator()]:
+        
+        dynamics.duE = pot.duE
+        
+        test = test_dynamics.Constant_Energy(pot, dynamics)
         utils.newTest(test.id)
-        assert test.lattice(p0, x0, step_sample, step_sizes)
-    
-        test = test_dynamics.Reversibility(pot, dynamics, tol=tol)
+        assert test.run(p0, x0, step_sample, step_sizes)
+        
+        test = test_dynamics.Reversibility(pot, dynamics)
         utils.newTest(test.id)
-        assert test.lattice(p0, x0)
-        pass
-    
-    run(Klein_Gordon())
-    run(Quantum_Harmonic_Oscillator())
+        assert test.run(p0, x0)
     pass
 
 def testLattice():
-    test = Test()
+    test = test_lattice.Test()
     utils.newTest(test.id)
     assert test.wrap(print_out = True)
     assert test.laplacian(print_out = True)
@@ -135,9 +98,8 @@ def testMomentum():
     pass
 
 if __name__ == '__main__':
-    testPotentials()
-    testContinuumDynamics()
-    testLatticeDynamics()
+    # testPotentials()
+    # testDynamics()
     testLattice()
     testHMC()
     testMomentum()

@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from common.hmc.continuum import Model
+from common.hmc_model import Model
 from hmc.potentials import Multivariate_Gaussian as MVG
 
 def plot(burn_in, samples, bg_xyz, save='hmc_mvg_2d_pot.png'):
@@ -23,7 +23,7 @@ def plot(burn_in, samples, bg_xyz, save='hmc_mvg_2d_pot.png'):
     
     fig.suptitle(r'Sampling Multivariate Gaussian with HMC',
         fontsize=pp.ttfont)
-    ax.set_title(r'Showing the burn-in \& first 50 HMC moves for:\ $\mu=\begin{pmatrix}0 & 0\end{pmatrix}$, $\Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$',
+    ax.set_title(r'Showing the burn-in \& first 100 HMC moves for:\ $\mu=\begin{pmatrix}0 & 0\end{pmatrix}$, $\Sigma = \begin{pmatrix} 1.0 & 0.8\\ 0.8 & 1.0 \end{pmatrix}$',
         fontsize=(pp.tfont-4))
     
     plt.grid(True)
@@ -77,17 +77,18 @@ def getPotential(potFn, n_points=100):
 #
 if __name__ == '__main__':
     
-    n_burn_in = 5
-    n_samples = 50
+    n_burn_in = 15
+    n_samples = 100
     
     pot = MVG()
-    model = Model(pot=pot, dim=2)
+    
+    x0 = np.asarray([[-4.],[4.]])
+    model = Model(x0, pot=pot)
     
     # adjust for nice plotting
-    model.sampler.x0[0] = -4.
-    model.sampler.x0[1] = 4.
-    
+    print "Running Model: {}".format(__file__)
     model.run(n_samples=n_samples, n_burn_in=n_burn_in)
+    print "Finished Running Model: {}".format(__file__)
     
     # change shape from (n, 2) -> (2, n)
     samples = model.samples
@@ -98,6 +99,6 @@ if __name__ == '__main__':
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
     plot(burn_in=burn_in, samples=samples, bg_xyz=xyz,
-        # save=save_name
-        save=False
+        save = save_name
+        # save = False
         )

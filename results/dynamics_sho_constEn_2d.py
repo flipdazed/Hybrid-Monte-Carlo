@@ -5,7 +5,7 @@ from copy import copy
 
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from common.hmc.continuum import Model
+from common.hmc_model import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
 def plot(x, y, z, save = 'dynamics_sho_constEn_2d.png'):
@@ -47,12 +47,11 @@ def dynamicalEnergyChange(step_sample, step_sizes):
         step_sample :: int   :: sample array of integrator step lengths
         step_sizes  :: float :: sample array of integrator step sizes
     """
-    
-    model = Model(pot=SHO())
-    
     # initial conditions - shoudn't matter much
     p0 = np.asarray([[4.]])
     x0 = np.asarray([[1.]])
+    
+    model = Model(x0, pot=SHO())
     
     # calculate original hamiltonian and set starting vals
     h_old = model.pot.hamiltonian(p0, x0)
@@ -90,14 +89,14 @@ if '__main__' == __name__:
     steps = np.linspace(steps[0], steps[1], n_steps, True, dtype=int)
     step_sizes = np.linspace(step_sizes[0], step_sizes[1], n_sizes, True)
         
-    print 'Running Model'
+    print 'Running Model: {}'.format(__file__)
     en_diffs = dynamicalEnergyChange(steps, step_sizes)
-    print 'Finished Running Model'
+    print 'Finished Running Model: {}'.format(__file__)
     
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
     
     plot(x = steps, y = step_sizes, z = en_diffs,
-        # save = save_name,
-        save = False
+        save = save_name
+        # save = False
         )

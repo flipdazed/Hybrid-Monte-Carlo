@@ -155,7 +155,7 @@ class Test(object):
         
         x_nd = np.random.random((n,)*dim)
         p0 = np.random.random((n,)*dim)
-        x0 = Periodic_Lattice(array=x_nd, spacing=spacing)
+        x0 = Periodic_Lattice(x_nd)
         
         self.lf.duE = self.qho.duE # reassign leapfrog gradient
         self.lf.step_size = step_size
@@ -172,7 +172,7 @@ class Test(object):
         self.burn_in = np.asarray(burn_in)
         self.p_samples = p_samples
         
-        s = np.asarray([i.get for i in self.samples]).reshape(n_samples+1, n)
+        s = np.asarray(self.samples).reshape(n_samples+1, n)
         fitted = norm.fit(s.ravel())
         
         w = np.sqrt(1.25) # w  = 1/(sigma)^2

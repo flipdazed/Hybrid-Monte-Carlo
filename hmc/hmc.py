@@ -29,12 +29,8 @@ class Hybrid_Monte_Carlo(object):
         self.accept = Accept_Reject(self.rng)
         
         self.x = self.x0
-        if hasattr(self.x0, 'get'):
-            self.p = self.momentum.fullRefresh(self.x0.get) # intial mom. sample
-            shapes = (self.x.get.shape,self.p.shape)
-        else:
-            self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
-            shapes = (self.x.shape,self.p.shape)
+        self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
+        shapes = (self.x.shape,self.p.shape)
         
         checks.tryAssertEqual(*shapes,
              error_msg=' x.shape != p.shape' \

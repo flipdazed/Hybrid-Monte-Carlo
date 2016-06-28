@@ -5,7 +5,7 @@ from copy import copy
 
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from common.hmc.lattice import Model
+from common.hmc_model import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 import dynamics_sho_rev
@@ -14,10 +14,12 @@ import dynamics_sho_rev
 if __name__ == '__main__':
     
     n_steps = 500
+    dim = 1; n=100
+    x0 = np.random.random((n,)*dim)
     
     pot = QHO()
     # set up the model
-    model = Model(
+    model = Model(x0,
         pot       = pot,
         n_steps   = n_steps, 
         step_size = 0.01,
@@ -27,11 +29,11 @@ if __name__ == '__main__':
     
     # initial conditions - shoudn't matter much
     p0 = model.sampler.p
-    x0 = model.x0
+    x0 = model.sampler.x
     
-    print 'Running Model'
+    print 'Running Model: {}'.format(__file__)
     norm = dynamics_sho_rev.reverseIntegration(p0, x0, model, n_steps)
-    print 'Finished Running Model'
+    print 'Finished Running Model: {}'.format(__file__)
     
     # average change across all sites
     av_norm = norm.mean(axis=1)
@@ -40,6 +42,6 @@ if __name__ == '__main__':
     save_name = os.path.splitext(f_name)[0] + '.png'
     
     dynamics_sho_rev.plot(av_norm, 
-        # save=False
-        save=save_name
+        save = save_name
+        # save = False
         )

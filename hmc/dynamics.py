@@ -1,5 +1,6 @@
 import numpy as np
 from copy import copy
+import checks
 
 class Leap_Frog(object):
     """Leap Frog Integrator
@@ -8,16 +9,16 @@ class Leap_Frog(object):
         duE  :: func :: Gradient of Potential Energy
     
     Optional Inputs
-        d   :: integration step size
-        l  :: leap frog integration steps (trajectory length)
+        step_size   :: integration step size
+        n_steps     :: leap frog integration steps (trajectory length)
+        save_path   :: saves the integration path - see _stepSteps() for locations
     
     Note: Do not confuse x0,p0 with initial x0,p0 for HD
     """
-    def __init__(self, duE, step_size = 0.1, n_steps = 250, lattice=False, save_path = False):
+    def __init__(self, duE, step_size = 0.1, n_steps = 250, save_path = False):
         self.step_size = step_size
         self.n_steps = n_steps
         self.duE = duE
-        self.lattice = lattice
         
         self.save_path = save_path
         self.newPaths() # create blank lists
@@ -89,15 +90,8 @@ class Leap_Frog(object):
             p :: float :: current momentum
             x :: float :: current position
         """
-        # print "         > X Move"
         
-        if not self.lattice:
-            # all addition can be done in place as it is a one-to-one operation
-            self.x += frac_step*self.step_size*self.p
-            
-        else: # lattice is present
-            # all addition can be done in place as it is a one-to-one operation
-            self.x.get += frac_step*self.step_size*self.p
+        self.x += frac_step*self.step_size*self.p
         pass
     
     def _moveP(self, frac_step = 1.):
@@ -112,20 +106,14 @@ class Leap_Frog(object):
         
         The momenta moves sweep through all the momentum field positions and
         update them in turn using a numpy array iteration
-        
-        The separation between lattice and non-lattice theory is due to the
-        potentials used. The SHO and Multivariate Gaussian derivatives do not accept
-        position indices for gradient terms and have an analytical derivative term.
-        
-        This needs to be corrected.
         """
-        
-        if not self.lattice:
-            self.p -= frac_step*self.step_size*self.duE(self.x)
-            
-        else: # lattice is present
-            for index in np.ndindex(self.p.shape):
+        # the extra value in the case of a non lattice potential is
+        # garbaged by *args
+        for index in np.ndindex(self.p.shape):
+            try:
                 self.p[index] -= frac_step*self.step_size*self.duE(self.x, index)
+            except:
+                checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(self.x, index)))
         pass
     def _storeSteps(self, new=False):
         """Stores current momentum and position in lists
@@ -136,12 +124,8 @@ class Leap_Frog(object):
             self.x_step :: float
             self.p_step :: float
         """
-        if not self.lattice:
-            self.p_ar.append(copy(self.p))
-            self.x_ar.append(copy(self.x))
-        else: # lattice is present
-            self.p_ar.append(copy(self.p))
-            self.x_ar.append(copy(self.x.get))
+        self.p_ar.append(copy(self.p))
+        self.x_ar.append(copy(self.x))
         pass
     
     def newPaths(self):

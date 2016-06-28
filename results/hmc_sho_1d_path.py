@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from common.hmc.continuum import Model
+from common.hmc_model import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
 def plot(burn_in, samples, save='hmc_sho_1d_path.png'):
@@ -46,8 +46,13 @@ if __name__ == '__main__':
     n_burn_in = 10
     n_samples = 25
     
-    model = Model(pot=SHO())
+    dim = 1; n = 1
+    x0 = np.random.random((n,)*dim+(1,))
+    
+    model = Model(x0, pot=SHO())
+    print "Running Model: {}".format(__file__)
     model.run(n_samples=n_samples, n_burn_in=n_burn_in)
+    print "Finished Running Model: {}".format(__file__)
     
     burn_in = np.asarray(model.burn_in).reshape(n_burn_in+1)
     samples = np.asarray(model.samples).reshape(n_samples+1)
@@ -56,6 +61,6 @@ if __name__ == '__main__':
     save_name = os.path.splitext(f_name)[0] + '.png'
     
     plot(burn_in[:n_burn_in+1], samples=samples, 
-        # save=save_name
-        save=False
-    )
+        save = save_name
+        # save = False
+        )

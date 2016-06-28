@@ -6,7 +6,7 @@ from copy import copy
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 from matplotlib.colors import LogNorm
 
-from common.hmc.lattice import Model
+from common.hmc_model import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 def plot(x, y, z, save = 'dynamics_qho_constEn_2d.png'):
@@ -49,12 +49,15 @@ def dynamicalEnergyChange(pot, step_sample, step_sizes):
         step_sample :: int   :: sample array of integrator step lengths
         step_sizes  :: float :: sample array of integrator step sizes
     """
+    dim = 1; n=100
+    x0 = np.random.random((n,)*dim)
     
-    model = Model(pot = pot)
+    model = Model(x0, pot = pot)
     
     # initial conditions - shoudn't matter much
     p0 = model.sampler.p
-    x0 = model.x0
+    x0 = model.sampler.x
+    
     # calculate original hamiltonian and set starting vals
     h_old = model.pot.hamiltonian(p0, x0)
     
@@ -91,16 +94,15 @@ if '__main__' == __name__:
     steps = np.linspace(steps[0], steps[1], n_steps, True, dtype=int)
     step_sizes = np.linspace(step_sizes[0], step_sizes[1], n_sizes, True)
         
-    print 'Running Model'
-    print 'Running Model'
+    print 'Running Model: {}'.format(__file__)
     pot = QHO()
     en_diffs = dynamicalEnergyChange(pot, steps, step_sizes)
-    print 'Finished Running Model'
+    print 'Finished Running Model: {}'.format(__file__)
     
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
     
     plot(x = steps, y = step_sizes, z = en_diffs,
-        save = save_name,
+        save = save_name
         # save = False
         )
