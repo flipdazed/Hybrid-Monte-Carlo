@@ -25,7 +25,7 @@ def plot(samples, save='hmc_qho_1d_pot.py'):
     ax[0].set_title(
         r'{} HMC samples'.format(samples.shape[0]-1))
     
-    ax[0].set_ylabel(r'Sampled Potential, $V(x)$')
+    ax[0].set_ylabel(r'Sampled Potential, $e^{-S(x)}$')
     ax[0].set_xlabel(r"Position, $x$")
     
     n = 100 # size of linear space

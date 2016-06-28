@@ -71,6 +71,6 @@ if __name__ == '__main__':
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
     plot(samples=samples,
-        save=save_name
-        # save=False
+        # save=save_name
+        save=False
         )

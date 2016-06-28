@@ -37,7 +37,7 @@ def display(test_name, outcome, details = False, minimal=False):
             for sub_detail in sub_details:
                 extra('   ... ' + sub_detail)
     
-    overview(' OUTCOME: {}'.format(['Failed','Passed'][outcome]))
+    overview(' OUTCOME: {}'.format(['Failed','Passed'][int(outcome)]))
     pass
     
 if __name__ == '__main__':

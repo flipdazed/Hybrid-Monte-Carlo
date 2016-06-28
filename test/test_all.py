@@ -99,12 +99,11 @@ def testLatticeDynamics():
     pass
 
 def testLattice():
-    utils.newTest('lattice')
-    test = test_lattice.Test()
+    test = Test()
+    utils.newTest(test.id)
     assert test.wrap(print_out = True)
     assert test.laplacian(print_out = True)
-    assert test.gradSquared(symmetric = False, print_out = True)
-    assert test.gradSquared(symmetric = True, print_out = True)
+    assert test.gradSquared(print_out = True)
     pass
 
 def testHMC():
