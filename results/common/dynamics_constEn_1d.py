@@ -150,3 +150,4 @@ def main(x0, pot, file_name, save = False, n_steps   = 500, step_size = .01, all
         subtitle = r'Potential: {}, Lattice shape: {}'.format(pot.name, x0.shape),
         save = saveOrDisplay(save, file_name)
         )
+    pass
