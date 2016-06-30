@@ -7,7 +7,7 @@ from common.hmc_model import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 from scipy.stats import norm
 
-def plot(samples, save='hmc_qho_1d_pot.py'):
+def plot(samples, save):
     """Note that samples and burn_in contain the initial conditions"""
     
     pp = Pretty_Plotter()
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     n_burn_in = 5
     n_samples = 100
     
-    dim = 1; n=100
+    dim = 1; n=10
     x0 = np.random.random((n,)*dim)
     
     pot = QHO()
@@ -83,6 +83,6 @@ if __name__ == '__main__':
     save_name = os.path.splitext(f_name)[0] + '.png'
     
     plot(samples=samples,
-        save = save_name
-        # save = False
+        # save = save_name
+        save = False
         )

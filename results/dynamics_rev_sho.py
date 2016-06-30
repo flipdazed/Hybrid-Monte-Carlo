@@ -9,7 +9,7 @@ from common.hmc_model import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
 
-def plot(norm, save='dynamics_sho_rev.png'):
+def plot(norm, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX

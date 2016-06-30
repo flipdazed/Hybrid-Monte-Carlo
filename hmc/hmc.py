@@ -1,5 +1,5 @@
 import numpy as np
-import copy
+from copy import copy
 
 from . import checks
 from dynamics import Leap_Frog
@@ -9,7 +9,7 @@ class Hybrid_Monte_Carlo(object):
     """The Hybrid (Hamiltonian) Monte Carlo method
     
     Optional Inputs
-        
+        store_acceptance :: bool :: optionally store the acceptance rates
     
     Required Inputs
         x0         :: tuple :: initial starting position vector
@@ -18,20 +18,26 @@ class Hybrid_Monte_Carlo(object):
         rng        :: np.random.RandomState :: random number state
     Expectations
     """
-    def __init__(self, x0, dynamics, potential, rng):
+    def __init__(self, x0, dynamics, potential, rng, store_acceptance=False):
         
         self.x0 = x0
         self.dynamics = dynamics
         self.potential = potential
         self.rng = rng
+        self.store_acceptance = store_acceptance
         
         self.momentum = Momentum(self.rng)
-        self.accept = Accept_Reject(self.rng)
+        self.accept = Accept_Reject(self.rng, store_acceptance=store_acceptance)
         
         self.x = self.x0
-        self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
-        shapes = (self.x.shape,self.p.shape)
         
+        # Take the position in just for the shape
+        # as note this is a fullRefresh so the return is
+        # entirely gaussian noise. It is independent of X
+        # so no need to preflip X before using as an input
+        self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
+        
+        shapes = (self.x.shape, self.p.shape)
         checks.tryAssertEqual(*shapes,
              error_msg=' x.shape != p.shape' \
              +'\n x: {}, p: {}'.format(*shapes)
@@ -48,121 +54,93 @@ class Hybrid_Monte_Carlo(object):
         Optional Inputs
             n_burn_in   :: integer :: Number of steps to discard at start
             store_path  :: bool    :: Store path for plotting
+        
+        Returns
+            (p_data, x_data) where *_data = (burn in samples, sample)
         """
-        self.burn_in_p = [copy.copy(self.p)]
-        self.burn_in = [copy.copy(self.x)]
+        self.burn_in_p = [copy(self.p)]
+        self.burn_in = [copy(self.x)]
         
         for step in xrange(n_burn_in): # burn in
-            self.p, self.x = self.moveHMC()
-            self.burn_in_p.append(copy.deepcopy(self.p))
-            self.burn_in.append(copy.deepcopy(self.x))
+            self.p, self.x = self.move()
+            self.burn_in_p.append(copy(self.p))
+            self.burn_in.append(copy(self.x))
         
-        self.samples_p = [copy.copy(self.p)]
-        self.samples = [copy.copy(self.x)]
+        self.samples_p = [copy(self.p)]
+        self.samples = [copy(self.x)]
         
         for step in xrange(n_samples):
-            p, x = self.moveHMC()
-            self.samples_p.append(copy.deepcopy(self.p))
-            self.samples.append(copy.deepcopy(self.x))
+            p, x = self.move()
+            self.samples_p.append(copy(self.p))
+            self.samples.append(copy(self.x))
         
         return (self.burn_in_p, self.samples_p), (self.burn_in, self.samples)
     
-    def moveHMC(self, step_size = None, n_steps = None):
-        """A Hybrid Monte Carlo move:
+    def move(self, step_size = None, n_steps = None, mixing_angle=.5*np.pi):
+        """A generalised Hybrid Monte Carlo move:
         Combines Hamiltonian Dynamics and Momentum Refreshment
         to generate a the next position for the MCMC chain
         
-        Optional Inputs
-            step_size   :: float    :: step_size for integrator
-            n_steps     :: integer  :: number of integrator steps
+        As HMC but includes option for partial momentum refreshment
+        through the mixing angle
         
-        Expectations
-            self.p, self.x
-            self.dynamics.integrate
-            self.momentum.fullRefresh
+        Optional Inputs
+            step_size    :: float    :: step_size for integrator
+            n_steps      :: integer  :: number of integrator steps
+            mixing_angle :: float    :: 0 is no mixing, pi/2 is total mix
         
         Returns
             (p,x) :: (float, float) :: new momentum and position
         """
         
-        p,x = self.p, self.x # initial temp. proposal p,x
-        h_old = self.potential.hamiltonian(p, x)
+        # Determine current energy state
+        p,x = self.p, self.x                     # Alter current p,x at MH-step
+        h_old = self.potential.hamiltonian(p, x) # get old hamiltonian
         
+        # The use of indices emphasises that the
+        # mixing happens point-wise
         for idx in np.ndindex(self.p.shape):
-            p[idx] = -self.momentum.fullRefresh(p[idx]) # mixing matrix adds a flip
+            # although a flip is added when theta=pi/2
+            # it doesn't matter as noise is symmetric
+            p[idx] = self.momentum.generalisedRefresh(p[idx], mixing_angle=mixing_angle)
         
+        # Molecular Dynamics Monte Carlo
         if (step_size is not None): self.dynamics.step_size = step_size
         if (n_steps is not None): self.dynamics.n_steps = step_size
-        
         p, x = self.dynamics.integrate(p, x)
-        # p = self.momentum.flip(p) # not necessary as full refreshment
-        h_new = self.potential.hamiltonian(p, x)
         
-        try:
-            accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
-        except Exception, e:
-            _, _, tb = sys.exc_info()
-            print '\nError in moveHMC():'
-            traceback.print_tb(tb) # Fixed format
-            tb_info = traceback.extract_tb(tb)
-            filename, line, func, text = tb_info[-1]
-            print 'line {} in {}'.format(line, text)
-            print 'old hamiltonian: {}'.format(h_old)
-            print 'new hamiltonian: {}'.format(h_new)
-            sys.exit(1)
+        # GHMC flip if partial refresh - else don't bother.
+        if (mixing_angle != .5*np.pi): p = self.momentum.flip(p)
         
-        if not accept: p, x = self.p, self.x
+        # Metropolis-Hastings accept / teject condition
+        h_new = self.potential.hamiltonian(p, x) # get new hamiltonian
+        accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
+        
+        # If the proposed state is not accepted (i.e. it is rejected), 
+        # the next state is the same as the current state 
+        # (and is counted again when estimating the expectation of 
+        # some function of state by its average over states of the Markov chain)
+        # - Neal, "MCMC using Hamiltnian Dynamics"
+        if not accept: p, x = self.p, self.x # return old p,x
         return p,x
     
-    def moveGHMC(self, mixing_angle, step_size = None, n_steps = None):
-        """A generalised Hybrid Monte Carlo move:
-        As HMC but includes partial momentum refreshment
-        
-        Required Inputs
-            mixing_angle :: float :: see Momentum()._rotationMatrix()
-        
-        Optional Inputs
-            step_size   :: float    :: step_size for integrator
-            n_steps     :: integer  :: number of integrator steps
-        
-        Expectations
-            self.p, self.x
-            self.dynamics.integrate
-            self.momentum.fullRefresh
-        
-        Returns
-            (p,x) :: (float, float) :: new momentum and position
-        """
-        p,x = self.p,self.x # initial temp. proposal p,x
-        h_old = self.potential.hamiltonian(p, x)
-        
-        p = self.momentum.generalisedRefresh(p, theta=mixing_angle)
-        
-        if (step_size is not None): self.dynamics.step_size = step_size
-        if (n_steps is not None): self.dynamics.n_steps = step_size
-        
-        p, x = self.dynamics.integrate(p, x)
-        p = self.momentum.flip(p)
-        h_new = self.potential.hamiltonian(p, x)
-        
-        accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
-        if not accept: p, x = self.p, self.x
-        
-        return p,x
 #
 class Momentum(object):
     """Momentum Routines
     
     Required Inputs
         rng :: np.random.RandomState :: random number generator
-    
     """
     def __init__(self, rng):
         self.rng = rng
         pass
     
     def fullRefresh(self, p):
-        """Performs full refresh"""
+        """Performs full refresh with implicit mixing angle
+        
+        Required Inputs
+            p :: np.array :: momentum to refresh
+        """
         p = self.generalisedRefresh(p)
         return p
     
@@ -171,7 +149,7 @@ class Momentum(object):
         to mix momentum with gaussian noise
         
         Optional Inputs
-            mixing_angle :: float :: 0. is no mixing
+            mixing_angle :: float   :: 0 is no mixing, pi/2 is total mix
         
         Required Inputs
             p :: np.array :: momentum to refresh
@@ -198,6 +176,7 @@ class Momentum(object):
         p = np.matrix(p.ravel()).T          # column A
         noise = np.matrix(noise.ravel()).T  # column B
         
+        # bmat is block matrix format
         unmixed = np.bmat([[p],[noise]])    # column [[A],[B]]
         flipped = self.flip(unmixed)
         
@@ -212,6 +191,11 @@ class Momentum(object):
         Required Input
             theta :: float :: angle in radians for mixing
             n_dim :: tuple :: creates n_dim^2 blocks (total: 4*n_dim^2)
+        
+        Expectations
+            This heavily relies on the np.matrix formatting
+            as defined in _refresh(). It will NOT work with
+            the standard np.ndarray class
         """
         i = np.identity(n_dim)
         c, s = np.cos(theta)*i, np.sin(theta)*i

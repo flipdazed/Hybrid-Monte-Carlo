@@ -8,7 +8,7 @@ from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 from common.hmc_model import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 
-def plot(x, y, z, save = 'dynamics_sho_constEn_2d.png'):
+def plot(x, y, z, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX

@@ -3,11 +3,20 @@ import numpy as np
 class Accept_Reject(object):
     """Contains accept-reject routines
     
+    Optional Inputs
+        store_acceptance :: bool :: optionally store the acceptance rates
+    
     Required Inputs
         rng :: np.random.RandomState :: random number generator
     """
-    def __init__(self, rng):
+    def __init__(self, rng, store_acceptance):
         self.rng = rng
+        self.store_acceptance = store_acceptance
+        
+        # both will only take values if store_acceptance == True
+        self.accept_rates = []   # list of acceptance rates
+        self.accept_rejects = [] # list of acceptance or rejections
+        self.delta_hs = []
         pass
     def metropolisHastings(self, h_old, h_new):
         """A M-H accept/reject test as per
@@ -35,6 +44,14 @@ class Accept_Reject(object):
             False   :: rejection
         """
         delta_h = h_new - h_old
+        
         # (self.rng.uniform() < min(1., np.exp(-delta_h))) # Neal / DKP original
-        return (np.exp(-delta_h) - self.rng.uniform()) >= 0 # faster
+        accept_reject = (np.exp(-delta_h) - self.rng.uniform()) >= 0 # faster
+        
+        if self.store_acceptance:
+            self.accept_rates.append(min(1, np.exp(-delta_h)))
+            self.accept_rejects.append(accept_reject)
+            self.delta_hs.append(np.exp(-delta_h))
+        
+        return accept_reject
 

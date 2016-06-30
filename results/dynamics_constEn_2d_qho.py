@@ -9,7 +9,7 @@ from matplotlib.colors import LogNorm
 from common.hmc_model import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
-def plot(x, y, z, save = 'dynamics_qho_constEn_2d.png'):
+def plot(x, y, z, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX

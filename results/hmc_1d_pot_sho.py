@@ -7,7 +7,7 @@ from common.hmc_model import Model
 from hmc.potentials import Simple_Harmonic_Oscillator as SHO
 from scipy.stats import norm
 
-def plot(samples, save='hmc_sho_1d_pot.png'):
+def plot(samples, save):
     """Note that samples and burn_in contain the initial conditions"""
     
     pp = Pretty_Plotter()

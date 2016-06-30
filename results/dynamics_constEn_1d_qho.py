@@ -10,7 +10,7 @@ from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 from common.hmc_model import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
-def plot(y1, y2, all_lines = False, save = 'dynamics_qho_constEn_1d.png'):
+def plot(y1, y2, save, all_lines = False):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX

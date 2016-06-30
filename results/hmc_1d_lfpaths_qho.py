@@ -6,7 +6,7 @@ from plotter import Pretty_Plotter, PLOT_LOC
 from common.hmc_model import Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
-def plot(burn_in, samples, save='hmc_qho_1d_lfpaths.png'):
+def plot(burn_in, samples, save):
     """Note that samples and burn_in contain the initial conditions"""
     
     pp = Pretty_Plotter()

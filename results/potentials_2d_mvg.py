@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from hmc.potentials import Multivariate_Gaussian
 from plotter import Pretty_Plotter, viridis, magma, inferno, plasma, PLOT_LOC
 
-def plot(x, y, z, save = 'potentials_Gaussian_2d.png'):
+def plot(x, y, z, save):
     """Plots a test image of the Bivariate Gaussian
     
     Required Inputs
