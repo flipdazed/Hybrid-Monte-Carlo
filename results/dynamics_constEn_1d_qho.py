@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import numpy as np
 
 from common import dynamics_constEn_1d
