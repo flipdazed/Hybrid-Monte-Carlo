@@ -1,26 +1,17 @@
-import dynamics_qho_constEn_2d
-
-import os
+#!/usr/bin/env python
 import numpy as np
+
+from common import dynamics_constEn_2d
 from hmc.potentials import Klein_Gordon as KG
 
-step_sizes  = [.001, .5]
-steps       = [1, 500]
-n_steps     = 25
-n_sizes     = 25
-
-steps = np.linspace(steps[0], steps[1], n_steps, True, dtype=int)
-step_sizes = np.linspace(step_sizes[0], step_sizes[1], n_sizes, True)
-    
-print 'Running Model: {}'.format(__file__)
+file_name = __file__
 pot = KG()
-en_diffs = dynamics_qho_constEn_2d.dynamicalEnergyChange(pot, steps, step_sizes)
-print 'Finished Running Model: {}'.format(__file__)
 
-f_name = os.path.basename(__file__)
-save_name = os.path.splitext(f_name)[0] + '.png'
+n, dim = 100, 1
+x0 = np.random.random((n,)*dim)
 
-dynamics_qho_constEn_2d.plot(x = steps, y = step_sizes, z = en_diffs,
-    # save = save_name
-    save = False
-    )
+res = 25
+
+if '__main__' == __name__:
+    dynamics_constEn_2d.main(x0, pot, file_name, save = True,
+        n_steps = res, n_sizes = res, log_scale=False)
