@@ -1,88 +1,48 @@
+#!/usr/bin/env python
 import numpy as np
-import os
-import matplotlib.pyplot as plt
-from plotter import Pretty_Plotter, PLOT_LOC
-
-from common.hmc_model import Model
-from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 from scipy.stats import norm
 
-def plot(samples, save):
-    """Note that samples and burn_in contain the initial conditions"""
+from common import hmc_sample_1d
+from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
+
+file_name = __file__
+pot = QHO()
+
+dim = 1; n=100
+x0 = np.random.random((n,)*dim)
+
+n_burn_in, n_samples = 15, 100
+
+theory_label = r'$|\psi_0(x)|^2 = \sqrt{\frac{\omega}{\pi}}e^{-\omega x^2}$ for $\omega=\sqrt{\frac{5}{4}}$'
+def theory(x, samples):
+    """The actual PDF curve
+    As per the paper by Creutz and Fredman
     
-    pp = Pretty_Plotter()
-    pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
-    pp._updateRC()
-    
-    fig = plt.figure(figsize = (8, 8)) # make plot
-    ax =[]
-    ax.append(fig.add_subplot(111))
-    
-    name = "QHO"
-    fig.suptitle(r'Sampled {} Ground State Potential'.format(name), fontsize=16)
-    
-    ax[0].set_title(
-        r'{} HMC samples'.format(samples.shape[0]-1))
-    
-    ax[0].set_ylabel(r'Sampled Potential, $e^{-S(x)}$')
-    ax[0].set_xlabel(r"Position, $x$")
-    
-    n = 100 # size of linear space
-    x = np.linspace(-5, 5, n)
-    
-    p = norm.fit(samples.ravel())
-    fitted = norm.pdf(x, loc=p[0], scale=p[1])
-    
-    w = np.sqrt(1.25) # w  = 1/(sigma)^2
+    Required Inputs
+        x :: np.array :: 1D array of x-axis
+        samples :: np.array :: 1D array of HMC samples
+    """
+    w = np.sqrt(1.25)       # w  = 1/(sigma)^2
     sigma = 1./np.sqrt(2*w)
-    c = np.sqrt(w / np.pi) # this is the theory
-    actual = np.exp(-x**2*1.1)*c
-    
-    theory = r'$|\psi_0(x)|^2 = \sqrt{\frac{\omega}{\pi}}e^{-\omega x^2}$ for $\omega=\sqrt{\frac{5}{4}}$'
-    
-    n, bins, patches = ax[0].hist(samples.ravel(), 50, normed=1, # histogram
-        facecolor='green', alpha=0.2, label=r'Sampled Data')
-        
-    ax[0].plot(x, fitted, # marker='x', # best fit
-        linestyle='-', color='red', linewidth=2., alpha=0.6,
-        label=r'Fitted Potential')
-    
-    ax[0].plot(x, actual, # marker='x',
-        linestyle='--', color='blue', linewidth=2., alpha=0.6,
-        label=r'Theory: {}'.format(theory))
-    
-    ax[0].legend(loc='upper left', shadow=True, fontsize = pp.axfont)
-    ax[0].grid(False)
-    
-    pp.save_or_show(save, PLOT_LOC)
-    pass
+    c = np.sqrt(w / np.pi)  # this is the theory
+    theory = np.exp(-x**2*1.1)*c
+    return theory
 #
+def fitted(x, samples):
+    """The fitted PDF curve. Assumes a gaussian form
+    Required Inputs
+        x :: np.array :: 1D array of x-axis
+        samples :: np.array :: 1D array of HMC samples
+    
+    """
+    p = norm.fit(samples.ravel())
+    return norm.pdf(x, p[0], p[1])
+#
+extra_data = [ # this passes fucntions to plot when smaple are obtained
+    {'f':theory,'label':'Theory, {}'.format(theory_label)},
+    {'f':fitted,'label':r'Fitted'}]
+y_label = r'Quantum Probability, $|\psi_0|^2$'
+
 if __name__ == '__main__':
-    
-    n_burn_in = 5
-    n_samples = 100
-    
-    dim = 1; n=10
-    x0 = np.random.random((n,)*dim)
-    
-    pot = QHO()
-    model = Model(x0, pot = pot)
-    
-    print 'Running Model: {}'.format(__file__)
-    model.run(n_samples=n_samples, n_burn_in=n_burn_in)
-    print 'Finished Running Model: {}'.format(__file__)
-    
-    f_name = os.path.basename(__file__)
-    save_name = os.path.splitext(f_name)[0] + '.png'
-    
-    burn_in = model.burn_in
-    samples = model.samples
-    
-    f_name = os.path.basename(__file__)
-    save_name = os.path.splitext(f_name)[0] + '.png'
-    
-    plot(samples=samples,
-        # save = save_name
-        save = False
-        )
+    hmc_sample_1d.main(x0, pot, file_name, n_samples, n_burn_in,
+        y_label, extra_data, save = True)
