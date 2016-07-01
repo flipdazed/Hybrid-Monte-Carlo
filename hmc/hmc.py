@@ -1,5 +1,6 @@
 import numpy as np
 from copy import copy
+from tqdm import tqdm
 
 from . import checks
 from dynamics import Leap_Frog
@@ -45,7 +46,7 @@ class Hybrid_Monte_Carlo(object):
         
         pass
     
-    def sample(self, n_samples, n_burn_in = 1000):
+    def sample(self, n_samples, n_burn_in = 20, verbose = False):
         """runs the sampler for HMC
         
         Required Inputs
@@ -54,6 +55,7 @@ class Hybrid_Monte_Carlo(object):
         Optional Inputs
             n_burn_in   :: integer :: Number of steps to discard at start
             store_path  :: bool    :: Store path for plotting
+            verbose :: bool :: a progress bar if True
         
         Returns
             (p_data, x_data) where *_data = (burn in samples, sample)
@@ -61,7 +63,12 @@ class Hybrid_Monte_Carlo(object):
         self.burn_in_p = [copy(self.p)]
         self.burn_in = [copy(self.x)]
         
-        for step in xrange(n_burn_in): # burn in
+        iterator = range(n_burn_in)
+        if verbose: 
+            print '\nBurning in ...'
+            iterator = tqdm(iterator)        
+        
+        for step in iterator: # burn in
             self.p, self.x = self.move()
             self.burn_in_p.append(copy(self.p))
             self.burn_in.append(copy(self.x))
@@ -69,7 +76,12 @@ class Hybrid_Monte_Carlo(object):
         self.samples_p = [copy(self.p)]
         self.samples = [copy(self.x)]
         
-        for step in xrange(n_samples):
+        iterator = range(n_samples)
+        if verbose: 
+            print 'Sampling ...'
+            iterator = tqdm(iterator)
+        
+        for step in iterator:
             p, x = self.move()
             self.samples_p.append(copy(self.p))
             self.samples.append(copy(self.x))

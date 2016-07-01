@@ -27,16 +27,18 @@ class Model():
         
         self.sampler = Hybrid_Monte_Carlo(self.x0, self.dynamics, self.pot, self.rng)
     
-    def run(self, n_samples, n_burn_in):
+    def run(self, n_samples, n_burn_in, verbose = False):
         """Runs the HMC algorithm to sample the potential
         
         Required Inputs
             n_samples   :: int  :: number of samples
             n_burn_in   :: int  :: number of burnin steps
         
+        Optional Inputs
+            verbose :: bool :: a progress bar if True
         """
         p_samples, samples = self.sampler.sample(
-            n_samples = n_samples, n_burn_in = n_burn_in)
+            n_samples = n_samples, n_burn_in = n_burn_in, verbose = verbose)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)

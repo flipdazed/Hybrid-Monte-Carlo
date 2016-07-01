@@ -16,7 +16,9 @@ class Accept_Reject(object):
         # both will only take values if store_acceptance == True
         self.accept_rates = []   # list of acceptance rates
         self.accept_rejects = [] # list of acceptance or rejections
-        self.delta_hs = []
+        self.exp_delta_hs = []       # list of delta_hs
+        self.h_olds = []
+        self.h_news = []
         pass
     def metropolisHastings(self, h_old, h_new):
         """A M-H accept/reject test as per
@@ -51,7 +53,9 @@ class Accept_Reject(object):
         if self.store_acceptance:
             self.accept_rates.append(min(1, np.exp(-delta_h)))
             self.accept_rejects.append(accept_reject)
-            self.delta_hs.append(np.exp(-delta_h))
-        
+            self.exp_delta_hs.append(np.exp(-delta_h))
+            self.h_olds.append(h_old)
+            self.h_news.append(h_new)
+            
         return accept_reject
 

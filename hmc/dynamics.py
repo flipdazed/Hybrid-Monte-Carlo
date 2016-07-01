@@ -1,5 +1,7 @@
 import numpy as np
 from copy import copy
+from tqdm import tqdm
+
 import checks
 
 class Leap_Frog(object):
@@ -24,12 +26,15 @@ class Leap_Frog(object):
         self.newPaths() # create blank lists
         pass
     
-    def integrate(self, p0, x0):
+    def integrate(self, p0, x0, verbose = False):
         """The Leap Frog Integration
         
         Required Input
             p0  :: float :: initial momentum to start integration
             x0  :: float :: initial position to start integration
+        
+        Optional Input
+            verbose :: bool :: prints out progress bar if True (ONLY use for LARGE path lengths)
         
         Expectations
             save_path :: Bool :: save (p,x). IN PHASE: Start at (1,1)
@@ -43,7 +48,9 @@ class Leap_Frog(object):
         if self.save_path:
             self._storeSteps() # store zeroth step
         
-        for step in xrange(0, self.n_steps):
+        iterator = range(0, self.n_steps)
+        if verbose: iterator = tqdm(iterator)
+        for step in iterator:
             self._moveP(frac_step=0.5)
             self._moveX()
             self._moveP(frac_step=0.5)
