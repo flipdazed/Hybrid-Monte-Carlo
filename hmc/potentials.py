@@ -79,7 +79,7 @@ class Klein_Gordon(Shared):
         Required Inputs
             p :: np.array (nd) :: momentum array
         """
-        return .5 * np.square(p).flatten().sum(axis=0)
+        return .5 * np.square(p).ravel().sum(axis=0)
     
     def potentialEnergy(self, positions):
         """n-dim potential
@@ -95,7 +95,7 @@ class Klein_Gordon(Shared):
         """
         lattice = positions # shortcut for brevity
         
-        x_sq_sum = np.power(lattice.flatten(), 2).sum()
+        x_sq_sum = np.power(lattice.ravel(), 2).sum()
         
         p_sq_sum = np.array(0.)
         # sum (integrate) across euclidean-space (i.e. all lattice sites)
@@ -127,13 +127,13 @@ class Klein_Gordon(Shared):
         
         # Add interation terms if required
         if self.phi_3: # phi^3 term
-            x_3_sum = np.power(lattice.flatten(), 3).sum()
+            x_3_sum = np.power(lattice.ravel(), 3).sum()
             u_3 = self.phi_3 * x_3_sum / np.math.factorial(3)
         else:
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            x_4_sum = np.power(lattice.flatten(), 4).sum()
+            x_4_sum = np.power(lattice.ravel(), 4).sum()
             u_4 = self.phi_4 * x_4_sum / np.math.factorial(4)
         else:
             u_4 = 0.
@@ -206,14 +206,16 @@ class Quantum_Harmonic_Oscillator(Shared):
     V(x) = \frac{1}{2}mx^2 + \frac{1}{3!}\lambda_3 x^3 + \frac{1}{4!}\lambda_4 x^4
     
     Optional Inputs
-        m       :: float :: mass
+        m0      :: float :: rest mass
+        mu      :: float :: x^2 coupling
         phi_3   :: phi_3 coupling constant
         phi_4   :: phi_4 coupling constant
     """
-    def __init__(self, m=1., phi_3=0., phi_4=0., debug=False):
+    def __init__(self, m0=1., mu=1., phi_3=0., phi_4=0., debug=False):
         self.name = 'QHO'
         self.debug = debug
-        self.m = m
+        self.m0 = m0
+        self.mu = mu
         self.phi_3 = phi_3      # phi^3 coupling const.
         self.phi_4 = phi_4      # phi^4 coupling const.
         
@@ -229,7 +231,7 @@ class Quantum_Harmonic_Oscillator(Shared):
         Required Inputs
             p :: np.array (nd) :: momentum array
         """
-        return .5 * np.square(p).flatten().sum(axis=0)
+        return .5 * np.square(p).ravel().sum(axis=0)
     
     def potentialEnergy(self, positions):
         """n-dim potential
@@ -245,7 +247,7 @@ class Quantum_Harmonic_Oscillator(Shared):
         """
         lattice = positions # shortcut for brevity
         
-        x_sq_sum = np.power(lattice.flatten(), 2).sum()
+        x_sq_sum = np.power(lattice.ravel(), 2).sum()
         
         v_sq_sum = np.array(0.) # initiate velocity squared
         # sum (integrate) across euclidean-space (i.e. all lattice sites)
@@ -264,19 +266,19 @@ class Quantum_Harmonic_Oscillator(Shared):
             v_sq_sum +=  v_sq
         
         #### free action S_0: m/2 \phi(v^2 + m)\phi
-        kinetic = .5 * self.m * v_sq_sum
-        u_0 = .5 * self.m * x_sq_sum
+        kinetic = .5 * self.m0 * v_sq_sum
+        u_0 = .5 * self.mu**2 * x_sq_sum
         ### End free action
         
         # Add interation terms if required
         if self.phi_3: # phi^3 term
-            x_3_sum = np.power(lattice.flatten(), 3).sum()
+            x_3_sum = np.power(lattice.ravel(), 3).sum()
             u_3 = self.phi_3 * x_3_sum / np.math.factorial(3)
         else:
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            x_4_sum = np.power(lattice.flatten(), 4).sum()
+            x_4_sum = np.power(lattice.ravel(), 4).sum()
             u_4 = self.phi_4 * x_4_sum / np.math.factorial(4)
         else:
             u_4 = 0.
@@ -321,8 +323,8 @@ class Quantum_Harmonic_Oscillator(Shared):
              )
         
         #### free action S_0: m/2 \phi(v^2 + m)\phi
-        kinetic = - self.m * v_sq
-        u_0 = self.m * x
+        kinetic = - self.m0 * v_sq
+        u_0 = self.mu**2 * x
         ### End free action
         
         # Add interation terms if required

@@ -1,4 +1,4 @@
-Hybrid Monte Carlo & Kramer's Algorithm
+Hybrid Monte Carlo & Kramers Algorithm
 ===============
 This repository contains the code used for the thesis component of a Masters degree in Theoretical Physics at Edinburgh University.
 
@@ -6,7 +6,7 @@ Supervisors: Brian Pendleton, Tony Kennedy
 
 ## Table of Contents
  - [Hybrid Monte Carlo (HMC)](#hmc)
- - [Kramer's Algorithm (KHMC)](#khmc)
+ - [Kramers Algorithm (KHMC)](#khmc)
  - [Generalised HMC (GHMC)](#ghmc)
  - [Conventions](#conv)
 
@@ -23,7 +23,7 @@ The algorithm is highly effective by utilising Hamiltonian Dynamics after introd
 ## Kramers Algorithm (KHMC)
  - [Kramers Algorithm (Horowitz)](http://www.sciencedirect.com/science/article/pii/0370269391908125)
  
-Kramer's Algorithm, also known as (L2MC), introduces an alternative approach whereby the conjugate momentum field is only partially refreshed after each sampler move.
+Kramers Algorithm, also known as (L2MC), introduces an alternative approach whereby the conjugate momentum field is only partially refreshed after each sampler move.
 
 <a name="ghmc"/>
 ## Generalised HMC (GHMC)
