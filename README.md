@@ -20,8 +20,8 @@ HMC is used for sampling high dimensional probability distributions e.g. Lattice
 The algorithm is highly effective by utilising Hamiltonian Dynamics after introducing a momentum field conjugate to the probability space that is refreshed after each sampler move. By utilising intrinsic gradient information provided by the geometry of the Hamiltonian, the sampler can transition through highly non-trivial spaces with exceptional efficiency when compared with the traditional Metropolis-Hastings approach.
 
 <a name="khmc"/>
-## Kramer's Algorithm (KHMC)
- - [Kramer's Algorithm (Horowitz)](http://www.sciencedirect.com/science/article/pii/0370269391908125)
+## Kramers Algorithm (KHMC)
+ - [Kramers Algorithm (Horowitz)](http://www.sciencedirect.com/science/article/pii/0370269391908125)
  
 Kramer's Algorithm, also known as (L2MC), introduces an alternative approach whereby the conjugate momentum field is only partially refreshed after each sampler move.
 
