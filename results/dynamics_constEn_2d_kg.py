@@ -10,7 +10,7 @@ pot = KG()
 n, dim = 100, 1
 x0 = np.random.random((n,)*dim)
 
-res = 25
+res = 100
 
 if '__main__' == __name__:
     dynamics_constEn_2d.main(x0, pot, file_name, save = True,

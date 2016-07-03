@@ -35,4 +35,4 @@ Coming when I know what to test! (:
 
 <a name="ak"/>
 ## Code Acknowledgements
-  - All `matlab` routines are taken from [Prof. Dr. Ulrich Wolff](https://www.physik.hu-berlin.de/de/com/ALPHAsoft) and formed the initial basis for a working code base
+See `../ref_code` for code snippets I found useful: Always helpful to see existing implementations to guide new implementations.

@@ -8,7 +8,22 @@ from hmc_model import Model
 from utils import saveOrDisplay
 
 def plot(probs, accepts, h_olds, h_news, exp_delta_hs, subtitle, save):
+    """Plots 3 stacked figures:
+        1. the acceptance probability at each step
+        2. the hamiltonian (old, new) at each step
+        3. the exp{-delta H} at each step
+    Overlayed with red bars is each instance in which a configuration was rejected
+    by the Metropolis-Hastings accept/reject step
     
+    Required Inputs
+        probs           :: np.array :: acc. probs
+        accepts         :: np.array :: array of boolean acceptances (True = accepted)
+        h_olds          :: np.array :: old hamiltonian at each step
+        h_news          :: np.array :: new hamiltonian at each step
+        exp_delta_hs    :: np.array :: exp{-delta H} at each step
+        subtitle        :: str      :: the subtitle to put in ax[0].set_title()
+        save            :: bool :: True saves the plot, False prints to the screen
+    """
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
     pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
@@ -69,12 +84,14 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False, step_size=0.05,
     model.run(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
     print 'Finished Running Model: {}'.format(file_name)
     
+    # pull out all the data from the metropolis class
     accept_rates = np.asarray(model.sampler.accept.accept_rates[n_burn_in:]).flatten()
     accept_rejects = np.asarray(model.sampler.accept.accept_rejects[n_burn_in:]).flatten()
     exp_delta_hs = np.asarray(model.sampler.accept.exp_delta_hs[n_burn_in:]).flatten()
     h_olds = np.asarray(model.sampler.accept.h_olds[n_burn_in:]).flatten()
     h_news = np.asarray(model.sampler.accept.h_news[n_burn_in:]).flatten()
     
+    # get the means where relevent
     av_acc      = np.asscalar(accept_rates.mean())
     meas_av_acc = np.asscalar(accept_rejects.mean())
     meas_av_exp_dh  = np.asscalar(exp_delta_hs.mean())
@@ -83,11 +100,14 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False, step_size=0.05,
     print '\t<Prob. Accept>: {:4.2f}     (Measured)'.format(meas_av_acc)
     print '\t<exp{{-𝛿H}}>:     {:8.2E} (Measured)\n'.format(meas_av_exp_dh)
     
-    pow_ten = int(np.floor(np.log10(meas_av_exp_dh)))
-    decimal = meas_av_exp_dh / float(10**pow_ten)
+    pow_ten = int(np.floor(np.log10(meas_av_exp_dh)))   # calculate N for AeN sci. format
+    decimal = meas_av_exp_dh / float(10**pow_ten)       # calculate A for AeN
+    
+    # one long subtitle - long as can't mix LaTeX and .format()
     subtitle = 'Potential: {}, Lattice shape: {}'.format(pot.name, x0.shape) + \
         r', $\langle P_{\text{acc}} \rangle= '+' {:4.2f}$'.format(meas_av_acc) + \
-        r', $\langle e^{-\delta H} \rangle='+' {:4.2f}'.format(decimal)+r'\times 10^{'+'{}'.format(pow_ten) + '}$'
+        r', $\langle e^{-\delta H} \rangle='+' {:4.2f}'.format(decimal)+r'\times 10^{'\
+            + '{}'.format(pow_ten) + '}$'
     
     plot(accept_rates, accept_rejects, h_olds, h_news, exp_delta_hs,
         subtitle = subtitle,
