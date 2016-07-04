@@ -44,7 +44,7 @@ class Pretty_Plotter(object):
         rcParams.update(self.params) # updates the default parameters
         pass
     
-    def save_or_show(self, save, d):
+    def save_or_show(self, save, save_dir):
         """Will either print to screen or save to location save
         
         Required Inputs
@@ -52,8 +52,7 @@ class Pretty_Plotter(object):
             d    :: string :: directory to save in if save != False
         """
         if save:
-            save_dir = d
-            subprocess.call(['mkdir', d])
+            subprocess.call(['mkdir', save_dir])
             
             fig = plt.gcf()
             fig.savefig(save_dir+save)

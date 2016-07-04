@@ -38,12 +38,18 @@ def plot(c_fn, spacing, subtitle, save):
     ax[0].set_xlabel(r'Time Separation, $\tau$')
     ax[0].set_ylabel(r'$\langle x(0)x(\tau) \rangle$')
     
-    steps = np.linspace(0, spacing*c_fn.size, c_fn.size)    # get x values
-    best_fit = np.poly1d(np.polyfit(steps, c_fn, 1))(steps) # linear regression
+    steps = np.linspace(0, spacing*c_fn.size, c_fn.size, False)    # get x values
+    log_y = np.log(c_fn)        # regress for logarithmic scale
+    mask = np.isfinite(log_y)   # handles negatives in the logarithm
+    masked_x = steps[mask]
+    # linear regression of the exponential curve
+    masked_fit = np.exp(np.poly1d(np.polyfit(masked_x, log_y[mask], 1))(masked_x))
     
-    bf = ax[0].plot(steps, best_fit, color='blue',
+    bf = ax[0].plot(masked_x, masked_fit, color='blue',
          linewidth=5., linestyle = '-', alpha=0.2)
     f = ax[0].scatter(steps, c_fn, color='red', marker='x')
+    ax[0].set_xlim(xmin=0)
+    ax[0].set_yscale("log", nonposy='clip')
     
     pp.save_or_show(save, PLOT_LOC)
     pass
@@ -63,27 +69,29 @@ def main(x0, pot, file_name, n_samples, n_burn_in, spacing = 1., save = False):
         save :: bool :: True saves the plot, False prints to the screen
     """
     
-    model = Model(x0, pot=pot, spacing=spacing)
+    rng = np.random.RandomState()
+    model = Model(x0, pot=pot, spacing=spacing, rng=rng)
     c = corr.Corellations_1d(model, 'run', 'samples')
     
-    print 'Running Model: {}'.format(file_name)
-    c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
-    c_fn = np.asarray([c.twoPoint(separation=i) for i in range(6)])
-    print 'Finished Running Model: {}'.format(file_name)
-    
-    subtitle = r"Potential: {}; lattice shape: {}$".format(
-        pot.name, spacing, x0.shape)
+    subtitle = r"Potential: {}; Lattice Shape: ${}$; $a={:.1f}$".format(
+        pot.name, x0.shape, spacing)
     length = model.x0.size
     if hasattr(pot, 'mu'):
         m0 = pot.m0
         mu = pot.mu
         th_x_sq = corr.qho_theory(spacing, mu, length)
         print 'theory:   <x(0)x(0)> = {}'.format(th_x_sq)
-        subtitle += r"m_0={}; \mu={}; Theory: $\langle x^2 \rangle = {}$".format(
-            m0, mu, th_x_sq)
+        subtitle += r"; $m_0={:.1f}$; $\mu={:.1f}$;".format(m0, mu)
     else:
         m0, mu = None
     
+    print 'Running Model: {}'.format(file_name)
+    c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
+    c_fn = np.asarray([c.twoPoint(separation=i) for i in range(5)])
+    print 'Finished Running Model: {}'.format(file_name)
+    
     av_x0_sq = c_fn[0]
     print 'measured: <x(0)x(0)> = {}'.format(av_x0_sq)
-    plot(c_fn, spacing, subtitle, save)
+    plot(c_fn, spacing, subtitle, 
+        save = saveOrDisplay(save, file_name))
+    
