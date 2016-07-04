@@ -28,38 +28,39 @@ class Test(object):
         rng :: np.random.RandomState :: must be able to call rng.uniform
     
     Optional Inputs
-        n :: int :: 1d lattice length
+        length :: int :: 1d lattice length
+        dim :: int  :: number of dimensions
+        spacing :: float :: lattice spacing
     """
-    def __init__(self, rng, mu = 1., spacing=.1, length = 100, dim = 1):
+    def __init__(self, rng, spacing=.1, length = 100, dim = 1, verbose = False):
         self.id  = '<x(0)x(0)>'
         self.rng = rng
         self.length = length
         self.dim = dim
         self.spacing = spacing
-        self.mu = mu
         self.lattice_shape = (self.length,)*self.dim
         
         self.n = dim*length
         
-    def qho(self, tol = 1e-2, print_out = True):
+    def qho(self, mu = 1., tol = 1e-2, print_out = True):
         """calculates the value <x(0)x(0)> for the QHO
         
         Optional Inputs
-            expected :: float :: the expected value of <x(0)x(0)>
+            mu :: float :: parameter used in potentials
             tol :: float :: tolerance level of deviation from expected value
             print_out :: bool :: prints info if True
         """
         passed = True
         
-        pot = QHO(mu=self.mu)
+        pot = QHO(mu=mu)
         measured_xx = self._run(pot)
-        expected_xx = qho_theory(self.spacing, self.mu, self.n)
+        expected_xx = qho_theory(self.spacing, mu, self.n)
         passed = np.abs(measured_xx - expected_xx) <= tol
         
         if print_out:
             utils.display(pot.name, passed,
                 details = {
-                    'Inputs':['a: {}'.format(self.spacing),'µ: {}'.format(self.mu),
+                    'Inputs':['a: {}'.format(self.spacing),'µ: {}'.format(mu),
                         'shape: {}'.format(self.lattice_shape), 'n: {}'.format(self.n)],
                     'another output':['expected: {}'.format(expected_xx),
                         'measured: {}'.format(measured_xx)]

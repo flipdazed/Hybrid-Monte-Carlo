@@ -12,12 +12,17 @@ class Basic_HMC():
         n_steps     :: int  :: default number of steps for dynamics
         step_size   :: int  :: default step size for dynamics
         spacing     :: float :: lattice spacing
+        rng :: np.random.RandomState :: must be able to call rng.uniform
     """
-    def __init__(self, x0, pot, n_steps=20, step_size=0.1, spacing=1.):
+    def __init__(self, x0, pot, n_steps=20, step_size=0.1, spacing=1., rng = None):
         
         self.x0 = Periodic_Lattice(x0, lattice_spacing=spacing)
         
-        self.rng = np.random.RandomState(111)
+        if rng is None:
+            self.rng = np.random.RandomState(111)
+        else:
+            self.rng = rng
+        
         
         self.pot = pot
         self.dynamics = Leap_Frog(

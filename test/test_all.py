@@ -15,9 +15,16 @@ import test_dynamics
 import test_hmc
 import test_lattice
 import test_momentum
+import test_expect
 
 import logging
 logging.root.setLevel(logging.DEBUG)
+
+def testExpectations():
+    test = test_expect.Test(rng=rng, spacing=.1, length = 100, dim = 1)
+    utils.newTest(test.id)
+    assert test.qho(mu = 1., tol = 1e-2)
+    pass
 
 def testPotentials():
     test = test_potentials.Test()
@@ -98,8 +105,9 @@ def testMomentum():
     pass
 
 if __name__ == '__main__':
-    # testPotentials()
-    # testDynamics()
+    testExpectations()
+    testPotentials()
+    testDynamics()
     testLattice()
     testHMC()
     testMomentum()
