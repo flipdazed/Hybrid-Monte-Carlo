@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 
-from common.hmc_model import Model
+from models import Basic_HMC as Model
 from hmc.potentials import Multivariate_Gaussian as MVG
 
 def plot(burn_in, samples, bg_xyz):

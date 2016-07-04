@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from common.hmc_model import Model
+from models import Basic_HMC as Model
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 def plot(burn_in, samples, save):

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from hmc_model import Model
+from models import Basic_HMC as Model
 from utils import saveOrDisplay
 from plotter import Pretty_Plotter, PLOT_LOC
 

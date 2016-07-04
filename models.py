@@ -1,7 +1,7 @@
 from hmc.lattice import Periodic_Lattice
 from hmc.hmc import *
 
-class Model():
+class Basic_HMC():
     """A model to sample from the potentials with LeapFrog
     
     Required Inputs

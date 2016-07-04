@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 from plotter import Pretty_Plotter, PLOT_LOC
 
-from hmc_model import Model
+from models import Basic_HMC as Model
 from utils import saveOrDisplay
 
 def plot(probs, accepts, h_olds, h_news, exp_delta_hs, subtitle, save):

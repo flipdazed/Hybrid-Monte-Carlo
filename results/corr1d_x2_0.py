@@ -9,7 +9,7 @@ pot = QHO(m0=1., mu=1.)
 
 n, dim = 100, 1
 x0 = np.random.random((n,)*dim)
-spacing = .01
+spacing = 1.
 
 
 if '__main__' == __name__:

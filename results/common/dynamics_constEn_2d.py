@@ -3,7 +3,7 @@ from copy import copy
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 
-from hmc_model import Model
+from models import Basic_HMC as Model
 from utils import saveOrDisplay, prll_map
 
 from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis

@@ -5,12 +5,14 @@ class Corellations_1d(object):
     """Runs a model and calculates the 1 dimensional correlation function
     
     Required Inputs
-        model           :: class    :: a class that runs some sort of model
+        model           :: class    :: a class that runs some sort of model - see models.py
         attr_samples    :: str      :: attr location of the x sampeles: model.attr_samples
         attr_run        :: str      :: attr points to fn to run the model: model.attr_run()
     
-    Optional Inputs
-        
+    Expectations
+        model has an attribute that contains the MCMC samples following a run
+        model has a function that runs the MCMC sampling
+        the samples are stored as [sample index, sampled lattice configuration]
     """
     def __init__(self, model, attr_run, attr_samples, *args, **kwargs):
         self.model = model
