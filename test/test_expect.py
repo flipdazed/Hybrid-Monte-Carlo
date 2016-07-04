@@ -9,18 +9,6 @@ from hmc.hmc import *
 from correlations import corr
 from models import Basic_HMC as Model
 
-def qho_theory(spacing, mu, length):
-    amu = mu*spacing
-    if np.abs(amu) <= 0.1: 
-        r = 1. - amu + .5*amu**2
-        print '> approximating R = 1. - aµ + aµ**2/2 as |aµ| <= 0.1 '
-    else:
-        r = 1. + .5*amu**2 - amu*np.sqrt(1. + .25*amu**2)
-    
-    ratio = (1. + r**length)/(1. - r**length)
-    av_xx = ratio / (2.*mu*np.sqrt(1. + .25*amu**2))
-    return av_xx
-
 class Test(object):
     """Runs tests for the expectation of <x(0)x(0)>
     
@@ -54,7 +42,7 @@ class Test(object):
         
         pot = QHO(mu=mu)
         measured_xx = self._run(pot)
-        expected_xx = qho_theory(self.spacing, mu, self.n)
+        expected_xx = corr.qho_theory(self.spacing, mu, self.n)
         passed = np.abs(measured_xx - expected_xx) <= tol
         
         if print_out:

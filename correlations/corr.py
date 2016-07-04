@@ -1,5 +1,18 @@
+# -*- coding: utf-8 -*- 
 import numpy as np
 from hmc import checks
+
+def qho_theory(spacing, mu, length):
+    amu = mu*spacing
+    if np.abs(amu) <= 0.1: 
+        r = 1. - amu + .5*amu**2
+        print '> approximating R = 1. - aµ + aµ**2/2 as |aµ| <= 0.1 '
+    else:
+        r = 1. + .5*amu**2 - amu*np.sqrt(1. + .25*amu**2)
+    
+    ratio = (1. + r**length)/(1. - r**length)
+    av_xx = ratio / (2.*mu*np.sqrt(1. + .25*amu**2))
+    return av_xx
 
 class Corellations_1d(object):
     """Runs a model and calculates the 1 dimensional correlation function
