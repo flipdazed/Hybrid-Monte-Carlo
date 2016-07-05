@@ -29,20 +29,6 @@ class Hybrid_Monte_Carlo(object):
         self.momentum = Momentum(self.rng)
         self.accept = Accept_Reject(self.rng, store_acceptance=store_acceptance)
         
-        self.x = self.x0
-        
-        # Take the position in just for the shape
-        # as note this is a fullRefresh so the return is
-        # entirely gaussian noise. It is independent of X
-        # so no need to preflip X before using as an input
-        self.p = self.momentum.fullRefresh(self.x0) # intial mom. sample
-        
-        shapes = (self.x.shape, self.p.shape)
-        checks.tryAssertEqual(*shapes,
-             error_msg=' x.shape != p.shape' \
-             +'\n x: {}, p: {}'.format(*shapes)
-             )
-        
         pass
     
     def sample(self, n_samples, n_burn_in = 20, mixing_angle=.5*np.pi, verbose = False):
@@ -60,35 +46,47 @@ class Hybrid_Monte_Carlo(object):
         Returns
             (p_data, x_data) where *_data = (burn in samples, sample)
         """
-        self.burn_in_p = [self.p.copy()]
-        self.burn_in = [self.x.copy()]
+        # Take the position in just for the shape
+        # as note this is a fullRefresh so the return is
+        # entirely gaussian noise. It is independent of X
+        # so no need to preflip X before using as an input
+        self.p0 = self.momentum.fullRefresh(self.x0) # intial mom. sample
+        shapes = (self.x0.shape, self.p0.shape)
+        checks.tryAssertEqual(*shapes,
+             error_msg=' x0.shape != p0.shape' \
+             +'\n x0: {}, p0: {}'.format(*shapes)
+             )
+        p, x = self.p0.copy(), self.x0.copy()
+        
+        # Burn in section
+        self.burn_in_p = [p.copy()]
+        self.burn_in = [x.copy()]
         
         iterator = range(n_burn_in)
         if verbose: 
             print '\nBurning in ...'
-            iterator = tqdm(iterator)        
-        
+            iterator = tqdm(iterator)
         for step in iterator: # burn in
-            self.p, self.x = self.move(mixing_angle=mixing_angle)
-            self.burn_in_p.append(self.p.copy())
-            self.burn_in.append(self.x.copy())
+            p, x = self.move(p, x, mixing_angle=mixing_angle)
+            self.burn_in_p.append(p.copy())
+            self.burn_in.append(x.copy())
         
-        self.samples_p = [self.p.copy()]
-        self.samples = [self.x.copy()]
+        # sampling section
+        self.samples_p = [p.copy()]
+        self.samples = [x.copy()]
         
         iterator = range(n_samples)
         if verbose: 
             print 'Sampling ...'
             iterator = tqdm(iterator)
-        
         for step in iterator:
-            p, x = self.move(mixing_angle=mixing_angle)
-            self.samples_p.append(self.p.copy())
-            self.samples.append(self.x.copy())
+            p, x = self.move(p, x, mixing_angle=mixing_angle)
+            self.samples_p.append(p.copy())
+            self.samples.append(x.copy())
         
         return (self.burn_in_p, self.samples_p), (self.burn_in, self.samples)
     
-    def move(self, step_size = None, n_steps = None, mixing_angle=.5*np.pi):
+    def move(self, p, x, step_size = None, n_steps = None, mixing_angle=.5*np.pi):
         """A generalised Hybrid Monte Carlo move:
         Combines Hamiltonian Dynamics and Momentum Refreshment
         to generate a the next position for the MCMC chain
@@ -105,13 +103,11 @@ class Hybrid_Monte_Carlo(object):
         """
         
         # Determine current energy state
-        # p,x = self.p.copy(), self.x.copy()
-        h_old = self.potential.hamiltonian(self.p, self.x)    # get old hamiltonian
+        p0, x0 = p.copy(), x.copy()
         
         # The use of indices emphasises that the
         # mixing happens point-wise
-        p = np.zeros(self.p.shape)
-        for idx in np.ndindex(self.p.shape):
+        for idx in np.ndindex(p.shape):
             # although a flip is added when theta=pi/2
             # it doesn't matter as noise is symmetric
             p[idx] = self.momentum.generalisedRefresh(p[idx], mixing_angle=mixing_angle)
@@ -119,14 +115,15 @@ class Hybrid_Monte_Carlo(object):
         # Molecular Dynamics Monte Carlo
         if (step_size is not None): self.dynamics.step_size = step_size
         if (n_steps is not None): self.dynamics.n_steps = step_size
-        p, x = self.dynamics.integrate(self.p, self.x)
+        p, x = self.dynamics.integrate(p, x)
         
         # # GHMC flip if partial refresh - else don't bother.
         # if (mixing_angle != .5*np.pi):
         p = self.momentum.flip(p)
         
         # Metropolis-Hastings accept / reject condition
-        h_new = self.potential.hamiltonian(p, x) # get new hamiltonian
+        h_old = self.potential.hamiltonian(p0, x0)      # get old hamiltonian
+        h_new = self.potential.hamiltonian(p, x)        # get new hamiltonian
         accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
         
         # If the proposed state is not accepted (i.e. it is rejected), 
@@ -134,20 +131,20 @@ class Hybrid_Monte_Carlo(object):
         # (and is counted again when estimating the expectation of 
         # some function of state by its average over states of the Markov chain)
         # - Neal, "MCMC using Hamiltnian Dynamics"
-        # checks.tryAssertNotEqual(h_old, h_new,
-        #      error_msg='H has not changed!' \
-        #      +'\n h_old: {}, h_new: {}'.format(h_old, h_new)
-        #      )
-        # checks.tryAssertNotEqual(x,self.x,
-        #      error_msg='x has not changed!' \
-        #      +'\n x: {}, self.x: {}'.format(x, self.x)
-        #      )
-        # checks.tryAssertNotEqual(p,self.p,
-        #      error_msg='p has not changed!' \
-        #      +'\n p: {}, self.p: {}'.format(p, self.p)
-        #      )
+        checks.tryAssertNotEqual(h_old, h_new,
+             error_msg='H has not changed!' \
+             +'\n h_old: {}, h_new: {}'.format(h_old, h_new)
+             )
+        checks.tryAssertNotEqual(x, x0,
+             error_msg='x has not changed!' \
+             +'\n x: {}, self.x: {}'.format(x, x0)
+             )
+        checks.tryAssertNotEqual(p, p0,
+             error_msg='p has not changed!' \
+             +'\n p: {}, self.p: {}'.format(p, p0)
+             )
         
-        if not accept: p, x = self.p, self.x # return old p,x
+        if not accept: p, x = p0, x0 # return old p,x
         return p,x
     
 #

@@ -44,7 +44,8 @@ class Test(object):
         self.lf.duE = self.sho.duE # reassign leapfrog gradient
         self.hmc.__init__(x0, self.lf, self.sho, self.rng)
         
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in)
+        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in,
+            verbose = True)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)
@@ -105,7 +106,8 @@ class Test(object):
         mean_tol = np.full(act_mean.shape, tol)
         cov_tol = np.full(act_cov.shape, tol)
         
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in)
+        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in,
+            verbose = True)
         burn_in, samples = samples # return the shape: (n, 2, 1)
         
         # flatten last dimension to a shape of (n, 2)
@@ -119,7 +121,7 @@ class Test(object):
         cov = np.cov(self.samples, rowvar=0)
         
         passed *= (np.abs(mean - act_mean) <= mean_tol).all()
-        # passed *= (np.abs(cov - act_cov) <= cov_tol).all()
+        passed *= (np.abs(cov - act_cov) <= cov_tol).all()
         
         if print_out:
             utils.display("HMC: Bivariate Gaussian", passed,
@@ -164,7 +166,8 @@ class Test(object):
         
         self.hmc.__init__(x0, self.lf, self.qho, self.rng)
         
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in)
+        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in,
+            verbose = True)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, 2)
@@ -201,9 +204,9 @@ class Test(object):
 #
 if __name__ == '__main__':
     rng = np.random.RandomState(1241)
-    
+    utils.logging.root.setLevel(utils.logging.DEBUG)
     test = Test(rng)
     utils.newTest(test.id)
-    test.hmcSho1d(n_samples = 1000, n_burn_in = 10, tol = 1e-1)
-    test.hmcGaus2d(n_samples = 1000, n_burn_in = 10, tol = 1e-1)
-    test.hmcQho(n_samples = 100, n_burn_in = 10, tol = 1e-1)
+    test.hmcSho1d(n_samples = 1000, n_burn_in = 15, tol = 1e-1)
+    test.hmcGaus2d(n_samples = 1000, n_burn_in = 15, tol = 1e-1)
+    test.hmcQho(n_samples = 1000, n_burn_in = 15, tol = 1e-1)
