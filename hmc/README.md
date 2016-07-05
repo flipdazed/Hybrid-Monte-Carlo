@@ -11,7 +11,7 @@ This directory contains the HMC code and test cases.
 	 * [Leap-Frog Parameters](#tests-lf)
 	 * [HMC sampling Bivariate Gaussian](#tests-bg)
 	 * [Sampling the QHO](#tests-qho)
-	 * [Acceptance Rates and <exp{-𝛿H}>](#tests-acc)
+	 * [Acceptance Rates and Hamiltonian Change](#tests-acc)
  - [Code Acknowledgements](#ak)
 
 <a name="td"/>
