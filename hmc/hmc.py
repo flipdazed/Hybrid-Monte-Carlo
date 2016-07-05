@@ -46,7 +46,7 @@ class Hybrid_Monte_Carlo(object):
         
         pass
     
-    def sample(self, n_samples, n_burn_in = 20, verbose = False):
+    def sample(self, n_samples, n_burn_in = 20, mixing_angle=.5*np.pi, verbose = False):
         """runs the sampler for HMC
         
         Required Inputs
@@ -55,6 +55,7 @@ class Hybrid_Monte_Carlo(object):
         Optional Inputs
             n_burn_in   :: integer :: Number of steps to discard at start
             store_path  :: bool    :: Store path for plotting
+            mixing_angle :: float    :: 0 is no mixing, pi/2 is total mix
             verbose :: bool :: a progress bar if True
         
         Returns
@@ -69,7 +70,7 @@ class Hybrid_Monte_Carlo(object):
             iterator = tqdm(iterator)        
         
         for step in iterator: # burn in
-            self.p, self.x = self.move()
+            self.p, self.x = self.move(mixing_angle=mixing_angle)
             self.burn_in_p.append(copy(self.p))
             self.burn_in.append(copy(self.x))
         
@@ -82,7 +83,7 @@ class Hybrid_Monte_Carlo(object):
             iterator = tqdm(iterator)
         
         for step in iterator:
-            p, x = self.move()
+            p, x = self.move(mixing_angle=mixing_angle)
             self.samples_p.append(copy(self.p))
             self.samples.append(copy(self.x))
         
@@ -100,7 +101,6 @@ class Hybrid_Monte_Carlo(object):
             step_size    :: float    :: step_size for integrator
             n_steps      :: integer  :: number of integrator steps
             mixing_angle :: float    :: 0 is no mixing, pi/2 is total mix
-        
         Returns
             (p,x) :: (float, float) :: new momentum and position
         """
