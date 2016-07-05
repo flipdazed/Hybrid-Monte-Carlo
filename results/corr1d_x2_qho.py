@@ -14,5 +14,5 @@ spacing = 1.
 
 if '__main__' == __name__:
     corr1d_x2.main(x0, pot, file_name,
-        n_samples = 100, n_burn_in = 15, spacing = spacing,
+        n_samples = 2000, n_burn_in = 25, spacing = spacing,
         save = True)

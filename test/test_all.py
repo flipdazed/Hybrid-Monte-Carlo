@@ -23,7 +23,8 @@ logging.root.setLevel(logging.DEBUG)
 def testExpectations():
     test = test_expect.Test(rng=rng, spacing=.1, length = 100, dim = 1)
     utils.newTest(test.id)
-    assert test.qho(mu = 1., tol = 1e-2)
+    assert test.qhoCorellation(mu = 1., tol = 1e-2)
+    assert test.qhoDeltaH(tol = 1e-1)
     pass
 
 def testPotentials():

@@ -7,7 +7,7 @@ from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 file_name = __file__
 pot = QHO()
 
-n, dim = 10, 1
+n, dim = 100, 1
 x0 = np.random.random((n,)*dim)
 
 n_burn_in, n_samples = 15, 100
