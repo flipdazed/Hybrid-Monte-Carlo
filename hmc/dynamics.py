@@ -1,5 +1,4 @@
 import numpy as np
-from copy import copy
 from tqdm import tqdm
 
 import checks
@@ -48,8 +47,8 @@ class Leap_Frog(object):
             fn = getattr(self, '_integrateSave')
         else:
             fn = getattr(self, '_integrateFast')
-        
-        return fn(p0, x0, verbose = False)
+        p, x = fn(p0, x0, verbose = False)
+        return p, x
     
     def _integrateSave(self, p0, x0, verbose = False):
         """The Leap Frog Integration - optimised for saving data
@@ -69,20 +68,20 @@ class Leap_Frog(object):
         Returns
             (x,p) :: tuple :: momentum, position
         """
-        self.p, self.x = p0, x0
-        self._storeSteps() # store zeroth step
+        p, x = p0, x0
+        self._storeSteps(p, x) # store zeroth step
         
         iterator = range(0, self.n_steps)
         if verbose: iterator = tqdm(iterator)
         for step in iterator:
-            self._moveP(frac_step=0.5)
-            self._moveX()
-            self._moveP(frac_step=0.5)
-            self._storeSteps() # store moves
+            self._moveP(p, x, frac_step=0.5)
+            self._moveX(p, x)
+            self._moveP(p, x, frac_step=0.5)
+            self._storeSteps(p, x) # store moves
         
         # remember that any usage of self.p, self.x will be stored as a pointer
-        # must slice or use a copy(self.p) to "freeze" the current value in mem
-        return self.p, self.x
+        # must slice or use a self.p.copy() to "freeze" the current value in mem
+        return p, x
     
     def _integrateFast(self, p0, x0, verbose = False):
         """The Leap Frog Integration - a faster implementation
@@ -100,21 +99,21 @@ class Leap_Frog(object):
             (x,p) :: tuple :: momentum, position
         """
         
-        self.p, self.x = p0,x0
-        self._moveP(frac_step=0.5)
-        self._moveX()
+        p, x = p0,x0
+        self._moveP(p, x, frac_step=0.5)
+        self._moveX(p, x)
         
         iterator = range(0, self.n_steps)
         if verbose: iterator = tqdm(iterator)
         for step in iterator:
-            self._moveP()
-            self._moveX()
+            self._moveP(p, x)
+            self._moveX(p, x)
         
-        self._moveP(frac_step=0.5)
+        self._moveP(p, x, frac_step=0.5)
         
-        return self.p, self.x
+        return p, x
     
-    def _moveX(self, frac_step = 1.):
+    def _moveX(self, p, x, frac_step = 1.):
         """Calculates a POSITION move for the Leap Frog integrator 
         
         Required Inputs
@@ -122,10 +121,10 @@ class Leap_Frog(object):
             x :: float :: current position
         """
         
-        self.x += frac_step*self.step_size*self.p
+        x += frac_step*self.step_size*p
         pass
     
-    def _moveP(self, frac_step = 1.):
+    def _moveP(self, p, x, frac_step = 1.):
         """Calculates a MOMENTUM move for the Leap Frog integrator 
         
         Required Inputs
@@ -133,21 +132,25 @@ class Leap_Frog(object):
             x :: float :: current position
         
         Expectations
-            self.p :: field in the first dimension, lattice in `self.p.shape[1:]`
+            p :: field in the first dimension, lattice in `p.shape[1:]`
         
         The momenta moves sweep through all the momentum field positions and
         update them in turn using a numpy array iteration
         """
         # the extra value in the case of a non lattice potential is
         # garbaged by *args
-        for index in np.ndindex(self.p.shape):
+        for index in np.ndindex(p.shape):
             try:
-                self.p[index] -= frac_step*self.step_size*self.duE(self.x, index)
+                p[index] -= frac_step*self.step_size*self.duE(x, index)
             except:
-                checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(self.x, index)))
+                checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(x, index)))
         pass
-    def _storeSteps(self, new=False):
+    def _storeSteps(self, p, x, new=False):
         """Stores current momentum and position in lists
+        
+        Required Inputs
+            p :: float :: current momentum
+            x :: float :: current position
         
         Optional Input
             new :: bool :: reverts storage arrays to empty lists
@@ -155,25 +158,14 @@ class Leap_Frog(object):
             self.x_step :: float
             self.p_step :: float
         """
-        self.p_ar.append(copy(self.p))
-        self.x_ar.append(copy(self.x))
+        self.p_ar.append(p.copy())
+        self.x_ar.append(x.copy())
         pass
     
     def newPaths(self):
         """Initialises new path lists"""
         self.p_ar = [] # data for plots
         self.x_ar = [] # data for plots
-        pass
-    def pathToNumpy(self):
-        """converts the path to a numpy array
-        
-        make into a 3-tensor of (path, column x/p, 1)
-        last shape required to preserve as column vector for np. matrix mul
-        """
-        self.p_ar = np.asarray(self.p_ar).reshape(
-            (len(self.p_ar), self.p.shape[0], self.p.shape[1]))
-        self.x_ar = np.asarray(self.x_ar).reshape(
-            (len(self.x_ar), self.x.shape[0], self.x.shape[1]))
         pass
 #
 if __name__ == '__main__':
