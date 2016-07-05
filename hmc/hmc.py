@@ -134,18 +134,18 @@ class Hybrid_Monte_Carlo(object):
         # (and is counted again when estimating the expectation of 
         # some function of state by its average over states of the Markov chain)
         # - Neal, "MCMC using Hamiltnian Dynamics"
-        checks.tryAssertNotEqual(h_old, h_new,
-             error_msg='H has not changed!' \
-             +'\n h_old: {}, h_new: {}'.format(h_old, h_new)
-             )
-        checks.tryAssertNotEqual(x,self.x,
-             error_msg='x has not changed!' \
-             +'\n x: {}, self.x: {}'.format(x, self.x)
-             )
-        checks.tryAssertNotEqual(p,self.p,
-             error_msg='p has not changed!' \
-             +'\n p: {}, self.p: {}'.format(p, self.p)
-             )
+        # checks.tryAssertNotEqual(h_old, h_new,
+        #      error_msg='H has not changed!' \
+        #      +'\n h_old: {}, h_new: {}'.format(h_old, h_new)
+        #      )
+        # checks.tryAssertNotEqual(x,self.x,
+        #      error_msg='x has not changed!' \
+        #      +'\n x: {}, self.x: {}'.format(x, self.x)
+        #      )
+        # checks.tryAssertNotEqual(p,self.p,
+        #      error_msg='p has not changed!' \
+        #      +'\n p: {}, self.p: {}'.format(p, self.p)
+        #      )
         
         if not accept: p, x = self.p, self.x # return old p,x
         return p,x
