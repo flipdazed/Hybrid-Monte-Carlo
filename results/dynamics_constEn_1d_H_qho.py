@@ -13,4 +13,4 @@ x0 = np.random.random((n,)*dim)
 
 
 if '__main__' == __name__:
-    dynamics_constEn_1d.main(x0, pot, file_name, save = True, all_lines = False)
+    dynamics_constEn_1d.main(x0, pot, file_name, save = False, all_lines = False)

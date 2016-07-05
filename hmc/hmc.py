@@ -29,6 +29,16 @@ class Hybrid_Monte_Carlo(object):
         self.momentum = Momentum(self.rng)
         self.accept = Accept_Reject(self.rng, store_acceptance=store_acceptance)
         
+        # Take the position in just for the shape
+        # as note this is a fullRefresh so the return is
+        # entirely gaussian noise. It is independent of X
+        # so no need to preflip X before using as an input
+        self.p0 = self.momentum.fullRefresh(self.x0) # intial mom. sample
+        shapes = (self.x0.shape, self.p0.shape)
+        checks.tryAssertEqual(*shapes,
+             error_msg=' x0.shape != p0.shape' \
+             +'\n x0: {}, p0: {}'.format(*shapes)
+             )
         pass
     
     def sample(self, n_samples, n_burn_in = 20, mixing_angle=.5*np.pi, verbose = False):
@@ -46,16 +56,6 @@ class Hybrid_Monte_Carlo(object):
         Returns
             (p_data, x_data) where *_data = (burn in samples, sample)
         """
-        # Take the position in just for the shape
-        # as note this is a fullRefresh so the return is
-        # entirely gaussian noise. It is independent of X
-        # so no need to preflip X before using as an input
-        self.p0 = self.momentum.fullRefresh(self.x0) # intial mom. sample
-        shapes = (self.x0.shape, self.p0.shape)
-        checks.tryAssertEqual(*shapes,
-             error_msg=' x0.shape != p0.shape' \
-             +'\n x0: {}, p0: {}'.format(*shapes)
-             )
         p, x = self.p0.copy(), self.x0.copy()
         
         # Burn in section
@@ -144,8 +144,10 @@ class Hybrid_Monte_Carlo(object):
              +'\n p: {}, self.p: {}'.format(p, p0)
              )
         
-        if not accept: p, x = p0, x0 # return old p,x
-        return p,x
+        if accept:
+            return p,x
+        else: # return old p,x
+            return p0, x0
     
 #
 class Momentum(object):

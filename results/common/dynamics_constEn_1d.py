@@ -93,16 +93,17 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
         step_sample :: int   :: sample array of integrator step lengths
         step_sizes  :: float :: sample array of integrator step sizes
     """
-    
+    rng = np.random.RandomState()
     model = Model(x0, pot,
         n_steps   = n_steps, 
-        step_size = step_size)
+        step_size = step_size,
+        rng=rng)
     model.dynamics.save_path = True # saves the dynamics path
     model.pot.debug = True          # saves all energies
     
     # initial conditions - shoudn't matter much
-    p0 = model.sampler.p
-    x0 = model.sampler.x
+    p0 = model.sampler.p0
+    x0 = model.sampler.x0
     
     # calculate original hamiltonian and set starting vals
     h0    = model.pot.hamiltonian(p0, x0)

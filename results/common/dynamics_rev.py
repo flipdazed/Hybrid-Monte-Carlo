@@ -96,8 +96,8 @@ def main(x0, pot, file_name, save = False, n_steps = 500, step_size = 0.05, prog
     model.dynamics.save_path = True
     
     # initial conditions - shoudn't matter much
-    p0 = model.sampler.p
-    x0 = model.sampler.x
+    p0 = model.sampler.p0
+    x0 = model.sampler.x0
     
     print 'Running Model: {}'.format(file_name)
     norm = reverseIntegration(p0, x0, model, n_steps, progress_bar)

@@ -11,8 +11,8 @@ pot = SHO()
 
 x0 = np.asarray([[1.]])
 
-n_burn_in, n_samples = 15, 250
+n_burn_in, n_samples = 15, 100
 
 if __name__ == '__main__':
     metropolis_accRej.main(x0, pot, file_name, n_samples, n_burn_in,
-        save = False)
+        save = False, step_size=0.01, n_steps=1)

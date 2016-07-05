@@ -99,6 +99,8 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False, step_size=0.05,
     print '\n\t<Prob. Accept>: {:4.2f}'.format(av_acc)
     print '\t<Prob. Accept>: {:4.2f}     (Measured)'.format(meas_av_acc)
     print '\t<exp{{-𝛿H}}>:     {:8.2E} (Measured)\n'.format(meas_av_exp_dh)
+    print '\tstep size:      {:4.2f}'.format(model.dynamics.step_size)
+    print '\ttraj. length:   {:4.2f}'.format(model.dynamics.n_steps)
     
     pow_ten = int(np.floor(np.log10(meas_av_exp_dh)))   # calculate N for AeN sci. format
     decimal = meas_av_exp_dh / float(10**pow_ten)       # calculate A for AeN

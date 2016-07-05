@@ -65,8 +65,8 @@ def dynamicalEnergyChange(x0, pot, step_sample, step_sizes):
     model = Model(x0, pot = pot)
     
     # initial conditions - shoudn't matter much
-    p0 = model.sampler.p
-    x0 = model.sampler.x
+    p0 = model.sampler.p0
+    x0 = model.sampler.x0
     
     # calculate original hamiltonian and set starting vals
     h_old = model.pot.hamiltonian(p0, x0)
