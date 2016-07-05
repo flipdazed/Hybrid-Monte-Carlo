@@ -27,7 +27,32 @@ class Leap_Frog(object):
         pass
     
     def integrate(self, p0, x0, verbose = False):
-        """The Leap Frog Integration
+        """The Leap Frog Integration: optimises method
+        
+        Required Input
+            p0  :: float :: initial momentum to start integration
+            x0  :: float :: initial position to start integration
+        
+        Optional Input
+            verbose :: bool :: prints out progress bar if True (ONLY use for LARGE path lengths)
+        
+        Expectations
+            save_path :: Bool :: save (p,x). IN PHASE: Start at (1,1)
+            self.x_step = x0 when class is instantiated
+            self.p_step = p0 when class is instantiated
+        
+        Returns
+            (x,p) :: tuple :: momentum, position
+        """
+        if self.save_path:
+            fn = getattr(self, '_integrateSave')
+        else:
+            fn = getattr(self, '_integrateFast')
+        
+        return fn(p0, x0, verbose = False)
+    
+    def _integrateSave(self, p0, x0, verbose = False):
+        """The Leap Frog Integration - optimised for saving data
         
         Required Input
             p0  :: float :: initial momentum to start integration
@@ -45,8 +70,7 @@ class Leap_Frog(object):
             (x,p) :: tuple :: momentum, position
         """
         self.p, self.x = p0, x0
-        if self.save_path:
-            self._storeSteps() # store zeroth step
+        self._storeSteps() # store zeroth step
         
         iterator = range(0, self.n_steps)
         if verbose: iterator = tqdm(iterator)
@@ -54,14 +78,14 @@ class Leap_Frog(object):
             self._moveP(frac_step=0.5)
             self._moveX()
             self._moveP(frac_step=0.5)
-            if self.save_path: self._storeSteps() # store moves
+            self._storeSteps() # store moves
         
         # remember that any usage of self.p, self.x will be stored as a pointer
         # must slice or use a copy(self.p) to "freeze" the current value in mem
         return self.p, self.x
     
-    def integrateAlt(self, p0, x0):
-        """The Leap Frog Integration
+    def _integrateFast(self, p0, x0, verbose = False):
+        """The Leap Frog Integration - a faster implementation
         
         Required Input
             p0  :: float :: initial momentum to start integration
@@ -79,12 +103,12 @@ class Leap_Frog(object):
         self.p, self.x = p0,x0
         self._moveP(frac_step=0.5)
         self._moveX()
-        if self.save_path: self._storeSteps() # store moves
         
-        for step in xrange(1, self.n_steps):
+        iterator = range(0, self.n_steps)
+        if verbose: iterator = tqdm(iterator)
+        for step in iterator:
             self._moveP()
             self._moveX()
-            if self.save_path: self._storeSteps() # store moves
         
         self._moveP(frac_step=0.5)
         
