@@ -106,8 +106,8 @@ class Hybrid_Monte_Carlo(object):
         """
         
         # Determine current energy state
-        p,x = self.p, self.x                     # Alter current p,x at MH-step
-        h_old = self.potential.hamiltonian(p, x) # get old hamiltonian
+        p,x = self.p, self.x
+        h_old = self.potential.hamiltonian(p, x)    # get old hamiltonian
         
         # The use of indices emphasises that the
         # mixing happens point-wise
@@ -121,10 +121,11 @@ class Hybrid_Monte_Carlo(object):
         if (n_steps is not None): self.dynamics.n_steps = step_size
         p, x = self.dynamics.integrate(p, x)
         
-        # GHMC flip if partial refresh - else don't bother.
-        if (mixing_angle != .5*np.pi): p = self.momentum.flip(p)
+        # # GHMC flip if partial refresh - else don't bother.
+        # if (mixing_angle != .5*np.pi):
+        p = self.momentum.flip(p)
         
-        # Metropolis-Hastings accept / teject condition
+        # Metropolis-Hastings accept / reject condition
         h_new = self.potential.hamiltonian(p, x) # get new hamiltonian
         accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
         
@@ -133,6 +134,14 @@ class Hybrid_Monte_Carlo(object):
         # (and is counted again when estimating the expectation of 
         # some function of state by its average over states of the Markov chain)
         # - Neal, "MCMC using Hamiltnian Dynamics"
+        checks.tryAssertNotEqual(x,self.x
+             error_msg='x has not changed!' \
+             +'\n x: {}, self.x: {}'.format(x, self.x)
+             )
+        checks.tryAssertNotEqual(p,self.p
+             error_msg='p has not changed!' \
+             +'\n p: {}, self.p: {}'.format(p, self.p)
+             )
         if not accept: p, x = self.p, self.x # return old p,x
         return p,x
     
