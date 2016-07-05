@@ -10,6 +10,8 @@ This directory contains the HMC code and test cases.
      * [Hamiltonian Dynamics (Leap-Frog)](#tests-hdlf)
 	 * [Leap-Frog Parameters](#tests-lf)
 	 * [HMC sampling Bivariate Gaussian](#tests-bg)
+	 * [Sampling the QHO](#tests-qho)
+	 * [Acceptance Rates and <exp{-𝛿H}>](#tests-acc)
  - [Code Acknowledgements](#ak)
 
 <a name="td"/>
@@ -35,16 +37,15 @@ This directory contains the HMC code and test cases.
 ### Implementation
  - ~~Gradient / Laplacian functions on the lattice~~
  - ~~Unit Test: Gradient / Laplacian vs. expected values~~
- - Potentials on the Lattice
+ - ~~Potentials on the Lattice~~
  - ~~Leap Frog algorithm on the lattice (position and momentum updates)~~
- - Unit Test: Leap Frog moves on the lattice
- - HMC on the Lattice - minimal changes: all in Leap Frog
- - Unit Test: HMC on the Lattice
- - Extend to Kramers condition on the Lattice
+ - ~~Unit Test: Leap Frog moves on the lattice~~
+ - ~~HMC on the Lattice - minimal changes: all in Leap Frog~~
+ - ~~Unit Test: HMC on the Lattice~~
 
 ### Results
- - Plot: Quantum Path for QHO
- - Plot: Sampled Quantum Harmonic Oscillator potential
+ - ~~Plot: Quantum Path for QHO~~
+ - ~~Plot: Sampled Quantum Harmonic Oscillator potential~~
  - Plot: Quantum Path for AHO
  - Plot: Quantum Anharmonic Oscillator potential (phi^4)
 
@@ -58,23 +59,45 @@ conservation of energy shown by the circular phase space path and near stationar
 
 Animated Summary | Energy Drift
 :---:|:---:
-<img src="../results/animations/ham_dynamics.gif" width="500" height="500" />  |  <img src="../results/plots/energy_drift.png" width="500" height="500" />
+<img src="../results/animations/ham_dynamics.gif" width="500" height="500" />  |  <img src="../results/figures/dynamics_constEn_1d_H_sho.png" width="500" height="500" />
 
 <a name="tests-lf"/>
 ### Energy Drift for varying Leap-Frog Parameters
-A contour plot showing the small energy loss encountered for different Leap-Frog parameters. Tested using the Simple Harmonic Oscillator. Acceptable tolerance level is
-show as a dashed horizontal line.
+A contour plot showing the small energy loss encountered for different Leap-Frog parameters. Tested using the 1D free-field Klein Gordon potential.
 <p align="center">
-	<img src="../results/plots/energy_conservation.png" width="700" height="700" />
+	<img src="../results/figures/dynamics_constEn_2d_kg.png" width="700" height="700" />
 </p>
 
 
 <a name="tests-bg"/>
 ### Sampling a Bivariate Gaussian
-A demonstration of the first 50 HMC moves when sampling a bivariate gaussian distribution. Normally these moves would be part of the *burn in* phase. An interesting thing to note is that this is equivalent to a simple harmonic oscillator based in a point-like lattice (i.e. no lattice!) of two dimensions. The covariance matrix can be diagonalised and linearly decomposed into two separate oscillators and then they can be considered as two separated point oscillators.
+A demonstration of the first 50 HMC moves when sampling a bivariate gaussian distribution. The burn-in phase is shown in grey. An interesting thing to note is that this is equivalent to a simple harmonic oscillator based in a point-like lattice (i.e. no lattice!) of two dimensions. The covariance matrix can be diagonalised and linearly decomposed into two separate oscillators and then they can be considered as two separated point oscillators.
 
 <p align="center">
-	<img src="../results/plots/HMC_gauss_2d.png" width="700" height="700" />
+	<img src="../results/figures/hmc_samplePlot_mvg.png" width="700" height="700" />
+</p>
+
+
+<a name="tests-qho"/>
+### Sampling the Quantum Harmonic Oscillator
+The 1D Quantum Harmonic Oscillator is sampled using the MCMC path integral method. This is shown to agree closely with theory.
+<p align="center">
+	<img src="../results/figures/hmc_sample_1d_qho.png" width="700" height="700" />
+</p>
+
+<a name="tests-acc">
+### Two Point Correlation Function: QHO
+Here the results of Creutz and Freedman are reproduced for the two-point correlation function for the Quantum harmonic Oscillator. A large number of HMC samples are required to obtain a good fit. This is likely related to the acceptance rate issue below.
+<p align="center">
+	<img src="../results/figures/corr1d_x2_qho.png" width="700" height="700" />
+</p>
+
+<a name="tests-acc">
+### Acceptance Rates and change in Hamiltonian (QHO)
+Here, in the top figure, is shown the acceptance probability for the Metropolis-Hastings step at the end of each Leap-Frog trajectory. The middle figure shows the old and new Hamiltonian at the end of each trajectory and the final, bottom, figure shows the exponentiated negative change in the Hamiltonian between the start and the end of each trajectory.
+The optimal acceptance probability is around `60%` and `<exp{-𝛿H}>` should sit around `1.`. Currently there is an, as of yet, undiagnosed issue in the code made clear by this test.
+<p align="center">
+	<img src="../results/figures/metropolis_accRej_qho.png" width="700" height="700" />
 </p>
 
 <a name="ak"/>
