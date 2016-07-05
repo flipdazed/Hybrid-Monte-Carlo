@@ -1,5 +1,4 @@
 import numpy as np
-from copy import copy
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 
@@ -86,7 +85,7 @@ def dynamicalEnergyChange(x0, pot, step_sample, step_sizes):
         
         # obtain new duynamics and resultant hamiltonian
         model.dynamics.newPaths()
-        pf, xf = model.dynamics.integrate(copy(p0), copy(x0))
+        pf, xf = model.dynamics.integrate(p0.copy(), x0.copy())
         h_new = model.pot.hamiltonian(pf, xf)
         
         bench_mark = np.exp(-(h_old-h_new))

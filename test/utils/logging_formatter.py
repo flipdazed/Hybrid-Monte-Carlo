@@ -3,7 +3,7 @@
 import logging
 import types
 import sys
-from copy import deepcopy, copy
+
 # THESE ARE HERE 
 # FOR ASSIGNING COLORS
 WHITE   = 21

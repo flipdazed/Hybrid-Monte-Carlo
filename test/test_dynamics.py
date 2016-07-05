@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from copy import deepcopy as copy
-
 import utils
 from hmc import checks
 
@@ -72,7 +70,7 @@ class Constant_Energy(object):
             
             # obtain new duynamics and resultant hamiltonian
             self.dynamics.newPaths()
-            pf, xf = self.dynamics.integrate(copy(p0), copy(x0))
+            pf, xf = self.dynamics.integrate(p0.copy(), x0.copy())
             h_new = self.pot.hamiltonian(pf, xf)
             
             bench_mark = np.exp(-(h_old-h_new))
@@ -136,7 +134,7 @@ class Reversibility(object):
         passed = True
         
         self.dynamics.newPaths()
-        pm, xm = self.dynamics.integrate(copy(p0), copy(x0))
+        pm, xm = self.dynamics.integrate(p0.copy(), x0.copy())
         p0f, x0f = self.dynamics.integrate(-pm, xm) # time flip
         p0f = -p0f # time flip to point in right time again
         

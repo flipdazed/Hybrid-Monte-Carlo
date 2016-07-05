@@ -1,5 +1,4 @@
 import numpy as np
-from copy import copy
 from tqdm import tqdm
 
 from . import checks
@@ -61,8 +60,8 @@ class Hybrid_Monte_Carlo(object):
         Returns
             (p_data, x_data) where *_data = (burn in samples, sample)
         """
-        self.burn_in_p = [copy(self.p)]
-        self.burn_in = [copy(self.x)]
+        self.burn_in_p = [self.p.copy()]
+        self.burn_in = [self.x.copy()]
         
         iterator = range(n_burn_in)
         if verbose: 
@@ -71,11 +70,11 @@ class Hybrid_Monte_Carlo(object):
         
         for step in iterator: # burn in
             self.p, self.x = self.move(mixing_angle=mixing_angle)
-            self.burn_in_p.append(copy(self.p))
-            self.burn_in.append(copy(self.x))
+            self.burn_in_p.append(self.p.copy())
+            self.burn_in.append(self.x.copy())
         
-        self.samples_p = [copy(self.p)]
-        self.samples = [copy(self.x)]
+        self.samples_p = [self.p.copy()]
+        self.samples = [self.x.copy()]
         
         iterator = range(n_samples)
         if verbose: 
@@ -84,8 +83,8 @@ class Hybrid_Monte_Carlo(object):
         
         for step in iterator:
             p, x = self.move(mixing_angle=mixing_angle)
-            self.samples_p.append(copy(self.p))
-            self.samples.append(copy(self.x))
+            self.samples_p.append(self.p.copy())
+            self.samples.append(self.x.copy())
         
         return (self.burn_in_p, self.samples_p), (self.burn_in, self.samples)
     
@@ -106,11 +105,12 @@ class Hybrid_Monte_Carlo(object):
         """
         
         # Determine current energy state
-        p,x = self.p, self.x
-        h_old = self.potential.hamiltonian(p, x)    # get old hamiltonian
+        # p,x = self.p.copy(), self.x.copy()
+        h_old = self.potential.hamiltonian(self.p, self.x)    # get old hamiltonian
         
         # The use of indices emphasises that the
         # mixing happens point-wise
+        p = np.zeros(self.p.shape)
         for idx in np.ndindex(self.p.shape):
             # although a flip is added when theta=pi/2
             # it doesn't matter as noise is symmetric
@@ -119,7 +119,7 @@ class Hybrid_Monte_Carlo(object):
         # Molecular Dynamics Monte Carlo
         if (step_size is not None): self.dynamics.step_size = step_size
         if (n_steps is not None): self.dynamics.n_steps = step_size
-        p, x = self.dynamics.integrate(p, x)
+        p, x = self.dynamics.integrate(self.p, self.x)
         
         # # GHMC flip if partial refresh - else don't bother.
         # if (mixing_angle != .5*np.pi):
@@ -134,14 +134,19 @@ class Hybrid_Monte_Carlo(object):
         # (and is counted again when estimating the expectation of 
         # some function of state by its average over states of the Markov chain)
         # - Neal, "MCMC using Hamiltnian Dynamics"
-        checks.tryAssertNotEqual(x,self.x
+        checks.tryAssertNotEqual(h_old, h_new,
+             error_msg='H has not changed!' \
+             +'\n h_old: {}, h_new: {}'.format(h_old, h_new)
+             )
+        checks.tryAssertNotEqual(x,self.x,
              error_msg='x has not changed!' \
              +'\n x: {}, self.x: {}'.format(x, self.x)
              )
-        checks.tryAssertNotEqual(p,self.p
+        checks.tryAssertNotEqual(p,self.p,
              error_msg='p has not changed!' \
              +'\n p: {}, self.p: {}'.format(p, self.p)
              )
+        
         if not accept: p, x = self.p, self.x # return old p,x
         return p,x
     

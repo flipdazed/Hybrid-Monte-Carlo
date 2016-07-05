@@ -45,8 +45,8 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs, subtitle, save):
     ax[0].grid(True)
     
     ax[1].set_ylabel(r'Hamiltonian, $H$')
-    ax[1].plot(xrng, h_olds, linestyle='-', color='blue', linewidth=2., alpha=0.4, label=r'$H_{i}$')
-    ax[1].plot(xrng, h_news, linestyle='-', color='green', linewidth=2., alpha=0.6, label=r'$H_{\text{old}}$')
+    ax[1].plot(xrng, h_olds, linestyle='-', color='blue', linewidth=2., alpha=0.4, label=r'$H_{\text{old}}$')
+    ax[1].plot(xrng, h_news, linestyle='-', color='green', linewidth=2., alpha=0.6, label=r'$H_{\text{new}}$')
     ax[1].legend(loc='upper left', shadow=True, fontsize = pp.axfont-3)
     # ax[1].set_yscale("log", nonposy='clip')
     ax[1].grid(True)

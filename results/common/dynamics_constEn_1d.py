@@ -1,5 +1,4 @@
 import numpy as np
-from copy import copy
 import matplotlib.pyplot as plt
 
 from models import Basic_HMC as Model
@@ -119,7 +118,7 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
     
     # obtain new duynamics and resultant hamiltonian
     model.dynamics.newPaths()
-    pf, xf = model.dynamics.integrate(copy(p0), copy(x0))
+    pf, xf = model.dynamics.integrate(p0.copy(), x0.copy())
     
     kE_path = [model.pot.kE(i) for i in model.dynamics.p_ar]
     uE_path = [model.pot.uE(i) for i in model.dynamics.x_ar]

@@ -20,6 +20,7 @@ class Accept_Reject(object):
         self.h_olds = []
         self.h_news = []
         pass
+    
     def metropolisHastings(self, h_old, h_new):
         """A M-H accept/reject test as per
         Duane, Kennedy, Pendleton (1987)

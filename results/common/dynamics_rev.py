@@ -1,5 +1,4 @@
 import numpy as np
-from copy import copy
 import matplotlib.pyplot as plt
 
 from models import Basic_HMC as Model
@@ -51,7 +50,7 @@ def reverseIntegration(p0, x0, model, n_steps, progress_bar):
     # the momentum flip is not included in the Leap Frog routine
     model.dynamics.newPaths()
     if progress_bar: print "Forwards integration..."
-    pm, xm = model.dynamics.integrate(copy(p0), copy(x0), verbose = progress_bar)
+    pm, xm = model.dynamics.integrate(p0.copy(), x0.copy(), verbose = progress_bar)
     if progress_bar: print "Reverse integration..."
     p0f, x0f = model.dynamics.integrate(-pm, xm, verbose = progress_bar) # time flip
     p0f = -p0f # time flip to point in right time again

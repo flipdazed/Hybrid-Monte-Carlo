@@ -1,5 +1,4 @@
 import numpy as np
-from copy import copy
 import matplotlib.pyplot as plt
 from scipy import stats
 
