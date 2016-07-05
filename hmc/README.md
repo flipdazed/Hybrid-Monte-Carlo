@@ -94,7 +94,7 @@ Here the results of Creutz and Freedman are reproduced for the two-point correla
 
 <a name="tests-acc">
 ### Acceptance Rates and change in Hamiltonian (QHO)
-Here, in the top figure, is shown the acceptance probability for the Metropolis-Hastings step at the end of each Leap-Frog trajectory. The middle figure shows the old and new Hamiltonian at the end of each trajectory and the final, bottom, figure shows the exponentiated negative change in the Hamiltonian between the start and the end of each trajectory.
+Here, in the top figure, is shown the acceptance probability for the Metropolis-Hastings step at the end of each Leap-Frog trajectory. The middle figure shows the old and new Hamiltonian at the end of each trajectory and the final, bottom, figure shows the exponentiated negative change in the Hamiltonian between the start and the end of each trajectory. Pink bands show where rejections occurred at run-time.
 The optimal acceptance probability is around `60%` and `<exp{-𝛿H}>` should sit around `1.`. Currently there is an, as of yet, undiagnosed issue in the code made clear by this test.
 <p align="center">
 	<img src="../results/figures/metropolis_accRej_qho.png" width="700" height="700" />
