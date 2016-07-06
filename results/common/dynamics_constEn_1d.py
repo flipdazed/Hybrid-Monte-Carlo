@@ -119,7 +119,7 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
     
     # obtain new duynamics and resultant hamiltonian
     model.dynamics.newPaths()
-    pf, xf = model.dynamics.integrate(p0.copy(), x0.copy())
+    pf, xf = model.dynamics.integrate(p0.copy(), x0.copy(), verbose=True)
     
     kE_path = [model.pot.kE(i) for i in model.dynamics.p_ar]
     uE_path = [model.pot.uE(i) for i in model.dynamics.x_ar]
@@ -128,7 +128,7 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
     pots = np.asarray([uE0] + uE_path) - uE0
     return kins, pots 
 #
-def main(x0, pot, file_name, save = False, n_steps   = 500, step_size = .01, all_lines = True):
+def main(x0, pot, file_name, save = False, n_steps   = 500, step_size = .1, all_lines = True):
     """A wrapper function
     
     Required Inputs

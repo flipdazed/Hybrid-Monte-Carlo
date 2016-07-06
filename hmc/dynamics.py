@@ -47,7 +47,8 @@ class Leap_Frog(object):
             fn = getattr(self, '_integrateSave')
         else:
             fn = getattr(self, '_integrateFast')
-        p, x = fn(p0, x0, verbose = False)
+        
+        p, x = fn(p0, x0, verbose = verbose)
         return p, x
     
     def _integrateSave(self, p0, x0, verbose = False):
@@ -74,9 +75,9 @@ class Leap_Frog(object):
         iterator = range(0, self.n_steps)
         if verbose: iterator = tqdm(iterator)
         for step in iterator:
-            self._moveP(p, x, frac_step=0.5)
-            self._moveX(p, x)
-            self._moveP(p, x, frac_step=0.5)
+            p = self._moveP(p, x, frac_step=0.5)
+            x = self._moveX(p, x)
+            p = self._moveP(p, x, frac_step=0.5)
             self._storeSteps(p, x) # store moves
         
         # remember that any usage of self.p, self.x will be stored as a pointer
@@ -99,17 +100,16 @@ class Leap_Frog(object):
             (x,p) :: tuple :: momentum, position
         """
         
-        p, x = p0,x0
-        self._moveP(p, x, frac_step=0.5)
-        self._moveX(p, x)
+        p = self._moveP(p0, x0, frac_step=0.5)
+        x = self._moveX(p, x0)
         
         iterator = range(0, self.n_steps)
         if verbose: iterator = tqdm(iterator)
         for step in iterator:
-            self._moveP(p, x)
-            self._moveX(p, x)
+            p = self._moveP(p, x)
+            x = self._moveX(p, x)
         
-        self._moveP(p, x, frac_step=0.5)
+        p = self._moveP(p, x, frac_step=0.5)
         
         return p, x
     
@@ -122,7 +122,7 @@ class Leap_Frog(object):
         """
         
         x += frac_step*self.step_size*p
-        pass
+        return x
     
     def _moveP(self, p, x, frac_step = 1.):
         """Calculates a MOMENTUM move for the Leap Frog integrator 
@@ -144,16 +144,15 @@ class Leap_Frog(object):
                 p[index] -= frac_step*self.step_size*self.duE(x, index)
             except:
                 checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(x, index)))
-        pass
-    def _storeSteps(self, p, x, new=False):
+        return p
+    
+    def _storeSteps(self, p, x):
         """Stores current momentum and position in lists
         
         Required Inputs
             p :: float :: current momentum
             x :: float :: current position
         
-        Optional Input
-            new :: bool :: reverts storage arrays to empty lists
         Expectations
             self.x_step :: float
             self.p_step :: float
