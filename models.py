@@ -24,13 +24,13 @@ class Basic_HMC():
             self.rng = rng
         
         
-        self.pot = pot
-        self.dynamics = Leap_Frog(
-            duE = self.pot.duE,
+        dynamics = Leap_Frog(
+            duE = pot.duE,
             step_size = step_size,
             n_steps = n_steps)
         
-        self.sampler = Hybrid_Monte_Carlo(self.x0, self.dynamics, self.pot, self.rng)
+        self.sampler = Hybrid_Monte_Carlo(self.x0, dynamics, pot, self.rng)
+        pass
     
     def run(self, n_samples, n_burn_in, verbose = False):
         """Runs the HMC algorithm to sample the potential
