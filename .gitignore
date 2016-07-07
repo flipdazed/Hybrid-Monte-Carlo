@@ -1,9 +1,0 @@
-# github junk
-.gitignore
-
-# OS junk files
-[Tt]humbs.db
-*.DS_Store
-
-# python junk
-*.pyc
