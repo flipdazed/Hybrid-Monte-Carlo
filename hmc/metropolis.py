@@ -56,6 +56,7 @@ class Accept_Reject(object):
             # (self.rng.uniform() < min(1., np.exp(-delta_h))) # Neal / DKP original
             accept_reject = (np.exp(-delta_h) - self.rng.uniform()) >= 0 # faster
         
+        # stores useful values for analysis during runtime
         if self.store_acceptance:
             self.accept_rates.append(min(1, np.exp(-delta_h)))
             self.accept_rejects.append(accept_reject)
