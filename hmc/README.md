@@ -71,7 +71,7 @@ A contour plot showing the small energy loss encountered for different Leap-Frog
 
 <a name="tests-bg"/>
 ### Sampling a Bivariate Gaussian
-A demonstration of the first 50 HMC moves when sampling a bivariate gaussian distribution. The burn-in phase is shown in grey. An interesting thing to note is that this is equivalent to a simple harmonic oscillator based in a point-like lattice (i.e. no lattice!) of two dimensions. The covariance matrix can be diagonalised and linearly decomposed into two separate oscillators and then they can be considered as two separated point oscillators.
+A demonstration of the first 100 HMC moves when sampling a bivariate gaussian distribution. The burn-in phase is shown in grey. An interesting thing to note is that this is equivalent to a simple harmonic oscillator based in a point-like lattice (i.e. no lattice!) of two dimensions. The covariance matrix can be diagonalised and linearly decomposed into two separate oscillators and then they can be considered as two separated point oscillators.
 
 <p align="center">
 	<img src="../results/figures/hmc_samplePlot_mvg.png" width="700" height="700" />
