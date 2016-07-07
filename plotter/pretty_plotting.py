@@ -17,6 +17,7 @@ class Pretty_Plotter(object):
         self.axfont = 11*self.s                 # axes
         self.tfont  = 14*self.s                 # subplot titles
         self.ttfont = 16*self.s                 # figure title
+        self.ipfont = 9*self.s                  # label fonts
         
         # Customising Options
         self.params = {'text.usetex' : True,
@@ -58,4 +59,16 @@ class Pretty_Plotter(object):
             fig.savefig(save_dir+save)
         else:
             plt.show()
+        pass
+    
+    def add_label(self, ax, text, fontsize = None, pos = [1, 1]):
+        """must have a plot"""
+        style = dict(facecolor='white', boxstyle='round')
+        x,y = pos
+        if fontsize is None: fontsize = self.ipfont
+        ax.text(x, y, text,
+             horizontalalignment='right',
+             verticalalignment='center',
+             bbox=style,
+             transform = ax.transAxes, fontsize=fontsize)
         pass

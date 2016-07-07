@@ -8,7 +8,7 @@ from models import Basic_GHMC as Model
 from utils import saveOrDisplay
 
 def plot(probs, accepts, h_olds, h_news, exp_delta_hs, h_mdmc, mdmc_deltaH, 
-    subtitle, save):
+    subtitle, labels, save):
     """Plots 3 stacked figures:
         1. the acceptance probability at each step
         2. the hamiltonian (old, new) at each step
@@ -22,6 +22,8 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs, h_mdmc, mdmc_deltaH,
         h_olds          :: np.array :: old hamiltonian at each step
         h_news          :: np.array :: new hamiltonian at each step
         exp_delta_hs    :: np.array :: exp{-delta H} at each step
+        h_mdmc          :: np.array :: 
+        mdmc_deltaH     :: np.array ::
         subtitle        :: str      :: the subtitle to put in ax[0].set_title()
         save            :: bool :: True saves the plot, False prints to the screen
     """
@@ -31,57 +33,65 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs, h_mdmc, mdmc_deltaH,
     pp._updateRC()
     
     fig, ax = plt.subplots(3, sharex=True, figsize = (8, 8))
-    fig.suptitle(r'Data from {} Metropolis acceptance steps'.format(len(probs)), fontsize=16)
+    fig.suptitle(r'Data from {} Metropolis acceptance steps'.format(len(probs)), 
+        fontsize=pp.ttfont)
     
-    fig.subplots_adjust(hspace=0.1)
-    l = probs.size
-    n = h_mdmc.size/l - 1
-    mdmc_x = np.asarray([np.linspace(i, j, n+1) for i,j in zip(range(0,l), range(1,l+1))])
-    mdmc_x = mdmc_x.flatten()
+    fig.subplots_adjust(hspace=0.2)
+    l = probs.size # length of HMC trajectory
     xrng = range(1, l+1)
     for a in ax:
         for x,val in zip(xrng,accepts):
             if val == False: a.axvline(x=x, linewidth=4, color='red', alpha=0.2)
     
-    ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
-    ax[0].set_ylabel(r'Acceptance Prob., $P_{\text{acc}}$')
-    ax[0].plot(xrng, probs, linestyle='-', color='blue', linewidth=2., alpha=0.6)
-    ax[0].grid(True)
-    
-    ax[1].set_ylabel(r'Hamiltonian, $H$')
-    ax[1].plot(xrng, h_olds, linestyle='-', color='blue', linewidth=2., alpha=0.4, 
-        label=r'$H_{\text{i-1}}$ M-H')
-    ax[1].plot(xrng, h_news, linestyle='-', color='green', linewidth=2., alpha=0.4, 
-        label=r'$H_{\text{i}}$ M-H')
-    ax[1].plot(mdmc_x, h_mdmc, linestyle='--', color='green', linewidth=1, alpha=1, 
-        label=r'$H_{\delta i}$ MDMC')
-    
+    # functions to calculate the staggering of y and x
+    # for the MDMC. Staggering means calculating the start and
+    # end points of each single trajectory consisting of 1 MDMC integration
+    n = h_mdmc.size/l - 1 # this calculates n_steps for the MDMC (in a backwards way)   
     staggered_xi = np.arange(0, l)
     staggered_xf = np.arange(1, l+1)
     staggered_y = lambda arr, offset: arr[0+offset::(n+1)]
+    remove_links = lambda arr: [None if (i)%(n+1) == 0 else a for i,a in enumerate(arr)]
     
-    ax[1].scatter(staggered_xi, staggered_y(h_mdmc,0), color='red', marker='o', alpha=1, 
+    ## calculate a linear space as a fraction of the HMC trajectory
+    mdmc_x = np.asarray([np.linspace(i, j, n+1) for i,j in zip(range(0,l), range(1,l+1))])
+    mdmc_x = mdmc_x.flatten()
+    
+    ax[0].set_title(subtitle, fontsize=pp.tfont)
+    ax[0].set_ylabel(r'Hamiltonian, $H$')
+    ax[0].plot(xrng, h_olds, linestyle='-', color='blue', linewidth=2., alpha=0.4, 
+        label=r'M-H: $H(t-1)$')
+    ax[0].plot(xrng, h_news, linestyle='-', color='green', linewidth=2., alpha=0.4, 
+        label=r'M-H: $H(t)$')
+    ax[0].plot(mdmc_x, remove_links(h_mdmc), linestyle='--', color='green', linewidth=1, alpha=1, 
+        label=r'MDMC: $H(t+\epsilon)$')
+    ax[0].scatter(staggered_xi, staggered_y(h_mdmc,0), color='red', marker='o', alpha=1, 
         label=r'Start MDMC')
-    ax[1].scatter(staggered_xf, staggered_y(h_mdmc,n), color='red', marker='x', alpha=1, 
+    ax[0].scatter(staggered_xf, staggered_y(h_mdmc,n), color='red', marker='x', alpha=1, 
         label=r'End MDMC')
-    ax[1].legend(loc='best', shadow=True, fontsize = pp.axfont-3)
-    ax[1].grid(True)
     
-    ax[2].set_ylabel(r'$\exp{-\delta H}$')
-    ax[2].plot(xrng, exp_delta_hs, linestyle='-', color='blue', linewidth=2., alpha=0.4,
-        label=r'$\exp{ -\delta H_{\text{HMC }}}$')
+    ax[1].set_ylabel(r'$\exp{-\delta H}$')
+    ax[1].plot(xrng, exp_delta_hs, linestyle='-', color='blue', linewidth=2., alpha=0.4,
+        label=r'M-H: $\exp{ -\delta H(t)}$')
     
-    ax[2].plot(mdmc_x, mdmc_deltaH, linestyle='--', color='blue', linewidth=1., alpha=1,
-        label=r'$\exp{ -\delta H_{\text{MDMC}}}$')
-    ax[2].scatter(staggered_xi, staggered_y(mdmc_deltaH, 0), color='red', marker='o', 
+    ax[1].plot(mdmc_x, remove_links(mdmc_deltaH), linestyle='--', color='blue', linewidth=1., alpha=1,
+        label=r'MDMC: $\exp{ -\delta H(t+\epsilon)}$')
+    ax[1].scatter(staggered_xi, staggered_y(mdmc_deltaH, 0), color='red', marker='o', 
         alpha=1, label=r'Start MDMC')
-    ax[2].scatter(staggered_xf, staggered_y(mdmc_deltaH, n), color='red', marker='x',
+    ax[1].scatter(staggered_xf, staggered_y(mdmc_deltaH, n), color='red', marker='x',
         alpha=1, label=r'End MDMC')
-    ax[2].grid(True)
-    ax[2].legend(loc='best', shadow=True, fontsize = pp.axfont-3)
-    # ax[2].set_yscale("log", nonposy='clip')
-    ax[2].set_xlabel(r'HMC step, $i$')
+#    ax[1].set_yscale("log", nonposy='clip')
     
+    ax[2].set_ylabel(r'Acceptance Prob., $P_{\text{acc}}$')
+    ax[2].plot(xrng, probs, linestyle='-', color='blue', linewidth=2., alpha=0.6)
+    
+    # adds labels to the plots
+    for i, text in labels.iteritems(): 
+        pp.add_label(ax[i], text, fontsize=pp.tfont)
+    ax[0].legend(loc='upper left', shadow=True, fontsize = pp.ipfont, fancybox=True)
+    ax[1].legend(loc='upper left', shadow=True, fontsize = pp.ipfont, fancybox=True)
+    for i in ax: i.grid(True)
+    ax[-1].set_xlabel(r'HMC trajectory, $t$')
+        
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
@@ -135,7 +145,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False, step_size=0.05,
     h_mdmc = np.asarray(np.asarray(kE_mdmc) + np.asarray(uE_mdmc))
     
     # filters out all the values multiples of n_steps
-    h_mdmc_0 = np.repeat(h_mdmc[0::(n_steps+1)], 11)
+    h_mdmc_0 = np.repeat(h_mdmc[0::(n_steps+1)], n_steps+1)
     delta_H = h_mdmc - h_mdmc_0
     
     print '\n\t<Prob. Accept>: {:4.2f}'.format(av_acc)
@@ -148,14 +158,20 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False, step_size=0.05,
     decimal = meas_av_exp_dh / float(10**pow_ten)       # calculate A for AeN
     
     # one long subtitle - long as can't mix LaTeX and .format()
-    subtitle = 'Potential: {}, Lattice shape: {}'.format(pot.name, x0.shape) + \
-        r', $\langle P_{\text{acc}} \rangle= '+' {:4.2f}$'.format(meas_av_acc) + \
-        r', $\langle e^{-\delta H} \rangle='+' {:4.2f}'.format(decimal)+r'\times 10^{'\
-            + '{}'.format(pow_ten) + '}$'
+    subtitle = '\centering Potential: {}, Lattice: {}'.format(pot.name, x0.shape) \
+        + ', Accept: {}'.format(['M-H','All'][accept_all]) \
+        + r', $\theta = ' + '{:3.1f}$'.format(mixing_angle) \
+        + r', $\epsilon = ' + '{:4.2f}$'.format(step_size) \
+        + r', $n = ' + '{}$'.format(n_steps)
+    
+    ax2_label = r'$\langle P_{\text{acc}} \rangle='+' {:4.2f}$'.format(meas_av_acc)
+    ax1_label = r' $\langle \exp{ -\delta H}  \rangle='+' {:3.1f}'.format(decimal) \
+        + r'\times 10^{' + '{}'.format(pow_ten) + '}$'
     
     plot(accept_rates, accept_rejects, h_olds, h_news, exp_delta_hs,
         h_mdmc, np.exp(-delta_H),
         subtitle = subtitle,
-        save = saveOrDisplay(save, file_name)
+        save = saveOrDisplay(save, file_name),
+        labels = {1:ax1_label, 2:ax2_label}
         )
     pass
