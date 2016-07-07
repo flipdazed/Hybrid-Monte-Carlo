@@ -98,7 +98,7 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
         n_steps   = n_steps, 
         step_size = step_size,
         rng=rng)
-    model.dynamics.save_path = True # saves the dynamics path
+    model.sampler.dynamics.save_path = True # saves the dynamics path
     model.pot.debug = True          # saves all energies
     
     # initial conditions - shoudn't matter much
@@ -118,11 +118,11 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
         check_uE0 = uE0    # if not debug then as normal
     
     # obtain new duynamics and resultant hamiltonian
-    model.dynamics.newPaths()
-    pf, xf = model.dynamics.integrate(p0.copy(), x0.copy(), verbose=True)
+    model.sampler.dynamics.newPaths()
+    pf, xf = model.sampler.dynamics.integrate(p0.copy(), x0.copy(), verbose=True)
     
-    kE_path = [model.pot.kE(i) for i in model.dynamics.p_ar]
-    uE_path = [model.pot.uE(i) for i in model.dynamics.x_ar]
+    kE_path = [model.pot.kE(i) for i in model.sampler.dynamics.p_ar]
+    uE_path = [model.pot.uE(i) for i in model.sampler.dynamics.x_ar]
     
     kins = np.asarray([kE0] + kE_path) - kE0
     pots = np.asarray([uE0] + uE_path) - uE0

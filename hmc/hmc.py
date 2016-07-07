@@ -102,15 +102,15 @@ class Hybrid_Monte_Carlo(object):
             (p,x) :: (float, float) :: new momentum and position
         """
         
-        # Determine current energy state
-        p0, x0 = p.copy(), x.copy()
-        
         # The use of indices emphasises that the
         # mixing happens point-wise
         for idx in np.ndindex(p.shape):
             # although a flip is added when theta=pi/2
             # it doesn't matter as noise is symmetric
             p[idx] = self.momentum.generalisedRefresh(p[idx], mixing_angle=mixing_angle)
+        
+        # Determine current energy state
+        p0, x0 = p.copy(), x.copy()
         
         # Molecular Dynamics Monte Carlo
         if (step_size is not None): self.dynamics.step_size = step_size

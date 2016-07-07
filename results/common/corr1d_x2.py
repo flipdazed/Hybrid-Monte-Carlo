@@ -64,7 +64,7 @@ def plot(c_fn, theory, spacing, subtitle, save):
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
-def main(x0, pot, file_name, n_samples, n_burn_in, spacing = 1., save = False):
+def main(x0, pot, file_name, n_samples, n_burn_in, c_len=5, step_size = .5, n_steps = 50, spacing = 1., save = False):
     """A wrapper function
     
     Required Inputs
@@ -75,14 +75,16 @@ def main(x0, pot, file_name, n_samples, n_burn_in, spacing = 1., save = False):
         n_burn_in   :: int :: number of burn in samples
         
     Optional Inputs
+        c_len :: int :: length of corellation
+        step_size :: float :: MDMC step size
+        n_steps :: int :: number of MDMC steps
         spacing ::float :: lattice spacing
         save :: bool :: True saves the plot, False prints to the screen
     """
     
-    c_len = 5
-    
     rng = np.random.RandomState()
-    model = Model(x0, pot=pot, spacing=spacing, rng=rng)
+    model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
+      n_steps = n_steps)
     c = corr.Corellations_1d(model, 'run', 'samples')
     
     subtitle = r"Potential: {}; Lattice Shape: ${}$; $a={:.1f}$".format(

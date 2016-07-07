@@ -48,15 +48,15 @@ def reverseIntegration(p0, x0, model, n_steps, progress_bar):
     # start the dynamics integrator
     # note the strange flips necessary are because 
     # the momentum flip is not included in the Leap Frog routine
-    model.dynamics.newPaths()
+    model.sampler.dynamics.newPaths()
     if progress_bar: print "Forwards integration..."
-    pm, xm = model.dynamics.integrate(p0.copy(), x0.copy(), verbose = progress_bar)
+    pm, xm = model.sampler.dynamics.integrate(p0.copy(), x0.copy(), verbose = progress_bar)
     if progress_bar: print "Reverse integration..."
-    p0f, x0f = model.dynamics.integrate(-pm, xm, verbose = progress_bar) # time flip
+    p0f, x0f = model.sampler.dynamics.integrate(-pm, xm, verbose = progress_bar) # time flip
     p0f = -p0f # time flip to point in right time again
     
     # extract the paths
-    p_path, x_path = model.dynamics.p_ar, model.dynamics.x_ar
+    p_path, x_path = model.sampler.dynamics.p_ar, model.sampler.dynamics.x_ar
     
     p_path = np.asarray(p_path)
     x_path = np.asarray(x_path)
@@ -93,7 +93,7 @@ def main(x0, pot, file_name, save = False, n_steps = 500, step_size = 0.05, prog
         n_steps   = n_steps, 
         step_size = step_size
         )
-    model.dynamics.save_path = True
+    model.sampler.dynamics.save_path = True
     
     # initial conditions - shoudn't matter much
     p0 = model.sampler.p0
