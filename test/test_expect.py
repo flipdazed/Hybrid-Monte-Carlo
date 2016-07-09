@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
+from scipy.special import erfc
 
 import utils
 
 from hmc.lattice import Periodic_Lattice
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
+from hmc.potentials import Klein_Gordon as KG
 from hmc.hmc import *
 from correlations import corr
 from models import Basic_HMC as Model
@@ -21,7 +23,7 @@ class Test(object):
         spacing :: float :: lattice spacing
     """
     def __init__(self, rng, spacing=.1, length = 100, dim = 1, verbose = False):
-        self.id  = 'Expectations: <x(0)x(0)>, <exp{{-𝛿H}}>'
+        self.id  = 'Expectations: <x(0)x(0)>, <exp{-𝛿H}>, <P_acc>'
         self.rng = rng
         self.length = length
         self.dim = dim
@@ -41,11 +43,12 @@ class Test(object):
         """
         passed = True
         pot = QHO()
-        meas_av_exp_dh, av_acc = self._runDeltaH(pot)
+        delta_hs, av_acc = self._runDeltaH(pot)
+        meas_av_exp_dh  = np.asscalar(np.exp(-delta_hs).mean())
         passed *= np.abs(meas_av_exp_dh - 1) <= tol
         
         if print_out:
-            utils.display(pot.name, passed,
+            utils.display('<exp{-𝛿H}> using ' + pot.name, passed,
                 details = {
                     'Inputs':['a: {}'.format(self.spacing),'n steps: {}'.format(n_steps),
                         'step size: {}'.format(step_size),
@@ -72,33 +75,69 @@ class Test(object):
         passed *= np.abs(measured_xx - expected_xx) <= tol
         
         if print_out:
-            utils.display(pot.name, passed,
+            utils.display('<x(0)x(t)> using ' + pot.name, passed,
                 details = {
                     'Inputs':['a: {}'.format(self.spacing),'µ: {}'.format(mu),
-                        'shape: {}'.format(self.lattice_shape), 'n: {}'.format(self.n)],
+                        'shape: {}'.format(self.lattice_shape), 'samples: {}'.format(self.n)],
                     'Outputs':['expected: {}'.format(expected_xx),
                         'measured: {}'.format(measured_xx)]
                     })
         return passed
     
-    def _runDeltaH(self, pot, n_samples = 100, n_burn_in = 20):
+    def kgAcceptance(self, n_steps = 20, step_size = .1, tol = 1e-2, print_out = True):
+        """calculates the value <P_acc> for the free field
+        
+        Optional Inputs
+            n_steps         :: int      :: LF trajectory lengths
+            step_size       :: int      :: Leap Frog step size
+            m :: float :: parameter used in potentials
+            tol :: float :: tolerance level of deviation from expected value
+            print_out :: bool :: prints info if True
+        """
+        passed = True
+        
+        pot = KG()
+        n_samples = 250
+        delta_hs, measured_acc = self._runDeltaH(pot, n_samples = n_samples, 
+            step_size=step_size, n_steps=n_steps)
+        av_dh = np.asscalar(delta_hs.mean())
+        expected_acc = erfc(.5*np.sqrt(av_dh))
+        
+        passed *= np.abs(measured_acc - expected_acc) <= tol
+        
+        meas_av_exp_dh  = np.asscalar(np.exp(-delta_hs).mean())
+        if print_out:
+            utils.display('<P_acc> using ' + pot.name, passed,
+                details = {
+                    'Inputs':['a: {}'.format(self.spacing),'m: {}'.format(pot.m),
+                        'shape: {}'.format(self.lattice_shape), 'samples: {}'.format(n_samples),
+                        'n steps: {}'.format(n_steps), 'step size: {}'.format(step_size)],
+                    'Outputs':['expected: {}'.format(expected_acc),
+                        'measured: {}'.format(measured_acc),
+                        '<exp{{-𝛿H}}>: {}'.format(meas_av_exp_dh),
+                        '<𝛿H>: {}'.format(av_dh)]
+                    })
+        return passed
+    
+    def _runDeltaH(self, pot, n_samples = 100, n_burn_in = 20, n_steps=20, step_size=.1):
         """Obtains the average exponentiated change in H for 
         a given potential
         
         Optional Inputs
             n_samples   :: int  :: number of samples
             n_burn_in   :: int  :: number of burnin steps
+            n_steps         :: int      :: LF trajectory lengths
+            step_size       :: int      :: Leap Frog step size
         """
         x0 = np.random.random(self.lattice_shape)
-        model = Model(x0, pot, spacing=self.spacing)
+        model = Model(x0, pot, spacing=self.spacing, n_steps=n_steps, step_size=step_size)
         model.sampler.accept.store_acceptance = True
         model.run(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
-        exp_delta_hs = np.asarray(model.sampler.accept.exp_delta_hs[n_burn_in:]).flatten()
+        delta_hs = np.asarray(model.sampler.accept.delta_hs[n_burn_in:]).flatten()
         accept_rates = np.asarray(model.sampler.accept.accept_rates[n_burn_in:]).flatten()
         
-        meas_av_exp_dh  = np.asscalar(exp_delta_hs.mean())
         av_acc          = np.asscalar(accept_rates.mean())
-        return (meas_av_exp_dh, av_acc)
+        return (delta_hs, av_acc)
     
     def _runCorellation(self, pot, n_samples = 100, n_burn_in = 20):
         """Runs the correlation function calculation
@@ -121,5 +160,6 @@ if __name__ == '__main__':
     utils.logs.logging.root.setLevel(utils.logs.logging.DEBUG)
     test = Test(rng)
     utils.newTest(test.id)
+    test.kgAcceptance(1, .1)
     test.qhoCorellation()
     test.qhoDeltaH()
