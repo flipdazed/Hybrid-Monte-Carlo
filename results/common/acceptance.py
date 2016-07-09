@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
-from tqdm import tqdm
 from scipy.special import j0, jn, erfc
 import matplotlib.pyplot as plt
 
-from utils import saveOrDisplay
+from utils import saveOrDisplay, prll_map
 from models import Basic_HMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
 from hmc.potentials import Klein_Gordon as KG
@@ -62,14 +61,12 @@ def probHMC1dFree(tau, dtau, m, lattice_p=np.array([])):
         if lattice_p.size == 0:
             raise ValueError('lattice velocities required if m != 0 or n < 1000')
         n = lattice_p.size
-        # p = lattice_p.ravel()     # which is it?
-        p = np.arange(n)            # which is it?
+        p = lattice_p.ravel()
         a = m**2 + 4*np.sin(np.pi*p/n)**2
         sigma = .125*(a**2*(1. - np.cos(2.*tau*np.sqrt(a)))).mean()
-    
     return erfc(.25*dtau**2*np.sqrt(.5*n*sigma))
 
-def plot(n_rng, prob, theory, subtitle, save):
+def plot(n_rng, prob, theories, subtitle, save):
     """Reproduces figure 1 from [1]
        
     
@@ -92,13 +89,15 @@ def plot(n_rng, prob, theory, subtitle, save):
     fig.suptitle(r'Testing Acceptance Rate', fontsize=pp.ttfont)
     
     ax[0].set_title(subtitle, fontsize=pp.tfont)
-    ax[-1].set_xlabel(r'Trajectory Length, $\tau$')
+    ax[-1].set_xlabel(r'Trajectory Length, $\tau=n\delta\tau$')
     
     ### add the lines to the plots
-    ax[0].set_ylabel(r'$\langle P_{\text{acc}}\rangle$')
+    ax[0].set_ylabel(r'$P_{\text{acc}}$')
     ax[0].scatter(n_rng, prob, marker='x', color='red', label=r'Measured')
-    ax[0].plot(n_rng, theory, linestyle='-', color='green', linewidth=2., alpha=0.4, 
-        label=r'Theory')
+    
+    for label, theory in theories.iteritems():
+        ax[0].plot(n_rng, theory, linestyle='-', linewidth=1.5, alpha=0.4, 
+            label=label)
     
     ### place legends
     ax[0].legend(loc='best', shadow=True, fontsize = pp.ipfont, fancybox=True)
@@ -126,28 +125,38 @@ def main(x0, file_name, n_rng, n_samples=1, n_burn_in=25, save = False, step_siz
     pot = KG(m=0.)
     
     print 'Running Model: {}'.format(file_name)
-    prob  = []
-    theory = []
-    for n_steps in tqdm(n_rng):
+    
+    
+    def coreFunc(n_steps):
+        """function for multiprocessing support"""
+        
         model = Model(x0.copy(), pot, step_size=step_size, n_steps=n_steps)
         model.sampler.accept.store_acceptance = True
         model.run(n_samples=n_samples, n_burn_in=n_burn_in)
+        accept_rates = np.asarray(model.sampler.accept.accept_rates[n_burn_in:]).flatten()
+        prob = np.asscalar(accept_rates.mean())
         
+        theory1 = probHMC1dFree(n_steps*step_size, step_size, 0, np.asarray(n_rng))
         x = Periodic_Lattice(model.samples[0])
         ke = model.sampler.potential.uE(x)
         p = -2.*np.sqrt(ke)
-        theory.append(probHMC1dFree(n_steps*step_size, step_size, 0, p))
         
-        accept_rates = np.asarray(model.sampler.accept.accept_rates[n_burn_in:]).flatten()
-        prob.append(np.asscalar(accept_rates.mean()))
+        theory2 = probHMC1dFree(n_steps*step_size, step_size, 0, p)
         
+        return prob, theory1, theory2
+    
+    # use multi-core support to speed up
+    ans = prll_map(coreFunc, n_rng, verbose=True)
+    prob, theory1, theory2 = zip(*ans)
     print 'Finished Running Model: {}'.format(file_name)
     
     # one long subtitle - long as can't mix LaTeX and .format()
-    subtitle = '\centering Potential: {}, Lattice: ({})'.format(pot.name, x0.shape) \
+    subtitle = '\centering Potential: {}, Lattice: {}'.format(pot.name, x0.shape) \
         + r', $\delta\tau = ' + '{:4.2f}$'.format(step_size)
     
-    plot(n_rng*step_size, prob, theory, subtitle = subtitle,
+    plot(n_rng*step_size, prob,
+        theories = {'Method 1':theory1,'Method 2':theory2},
+        subtitle = subtitle,
         save = saveOrDisplay(save, file_name),
         )
     pass
