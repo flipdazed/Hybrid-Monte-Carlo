@@ -5,7 +5,7 @@ import utils
 # these directories won't work unless 
 # the commandline interface for python unittest is used
 from hmc.lattice import Periodic_Lattice, laplacian, gradSquared
-
+from scipy.ndimage.filters import laplace
 class Test(object):
     def __init__(self):
         self.id = 'lattice'
@@ -60,6 +60,31 @@ class Test(object):
         
         return passed
     
+    def sciPyLaplacian(self, print_out = True):
+        """tests the laplacian function against expected values"""
+        passed = True
+        a = self.a1 # shortcut
+        test = [[(1,1), np.asarray([  0.,  0.]).sum()], # 11
+                [(3,3), np.asarray([-40., -4.]).sum()], # 44
+                [(4,4), np.asarray([ 40.,  4.]).sum()], # 11
+                [(3,4), np.asarray([-40.,  4.]).sum()], # 41
+                [(4,3), np.asarray([ 40., -4.]).sum()], # 14
+                [(2,3), np.asarray([  0., -4.]).sum()]] # 34
+        
+        store = []
+        for pos, act in test: # iterate test values
+            res = laplace(a, mode='wrap').view(Periodic_Lattice)[pos]
+            passed *= (res == act).all()
+            if print_out: store.append([pos, res, act])
+        
+        if print_out:
+            utils.display('SciPy Laplacian', outcome=passed,
+                details = {'checked vs. known values (Mathematica)':[
+                    'pos: {}, res: {}, act: {}'.format(*vals) for vals in store
+                ]})
+        
+        return passed
+    
     def gradSquared(self, print_out = True):
         """tests the gradient squared function against expected values"""
         passed = True
@@ -90,6 +115,7 @@ class Test(object):
 if __name__ == '__main__':
     test = Test()
     utils.newTest(test.id)
-    test.wrap(print_out = True)
-    test.laplacian(print_out = True)
-    test.gradSquared(print_out = True)
+    test.sciPyLaplacian()
+    test.wrap()
+    test.laplacian()
+    test.gradSquared()
