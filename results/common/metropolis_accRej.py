@@ -148,14 +148,14 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False,
     # pull out all the data from the metropolis class
     accept_rates = np.asarray(model.sampler.accept.accept_rates[n_burn_in:]).flatten()
     accept_rejects = np.asarray(model.sampler.accept.accept_rejects[n_burn_in:]).flatten()
-    exp_delta_hs = np.asarray(model.sampler.accept.exp_delta_hs[n_burn_in:]).flatten()
+    delta_hs = np.asarray(model.sampler.accept.delta_hs[n_burn_in:]).flatten()
     h_olds = np.asarray(model.sampler.accept.h_olds[n_burn_in:]).flatten()
     h_news = np.asarray(model.sampler.accept.h_news[n_burn_in:]).flatten()
     
     # get the means where relevent
     av_acc      = np.asscalar(accept_rates.mean())
     meas_av_acc = np.asscalar(accept_rejects.mean())
-    meas_av_exp_dh  = np.asscalar(exp_delta_hs.mean())
+    meas_av_exp_dh  = np.asscalar(np.exp(-delta_hs).mean())
     
     print '\n\t<Prob. Accept>: {:4.2f}'.format(av_acc)
     print '\t<Prob. Accept>: {:4.2f}     (Measured)'.format(meas_av_acc)

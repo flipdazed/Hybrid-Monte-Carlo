@@ -18,7 +18,7 @@ class Accept_Reject(object):
         # both will only take values if store_acceptance == True
         self.accept_rates = []   # list of acceptance rates
         self.accept_rejects = [] # list of acceptance or rejections
-        self.exp_delta_hs = []       # list of delta_hs
+        self.delta_hs = []       # list of delta_hs
         self.h_olds = []
         self.h_news = []
         pass
@@ -60,7 +60,7 @@ class Accept_Reject(object):
         if self.store_acceptance:
             self.accept_rates.append(min(1, np.exp(-delta_h)))
             self.accept_rejects.append(accept_reject)
-            self.exp_delta_hs.append(np.exp(-delta_h))
+            self.delta_hs.append(delta_h)
             self.h_olds.append(h_old)
             self.h_news.append(h_new)
             

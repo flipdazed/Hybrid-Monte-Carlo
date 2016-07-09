@@ -7,7 +7,7 @@ from utils import saveOrDisplay, prll_map
 from models import Basic_HMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
 from hmc.potentials import Klein_Gordon as KG
-from hmc.lattice import Periodic_Lattice
+from hmc.lattice import Periodic_Lattice, laplacian
 
 __doc__ == """
 References
@@ -96,7 +96,8 @@ def plot(n_rng, prob, theories, subtitle, save):
     ax[0].scatter(n_rng, prob, marker='x', color='red', label=r'Measured')
     
     for label, theory in theories.iteritems():
-        ax[0].plot(n_rng, theory, linestyle='-', linewidth=1.5, alpha=0.4, 
+        x,y = theory
+        ax[0].plot(x, y, linestyle='-', linewidth=2., alpha=0.4, 
             label=label)
     
     ### place legends
@@ -108,7 +109,7 @@ def plot(n_rng, prob, theories, subtitle, save):
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
-def main(x0, file_name, n_rng, n_samples=1, n_burn_in=25, save = False, step_size=0.2):
+def main(x0, file_name, n_rng, n_samples=1000, n_burn_in=25, save = False, step_size=0.2):
     """A wrapper function
     
     Required Inputs
@@ -126,36 +127,55 @@ def main(x0, file_name, n_rng, n_samples=1, n_burn_in=25, save = False, step_siz
     
     print 'Running Model: {}'.format(file_name)
     
+    f = np.vectorize(lambda t: probHMC1dFree(t, step_size, 0, np.asarray(n_rng)))
+    x = np.linspace(0, n_rng[-1]*step_size,101, True)
+    theory1 = f(x)
+    theories = {r'$p \in [0,n]$': (x, theory1)}
     
     def coreFunc(n_steps):
         """function for multiprocessing support"""
         
         model = Model(x0.copy(), pot, step_size=step_size, n_steps=n_steps)
         model.sampler.accept.store_acceptance = True
-        model.run(n_samples=n_samples, n_burn_in=n_burn_in)
-        accept_rates = np.asarray(model.sampler.accept.accept_rates[n_burn_in:]).flatten()
-        prob = np.asscalar(accept_rates.mean())
         
-        theory1 = probHMC1dFree(n_steps*step_size, step_size, 0, np.asarray(n_rng))
-        x = Periodic_Lattice(model.samples[0])
-        ke = model.sampler.potential.uE(x)
-        p = -2.*np.sqrt(ke)
+        prob = 1.
+        delta_hs = 1.
+        av_dh = -1
+        accept_rates = []
+        delta_hs = []
+        samples = []
+        while av_dh < 0:
+            model.run(n_samples=n_samples, n_burn_in=n_burn_in)
+            accept_rates += model.sampler.accept.accept_rates[n_burn_in:]
+            delta_hs += model.sampler.accept.delta_hs[n_burn_in:]
+            samples.append(model.samples.copy())
+            av_dh = np.mean(delta_hs)
+            if av_dh < 0: print 'running again -ve av_dh'
         
-        theory2 = probHMC1dFree(n_steps*step_size, step_size, 0, p)
+        samples = np.concatenate(tuple(samples), axis=0)
+        prob = np.mean(accept_rates)
+        meas_av_exp_dh  = np.asscalar((1./np.exp(delta_hs)).mean())
         
-        return prob, theory1, theory2
+        t3 = erfc(.5*np.sqrt(av_dh))
+        
+        return prob, t3
     
     # use multi-core support to speed up
     ans = prll_map(coreFunc, n_rng, verbose=True)
-    prob, theory1, theory2 = zip(*ans)
     print 'Finished Running Model: {}'.format(file_name)
+    
+    prob, theory3 = zip(*ans)
+    
+    x2 = np.asarray(n_rng)*step_size
+    # theories[r'$p_{HMC}$'] = (x2, theory2)
+    theories[r'$\text{erfc}(\sqrt{\langle \delta H \rangle}/2)$'] = (x2, theory3)
     
     # one long subtitle - long as can't mix LaTeX and .format()
     subtitle = '\centering Potential: {}, Lattice: {}'.format(pot.name, x0.shape) \
         + r', $\delta\tau = ' + '{:4.2f}$'.format(step_size)
     
     plot(n_rng*step_size, prob,
-        theories = {'Method 1':theory1,'Method 2':theory2},
+        theories = theories,
         subtitle = subtitle,
         save = saveOrDisplay(save, file_name),
         )
