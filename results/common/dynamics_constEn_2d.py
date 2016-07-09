@@ -69,7 +69,7 @@ def dynamicalEnergyChange(x0, pot, step_sample, step_sizes):
     x0 = model.sampler.x0
     
     # calculate original hamiltonian and set starting vals
-    h_old = model.pot.hamiltonian(p0, x0)
+    h_old = model.sampler.potential.hamiltonian(p0, x0)
     
     # set up a mesh grid of the steps and sizes
     step_sample, step_sizes = np.meshgrid(step_sample, step_sizes)
@@ -86,7 +86,7 @@ def dynamicalEnergyChange(x0, pot, step_sample, step_sizes):
         # obtain new duynamics and resultant hamiltonian
         model.sampler.dynamics.newPaths()
         pf, xf = model.sampler.dynamics.integrate(p0.copy(), x0.copy())
-        h_new = model.pot.hamiltonian(pf, xf)
+        h_new = model.sampler.potential.hamiltonian(pf, xf)
         
         bench_mark = np.exp(-(h_old-h_new))
         

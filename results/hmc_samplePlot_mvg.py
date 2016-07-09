@@ -70,7 +70,7 @@ def getPotential(potFn, n_points=100):
     x,y = np.meshgrid(x, x)
     
     z = np.exp( -np.asarray(
-            [ model.pot.uE(np.matrix([[i], [j]])) \
+            [ model.sampler.potential.uE(np.matrix([[i], [j]])) \
               for i,j in zip(np.ravel(x), np.ravel(y))]
             ))
     z = np.asarray(z).reshape(n_points, n_points)

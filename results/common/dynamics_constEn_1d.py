@@ -99,16 +99,16 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
         step_size = step_size,
         rng=rng)
     model.sampler.dynamics.save_path = True # saves the dynamics path
-    model.pot.debug = True          # saves all energies
+    model.sampler.potential.debug = True          # saves all energies
     
     # initial conditions - shoudn't matter much
     p0 = model.sampler.p0
     x0 = model.sampler.x0
     
     # calculate original hamiltonian and set starting vals
-    h0    = model.pot.hamiltonian(p0, x0)
-    kE0   = model.pot.kE(p0)
-    uE0   = model.pot.uE(x0)
+    h0    = model.sampler.potential.hamiltonian(p0, x0)
+    kE0   = model.sampler.potential.kE(p0)
+    uE0   = model.sampler.potential.uE(x0)
     
     # Setting debug = True returns a tuple
     # from the potential: (action, action_ke, action_ue)
@@ -121,8 +121,8 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
     model.sampler.dynamics.newPaths()
     pf, xf = model.sampler.dynamics.integrate(p0.copy(), x0.copy(), verbose=True)
     
-    kE_path = [model.pot.kE(i) for i in model.sampler.dynamics.p_ar]
-    uE_path = [model.pot.uE(i) for i in model.sampler.dynamics.x_ar]
+    kE_path = [model.sampler.potential.kE(i) for i in model.sampler.dynamics.p_ar]
+    uE_path = [model.sampler.potential.uE(i) for i in model.sampler.dynamics.x_ar]
     
     kins = np.asarray([kE0] + kE_path) - kE0
     pots = np.asarray([uE0] + uE_path) - uE0
@@ -147,7 +147,8 @@ def main(x0, pot, file_name, save = False, n_steps   = 500, step_size = .1, all_
     print 'Finished Running Model: {}'.format(file_name)
     
     plot(y1 = kins, y2 = pots, all_lines = all_lines,
-        subtitle = r'Potential: {}, Lattice shape: {}'.format(pot.name, x0.shape),
+        subtitle = r'Potential: {}, Lattice shape: {}, '.format(pot.name, x0.shape) + \
+        r'$\epsilon ='+'{}$'.format(step_size),
         save = saveOrDisplay(save, file_name)
         )
     pass
