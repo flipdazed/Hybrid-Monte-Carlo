@@ -2,6 +2,8 @@
 import numpy as np
 from scipy.special import j0, jn, erfc
 import matplotlib.pyplot as plt
+from matplotlib import colors
+import random
 
 from utils import saveOrDisplay, prll_map
 from models import Basic_HMC as Model
@@ -66,14 +68,13 @@ def probHMC1dFree(tau, dtau, m, lattice_p=np.array([])):
         sigma = .125*(a**2*(1. - np.cos(2.*tau*np.sqrt(a)))).mean()
     return erfc(.25*dtau**2*np.sqrt(.5*n*sigma))
 
-def plot(n_rng, prob, theories, subtitle, save):
+def plot(scats, lines, subtitle, save):
     """Reproduces figure 1 from [1]
        
     
     Required Inputs
-        n_rng           :: np.array :: trajectory lengths
-        prob            :: np.array :: acc. probs
-        theory          :: np.array :: theoretical acc. probs
+        lines           :: {label:(x,y)} :: plots (x,y) as a line with label=label
+        scats           :: {label:(x,y)} :: plots (x,y) as a scatter with label=label
         subtitle        :: str      :: the subtitle to put in ax[0].set_title()
         save            :: bool :: True saves the plot, False prints to the screen
     """
@@ -92,13 +93,15 @@ def plot(n_rng, prob, theories, subtitle, save):
     ax[-1].set_xlabel(r'Trajectory Length, $\tau=n\delta\tau$')
     
     ### add the lines to the plots
-    ax[0].set_ylabel(r'$P_{\text{acc}}$')
-    ax[0].scatter(n_rng, prob, marker='x', color='red', label=r'Measured')
+    ax[0].set_ylabel(r'$\langle P_{\text{acc}} \rangle$')
     
-    for label, theory in theories.iteritems():
-        x,y = theory
-        ax[0].plot(x, y, linestyle='-', linewidth=2., alpha=0.4, 
-            label=label)
+    clist = [i for i in colors.ColorConverter.colors if i != 'w']
+    colour = (i for i in random.sample(clist, len(clist)))
+    for label, line in lines.iteritems():
+        ax[0].plot(*line, linestyle='-', color = next(colour), linewidth=2., alpha=0.4, label=label)
+    
+    for label, scat in scats.iteritems():
+        ax[0].scatter(*scat, marker='o', label=label, color = next(colour))
     
     ### place legends
     ax[0].legend(loc='best', shadow=True, fontsize = pp.ipfont, fancybox=True)
@@ -109,7 +112,7 @@ def plot(n_rng, prob, theories, subtitle, save):
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
-def main(x0, file_name, n_rng, n_samples=1000, n_burn_in=25, save = False, step_size=0.2):
+def main(x0, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size = 0.2, save = False):
     """A wrapper function
     
     Required Inputs
@@ -124,13 +127,17 @@ def main(x0, file_name, n_rng, n_samples=1000, n_burn_in=25, save = False, step_
         step_size       :: int      :: Leap Frog step size
     """
     pot = KG(m=0.)
+    lines = {}
+    scats = {}
     
     print 'Running Model: {}'.format(file_name)
+    f = np.vectorize(lambda t: probHMC1dFree(t, step_size, 0, np.arange(1, x0.size+1)))
+    x_fine = np.linspace(0, n_rng[-1]*step_size,101, True)
+    theory1 = f(x_fine)
     
-    f = np.vectorize(lambda t: probHMC1dFree(t, step_size, 0, np.asarray(n_rng)))
-    x = np.linspace(0, n_rng[-1]*step_size,101, True)
-    theory1 = f(x)
-    theories = {r'$p \in [0,n]$': (x, theory1)}
+    label = r'$\text{erfc}\left(\frac{\delta \tau^2}{4}' \
+        + r' \sqrt{\frac{N \sigma_{\text{HMC}}}{2}}\right)$'
+    lines[label] =  (x_fine, theory1)
     
     def coreFunc(n_steps):
         """function for multiprocessing support"""
@@ -166,16 +173,16 @@ def main(x0, file_name, n_rng, n_samples=1000, n_burn_in=25, save = False, step_
     
     prob, theory3 = zip(*ans)
     
-    x2 = np.asarray(n_rng)*step_size
+    x = np.asarray(n_rng)*step_size
     # theories[r'$p_{HMC}$'] = (x2, theory2)
-    theories[r'$\text{erfc}(\sqrt{\langle \delta H \rangle}/2)$'] = (x2, theory3)
+    scats[r'$\text{erfc}(\sqrt{\langle \delta H \rangle}/2)$'] = (x, theory3)
+    scats[r'Measured'] = (x, prob)
     
     # one long subtitle - long as can't mix LaTeX and .format()
     subtitle = '\centering Potential: {}, Lattice: {}'.format(pot.name, x0.shape) \
         + r', $\delta\tau = ' + '{:4.2f}$'.format(step_size)
     
-    plot(n_rng*step_size, prob,
-        theories = theories,
+    plot(lines = lines, scats = scats,
         subtitle = subtitle,
         save = saveOrDisplay(save, file_name),
         )
