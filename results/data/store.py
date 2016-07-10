@@ -47,19 +47,20 @@ def json_numpy_obj_hook(dct):
         return np.frombuffer(data, dct['dtype']).reshape(dct['shape'])
     return dct
 #
-def writefile(fname, obj_id):
+def writefile(fname, obj_id, suffix):
     """Gets the correct file open
     
     Required Inputs
         path :: string :: file path
         id   :: string :: must be in ['np', 'else']
+        suffix :: str :: optional suffix for the filename
     """
     
     # check input is sensible
     if obj_id not in flocs.keys(): raise ValueError(
         'obj_id:{} not in {}'.format(obj_id, flocs.keys()))
     
-    fname = os.path.splitext(fname)[0]
+    fname = os.path.splitext(fname)[0] + suffix
     path = os.path.join(DATA_LOC, obj_id, fname + flocs[obj_id])
     hook = codecs.open(path, 'w', **wparams)
     return path, hook
@@ -84,21 +85,22 @@ def load(path):
             obj = pickle.load(file=f)
     return obj
 #
-def store(obj, filename):
+def store(obj, filename, suffix = ''):
     """Stores a python object
     
     Required Inputs
         obj :: anything! :: stores this object
-        path :: str :: the save name in ./data/
+        filename :: str :: the save name in ./data/
+        suffix :: str :: optional suffix for the filename
     """
     # It is a numpy array
     if type(obj) == np.ndarray:
-        path,f = writefile(filename, obj_id='numpy_objs')
+        path,f = writefile(filename, obj_id='numpy_objs', suffix)
         json.dump(obj, fp=f, cls=NumpyEncoder,
             separators=(',', ':'), sort_keys=True, indent=4)
         print '> saved with JSON to {}'.format(path)
     else:
-        path, f = writefile(filename, obj_id='other_objs')
+        path, f = writefile(filename, obj_id='other_objs', suffix)
         pickle.dump(obj, file=f)
         print '> saved with dill (pickled) to {}'.format(path)
     return path

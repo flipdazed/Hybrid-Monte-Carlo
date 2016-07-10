@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 import random
 
+from data import store
 from utils import saveOrDisplay, prll_map
 from models import Basic_HMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
@@ -186,6 +187,8 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
     subtitle = '\centering Potential: {}, Lattice: {}'.format(pot.name, x0.shape) \
         + r', $\delta\tau = ' + '{:4.2f}$'.format(step_size)
     
+    store.store(lines, file_name, '_lines')
+    store.store(scats, file_name, '_scats')
     plot(lines = lines, scats = scats,
         subtitle = subtitle,
         save = saveOrDisplay(save, file_name),
