@@ -113,6 +113,7 @@ if __name__ == '__main__':
     assert result.shape == expected.shape, "Wrong Shape"
     assert np.allclose(expected, result), "Wrong Values"
     
+    expected = np.arange(100, dtype=np.float)
     path   = store(expected, 'test')
     result = load(path)
     
