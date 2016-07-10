@@ -112,11 +112,12 @@ def plot(scats, lines, subtitle, save):
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
-def main(x0, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size = 0.2, save = False):
+def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size = 0.2, save = False):
     """A wrapper function
     
     Required Inputs
         x0              :: np.array :: initial position input to the HMC algorithm
+        pot             :: pot. cls :: defined in hmc.potentials
         file_name       :: string   :: the final plot will be saved with a similar name if save=True
         n_rng           :: int arr  :: array of number of leapfrog step sizes
     
@@ -126,8 +127,7 @@ def main(x0, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size = 0.2
         save :: bool    :: bool     :: True saves the plot, False prints to the screen
         step_size       :: int      :: Leap Frog step size
     """
-    pot = KG(m=0.)
-    lines = {}
+    lines = {} # contains the label as the key and a tuple as (x,y) data in the entry
     scats = {}
     
     print 'Running Model: {}'.format(file_name)
@@ -140,7 +140,11 @@ def main(x0, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size = 0.2
     lines[label] =  (x_fine, theory1)
     
     def coreFunc(n_steps):
-        """function for multiprocessing support"""
+        """function for multiprocessing support
+        
+        Required Inputs
+            n_steps :: int :: the number of LF steps
+        """
         
         model = Model(x0.copy(), pot, step_size=step_size, n_steps=n_steps)
         model.sampler.accept.store_acceptance = True

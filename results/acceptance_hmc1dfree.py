@@ -12,4 +12,5 @@ x0 = np.random.random((n,)*dim)
 
 if __name__ == '__main__':
     lengths = np.arange(1, 41, 1)
-    acceptance.main(x0, file_name, lengths, step_size = .2, save = True)
+    acceptance.main(x0, file_name, lengths, 
+      n_samples = 10000, step_size = .2, save = True)
