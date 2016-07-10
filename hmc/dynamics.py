@@ -100,15 +100,17 @@ class Leap_Frog(object):
             (x,p) :: tuple :: momentum, position
         """
         
+        # first step and half momentum step
         p = self._moveP(p0, x0, frac_step=0.5)
         x = self._moveX(p, x0)
         
-        iterator = range(0, self.n_steps)
+        iterator = range(1, self.n_steps) # one step done
         if verbose: iterator = tqdm(iterator)
         for step in iterator:
             p = self._moveP(p, x)
             x = self._moveX(p, x)
         
+        # last half momentum step
         p = self._moveP(p, x, frac_step=0.5)
         
         return p, x
