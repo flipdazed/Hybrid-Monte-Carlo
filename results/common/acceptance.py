@@ -17,7 +17,6 @@ References
     [2] : ADK, BP, `Cost of the generalised hybrid Monte Carlo algorithm for free field theory'
 """
 
-
 def probLMC1dFree(dtau, m, n):
     """Acceptance probability routines for Langevin Monte Carlo: 
         (HMC with 1 Leap Frog step) in one dimension
@@ -56,16 +55,17 @@ def probHMC1dFree(tau, dtau, m, lattice_p=np.array([])):
         number of Leap Frog steps for each trajectory
     """
     
-    if (m == 0) & (lattice_p.size >= 1000):
+    n = lattice_p.size
+    if (m == 0) & (lattice_p.size >= 10):
         c = 4.*tau
         sigma = .75 - .75*j0(c) + jn(2, c) - .25*jn(4,c)
     else:
         if lattice_p.size == 0:
-            raise ValueError('lattice velocities required if m != 0 or n < 1000')
-        n = lattice_p.size
+            raise ValueError('lattice velocities required if m != 0 or n < 10')
         p = lattice_p.ravel()
         a = m**2 + 4*np.sin(np.pi*p/n)**2
         sigma = .125*(a**2*(1. - np.cos(2.*tau*np.sqrt(a)))).mean()
+    
     return erfc(.25*dtau**2*np.sqrt(.5*n*sigma))
 
 def plot(scats, lines, subtitle, save):
