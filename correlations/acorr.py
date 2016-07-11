@@ -2,31 +2,8 @@
 import numpy as np
 from hmc import checks
 
-def qho_theory(spacing, mu, length, separation=0.):
-   """Theoretical prediction for the 1D 2-point correlation function
-   
-   Required Inputs
-      spacing  :: float :: lattice spacing
-      mu       :: float :: mass-coupling
-      length   :: int   :: length of 1D lattice
-      separation :: int :: number of sites between observables <x(0)x(separation)>
-   """
-    amu = mu*spacing
-    if np.abs(amu) <= 0.1: 
-        r = 1. - amu + .5*amu**2
-        print '> approximating R = 1. - aµ + aµ**2/2 as |aµ| <= 0.1 '
-    else:
-        r = 1. + .5*amu**2 - amu*np.sqrt(1. + .25*amu**2)
-    if separation == 0:
-        ratio = (1. + r**length)/(1. - r**length)
-    else:
-        ratio = (r**separation + r**(length-separation))/(1. - r**length)
-    
-    av_xx = ratio / (2.*mu*np.sqrt(1. + .25*amu**2))
-    return av_xx
-
-class Correlations_1d(object):
-    """Runs a model and calculates the 1 dimensional correlation function
+class Autocorrelations_1d(object):
+    """Runs a model and calculates the 1 dimensional autocorrelation function
     
     Required Inputs
         model           :: class    :: a class that runs some sort of model - see models.py
@@ -59,7 +36,7 @@ class Correlations_1d(object):
         self.result = self.runWrapper(*args, **kwargs)
         return self.result
     
-    def twoPoint(self, separation):
+    def getAcorr(self, separation):
         """Delivers the two point with a given separation
         
         Once the model is run then the samples can be passed through the correlation
@@ -81,16 +58,20 @@ class Correlations_1d(object):
         self.samples = np.asarray(self.samples)
         
         # shift the array by the separation
-        # need the axis=1 as this is the lattice index, 0 is the sample index
-        shifted = np.roll(self.samples, separation, axis=1)
+        # need the axis=0 as this is the sample index, 1 is the lattice index
+        # corellations use axis 1
+        shifted = np.roll(self.samples, separation, axis=0)
         
-        # this actually works for any dim arrays as * op broadcasts
-        self.two_point = (shifted*self.samples)
+        # Need to be wary that roll will roll all elements arouns the array boundary
+        # so cannot take element from the end. The last sample that can have an autocorrelation
+        # of length m within N samples is x[N-1-m]x[N-1] so we want up to index N-m
+        n = self.samples.shape[0] # get the number of samples
+        self.acorr = (shifted*self.samples)[:n-separation] # indexing the 1st index for samples
         
         # ravel() just flattens averything into one dimension
         # rather than averaging over each lattice sample and averaging over
         # all samples I jsut average the lot saving a calculation
-        return self.two_point.ravel().mean()
+        return self.acorr.ravel().mean()
         
     def _getSamples(self):
         """grabs the position samples from the model"""

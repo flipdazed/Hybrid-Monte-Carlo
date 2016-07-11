@@ -61,8 +61,9 @@ def writefile(fname, obj_id, suffix):
         'obj_id:{} not in {}'.format(obj_id, flocs.keys()))
     
     fname = os.path.splitext(fname)[0] + suffix
+    fname = os.path.split(fname)[-1]
     path = os.path.join(DATA_LOC, obj_id, fname + flocs[obj_id])
-    hook = codecs.open(path, 'w', **wparams)
+    hook = codecs.open(path, 'w+', **wparams)
     return path, hook
 #
 def load(path):
@@ -95,12 +96,12 @@ def store(obj, filename, suffix = ''):
     """
     # It is a numpy array
     if type(obj) == np.ndarray:
-        path,f = writefile(filename, obj_id='numpy_objs', suffix)
+        path,f = writefile(filename, obj_id='numpy_objs', suffix=suffix)
         json.dump(obj, fp=f, cls=NumpyEncoder,
             separators=(',', ':'), sort_keys=True, indent=4)
         print '> saved with JSON to {}'.format(path)
     else:
-        path, f = writefile(filename, obj_id='other_objs', suffix)
+        path, f = writefile(filename, obj_id='other_objs', suffix=suffix)
         pickle.dump(obj, file=f)
         print '> saved with dill (pickled) to {}'.format(path)
     return path
