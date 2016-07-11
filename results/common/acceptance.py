@@ -9,7 +9,6 @@ from data import store
 from utils import saveOrDisplay, prll_map
 from models import Basic_HMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
-from hmc.potentials import Klein_Gordon as KG
 from hmc.lattice import Periodic_Lattice, laplacian
 
 __doc__ == """
