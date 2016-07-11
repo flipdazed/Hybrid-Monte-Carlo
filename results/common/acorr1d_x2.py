@@ -30,13 +30,13 @@ def plot(ac_fn, subtitle, save, theory=None):
     ax =[]
     ax.append(fig.add_subplot(111))
     
-    fig.suptitle(r"Autocorrelation Function, $\langle x(0)x(n)\rangle$",
+    fig.suptitle(r"Autocorrelation Function for $\hat{x}$",
         fontsize=pp.ttfont)
     
     ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
     
-    ax[0].set_xlabel(r'Sample Separation, $n$')
-    ax[0].set_ylabel(r'$\langle x(0)x(n) \rangle$')
+    ax[0].set_xlabel(r'HMC trajectories, $\tau / n\delta\tau$')
+    ax[0].set_ylabel(r'$\langle (x_i - \bar{x})(x_{i+t} - \bar{x}) \rangle$')
     
     steps = np.linspace(0, ac_fn.size, ac_fn.size, False)    # get x values
     
@@ -57,10 +57,10 @@ def plot(ac_fn, subtitle, save, theory=None):
 #         linewidth=3., linestyle = '-', alpha=0.2, label=r'fit: $y = e^{'\
 #             + '{:.2f}x'.format(m)+'}e^{'+'{:.2f}'.format(c) + r'}$')
     
-    f = ax[0].scatter(steps, ac_fn, color='red', marker='x',
+    f = ax[0].stem(steps, ac_fn, markerfmt='ro', linefmt='k:', basefmt='k-',
         label=r'MCMC Data')
     
-    ax[0].set_xlim(xmin=0)
+    ax[0].set_xlim(xmin=-1)
 #    ax[0].set_yscale("log", nonposy='clip')
     
     ax[0].legend(loc='best', shadow=True, fontsize = pp.axfont)
@@ -90,8 +90,8 @@ def main(x0, pot, file_name, n_samples, n_burn_in, c_len=20, step_size = .5, n_s
       n_steps = n_steps)
     c = acorr.Autocorrelations_1d(model, 'run', 'samples')
     
-    subtitle = r"Potential: {}; Lattice Shape: ${}$; $a={:.1f}$".format(
-        pot.name, x0.shape, spacing)
+    subtitle = r"Potential: {}; Lattice Shape: ${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
+        pot.name, x0.shape, spacing, step_size, n_steps)
     length = model.x0.size
     
     
