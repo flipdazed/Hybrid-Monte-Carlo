@@ -35,8 +35,8 @@ def plot(ac_fn, subtitle, save, theory=None):
     
     ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
     
-    ax[0].set_xlabel(r'HMC trajectories, $\tau / n\delta\tau$')
-    ax[0].set_ylabel(r'$\langle (x_i - \bar{x})(x_{i+t} - \bar{x}) \rangle$')
+    ax[0].set_xlabel(r'HMC trajectories between samples, $(\tau_{i+t} - \tau_{i}) / n\delta\tau$')
+    ax[0].set_ylabel(r'${\langle (x_i - \bar{x})(x_{i+t} - \bar{x}) \rangle}/{\langle x_0^2 \rangle}$')
     
     steps = np.linspace(0, ac_fn.size, ac_fn.size, False)    # get x values
     
@@ -44,6 +44,7 @@ def plot(ac_fn, subtitle, save, theory=None):
     mask = np.isfinite(log_y)   # handles negatives in the logarithm
     x = steps[mask]
     y = log_y[mask]
+    
     # linear regression of the exponential curve
     m, c, r_val, p_val, std_err = stats.linregress(x, y)
     fit = np.exp(m*steps + c)
@@ -58,9 +59,11 @@ def plot(ac_fn, subtitle, save, theory=None):
 #             + '{:.2f}x'.format(m)+'}e^{'+'{:.2f}'.format(c) + r'}$')
     
     f = ax[0].stem(steps, ac_fn, markerfmt='ro', linefmt='k:', basefmt='k-',
-        label=r'MCMC Data')
+        label=r'Measured')
     
-    ax[0].set_xlim(xmin=-1)
+    xi,xf = ax[0].get_xlim()
+    ax[0].set_xlim(xmin=xi-0.05*(xf-xi)) # give a decent view of the first point
+    ax[0].set_ylim(ymax=1 + .05*np.diff(ax[0].get_ylim())) # give 5% extra room at top
 #    ax[0].set_yscale("log", nonposy='clip')
     
     ax[0].legend(loc='best', shadow=True, fontsize = pp.axfont)
@@ -97,7 +100,11 @@ def main(x0, pot, file_name, n_samples, n_burn_in, c_len=20, step_size = .5, n_s
     
     print 'Running Model: {}'.format(file_name)
     c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
-    ac_fn = np.asarray([c.getAcorr(separation=i) for i in range(c_len)])
+    
+    separations = range(c_len)
+    fn = lambda x: x # operator \hat{x}
+    
+    ac_fn = c.getAcorr(separations, fn)
     print 'Finished Running Model: {}'.format(file_name)
     
     av_x0_sq = ac_fn[0]

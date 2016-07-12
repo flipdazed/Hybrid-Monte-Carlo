@@ -14,7 +14,7 @@ spacing = 1.
 
 if '__main__' == __name__:
     acorr1d_x2.main(x0, pot, file_name,
-        n_samples = 1000, n_burn_in = 20, spacing = spacing,
-        c_len = 100,
+        n_samples = 100, n_burn_in = 20, spacing = spacing,
+        c_len = 10,
         step_size = 0.1, n_steps = 20,
         save = True)

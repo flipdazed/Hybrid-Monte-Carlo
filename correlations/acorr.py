@@ -81,21 +81,22 @@ class Autocorrelations_1d(object):
         self.result = self.runWrapper(*args, **kwargs)
         return self.result
     
-    def getAcorr(self, separation, op_func):
+    def getAcorr(self, separations, op_func):
         """Returns the autocorrelations for a specific sampled operator 
         
         Once the model is run then the samples can be passed through the autocorrelation
         function in once move utilising the underlying optimisations of numpy in full
         
         Required Inputs
-            separation  :: int :: the separation between HMC steps
+            separations  :: iterable, int :: the separations between HMC steps
             op_func     :: func :: the operator function
         
         Notes: op_func must be optimised to only take one HMC trajectory as an input
         """
         
-        checks.tryAssertEqual(int, type(separation),
-            "Separation must be integer: type is: {}".format(type(separation)))
+        if not isinstance(separations, list): separations = list(separations)
+        checks.tryAssertEqual(True, all(isinstance(s, int) for s in separations),
+            "Separations must be list of integers:\n{}".format(separations))
         
         if not hasattr(self, 'op_samples'): 
             if not hasattr(self, 'samples'): self._getSamples() # get samples if not already
@@ -106,15 +107,18 @@ class Autocorrelations_1d(object):
         if not hasattr(self, 'op_mean'): self.op_mean = self.op_samples.mean()
         if not hasattr(self, 'op_norm'):
             self.op_norm = acorr(self.op_samples, self.op_mean, separation=0)
-        elif separation == 0:  # define this as the normalisation
-            self.op_norm = acorr(self.op_samples, self.op_mean, separation)
-            self.acorr = 1. # make sure it is a float as it will be denominator
-            # no need to calculate twice
-            return self.acorr
         
-        # get normalised autocorrelation
-        self.acorr = acorr(self.op_samples, self.op_mean, separation, self.op_norm)
-        return self.acorr 
+        # get normalised autocorrelations for each separation
+        separations.sort()
+        if separations[0] == 0:
+            self.acorr = [1.] # first entry is the normalisation
+            separations.pop(0)
+        
+        self.acorr += [acorr(self.op_samples, self.op_mean, 
+                            s, self.op_norm) for s in separations]
+        self.acorr = np.asarray(self.acorr)
+        
+        return self.acorr
         
     def _getSamples(self):
         """grabs the position samples from the model"""
