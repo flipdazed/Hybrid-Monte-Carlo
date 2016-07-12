@@ -91,7 +91,8 @@ class Autocorrelations_1d(object):
             separations  :: iterable, int :: the separations between HMC steps
             op_func     :: func :: the operator function
         
-        Notes: op_func must be optimised to only take one HMC trajectory as an input
+        
+        Notes: op_func must be optimised to only take ALL HMC trajectories as an input
         """
         
         if not isinstance(separations, list): separations = list(separations)
@@ -101,10 +102,10 @@ class Autocorrelations_1d(object):
         if not hasattr(self, 'op_samples'): 
             if not hasattr(self, 'samples'): self._getSamples() # get samples if not already
             self.samples = np.asarray(self.samples) # ensure in numpy format
-            self.op_samples = np.asarray(map(op_func, self.samples))
+            self.op_samples = op_func(self.samples)
         
         # get mean for these samples if doesn't already exist - don't waste time doing multiple
-        if not hasattr(self, 'op_mean'): self.op_mean = self.op_samples.mean()
+        if not hasattr(self, 'op_mean'): self.op_mean = self.op_samples.ravel().mean()
         if not hasattr(self, 'op_norm'):
             self.op_norm = acorr(self.op_samples, self.op_mean, separation=0)
         

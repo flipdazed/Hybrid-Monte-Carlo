@@ -104,7 +104,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, c_len=5, step_size = .5, n_st
     
     print 'Running Model: {}'.format(file_name)
     c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
-    c_fn = np.asarray([c.twoPoint(separation=i) for i in range(c_len)])
+    c_fn = np.asarray([c.getTwoPoint(separation=i) for i in range(c_len)])
     print 'Finished Running Model: {}'.format(file_name)
     
     av_x0_sq = c_fn[0]

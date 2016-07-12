@@ -2,20 +2,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 
-from correlations import acorr
+from correlations import acorr, corr
 from models import Basic_HMC as Model
 from utils import saveOrDisplay
 from data import store
 from plotter import Pretty_Plotter, PLOT_LOC
 
-def plot(ac_fn, subtitle, save, theory=None):
+def plot(ac_fn, subtitle, op_name, save, theory=None):
     """Plots the two-point correlation function
     
     Required Inputs
-        ac_fn :: np.array :: correlation function
-        subtitle :: string :: subtitle for the plot
-        save :: bool :: True saves the plot, False prints to the screen
-        theory :: none atm
+        ac_fn    :: np.array :: correlation function
+        subtitle :: str  :: subtitle for the plot
+        op_name  :: str  :: the name of the operator for the title
+        save     :: bool :: True saves the plot, False prints to the screen
+        theory   :: not used yet
     
     Optional Inputs
         all_lines :: bool :: if True, plots hamiltonian as well as all its components
@@ -30,13 +31,14 @@ def plot(ac_fn, subtitle, save, theory=None):
     ax =[]
     ax.append(fig.add_subplot(111))
     
-    fig.suptitle(r"Autocorrelation Function for $\hat{x}$",
+    fig.suptitle(r"Autocorrelation Function for {}".format(op_name),
         fontsize=pp.ttfont)
     
     ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
     
     ax[0].set_xlabel(r'HMC trajectories between samples, $(\tau_{i+t} - \tau_{i}) / n\delta\tau$')
-    ax[0].set_ylabel(r'${\langle (x_i - \bar{x})(x_{i+t} - \bar{x}) \rangle}/{\langle x_0^2 \rangle}$')
+    ax[0].set_ylabel(r'$\mathcal{C}(t) = {\langle (\hat{O}_i - \langle\hat{O}\rangle)' \
+        + r'(\hat{O}_{i+t} - \langle\hat{O}\rangle) \rangle}/{\langle \hat{O}_0^2 \rangle}$')
     
     steps = np.linspace(0, ac_fn.size, ac_fn.size, False)    # get x values
     
@@ -88,6 +90,10 @@ def main(x0, pot, file_name, n_samples, n_burn_in, c_len=20, step_size = .5, n_s
         save :: bool :: True saves the plot, False prints to the screen
     """
     
+    separations = range(c_len)
+    opFn = lambda samples: corr.twoPoint(samples, separation=0)
+    op_name = r'$\hat{O} = \langle x(0)x(0) \rangle$'
+    
     rng = np.random.RandomState()
     model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
       n_steps = n_steps)
@@ -97,19 +103,15 @@ def main(x0, pot, file_name, n_samples, n_burn_in, c_len=20, step_size = .5, n_s
         pot.name, x0.shape, spacing, step_size, n_steps)
     length = model.x0.size
     
-    
     print 'Running Model: {}'.format(file_name)
     c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
-    
-    separations = range(c_len)
-    fn = lambda x: x # operator \hat{x}
-    
-    ac_fn = c.getAcorr(separations, fn)
+    ac_fn = c.getAcorr(separations, opFn)
     print 'Finished Running Model: {}'.format(file_name)
     
-    av_x0_sq = ac_fn[0]
-    print 'measured: <x(0)x(0)> = {}'.format(av_x0_sq)
+    av_corr = c.op_mean
+    print 'measured: <x(0)x(0)> = {}'.format(av_corr)
     store.store(ac_fn, file_name, '_acfn')
-    plot(ac_fn, subtitle, 
+    
+    plot(ac_fn, subtitle, op_name,
         save = saveOrDisplay(save, file_name))
     

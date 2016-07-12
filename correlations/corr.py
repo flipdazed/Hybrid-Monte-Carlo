@@ -2,15 +2,34 @@
 import numpy as np
 from hmc import checks
 
-def qho_theory(spacing, mu, length, separation=0.):
-   """Theoretical prediction for the 1D 2-point correlation function
-   
-   Required Inputs
+def twoPoint(samples, separation):
+    """Delivers the UNAVERAGED two point with a given separation
+    
+    Equivalent to evaluating for each sample[i] and averaging over them
+    
+    Required Inputs
+        samples    :: n+1-dim lattice :: the 0th dim is `m` HMC lattice-samples
+        separation :: int :: the lattice spacing between the two point function
+    """
+    
+    # shift the array by the separation
+    # need the axis=1 as this is the lattice index, 0 is the sample index
+    shifted = np.roll(samples, separation, axis=1)
+    
+    # this actually works for any dim arrays as * op broadcasts
+    two_point = (shifted*samples)
+    
+    return two_point
+
+def twoPointTheoryQHO(spacing, mu, length, separation=0.):
+    """Theoretical prediction for the 1D 2-point correlation function
+    
+    Required Inputs
       spacing  :: float :: lattice spacing
       mu       :: float :: mass-coupling
       length   :: int   :: length of 1D lattice
       separation :: int :: number of sites between observables <x(0)x(separation)>
-   """
+    """
     amu = mu*spacing
     if np.abs(amu) <= 0.1: 
         r = 1. - amu + .5*amu**2
@@ -59,13 +78,11 @@ class Correlations_1d(object):
         self.result = self.runWrapper(*args, **kwargs)
         return self.result
     
-    def twoPoint(self, separation):
-        """Delivers the two point with a given separation
+    def getTwoPoint(self, separation):
+        """Delivers the two point with a given separation and runs model if necessary
         
         Once the model is run then the samples can be passed through the correlation
         function in once move utilising the underlying optimisations of numpy in full
-        
-        Equivalent to evaluating for each sample[i] and averaging over them
         
         Required Inputs
             separation :: int :: the lattice spacing between the two point function
@@ -78,14 +95,9 @@ class Correlations_1d(object):
         
         # here the sample index will be the first index
         # the remaning indices are the lattice indices
-        self.samples = np.asarray(self.samples)
+        samples = np.asarray(samples)
         
-        # shift the array by the separation
-        # need the axis=1 as this is the lattice index, 0 is the sample index
-        shifted = np.roll(self.samples, separation, axis=1)
-        
-        # this actually works for any dim arrays as * op broadcasts
-        self.two_point = (shifted*self.samples)
+        self.two_point = twoPoint(self.samples, separation)
         
         # ravel() just flattens averything into one dimension
         # rather than averaging over each lattice sample and averaging over
