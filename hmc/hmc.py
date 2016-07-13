@@ -2,32 +2,41 @@ import numpy as np
 from tqdm import tqdm
 
 from . import checks
+from common import Init
 from dynamics import Leap_Frog
 from metropolis import Accept_Reject
 
-class Hybrid_Monte_Carlo(object):
+class Hybrid_Monte_Carlo(Init):
     """The Hybrid (Hamiltonian) Monte Carlo method
     
     Optional Inputs
         store_acceptance :: bool :: optionally store the acceptance rates
+        accept_kwargs    :: dict :: kwargs to pass to Accept_Reject(**accept_kwargs)
     
     Required Inputs
         x0         :: tuple :: initial starting position vector
         potential  :: class :: class from potentials.py
         dynamics   :: class :: integrator class for dynamics from h_dynamics.py
         rng        :: np.random.RandomState :: random number state
+    
     Expectations
     """
-    def __init__(self, x0, dynamics, potential, rng, store_acceptance=False):
+    def __init__(self, x0, dynamics, potential, rng, **kwargs):
+        super(Hybrid_Monte_Carlo, self).__init__()
+        self.initArgs(locals())
+        self.defaults = {
+            'accept_kwargs':{ # kwargs to pass to accept
+                'store_acceptance':False
+                }
+            }
+        self.initDefaults(kwargs)
         
-        self.x0 = x0
-        self.dynamics = dynamics
-        self.potential = potential
-        self.rng = rng
-        self.store_acceptance = store_acceptance
+        # legacy support - need to update
+        a = 'store_acceptance'
+        if a in kwargs: self.accept_kwargs[a] = kwargs[a]
         
         self.momentum = Momentum(self.rng)
-        self.accept = Accept_Reject(self.rng, store_acceptance=store_acceptance)
+        self.accept = Accept_Reject(self.rng, **self.accept_kwargs)
         
         # Take the position in just for the shape
         # as note this is a fullRefresh so the return is
@@ -65,20 +74,19 @@ class Hybrid_Monte_Carlo(object):
         # Burn in section
         self.burn_in_p = [p.copy()]
         self.burn_in = [x.copy()]
+        self.burn_in_traj = [0]
         
         iterator = xrange(n_burn_in)
-        # if verbose:
-        #     iterator = tqdm(iterator, position=verb_pos,
-        #         desc='Burning In: {}'.format(verb_pos))
-        #     # tqdm.write('Burning in ...')
         for step in iterator: # burn in
             p, x = self.move(p, x, mixing_angle=mixing_angle)
             self.burn_in_p.append(p.copy())
             self.burn_in.append(x.copy())
+            self.burn_in_traj.append(self.dynamics.n)
         
         # sampling section
         self.samples_p = [p.copy()]
         self.samples = [x.copy()]
+        self.samples_traj = [0]
         
         iterator = xrange(n_samples)
         if verbose:
@@ -89,6 +97,7 @@ class Hybrid_Monte_Carlo(object):
             p, x = self.move(p, x, mixing_angle=mixing_angle)
             self.samples_p.append(p.copy())
             self.samples.append(x.copy())
+            self.samples_traj.append(self.dynamics.n)
         
         return (self.burn_in_p, self.samples_p), (self.burn_in, self.samples)
     

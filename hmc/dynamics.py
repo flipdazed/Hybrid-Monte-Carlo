@@ -1,9 +1,10 @@
 import numpy as np
 from tqdm import tqdm
 
+from common import Init
 import checks
 
-class Leap_Frog(object):
+class Leap_Frog(Init):
     """Leap Frog Integrator
     
     Required Inputs
@@ -16,12 +17,17 @@ class Leap_Frog(object):
     
     Note: Do not confuse x0,p0 with initial x0,p0 for HD
     """
-    def __init__(self, duE, step_size = 0.1, n_steps = 250, save_path = False):
-        self.step_size = step_size
-        self.n_steps = n_steps
-        self.duE = duE
-        
-        self.save_path = save_path
+    def __init__(self, duE, **kwargs):
+        super(Leap_Frog, self).__init__()
+        self.initArgs(locals())
+        self.defaults = {
+            'step_size':0.1,
+            'n_steps':250,
+            'rand_steps':False,
+            'save_path':False
+            }
+        self.initDefaults(kwargs)
+        if self.rand_steps: self.lengths = []
         self.newPaths() # create blank lists
         pass
     
@@ -69,10 +75,12 @@ class Leap_Frog(object):
         Returns
             (x,p) :: tuple :: momentum, position
         """
-        p, x = p0, x0
-        self._storeSteps(p, x) # store zeroth step
+        self.n = self._getStepLen()
         
-        iterator = range(0, self.n_steps)
+        p, x = p0, x0
+        self._storeSteps(p, x, self.n) # store zeroth step
+        
+        iterator = range(0, self.n)
         if verbose: iterator = tqdm(iterator)
         for step in iterator:
             p = self._moveP(p, x, frac_step=0.5)
@@ -99,12 +107,13 @@ class Leap_Frog(object):
         Returns
             (x,p) :: tuple :: momentum, position
         """
+        self.n = self._getStepLen()
         
         # first step and half momentum step
         p = self._moveP(p0, x0, frac_step=0.5)
         x = self._moveX(p, x0)
         
-        iterator = range(1, self.n_steps) # one step done
+        iterator = range(1, self.n) # one step done
         if verbose: iterator = tqdm(iterator)
         for step in iterator:
             p = self._moveP(p, x)
@@ -114,6 +123,17 @@ class Leap_Frog(object):
         p = self._moveP(p, x, frac_step=0.5)
         
         return p, x
+    
+    def _getStepLen(self):
+        """Determines if steps are constant or binomially distributed
+        
+        Obtains the number of steps from binomial trials using geometric dist.
+        if binomially distributed (negative binomial dist.)
+        """
+        if not self.rand_steps:
+            return self.n_steps
+        else:
+            return np.random.geometric(1./float(self.n_steps))
     
     def _moveX(self, p, x, frac_step = 1.):
         """Calculates a POSITION move for the Leap Frog integrator 
@@ -148,12 +168,13 @@ class Leap_Frog(object):
                 checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(x, index)))
         return p
     
-    def _storeSteps(self, p, x):
+    def _storeSteps(self, p, x, l):
         """Stores current momentum and position in lists
         
         Required Inputs
             p :: float :: current momentum
             x :: float :: current position
+            l :: int   :: number of steps in this trajectory
         
         Expectations
             self.x_step :: float
@@ -161,12 +182,14 @@ class Leap_Frog(object):
         """
         self.p_ar.append(p.copy())
         self.x_ar.append(x.copy())
+        self.lengths.append(l)
         pass
     
     def newPaths(self):
         """Initialises new path lists"""
         self.p_ar = [] # data for plots
         self.x_ar = [] # data for plots
+        self.n    = []
         pass
 #
 if __name__ == '__main__':

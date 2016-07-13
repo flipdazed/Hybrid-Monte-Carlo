@@ -108,18 +108,21 @@ def main(x0, pot, file_name,
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
         ac = c.getAcorr(separations, opFn)
         
-        av_corr = c.op_mean
-        return av_corr, ac
+        traj = c.model.traj
+        p = c.model.p_acc
+        xx = c.op_mean
+        return xx, ac, traj, p
     
     # use multiprocessing
     ans = prll_map(coreFunc, zip(range(len(mixing_angles)), mixing_angles), verbose=False)
-    x0x0, ans = zip(*ans)
+    xx, ac, traj, p = zip(*ans) # unpack from multiprocessing
+    
     print '\n'*len(mixing_angles) # hack to avoid overlapping!
-    for av_corr,a in zip(x0x0, mixing_angles):
-        print '> measured at angle:{:3.1f}: <x(0)x(0)> = {}'.format(a, av_corr)
+    for p, x, a in zip(p, xx, mixing_angles):
+        print '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
     
     # create dictionary for plotting
-    acs = {l:(separations, y) for y, l in zip(ans, angle_labels)}
+    acs = {l:(separations, y) for y, l in zip(ac, angle_labels)}
     print 'Finished Running Model: {}'.format(file_name)
     
     store.store(lines, file_name, '_lines')
