@@ -8,17 +8,16 @@ __doc__ = """This code is based on ``Monte Carlo errors with less errors''
 The aim is to make the routine more readable and simplified with python
 """
 
-def uWerr(samples, sample_obs, s_tau, quantity = 1, name = None, n_rep = None, **kwargs):
+def uWerr(f_ret, s_tau, quantity = 1, name = None, n_rep = None, **kwargs):
     """autocorrelation-analysis of MC time-series following the Gamma-method
-    This (simplified) implementation assumes samples have been acted upon by an operator
+    This (simplified) implementation assumes f_ret have been acted upon by an operator
     and just completes basic calculations
     
     **Currently only supports ONE observable of length sample.shape[0]**
     
     Required Inputs
-        samples  :: np.ndarray :: n samples
-        sample_ops :: np.ndarray :: observables corresponding to n_samples
-        s_tau    :: float :: guess for the ratio S of tau/tauint [D=1.5]
+        f_ret   :: np.ndarray :: the return of a function action upon all f_ret
+        s_tau   :: float :: guess for the ratio S of tau/tauint [D=1.5]
                              0 = assumed absence of autocorrs
     
     Optional Inputs
@@ -34,27 +33,15 @@ def uWerr(samples, sample_obs, s_tau, quantity = 1, name = None, n_rep = None, *
     """
     
     # legacy: n_rep is set up as the number of entries in the data if reps = None
-    n = float(samples.size)
-    # primary_index = 1 # legacy - don't need
-    primary = True      # legacy - don't need as we do all func evals before
+    n = float(f_ret.size)
     
-    # legacy: find the means of the primaries
     # a_av0 is equal to a_aav beacuse we have no replicas here
-    a_aav = np.average(samples)
+    # note that f_aav == a_aav because R=1
+    f_aav = a_aav = np.average(f_ret)   # get the mean of the function outputs
+    diffs = f_ret - a_aav               # get fluctuations around mean
     
-    # legacy: means of derived / primary - depending on quantity
-    # here quantity is 1 and primary = True
-    f_aav = a_aav[idx1]
-    
-    # legacy: form the gradient of f and project fluctuations:
-    delpro = samples - a_aav
-    
-    ### possibly add another function? ###
     ### Computation of Gamma, automatic windowing
-    # note: W=1,2,3,.. in Matlab-vectorindex <-> W=0,1,2,.. in the paper!
-    
-    # values for W=0:
-    norm = (delpro**2).mean()
+    norm = (diffs**2).mean() # values for w = 0
     
     check.tryAssertNotEqual(norm, 0,
         msg = 'Normalisation cannot be zero: No fluctuations.' \
@@ -63,13 +50,13 @@ def uWerr(samples, sample_obs, s_tau, quantity = 1, name = None, n_rep = None, *
     acorr = [norm] # first element is the norm
     
     # compute Gamma(t), find the optimal W
-    if s_tau == 0: # 0 = assumed absence of autocorrs
-        w_best   = 0.
+    flag = (s_tau == 0)
+    
+    if flag: # 0 = assumed absence of autocorrs
+        w_best      = 0.
         t_max       = 0.
-        flag        = False
     else:
-        t_max       = samples.size/2 # note integer division deliberate
-        flag        = True
+        t_max       = f_ret.size/2 # note integer division deliberate
         g_int       = 0.
     
     for t in in range(1, t_max):
@@ -77,19 +64,17 @@ def uWerr(samples, sample_obs, s_tau, quantity = 1, name = None, n_rep = None, *
         # gamma_f_i += delpro[:n-t]*delpro[t:n] sucks in python syntax
         # instead this can be replaced by a np.roll and slice off the end bits
         # and then the mean can be taken all in one go
-        rickrolled = np.roll(delpro, t) # this totally wasn't a waste of a line of code
-        acorr_t = delpro*rickrolled[:n-t].mean() # bosh.
+        rickrolled = np.roll(diffs, t) # this totally wasn't a waste of a line of code
+        acorr_t = diffs*rickrolled[:n-t].mean() # bosh.
         
         acorr.append(acorr_t) # append to gammas
         
         # this while section below can be improved drastically
         ######
         if flag: # this flag occurs if s_tau != 0 - should be explict
-            g_int += acorr/norm
-            if g_int <= 0: # calculate g_int
-                tau_w = np.finfo(float).eps
-            else:
-                tau_w = s_tau / np.log(1.+1./g_int)
+            g_int += acorr_t/norm
+            # np.nan handles the divisino by 0 fine (tested)
+            tau_w = s_tau / np.log(1. + 1./g_int.clip(0))
             g_w = np.exp(-t/tau_w) - tau_w/np.sqrt(t*n)
             
             # look for a sign switch in g_w
