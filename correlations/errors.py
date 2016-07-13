@@ -111,3 +111,8 @@ def uWerr(f_ret, s_tau, quantity = 1, name = None, n_rep = None, **kwargs):
     itau_diff = int_tau*2*np.sqrt((w_best - int_tau + .5)/n)
     
     return v, v_diff, v_ddiff, itau, itau_diff
+
+if __name__ == '__main__':
+    plot(x, np.exp(-1./np.log(1. + 1./x.clip(0))) - x, label='0 giving 1/0 = np.inf', linewidth=2., alpha = .4)
+    plot(x, np.exp(-1./np.log(1. + 1./x.clip(np.finfo(float).eps))) - x, label='eps', linewidth=2., alpha = .4)
+    pass
