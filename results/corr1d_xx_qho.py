@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from common import corr1d_x2
+from common import corr1d_xx
 from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 
 file_name = __file__
@@ -13,7 +13,7 @@ spacing = 1.
 
 
 if '__main__' == __name__:
-    corr1d_x2.main(x0, pot, file_name,
+    corr1d_xx.main(x0, pot, file_name,
         n_samples = 10000, n_burn_in = 25, spacing = spacing,
         c_len = 5,
         step_size = 0.1, n_steps = 20,

@@ -85,7 +85,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, c_len=5, step_size = .5, n_st
     rng = np.random.RandomState()
     model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
       n_steps = n_steps)
-    c = corr.Correlations_1d(model, 'run', 'samples')
+    c = corr.Correlations_1d(model)
     
     subtitle = r"Potential: {}; Lattice Shape: ${}$; $a={:.1f}$".format(
         pot.name, x0.shape, spacing)

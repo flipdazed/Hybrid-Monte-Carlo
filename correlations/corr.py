@@ -47,7 +47,7 @@ def twoPointTheoryQHO(spacing, mu, length, separation=0.):
     av_xx = ratio / (2.*mu*np.sqrt(1. + .25*amu**2))
     return av_xx
 
-class Correlations_1d(Base):
+class Correlations_1d(Init, Base):
     """Runs a model and calculates the 1 dimensional correlation function
     
     Required Inputs
@@ -60,10 +60,14 @@ class Correlations_1d(Base):
         model has a function that runs the MCMC sampling
         the samples are stored as [sample index, sampled lattice configuration]
     """
-    def __init__(self, model, attr_run, attr_samples, **kwargs):
+    def __init__(self, model, **kwargs):
         super(Correlations_1d, self).__init__()
         self.initArgs(locals())
-        self.defaults = {}
+        self.defaults = {
+            'attr_run':'run',
+            'attr_samples':'samples',
+            'attr_trajs':'samples_traj'
+            }
         self.initDefaults(kwargs)
         self.setUp()
         pass
@@ -81,11 +85,10 @@ class Correlations_1d(Base):
         checks.tryAssertEqual(int, type(separation),
             "Separation must be integer: type is: {}".format(type(separation)))
         
-        if not hasattr(self, 'samples'): self._getSamples()
-        
         # here the sample index will be the first index
         # the remaning indices are the lattice indices
-        samples = np.asarray(samples)
+        if not hasattr(self, 'samples'): self._getSamples()
+        if not isinstance(self.samples, np.ndarray): self.samples = np.asarray(self.samples)
         
         self.two_point = twoPoint(self.samples, separation)
         

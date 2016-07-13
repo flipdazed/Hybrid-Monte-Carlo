@@ -40,7 +40,8 @@ class Base(object):
         dynamics = Leap_Frog(
             duE = self.pot.duE,
             step_size = self.step_size,
-            n_steps = self.n_steps)
+            n_steps = self.n_steps,
+            rand_steps = self.rand_steps)
         
         self.sampler = Hybrid_Monte_Carlo(self.x0, dynamics, self.pot, self.rng,
             accept_kwargs = {'get_accept_rates':True})
@@ -66,7 +67,8 @@ class Basic_HMC(Init, Base):
             'spacing':1.,
             'rng':np.random.RandomState(111),
             'step_size': .1,
-            'n_steps': 20
+            'n_steps': 20,
+            'rand_steps':False
         }
         self.initDefaults(kwargs)
         self._getInstances()
@@ -92,6 +94,7 @@ class Basic_KHMC(Init, Base):
             'spacing':1.,
             'rng':np.random.RandomState(111),
             'step_size': .1,
+            'rand_steps':False
         }
         self.initDefaults(kwargs)
         self.n_steps = 1 # this is a key paramter of KHMC
@@ -119,7 +122,8 @@ class Basic_GHMC(Init, Base):
             'spacing':1.,
             'rng':np.random.RandomState(111),
             'step_size': .1,
-            'n_steps': 20
+            'n_steps': 20,
+            'rand_steps':False
         }
         self.initDefaults(kwargs)
         self._getInstances()

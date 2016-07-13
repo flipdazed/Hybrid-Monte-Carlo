@@ -5,13 +5,14 @@ from hmc import checks
 from hmc.common import Init
 from .common import Base
 
-def acorr(op_samples, mean, separation, norm = None):
+def acorr(op_samples, mean, separation, weights = None, norm = None):
     """autocorrelation of a measured operator with optional normalisation
     
     Required Inputs
         op_samples     :: np.ndarray :: the operator samples from a number of lattices
         mean        :: float :: the mean of the operator
         separation  :: int :: the separation between HMC steps
+        weights     :: np.ndarray :: the weights for each respective sample
         norm        :: float :: the autocorrelation with separation=0
     
     Note: the sample index will always be the first index. A sample is one op_sample
@@ -33,7 +34,7 @@ def acorr(op_samples, mean, separation, norm = None):
     # shift the array by the separation
     # need the axis=0 as this is the sample index, 1 is the lattice index
     # corellations use axis 1
-    shifted = np.roll(op_samples, separation, axis=0)
+    shifted = np.roll(op_samples, separation, axis = 0)
     
     # Need to be wary that roll will roll all elements arouns the array boundary
     # so cannot take element from the end. The last sample that can have an autocorrelation
@@ -47,7 +48,8 @@ def acorr(op_samples, mean, separation, norm = None):
     # ravel() just flattens averything into one dimension
     # rather than averaging over each lattice sample and averaging over
     # all samples I jsut average the lot saving a calculation
-    acorr = acorrs.ravel().mean()
+    if weights is not None: weights = weights[:n-separation]
+    acorr = np.average(acorrs, weights=weights, axis = 0).mean()
     return acorr
 
 class Autocorrelations_1d(Init, Base):
@@ -63,10 +65,14 @@ class Autocorrelations_1d(Init, Base):
         model has a function that runs the MCMC sampling
         the samples are stored as [sample index, sampled lattice configuration]
     """
-    def __init__(self, model, attr_run, attr_samples, **kwargs):
+    def __init__(self, model, **kwargs):
         super(Autocorrelations_1d, self).__init__()
         self.initArgs(locals())
-        self.defaults = {}
+        self.defaults = {
+            'attr_run':'run',
+            'attr_samples':'samples',
+            'attr_trajs':'traj'
+            }
         self.initDefaults(kwargs)
         self._setUp()
         pass
@@ -91,8 +97,8 @@ class Autocorrelations_1d(Init, Base):
         
         if not hasattr(self, 'op_samples'): 
             if not hasattr(self, 'samples'): self._getSamples() # get samples if not already
-            self.samples = np.asarray(self.samples) # ensure in numpy format
-            self.trajs = np.asarray(self.samples_traj)
+            if not isinstance(self.samples, np.ndarray): self.samples = np.asarray(self.samples)
+            if not isinstance(self.trajs, np.ndarray): self.trajs = np.asarray(self.trajs)
             self.op_samples = op_func(self.samples)
         
         # get mean for these samples if doesn't already exist - don't waste time doing multiple
@@ -104,10 +110,16 @@ class Autocorrelations_1d(Init, Base):
         separations.sort()
         if separations[0] == 0:
             self.acorr = [1.] # first entry is the normalisation
-            separations.pop(0)
+            separations = separations[1:]
+        
+        w = self.trajs/self.trajs.sum()
+        
+        checks.tryAssertEqual(self.op_samples.shape[0], w.shape[0],
+            "Shapes differ! Op Samples: {}, weights: {}".format(self.op_samples.shape, w.shape))
         
         self.acorr += [acorr(self.op_samples, self.op_mean, 
-                            s, self.op_norm) for s in separations]
+                            s, w, self.op_norm) for s in separations]
+        
         self.acorr = np.asarray(self.acorr)
         
         return self.acorr
