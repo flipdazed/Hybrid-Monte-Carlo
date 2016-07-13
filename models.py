@@ -32,7 +32,7 @@ class Basic_HMC():
         self.sampler = Hybrid_Monte_Carlo(self.x0, dynamics, pot, self.rng)
         pass
     
-    def run(self, n_samples, n_burn_in, verbose = False):
+    def run(self, n_samples, n_burn_in, *args, **kwargs):
         """Runs the HMC algorithm to sample the potential
         
         Required Inputs
@@ -43,7 +43,7 @@ class Basic_HMC():
             verbose :: bool :: a progress bar if True
         """
         p_samples, samples = self.sampler.sample(
-            n_samples = n_samples, n_burn_in = n_burn_in, verbose = verbose)
+            n_samples = n_samples, n_burn_in = n_burn_in, *args, **kwargs)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)
@@ -81,7 +81,7 @@ class Basic_KHMC():
         
         self.sampler = Hybrid_Monte_Carlo(self.x0, self.dynamics, self.pot, self.rng)
     
-    def run(self, n_samples, n_burn_in, mixing_angle, verbose = False):
+    def run(self, n_samples, n_burn_in, mixing_angle, *args, **kwargs):
         """Runs the HMC algorithm to sample the potential
         
         Required Inputs
@@ -93,7 +93,7 @@ class Basic_KHMC():
             verbose :: bool :: a progress bar if True
         """
         p_samples, samples = self.sampler.sample(n_samples = n_samples, 
-            n_burn_in = n_burn_in, mixing_angle=mixing_angle, verbose = verbose)
+            n_burn_in = n_burn_in, mixing_angle=mixing_angle, *args, **kwargs)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)
@@ -132,7 +132,7 @@ class Basic_GHMC():
         
         self.sampler = Hybrid_Monte_Carlo(self.x0, self.dynamics, self.pot, self.rng)
     
-    def run(self, n_samples, n_burn_in, mixing_angle, verbose = False):
+    def run(self, n_samples, n_burn_in, mixing_angle, *args, **kwargs):
         """Runs the HMC algorithm to sample the potential
         
         Required Inputs
@@ -144,7 +144,7 @@ class Basic_GHMC():
             verbose :: bool :: a progress bar if True
         """
         p_samples, samples = self.sampler.sample(n_samples = n_samples, 
-            n_burn_in = n_burn_in, mixing_angle=mixing_angle, verbose = verbose)
+            n_burn_in = n_burn_in, mixing_angle=mixing_angle, *args, **kwargs)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)

@@ -56,7 +56,7 @@ def prll_map(function_to_apply, items, cpus=None, verbose=False):
     if verbose:
         result = [q_out.get() for _ in tqdm(sent)]
     else: # tqdm prints display
-        result = [q_out.get() for _ in tqdm(sent)]
+        result = [q_out.get() for _ in sent]
     for proc in processes: proc.join() # Wait for them to finish
     
     return [x for i, x in sorted(result)] # Return results sorted

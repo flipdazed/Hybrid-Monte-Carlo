@@ -41,7 +41,7 @@ class Hybrid_Monte_Carlo(object):
              +'\n x0: {}, p0: {}'.format(*shapes))
         pass
     
-    def sample(self, n_samples, n_burn_in = 20, mixing_angle=.5*np.pi, verbose = False):
+    def sample(self, n_samples, n_burn_in = 20, mixing_angle=.5*np.pi, verbose = False, verb_pos = 0):
         """runs the sampler for HMC
         
         Required Inputs
@@ -52,6 +52,7 @@ class Hybrid_Monte_Carlo(object):
             store_path  :: bool    :: Store path for plotting
             mixing_angle :: float    :: 0 is no mixing, pi/2 is total mix
             verbose :: bool :: a progress bar if True
+            verb_pos :: int :: offset for status bar
         
         Returns
             (p_data, x_data) where *_data = (burn in samples, sample)
@@ -66,9 +67,10 @@ class Hybrid_Monte_Carlo(object):
         self.burn_in = [x.copy()]
         
         iterator = xrange(n_burn_in)
-        if verbose: 
-            print '\nBurning in ...'
-            iterator = tqdm(iterator)
+        # if verbose:
+        #     iterator = tqdm(iterator, position=verb_pos,
+        #         desc='Burning In: {}'.format(verb_pos))
+        #     # tqdm.write('Burning in ...')
         for step in iterator: # burn in
             p, x = self.move(p, x, mixing_angle=mixing_angle)
             self.burn_in_p.append(p.copy())
@@ -79,9 +81,10 @@ class Hybrid_Monte_Carlo(object):
         self.samples = [x.copy()]
         
         iterator = xrange(n_samples)
-        if verbose: 
-            print 'Sampling ...'
-            iterator = tqdm(iterator)
+        if verbose:
+            iterator = tqdm(iterator, position=verb_pos, 
+                desc='Sampling: {}'.format(verb_pos))
+            # tqdm.write('Sampling ...')
         for step in iterator:
             p, x = self.move(p, x, mixing_angle=mixing_angle)
             self.samples_p.append(p.copy())

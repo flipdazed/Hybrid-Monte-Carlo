@@ -1,22 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import colors
+import random
 from scipy import stats
 
-from correlations import acorr, corr
-from models import Basic_HMC as Model
-from utils import saveOrDisplay
 from data import store
+from correlations import acorr, corr
+from models import Basic_GHMC as Model
+from utils import saveOrDisplay, prll_map
 from plotter import Pretty_Plotter, PLOT_LOC
 
-def plot(ac_fn, subtitle, op_name, save, theory=None):
+def plot(acs, lines, subtitle, op_name, save):
     """Plots the two-point correlation function
     
     Required Inputs
-        ac_fn    :: np.array :: correlation function
+        acs              :: {label:(x,y)} :: plots (x,y) as a stem plot with label=label
+        lines            :: {label:(x,y)} :: plots (x,y) as a line with label=label
         subtitle :: str  :: subtitle for the plot
         op_name  :: str  :: the name of the operator for the title
         save     :: bool :: True saves the plot, False prints to the screen
-        theory   :: not used yet
     
     Optional Inputs
         all_lines :: bool :: if True, plots hamiltonian as well as all its components
@@ -40,28 +42,16 @@ def plot(ac_fn, subtitle, op_name, save, theory=None):
     ax[0].set_ylabel(r'$\mathcal{C}(t) = {\langle (\hat{O}_i - \langle\hat{O}\rangle)' \
         + r'(\hat{O}_{i+t} - \langle\hat{O}\rangle) \rangle}/{\langle \hat{O}_0^2 \rangle}$')
     
-    steps = np.linspace(0, ac_fn.size, ac_fn.size, False)    # get x values
+    clist = [i for i in colors.ColorConverter.colors if i != 'w']
+    colour = (i for i in random.sample(clist, len(clist)))
+    for label, line in lines.iteritems():
+        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, color = next(colour))
     
-    log_y = np.log(ac_fn)        # regress for logarithmic scale
-    mask = np.isfinite(log_y)   # handles negatives in the logarithm
-    x = steps[mask]
-    y = log_y[mask]
+    for label, line in acs.iteritems():
+        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, color = next(colour))
     
-    # linear regression of the exponential curve
-    m, c, r_val, p_val, std_err = stats.linregress(x, y)
-    fit = np.exp(m*steps + c)
-    
-    if theory is not None:
-        th = ax[0].plot(steps, theory, color='green',linewidth=3., linestyle = '-', 
-            alpha=0.2, label = r'Theoretical prediction', marker='o')
-    
-    # exponential regression (straight line on log scale)
-#    bf = ax[0].plot(steps, fit, color='blue',
-#         linewidth=3., linestyle = '-', alpha=0.2, label=r'fit: $y = e^{'\
-#             + '{:.2f}x'.format(m)+'}e^{'+'{:.2f}'.format(c) + r'}$')
-    
-    f = ax[0].stem(steps, ac_fn, markerfmt='ro', linefmt='k:', basefmt='k-',
-        label=r'Measured')
+    # for label, stem in stems.iteritems():
+    #     ax[0].stem(*stem, markerfmt='o', linefmt='k:', basefmt='k-',label=label)
     
     xi,xf = ax[0].get_xlim()
     ax[0].set_xlim(xmin=xi-0.05*(xf-xi)) # give a decent view of the first point
@@ -72,7 +62,11 @@ def plot(ac_fn, subtitle, op_name, save, theory=None):
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
-def main(x0, pot, file_name, n_samples, n_burn_in, c_len=20, step_size = .5, n_steps = 20, spacing = 1., save = False):
+def main(x0, pot, file_name, 
+        n_samples, n_burn_in, 
+        mixing_angles, angle_labels, c_len=20, 
+        step_size = .5, n_steps = 1, spacing = 1., 
+        save = False):
     """A wrapper function
     
     Required Inputs
@@ -81,6 +75,8 @@ def main(x0, pot, file_name, n_samples, n_burn_in, c_len=20, step_size = .5, n_s
         file_name   :: string :: the final plot will be saved with a similar name if save=True
         n_samples   :: int :: number of HMC samples
         n_burn_in   :: int :: number of burn in samples
+        mixing_angles :: iterable :: mixing angles for the HMC algorithm
+        angle_labels :: list :: list of labels for the angles provided
     
     Optional Inputs
         c_len :: int :: length of autocorellation
@@ -89,29 +85,46 @@ def main(x0, pot, file_name, n_samples, n_burn_in, c_len=20, step_size = .5, n_s
         spacing ::float :: lattice spacing
         save :: bool :: True saves the plot, False prints to the screen
     """
+    lines = {} # contains the label as the key and a tuple as (x,y) data in the entry
+    acs = {}
     
     separations = range(c_len)
     opFn = lambda samples: corr.twoPoint(samples, separation=0)
     op_name = r'$\hat{O} = \langle x(0)x(0) \rangle$'
     
     rng = np.random.RandomState()
-    model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
-      n_steps = n_steps)
-    c = acorr.Autocorrelations_1d(model, 'run', 'samples')
     
     subtitle = r"Potential: {}; Lattice Shape: ${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
         pot.name, x0.shape, spacing, step_size, n_steps)
-    length = model.x0.size
+    length = x0.size
     
     print 'Running Model: {}'.format(file_name)
-    c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
-    ac_fn = c.getAcorr(separations, opFn)
+    def coreFunc(a):
+        """runs the below for an angle, a"""
+        i,a = a
+        model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
+          n_steps = n_steps)
+        c = acorr.Autocorrelations_1d(model, 'run', 'samples')
+        c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
+        ac = c.getAcorr(separations, opFn)
+        
+        av_corr = c.op_mean
+        return av_corr, ac
+    
+    # use multiprocessing
+    ans = prll_map(coreFunc, zip(range(len(mixing_angles)), mixing_angles), verbose=False)
+    x0x0, ans = zip(*ans)
+    print '\n'*len(mixing_angles) # hack to avoid overlapping!
+    for av_corr,a in zip(x0x0, mixing_angles):
+        print '> measured at angle:{:3.1f}: <x(0)x(0)> = {}'.format(a, av_corr)
+    
+    # create dictionary for plotting
+    acs = {l:(separations, y) for y, l in zip(ans, angle_labels)}
     print 'Finished Running Model: {}'.format(file_name)
     
-    av_corr = c.op_mean
-    print 'measured: <x(0)x(0)> = {}'.format(av_corr)
-    store.store(ac_fn, file_name, '_acfn')
-    
-    plot(ac_fn, subtitle, op_name,
+    store.store(lines, file_name, '_lines')
+    store.store(acs, file_name, '_acs')
+    plot(acs, lines,
+        subtitle, op_name,
         save = saveOrDisplay(save, file_name))
     
