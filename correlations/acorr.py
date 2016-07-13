@@ -5,14 +5,13 @@ from hmc import checks
 from hmc.common import Init
 from .common import Base
 
-def acorr(op_samples, mean, separation, weights = None, norm = None):
+def acorr(op_samples, mean, separation, norm = None):
     """autocorrelation of a measured operator with optional normalisation
     
     Required Inputs
         op_samples     :: np.ndarray :: the operator samples from a number of lattices
         mean        :: float :: the mean of the operator
         separation  :: int :: the separation between HMC steps
-        weights     :: np.ndarray :: the weights for each respective sample
         norm        :: float :: the autocorrelation with separation=0
     
     Note: the sample index will always be the first index. A sample is one op_sample
@@ -37,19 +36,18 @@ def acorr(op_samples, mean, separation, weights = None, norm = None):
     shifted = np.roll(op_samples, separation, axis = 0)
     
     # Need to be wary that roll will roll all elements arouns the array boundary
-    # so cannot take element from the end. The last sample that can have an autocorrelation
-    # of length m within N samples is x[N-1-m]x[N-1] so we want up to index N-m
+    # so cannot take element from the end. The last sample that can have an acorr
+    # of len m within N samples is x[N-1-m]x[N-1] so we want up to index N-m
     n = op_samples.shape[0] # get the number of samples from the 0th dimension
     acorrs = ((shifted - mean)*(op_samples - mean))[:n-separation] # indexing the 1st index for samples
     
     # normalise if a normalisation is given
     if norm is not None: acorrs /= norm
     
-    # ravel() just flattens averything into one dimension
-    # rather than averaging over each lattice sample and averaging over
-    # all samples I jsut average the lot saving a calculation
-    if weights is not None: weights = weights[:n-separation]
-    acorr = np.average(acorrs, weights=weights, axis = 0).mean()
+    # av over all even if random trjectories
+    # high # have n_steps average 
+    # as Geom~expo dist for p<<1
+    acorr = acorrs.ravel().mean()
     return acorr
 
 class Autocorrelations_1d(Init, Base):
@@ -112,13 +110,8 @@ class Autocorrelations_1d(Init, Base):
             self.acorr = [1.] # first entry is the normalisation
             separations = separations[1:]
         
-        w = self.trajs/self.trajs.sum()
-        
-        checks.tryAssertEqual(self.op_samples.shape[0], w.shape[0],
-            "Shapes differ! Op Samples: {}, weights: {}".format(self.op_samples.shape, w.shape))
-        
         self.acorr += [acorr(self.op_samples, self.op_mean, 
-                            s, w, self.op_norm) for s in separations]
+                            s, self.op_norm) for s in separations]
         
         self.acorr = np.asarray(self.acorr)
         
