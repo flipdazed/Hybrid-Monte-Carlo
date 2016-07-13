@@ -16,8 +16,9 @@ step_size =   .1
 n_steps   =  1
 c_len     = 110
 
-mixing_angles = 1/np.arange(8,1,-2, dtype='float64')*np.pi
+mixing_angles = 1/np.arange(10,1,-2, dtype='float64')*np.pi
 angle_labels = [
+    r'$\theta = \pi/10$',
     r'$\theta = \pi/8$',
     r'$\theta = \pi/6$',
     r'$\theta = \pi/4$',
