@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
+
 from hmc import checks
+from hmc.common import Init
+from .common import Base
 
 def acorr(op_samples, mean, separation, norm = None):
     """autocorrelation of a measured operator with optional normalisation
@@ -47,7 +50,7 @@ def acorr(op_samples, mean, separation, norm = None):
     acorr = acorrs.ravel().mean()
     return acorr
 
-class Autocorrelations_1d(object):
+class Autocorrelations_1d(Init, Base):
     """Runs a model and calculates the 1 dimensional autocorrelation function
     
     Required Inputs
@@ -60,26 +63,13 @@ class Autocorrelations_1d(object):
         model has a function that runs the MCMC sampling
         the samples are stored as [sample index, sampled lattice configuration]
     """
-    def __init__(self, model, attr_run, attr_samples, *args, **kwargs):
-        self.model = model
-        self.attr_run = attr_run
-        self.attr_samples = attr_samples
-        
-        checks.tryAssertEqual(True, hasattr(self.model, self.attr_run),
-            "The model has no attribute: self.model.{} ".format(self.attr_run))
-        
-        # set all kwargs and args
-        for kwarg,val in kwargs.iteritems(): setattr(self, kwarg, val)
-        for arg in args: setattr(self, arg, arg)
-        
-        # get the function for running the model
-        self.runWrapper = getattr(self.model, self.attr_run)
+    def __init__(self, model, attr_run, attr_samples, **kwargs):
+        super(Autocorrelations_1d, self).__init__()
+        self.initArgs(locals())
+        self.defaults = {}
+        self.initDefaults(kwargs)
+        self._setUp()
         pass
-    
-    def runModel(self, *args, **kwargs):
-        """Runs the model with any given *args and **kwargs"""
-        self.result = self.runWrapper(*args, **kwargs)
-        return self.result
     
     def getAcorr(self, separations, op_func):
         """Returns the autocorrelations for a specific sampled operator 
@@ -102,6 +92,7 @@ class Autocorrelations_1d(object):
         if not hasattr(self, 'op_samples'): 
             if not hasattr(self, 'samples'): self._getSamples() # get samples if not already
             self.samples = np.asarray(self.samples) # ensure in numpy format
+            self.trajs = np.asarray(self.samples_traj)
             self.op_samples = op_func(self.samples)
         
         # get mean for these samples if doesn't already exist - don't waste time doing multiple
@@ -121,20 +112,4 @@ class Autocorrelations_1d(object):
         
         return self.acorr
         
-    def _getSamples(self):
-        """grabs the position samples from the model"""
-        
-        checks.tryAssertEqual(True, hasattr(self, 'result'),
-            "The model has not been run yet!\n\tself.result not found")
-        checks.tryAssertEqual(True, hasattr(self.model, self.attr_samples),
-            "The model has no lattice attribute: self.model.{} ".format(self.attr_samples))
-        
-        samples = getattr(self.model, self.attr_samples) # pull out the lattice values
-        
-        # check that the lattice is indeed 1D as the size should be equal to
-        # the largest dimension. Won't be true if more than 1 entry != (1,)
-        checks.tryAssertEqual(samples[0].size, max(samples[0].shape),
-            "The lattice is not 1-dimensional: self.model.{}.shape ={}".format(
-            self.attr_samples, samples[0].shape))
-        self.samples = samples[1:] # the last burn-in sample is the 1st entry
-        pass
+    

@@ -122,9 +122,9 @@ def main(x0, pot, file_name,
         print '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
     
     # create dictionary for plotting
-    acs = {l:(separations, y) for y, l in zip(ac, angle_labels)}
+    acs = {l:(x, y) for x, y, l in zip(traj, ac, angle_labels)}
     print 'Finished Running Model: {}'.format(file_name)
-    
+    print traj[0].shape, ac[0].shape
     store.store(lines, file_name, '_lines')
     store.store(acs, file_name, '_acs')
     plot(acs, lines,

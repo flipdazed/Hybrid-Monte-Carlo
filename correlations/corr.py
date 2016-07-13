@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
+
+from hmc.common import Init
 from hmc import checks
+from .common import Base
 
 def twoPoint(samples, separation):
     """Delivers the UNAVERAGED two point with a given separation
@@ -44,7 +47,7 @@ def twoPointTheoryQHO(spacing, mu, length, separation=0.):
     av_xx = ratio / (2.*mu*np.sqrt(1. + .25*amu**2))
     return av_xx
 
-class Correlations_1d(object):
+class Correlations_1d(Base):
     """Runs a model and calculates the 1 dimensional correlation function
     
     Required Inputs
@@ -57,26 +60,13 @@ class Correlations_1d(object):
         model has a function that runs the MCMC sampling
         the samples are stored as [sample index, sampled lattice configuration]
     """
-    def __init__(self, model, attr_run, attr_samples, *args, **kwargs):
-        self.model = model
-        self.attr_run = attr_run
-        self.attr_samples = attr_samples
-        
-        checks.tryAssertEqual(True, hasattr(self.model, self.attr_run),
-            "The model has no attribute: self.model.{} ".format(self.attr_run))
-        
-        # set all kwargs and args
-        for kwarg,val in kwargs.iteritems(): setattr(self, kwarg, val)
-        for arg in args: setattr(self, arg, arg)
-        
-        # run the model
-        self.runWrapper = getattr(self.model, self.attr_run)
+    def __init__(self, model, attr_run, attr_samples, **kwargs):
+        super(Correlations_1d, self).__init__()
+        self.initArgs(locals())
+        self.defaults = {}
+        self.initDefaults(kwargs)
+        self.setUp()
         pass
-    
-    def runModel(self, *args, **kwargs):
-        """Runs the model with any given *args and **kwargs"""
-        self.result = self.runWrapper(*args, **kwargs)
-        return self.result
     
     def getTwoPoint(self, separation):
         """Delivers the two point with a given separation and runs model if necessary
@@ -103,21 +93,4 @@ class Correlations_1d(object):
         # rather than averaging over each lattice sample and averaging over
         # all samples I jsut average the lot saving a calculation
         return self.two_point.ravel().mean()
-        
-    def _getSamples(self):
-        """grabs the position samples from the model"""
-        
-        checks.tryAssertEqual(True, hasattr(self, 'result'),
-            "The model has not been run yet!\n\tself.result not found")
-        checks.tryAssertEqual(True, hasattr(self.model, self.attr_samples),
-            "The model has no lattice attribute: self.model.{} ".format(self.attr_samples))
-        
-        samples = getattr(self.model, self.attr_samples) # pull out the lattice values
-        
-        # check that the lattice is indeed 1D as the size should be equal to
-        # the largest dimension. Won't be true if more than 1 entry != (1,)
-        checks.tryAssertEqual(samples[0].size, max(samples[0].shape),
-            "The lattice is not 1-dimensional: self.model.{}.shape ={}".format(
-            self.attr_samples, samples[0].shape))
-        self.samples = samples[1:] # the last burn-in sample is the 1st entry
-        pass
+    

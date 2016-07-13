@@ -11,10 +11,10 @@ n, dim = 20, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.
 
-n_samples, n_burn_in = 1100, 25
+n_samples, n_burn_in = 110, 25
 step_size =   .1
 n_steps   =  1
-c_len     = 100
+c_len     = 10
 
 mixing_angles = 1/np.arange(8,1,-2, dtype='float64')*np.pi
 angle_labels = [

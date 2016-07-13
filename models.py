@@ -2,6 +2,7 @@ import numpy as np
 from hmc.lattice import Periodic_Lattice
 from hmc.hmc import *
 from hmc.common import Init
+
 class Base(object):
     def __init__(self):
         pass
@@ -71,7 +72,6 @@ class Basic_HMC(Init, Base):
         self._getInstances()
         pass
     
-
 #
 class Basic_KHMC(Init, Base):
     """A KHMC model to sample from the potentials with LeapFrog
