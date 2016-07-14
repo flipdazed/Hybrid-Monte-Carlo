@@ -66,10 +66,10 @@ class Correlations_1d(Init, Base):
         self.defaults = {
             'attr_run':'run',
             'attr_samples':'samples',
-            'attr_trajs':'samples_traj'
+            'attr_trajs':'traj'
             }
         self.initDefaults(kwargs)
-        self.setUp()
+        self._setUp()
         pass
     
     def getTwoPoint(self, separation):

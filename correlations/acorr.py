@@ -83,7 +83,7 @@ class Autocorrelations_1d(Init, Base):
         
         Required Inputs
             separations  :: iterable, int :: the separations between HMC steps
-            op_func     :: func :: the operator function
+            op_func      :: func :: the operator function
         
         
         Notes: op_func must be optimised to only take ALL HMC trajectories as an input

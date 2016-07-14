@@ -27,7 +27,7 @@ class Base(object):
         # flatten last dimension to a shape of (n, dim)
         self.burn_in = np.asarray(burn_in).reshape(n_burn_in+1, -1)
         self.samples = np.asarray(samples).reshape(n_samples+1, -1)
-        self.traj = np.asarray(traj, dtype='float64').reshape(n_samples+1)
+        self.traj  = np.asarray(traj, dtype='float64').reshape(n_samples+1)
         self.traj *= self.step_size
         self.p_acc = np.asarray(self.sampler.accept.accept_rates).ravel().mean()
         self.p_acc = np.asscalar(self.p_acc)
