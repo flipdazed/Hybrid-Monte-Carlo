@@ -13,25 +13,26 @@ This directory contains the correlation and autocorrelation routines used.
 <a name="td-corr"/>
 ## Correlation Functions
 ### Implementation
- - TBD
+ - ~~Two Point Correlation Function class~~
  
 ### Results
- - Plot: Two point correlation function for QHO vs. separation
+ - ~~Plot: Two point correlation function for QHO vs. separation~~
  - Plot: Two point correlation function for AHO vs. separation
  
 <a name="td-acorr"/>
 ## Autocorrelation Functions
 ### Implementation
- - Implement autocorrelation function (approach TBD)
- - Implement existing algorithm into python from matlab for error analysis
+ - ~~Implement autocorrelation function~~
+ - ~~Implement existing algorithm into python from matlab for error analysis~~
+ - ~~Implement code to calculate integrated autocorrelations~~
  
 ### Results
- - .TBC
- - Plot: Errors vs. ?
+ - ~~Plot: Autocorrelation for free field~~
+ - ~~Plot: Integrated Autocorrelations vs. integration Window~~
 
 <a name="tests"/>
 ## Unit Tests
-Coming when I know what to test! (:
+None yet!
 
 <a name="ak"/>
 ## Code Acknowledgements
