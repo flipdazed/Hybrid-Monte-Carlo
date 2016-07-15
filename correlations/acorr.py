@@ -32,8 +32,8 @@ def acorr(op_samples, mean, separation, norm = None):
     if type(op_samples) != np.ndarray: op_samples = np.asarray(op_samples)
     # shift the array by the separation
     # need the axis=0 as this is the sample index, 1 is the lattice index
-    # corellations use axis 1
-    shifted = np.roll(op_samples, separation, axis = 0)
+    # -ve so that a[0]->a[sep] as default is sending a[0] -> a[-1]
+    shifted = np.roll(op_samples, -separation, axis = 0)
     
     # Need to be wary that roll will roll all elements arouns the array boundary
     # so cannot take element from the end. The last sample that can have an acorr

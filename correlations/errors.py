@@ -13,42 +13,70 @@ __doc__ = """This code is based on ``Monte Carlo errors with less errors''
 
 The aim is to make the routine more readable and simplified with python
 """
-def tmpPlot(lines, w_best):
-    pp = Pretty_Plotter()
-    pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
-    pp._updateRC()
+
+def acorrnErr(acn, w, n):
+    """Calculates the errors in the autocorrelations
     
-    fig = plt.figure(figsize=(8, 8)) # make plot
-    ax =[]
-    ax.append(fig.add_subplot(111))
-    for label, line in lines.iteritems():
-        x,y,e = line
-        ax[0].errorbar(x, y, yerr=e,fmt='o', alpha=0.6, ecolor='k', label=label)
+    contruct errors acc. to hep-lat/0409106 eq. (E.11)
     
-    fig.suptitle(r'Test plot for $W = {}$'.format(w_best))
-    ax[0].legend(loc='best', shadow=True, fontsize = pp.axfont)
-    plt.show()
-    pass
+    Required Input
+        acorrn :: np.ndarray :: normalised autocorrelations
+        w      :: int :: cuttoff for the error summation - suggest w_best
+        n      :: int :: number of MCMC samples
+    """
+    err = []
+    if not isinstance(w, int): w = int(w)
+    pd = np.zeros(w*5)
+    pd[:acn.size] = acn
+    for t in range(0,int(w)*2):
+        tmp = 0.
+        for k in range(max(1,t-w), t+w):
+            tmp += (pd[k+t] + pd[abs(k-t)] - 2*pd[t]*pd[k])**2
+        err.append(np.sqrt(tmp/n))
+    return np.asarray(err)
 #
-def intAcorr(acorrn, w, n):
-    """Calculates the integrated autocorellations by integrating
-    up to a window length, w across the autocorrelation function
+def itauErrors(itau, n, window = None):
+    """Calculates the standard deviation in the integrated autocorrelations
+    If window is None then the function can calculate errors varying with W
     
     Required Inputs
         acorrn :: np.ndarray :: normalised autocorrelation function
-        w      :: int  :: the window to integrate up to
+        n      :: int        :: number of MCMC samples
+    
+    Optional
+        window :: int  :: optional window to integrate up to
+    """
+    if window is None: window = np.arange(itau.size)
+    return itau*2*np.sqrt((window - itau + .5)/n)
+#
+def intAcorr(acorrn, n, window = None):
+    """Calculates the integrated autocorellations by integrating
+    up to a window length, w, across the autocorrelation function
+    
+    Required Inputs
+        acorrn :: np.ndarray :: normalised autocorrelation function
+        n      :: int        :: number of MCMC samples
+    
+    Optional
+        window :: int  :: optional window to integrate up to
     
     Returns
         itau      :: float :: integrated autocorrelation function
         itau_diff :: float :: errors in itau
         itau_aav  :: np.ndarray :: itau at each window length
+    
+    Notes
+        The correction of - 0.5,
+            $$\bbar{C}_F(W) = \Lambda_F(0) + 2\sum_1^W \Lambda_F(W)$$
+        estimating for $\bbar{\nu}_F \approx \Lambda_F(0)$ then,
+            $$\bbar{\tau_{int},F}(W) = \frac{\bbar{C}_F(W)}{2\bbar{\nu}_F}$$
+            $$\bbar{\tau_{int},F}(W) = 0.5 + \frac{2}{\bbar{\nu}_F}\sum_1^W \Lambda_F(W)$$
     """
-    itau_aav  = np.cumsum(acorrn) - .5              # Eq. (41)
-    itau      = itau_aav[w]
-    itau_diff = itau*2*np.sqrt((w - itau + .5)/n)
+    if window is None: window = acorrn.size # assume alrady windowed
+    itau_aav  = np.cumsum(acorrn) - .5      # Eq. (41)
+    itau = itau_aav[window]
+    itau_diff = itauErrors(itau, n, window=window)
     return itau, itau_diff, itau_aav
-
 #
 def gW(t, g_int, s_tau, n):
     """Calculates g_W as in Eq. (52)
@@ -63,33 +91,54 @@ def gW(t, g_int, s_tau, n):
     tau_w = s_tau / np.log(1. + 1./g_int.clip(0))
     g_w = np.exp(-t/tau_w) - tau_w/np.sqrt(t*n)
     return g_w
-
 #
-def autoWindow(acorrn, s_tau, n):
+def covarianceN(acorr, var = None, window = None):
+    """Covariance*N as defined in Eq. (12, 26, 35)
+    Practical estimate of variance is the t=0 autocorrelation
+    as per Eq. 35 which is taken as the normalisation
+    
+    Required Inputs
+        acorr :: np.ndarray :: unnormalised autocorellations
+    
+    Optional Inputs
+        var   :: float :: variance estimate of the underlying function
+        window :: int  :: optional window to integrate up to
+    """
+    if var is None: var  = acorr[0]
+    if window is None: # assume already windowed
+        c = var + 2*acorr[1:].sum()
+    else:
+        c = var + 2*acorr[1:window].sum()
+    checks.tryAssertLt(0, c, 'Estimated error^2 < 0...\n sum = {}'.format(c))
+    return c
+#
+def autoWindow(acorrn, s_tau, n, t_max = None):
     """Automatic windowing procedure as 
     described in Section 3.3 in the paper
     
     Required Inputs
-        acorr :: np.ndarray :: normalised autocorellations
+        acorrn :: np.ndarray :: normalised autocorellations
         s_tau :: float      :: guess for the ratio S of tau/itau
-        n     :: int        :: f_ret.size
-    """
-    g_int = np.cumsum(acorrn[1:]) # cumulative sum
-    for t,v in enumerate(g_int):
-        # look for a sign switch in g_w
-        # optimal w occurs when sign changes
-        if gW(t+1, v, s_tau, n) < 0: 
-            w_best = t+1
-            return w_best
     
-    # x = range(1, g_int.size+1)
-    # lines = {r'$g_W$':(x, [gW(t+1, v, s_tau, n) for t,v in enumerate(g_int)])}
-    # lines[r'acorrn'] = (x, acorrn[1:])
-    # lines[r'$g_{int}$'] = (x, g_int)
-    # tmpPlot(lines, w_best)
-    checks.tryAssertNotEqual(False, False,
-        error_msg = 'Windowing condition failed up to W = {}'.format(g_int.size))
-    pass
+    Optional Inputs
+        t_max :: int :: maximum window length
+    
+    w is returned when gW changes sign from positive to negative
+    the t counter starts at 1 and evaluates using next() comprehension
+    
+    If not supplied, it is assumed that the length of the acorrn has
+    already been adjusted w.r.t. the n//2 parameter for t_max
+    """
+    if t_max is None: t_max = acorrn.size
+    g_int = np.cumsum(acorrn[1:t_max])
+    
+    # see http://stackoverflow.com/a/8534381/4013571
+    try:
+        w = next(t for t,v in enumerate(g_int,1) if gW(t, v, s_tau, n) < 0)
+    except:
+        checks.tryAssertNotEqual(False, False,
+        'Windowing condition failed up to W = {}'.format(g_int.size))
+    return min(g_int.size, 2*w)
 #
 def uWerr(f_ret, s_tau=1.5):
     """autocorrelation-analysis of MC time-series following the Gamma-method
@@ -118,62 +167,41 @@ def uWerr(f_ret, s_tau=1.5):
     for info.
     """
     checks.tryAssertNotEqual(s_tau, 0,
-        error_msg = 's_tau cannot be zero, see:\n' \
+        's_tau cannot be zero, see:\n' \
         + 'https://github.com/flipdazed/Hybrid-Monte-Carlo' \
         + '/issues/34#issuecomment-232472657')
     
-    # legacy: n_rep is set up as the number of entries in the data if reps = None
     if not isinstance(f_ret, np.ndarray): f_ret = np.ndarray(f_ret)
-    
     checks.tryAssertEqual(len(f_ret.shape[1:]), len(set(f_ret.shape[1:])),
-        error_msg = 'Only expects cuboid lattices: dims >2 are not equal.' \
+        'Only expects cuboid lattices: dims >2 are not equal.' \
         + '\nShape: {}'.format(f_ret.shape))
     
-    n = float(f_ret.shape[0])
+    f_aav = np.average(f_ret)           # get the mean of the function outputs
+    n = float(f_ret.shape[0])           # number of MCMC samples
     
-    # a_av0 is equal to a_aav beacuse we have no replicas here
-    # note that f_aav == a_aav because R=1
-    f_aav = a_aav = np.average(f_ret)   # get the mean of the function outputs
-    diffs = f_ret - a_aav               # get fluctuations around mean
+    # Don't normalise until bias corrected
+    fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=None)
+    acorr  = np.asarray([fn(t=t) for t in range(0, int(n//2))])
     
-    norm = np.average(diffs**2) # values for w = 0
+    norm = acorr[0] # values for w = 0
     checks.tryAssertNotEqual(norm, 0,
-        error_msg = 'Normalisation cannot be zero: No fluctuations.' \
+        'Normalisation cannot be zero: No fluctuations.' \
         + '\nNormalisation: {}'.format(norm))
     
-    # just makes it more readable - this fills static parameters and only varies t
-    # don't normalise until bias corrected
-    fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=None)
-    
-    # this maps the function to every item in the range, returns as list
-    # and appends to the existing entry of [norm]
-    t_max = int(n)/2
-    acorr  = np.asarray([norm] + [fn(t=t) for t in range(1, t_max)] )
-    
     # The automatic windowing proceedure
-    w_best = autoWindow(acorrn=acorr/norm, s_tau=s_tau, n=n)
-    t_max = min(t_max, 2*w_best)
-    acorr = acorr[:t_max]
+    w = autoWindow(acorrn=acorr/norm, s_tau=s_tau, n=n)
     
-    # this starting point is defined as Eq. 35 in the paper
-    g_sum = acorr[1:w_best].sum()
-    c_aav = norm + 2.*g_sum
-    checks.tryAssertLt(0, g_sum,
-        error_msg = 'Estimated error^2 as sum(gamma) < 0...\n sum = {}'.format(g_sum))
+    # correct acorr for variance in the function
+    c_aav  = covarianceN(acorr=acorr, var=norm, window=w)   # var = c_aav/n     Eq. 35
+    acorr += c_aav/n                                        # correct for bias  Eq. 32,49
+    c_aav  = covarianceN(acorr=acorr, var=norm, window=w)
+    acorrn = acorr/norm                                     # normalise corrected a/c fn.
     
-    acorr    += c_aav/n     # correct bias from Eq. (31) as decribed in Eq. (32/49)
-    c_aav     = norm + 2*acorr[1:w_best].sum()  # refine estimate with  Eq. (35)
-    acorrn    = acorr/norm                      # normalise autocorr fn.
+    itau, itau_diff, itau_aav = intAcorr(acorrn=acorrn, n=n, window=w)
+    f_diff  = np.sqrt(c_aav/n)             # error of f from       Eq. (26,44)
+    f_ddiff = f_diff*np.sqrt((w + .5)/n)   # error on error of f   Eq. (42)
     
-    itau, itau_diff, itau_aav = intAcorr(acorrn=acorrn, w=w_best, n=n)
-    f_diff  = np.sqrt(c_aav/n)                  # error of f from       Eq. (44)
-    f_ddiff = f_diff*np.sqrt((w_best - itau + .5)/n)      # error on error of f   Eq. ()
-    
-    lines = {}
-    lines[r'$\bar{\tau}_{int}$'] = (range(t_max), itau_aav, itau_diff)
-    lines[r'$\mathcal{C}(t)$'] = (range(t_max), acorrn, f_diff)
-    tmpPlot(lines, w_best)
-    return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav
+    return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav[:2*w], acorrn[:2*w]
 
 if __name__ == '__main__':
     pass

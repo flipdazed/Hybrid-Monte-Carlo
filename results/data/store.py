@@ -80,6 +80,7 @@ def load(path):
     obj_id = obj_id.pop(0)
     
     with codecs.open(path, 'r', **rparams) as f:
+        print ' > loading... {}'.format(path)
         if obj_id == 'numpy_objs':
             obj = json.load(f, object_hook=json_numpy_obj_hook)
         else:
