@@ -35,22 +35,23 @@ def plot(acs, lines, subtitle, op_name, save):
     fig.suptitle(r"Autocorrelation Function for {}".format(op_name),
         fontsize=pp.ttfont)
     
+    # set labels
     ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
-    
-    ax[0].set_xlabel(r'Av. trajectories between samples, $\langle\tau_{i+t} - \tau_{i}\rangle / n\delta\tau$')
+    ax[0].set_xlabel(r'Av. trajectories between samples, '\
+        + '$\langle\tau_{i+t} - \tau_{i}\rangle / n\delta\tau$')
     ax[0].set_ylabel(r'$\mathcal{C}(t) = {\langle (\hat{O}_i - \langle\hat{O}\rangle)' \
-        + r'(\hat{O}_{i+t} - \langle\hat{O}\rangle) \rangle}/{\langle \hat{O}_0^2 \rangle}$')
+        + r'(\hat{O}_{i+t} - \langle\hat{O}\rangle) \rangle}/'\
+        + '{\langle \hat{O}_0^2 \rangle}$')
     
     clist = [i for i in colors.ColorConverter.colors if i != 'w']
     colour = (i for i in random.sample(clist, len(clist)))
     for label, line in lines.iteritems():
-        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, color = next(colour))
+        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label,
+            color = next(colour))
     
     for label, line in acs.iteritems():
-        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, color = next(colour))
-    
-    # for label, stem in stems.iteritems():
-    #     ax[0].stem(*stem, markerfmt='o', linefmt='k:', basefmt='k-',label=label)
+        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, 
+            color = next(colour))
     
     xi,xf = ax[0].get_xlim()
     ax[0].set_xlim(xmin=xi-0.05*(xf-xi)) # give a decent view of the first point
@@ -69,7 +70,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, opFn,
     Required Inputs
         x0          :: np.array :: initial position input to the HMC algorithm
         pot         :: potential class :: defined in hmc.potentials
-        file_name   :: string :: the final plot will be saved with a similar name if save=True
+        file_name   :: string :: final plot will be saved with a similar name if save=True
         n_samples   :: int :: number of HMC samples
         n_burn_in   :: int :: number of burn in samples
         mixing_angle :: iterable :: mixing angles for the HMC algorithm
@@ -88,24 +89,28 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, opFn,
     
     rng = np.random.RandomState()
     
-    subtitle = r"Potential: {}; Lattice Shape: ${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
-        pot.name, x0.shape, spacing, step_size, n_steps)
+    subtitle = r"Potential: {}; Lattice Shape: " \
+        + "${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
+            pot.name, x0.shape, spacing, step_size, n_steps)
     
     print 'Running Model: {}'.format(file_name)
-    model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
-      n_steps = n_steps, rand_steps=rand_steps)
-    c = acorr.Autocorrelations_1d(model)
-    c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = mixing_angle, verbose=True)
-    cfn = opFn(c.model.samples)
-    print 'Finished Running Model: {}'.format(file_name)
+    model = Model(x0, pot=pot, spacing=spacing, # set up model
+        rng=rng, step_size = step_size,
+        n_steps = n_steps, rand_steps=rand_steps)
+    
+    c = acorr.Autocorrelations_1d(model)                    # set up autocorrs
+    c.runModel(n_samples=n_samples, n_burn_in=n_burn_in,    # run MCMC
+        mixing_angle = mixing_angle, verbose=True)
+    cfn = opFn(c.model.samples)                             # run func on HMC samples
     
     # get parameters generated
-    traj = c.model.traj
-    p = c.model.p_acc
-    xx = np.average(cfn)
+    traj = c.model.traj         # get trajectory lengths for each LF step
+    p = c.model.p_acc           # get acceptance rates at each M-H step
+    xx = np.average(cfn)        # get average of the function run over the samples
+    print 'Finished Running Model: {}'.format(file_name)    
+    
+    store.store(cfn, file_name, '_cfn')     # store the function
+    ans = errors.uWerr(cfn)                 
+    f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav = ans
     
     print '> measured at angle:{:3.1f}: <x^2> = {}; <P_acc> = {:4.2f}'.format(mixing_angle, xx , p)
-    
-    store.store(cfn, file_name, '_cfn')
-    ans = errors.uWerr(cfn)
-    f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav = ans
