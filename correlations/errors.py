@@ -124,6 +124,11 @@ def uWerr(f_ret, s_tau=1.5):
     
     # legacy: n_rep is set up as the number of entries in the data if reps = None
     if not isinstance(f_ret, np.ndarray): f_ret = np.ndarray(f_ret)
+    
+    checks.tryAssertEqual(len(f_ret.shape[1:]), len(set(f_ret.shape[1:])),
+        error_msg = 'Only expects cuboid lattices: dims >2 are not equal.' \
+        + '\nShape: {}'.format(f_ret.shape))
+    
     n = float(f_ret.shape[0])
     
     # a_av0 is equal to a_aav beacuse we have no replicas here
