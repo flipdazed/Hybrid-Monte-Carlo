@@ -11,14 +11,18 @@ from plotter import Pretty_Plotter, PLOT_LOC
 
 from scipy.optimize import curve_fit
 def expFit(t, a, b, c):
+    """Fit for an exponential curve
+    Main parameter is t
+    a,b,c are fitted w.r.t. f(t)
+    """
     return a + b * np.exp(-t / c)
 
 def plot(lines, w, subtitle, labels, op_name, save):
     """Plots the two-point correlation function
     
     Required Inputs
-        acs              :: {label:(x,y)} :: plots (x,y) as a stem plot with label=label
-        lines            :: {label:(x,y)} :: plots (x,y) as a line with label=label
+        acs              :: {axis:(x,y)} :: plots (x,y,error)
+        lines            :: {axis:(x,y)} :: plots (x,y,error)
         subtitle :: str  :: subtitle for the plot
         op_name  :: str  :: the name of the operator for the title
         save     :: bool :: True saves the plot, False prints to the screen
@@ -46,19 +50,17 @@ def plot(lines, w, subtitle, labels, op_name, save):
     ax[-1].set_xlabel(r'Av. trajectories between samples, '\
         + r'$t = \langle \tau_{i+t} - \tau_{i} \rangle / n\delta\tau$')
     
-    ### add the lines to the plots
-    
+    # Fix colours: A bug sometimes forces all colours the same
     clist = [i for i in colors.ColorConverter.colors if i not in ['w', 'k']]
     colour = (i for i in random.sample(clist, len(clist)))
     
-    ### add the Window stop point
-    for a in range(1,len(ax)):            # iterate over each axis
+    for a in range(1,len(ax)):  # Add the Window stop point as a red line
         ax[a].axvline(x=w, linewidth=4, color='red', alpha=0.1)
     
     ax[0].set_ylabel(r'$g(w)$')
-    x, y = lines[0]
-    yp = y.copy() ; yp[yp < 0] = np.nan
-    ym = y.copy() ; ym[ym >= 0] = np.nan
+    x, y = lines[0]                         # allow plots in diff colours for +/-
+    yp = y.copy() ; yp[yp < 0] = np.nan     # hide negative
+    ym = y.copy() ; ym[ym >= 0] = np.nan    # hide positive
     ax[0].scatter(x, yp, marker='o', color='g', linewidth=2., alpha=0.6, label=r'$g(t) \ge 0$')
     ax[0].scatter(x, ym, marker='s', color='r', linewidth=2., alpha=0.6, label=r'$g(t) < 0$')
     
@@ -72,23 +74,25 @@ def plot(lines, w, subtitle, labels, op_name, save):
     ax[2].errorbar(x, y, yerr=e, label = r'MCMC data',
         markersize=5, color=next(colour), fmt='o', alpha=0.4, ecolor='k')
     
-    for i in range(1, len(lines)):
+    for i in range(1, len(lines)):              # add best fit lines
         x, y = lines[i][:2]
-        popt, pcov = curve_fit(expFit, x, y)
+        popt, pcov = curve_fit(expFit, x, y)    # approx A+Bexp(-t/C)
         l_th = r'Fit: $f(t) = {:.1f} + {:.1f}'.format(popt[0], popt[1]) \
             + r'e^{-t/' +'{:.2f}'.format(popt[2]) + r'}$'
         ax[i].plot(x, expFit(x, *popt), label = l_th,
             linestyle = '--', color='k', linewidth=1., alpha=0.6)
     
+    # fix the limits so the plots have nice room 
     xi,xf = ax[2].get_xlim()
-    ax[2].set_xlim(xmin= xi-.05*(xf-xi)) # give a decent view of the first point
-    for a in ax:
+    ax[2].set_xlim(xmin= xi-.05*(xf-xi))    # decent view of the first point
+    for a in ax:                            # 5% extra room at top & add legend
         yi,yf = a.get_ylim()
-        a.set_ylim(ymax= yf+.05*(yf-yi), ymin= yi-.05*(yf-yi)) # give 5% extra room at top
+        a.set_ylim(ymax= yf+.05*(yf-yi), ymin= yi-.05*(yf-yi))
         a.legend(loc='best', shadow=True, fontsize = pp.axfont)
     
-    ### adds labels to the plots
+    # adds labels to the plots
     for i, text in labels.iteritems(): pp.add_label(ax[i], text, fontsize=pp.tfont)
+    
     pp.save_or_show(save, PLOT_LOC)
     pass
 #

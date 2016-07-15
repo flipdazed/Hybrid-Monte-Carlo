@@ -9,18 +9,17 @@ import random
 from plotter import Pretty_Plotter, PLOT_LOC
 
 __doc__ = """This code is based on ``Monte Carlo errors with less errors''
- - by Ulli Wolff, hep-lat/0306017
+- by Ulli Wolff, hep-lat/0306017
 
 The aim is to make the routine more readable and simplified with python
 """
 
 def acorrnErr(acn, w, n):
     """Calculates the errors in the autocorrelations
-    
-    contruct errors acc. to hep-lat/0409106 eq. (E.11)
+    construct errors acc. to hep-lat/0409106 eq. (E.11)
     
     Required Input
-        acorrn :: np.ndarray :: normalised autocorrelations
+        acn    :: np.ndarray :: normalised autocorrelations
         w      :: int :: cuttoff for the error summation - suggest w_best
         n      :: int :: number of MCMC samples
     """
@@ -28,8 +27,8 @@ def acorrnErr(acn, w, n):
     if not isinstance(w, int): w = int(w)
     pd = np.zeros(w*5)
     pd[:acn.size] = acn
-    for t in range(0,int(w)*2):
-        tmp = 0.
+    for t in range(0,int(w)*2): # this is a horrible loop 
+        tmp = 0                 # but doesn't run that slow
         for k in range(max(1,t-w), t+w):
             tmp += (pd[k+t] + pd[abs(k-t)] - 2*pd[t]*pd[k])**2
         err.append(np.sqrt(tmp/n))
