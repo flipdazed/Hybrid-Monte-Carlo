@@ -137,23 +137,22 @@ def autoWindow(acorrn, s_tau, n, t_max = None):
     except:
         checks.tryAssertNotEqual(False, False,
         'Windowing condition failed up to W = {}'.format(g_int.size))
-    return min(g_int.size, 2*w)
+        # UWerr actually returns min(t_max, 2*t) anyway
+    print w
+    return w
 #
 def uWerr(f_ret, s_tau=1.5):
     """autocorrelation-analysis of MC time-series following the Gamma-method
     This (simplified) implementation assumes f_ret have been acted upon by an operator
     and just completes basic calculations
     
-    **Currently only supports ONE observable of length sample.shape[0]**
+    **Currently only supports ONE observable where # samples == f_ret.shape[0]**
     
     Required Inputs
         f_ret   :: np.ndarray :: the return of a function action upon all f_ret
-        s_tau   :: float>0 :: guess for the ratio S of tau/tauint [D=1.5]
     
     Optional Inputs
-        name     :: str/None :: observable titles for plots. None: no plots.
-        n_rep    :: np.ndarray :: list of int: len of each data for replica of len n_rep
-        quantity :: int :: shouldn't be used
+        s_tau   :: float>0 :: guess for the ratio S of tau/tauint [D=1.5]
     
     Notation notes:
         x_av0 is an average of x over the 0th dim - \bar{x}^r in the paper
@@ -178,9 +177,9 @@ def uWerr(f_ret, s_tau=1.5):
     f_aav = np.average(f_ret)           # get the mean of the function outputs
     n = float(f_ret.shape[0])           # number of MCMC samples
     
-    # Don't normalise until bias corrected
+    # get autocorrelations: Don't normalise until bias corrected
     fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=None)
-    acorr  = np.asarray([fn(t=t) for t in range(0, int(n//2))])
+    acorr  = np.asarray([fn(t=t) for t in range(0, int(n//2))]) # t_max implicit n//2
     
     norm = acorr[0] # values for w = 0
     checks.tryAssertNotEqual(norm, 0,
@@ -200,6 +199,7 @@ def uWerr(f_ret, s_tau=1.5):
     f_diff  = np.sqrt(c_aav/n)             # error of f from       Eq. (26,44)
     f_ddiff = f_diff*np.sqrt((w + .5)/n)   # error on error of f   Eq. (42)
     
+    # return relevant values - perhaps this is all better as a class?
     return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav[:2*w], acorrn[:2*w]
 
 if __name__ == '__main__':
