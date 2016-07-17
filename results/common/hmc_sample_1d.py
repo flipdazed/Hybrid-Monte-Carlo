@@ -49,8 +49,10 @@ def plot(samples, subtitle, y_label, save, extra_data=[]):
     
     n = 100 # size of linear space
     x = np.linspace(-5, 5, n)
-    for i in extra_data: ax[0].plot(x, i['f'](x, samples), 
-                            linewidth=2., alpha=0.6, label=i['label'])
+    for i in extra_data: 
+        params, fitted = i['f'](x, samples)
+        ax[0].plot(x, fitted, 
+            linewidth=2., alpha=0.6, label=i['label'].format(*params))
     
     ax[0].legend(loc='best', shadow=True, fontsize = pp.axfont)
     ax[0].grid(False)

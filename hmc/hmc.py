@@ -128,10 +128,8 @@ class Hybrid_Monte_Carlo(Init):
         if (step_size is not None): self.dynamics.step_size = step_size
         if (n_steps is not None): self.dynamics.n_steps = step_size
         
-        # The use of indices emphasises that the mixing happens point-wise
-        for idx in np.ndindex(p.shape):
-            # although a flip is added when theta=pi/2 it doesn't matter as noise is symmetric
-            p[idx] = self.momentum.generalisedRefresh(p[idx], mixing_angle=mixing_angle)
+        # although a flip is added when theta=pi/2 it doesn't matter as noise is symmetric
+        p = self.momentum.generalisedRefresh(p, mixing_angle=mixing_angle)
         
         # Determine current energy state
         p0, x0 = p.copy(), x.copy()
@@ -192,8 +190,7 @@ class Momentum(object):
         self.noise = self.rng.normal(size=p.shape, scale=1., loc=0.)
         self.mixed = self._refresh(p, self.noise, theta=mixing_angle)
         
-        ret_val = np.asarray(self.mixed[:p.size, :1]).reshape(p.shape)
-        return ret_val
+        return self.mixed
     
     def _refresh(self, p, noise, theta):
         """Mixes noise with momentum
@@ -203,23 +200,47 @@ class Momentum(object):
             noise   :: np.array :: noise to mix with momentum
             theta   :: float    :: mixing angle
         """
+        if theta == .5*np.pi:
+            return self.flip(noise)
+        elif theta == 0:
+            return self.flip(p)
+        else:
+            return np.cos(theta)*self.flip(p) + np.sin(theta)*self.flip(noise)
+    
+    def _refreshOld(self, p, noise, theta):
+        """Mixes noise with momentum
         
-        self.rot = self._rotationMatrix(n_dim=p.size, theta=theta)
+        ### This is now retired from use as a faster implementation is
+        in _refresh() - we never need the gaussian noise back
         
-        p = np.matrix(p.ravel()).T          # column A
-        noise = np.matrix(noise.ravel()).T  # column B
-        
-        # bmat is block matrix format
-        unmixed = np.bmat([[p],[noise]])    # column [[A],[B]]
-        flipped = self.flip(unmixed)
-        
-        # matix multiplication
-        mixed = self.rot*flipped
-        
-        return mixed
+        Required Inputs
+            p       :: np.array :: momentum to refresh
+            noise   :: np.array :: noise to mix with momentum
+            theta   :: float    :: mixing angle
+        """
+        if theta == .5*np.pi:
+            return self.flip(noise)
+        elif theta == 0:
+            return self.flip(p)
+        else:
+            self.rot = self._rotationMatrix(n_dim=p.size, theta=theta)
+            
+            p = np.matrix(p.ravel()).T          # column A
+            noise = np.matrix(noise.ravel()).T  # column B
+            
+            # bmat is block matrix format
+            unmixed = np.bmat([[p],[noise]])    # column [[A],[B]]
+            flipped = self.flip(unmixed)
+            
+            # matix multiplication
+            mixed = self.rot*flipped
+            
+            return mixed
     
     def _rotationMatrix(self, n_dim, theta):
         """A rotation matrix
+        
+        ### Retired with _refreshOld()
         
         Required Input
             theta :: float :: angle in radians for mixing

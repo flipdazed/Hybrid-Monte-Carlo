@@ -181,7 +181,7 @@ def gradSquared(lattice, position, a_power=0):
     forwards = lattice[plus] - lattice[repeated_pos] # forwards difference
     # ___end cool section___
     
-    grad = np.dot(forwards.T, forwards)              # dot prod faster than np.square().sum()
+    grad = (forwards**2).sum()
     
     # lattice spacing
     if a_power: grad /= lattice.lattice_spacing**a_power

@@ -7,7 +7,7 @@ from plotter import Pretty_Plotter, PLOT_LOC, magma, inferno, plasma, viridis
 from models import Basic_HMC as Model
 from hmc.potentials import Multivariate_Gaussian as MVG
 
-def plot(burn_in, samples, bg_xyz, save):
+def plot(burn_in, samples, bg_xyz):
     """Note that samples and burn_in contain the initial conditions"""
     
     pp = Pretty_Plotter()
@@ -100,6 +100,6 @@ if __name__ == '__main__':
     f_name = os.path.basename(__file__)
     save_name = os.path.splitext(f_name)[0] + '.png'
     plot(burn_in=burn_in, samples=samples, bg_xyz=xyz,
-        # save = save_name
-        save = False
+        save = save_name
+        # save = False
         )

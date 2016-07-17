@@ -34,4 +34,4 @@ if '__main__' == __name__:
         rand_steps = True, step_size = step_size, n_steps = n_steps, 
         mixing_angle = mixing_angle, angle_labels = angle_labels, 
         opFn = opFn, op_name=op_name,
-        save = True)
+        save = False)

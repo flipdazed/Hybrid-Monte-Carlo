@@ -11,9 +11,9 @@ pot = SHO()
 dim = 1; n = 1
 x0 = np.random.random((n,)*dim+(1,))
 
-n_burn_in, n_samples = 15, 10000
+n_burn_in, n_samples = 15, 100000
 
-theory_label = r'$f(x) = \sqrt{\frac{\omega}{\pi}}e^{-\omega x^2}$ for $\omega=\frac{1}{2}$'
+theory_label = r'$f(x) = \sqrt{{\frac{{\omega}}{{\pi}}}}e^{{-\omega x^2}}$ for $\omega=\frac{{1}}{{2}}$'
 def theory(x, samples):
     """The actual PDF curve
     
@@ -21,7 +21,7 @@ def theory(x, samples):
         x :: np.array :: 1D array of x-axis
         samples :: np.array :: 1D array of HMC samples
     """
-    return norm.pdf(x)
+    return (None,), norm.pdf(x)
 def fitted(x, samples):
     """The fitted PDF curve
     
@@ -30,13 +30,13 @@ def fitted(x, samples):
         samples :: np.array :: 1D array of HMC samples
     """
     p = norm.fit(samples)
-    return norm.pdf(x, p[0], p[1])
+    return p,norm.pdf(x, p[0], p[1])
 #
 extra_data = [ # this passes fucntions to plot when smaple are obtained
     {'f':theory,'label':'Theory, {}'.format(theory_label)},
-    {'f':fitted,'label':r'Fitted'}]
+    {'f':fitted,'label':r'Fitted $\mu = {:4.2f}$; $\omega = {:4.2f}$'}]
 y_label = r'Sampled Potential, $e^{-V(x)}$'
 
 if __name__ == '__main__':
     hmc_sample_1d.main(x0, pot, file_name, n_samples, n_burn_in,
-        y_label, extra_data, save = True)
+        y_label, extra_data, save = False)

@@ -252,7 +252,7 @@ class Quantum_Harmonic_Oscillator(Shared):
         """
         lattice = positions # shortcut for brevity
         
-        x_sq_sum = np.power(lattice.ravel(), 2).sum()
+        x_sq_sum = (lattice**2).ravel().sum()
         
         v_sq_sum = np.array(0.) # initiate velocity squared
         # sum (integrate) across euclidean-space (i.e. all lattice sites)
@@ -371,14 +371,13 @@ class Simple_Harmonic_Oscillator(Shared):
         pass
     
     def kineticEnergy(self, p):
-        return .5 * (p**2).sum(axis=0)
+        return .5 * (p**2).sum()
     
     def potentialEnergy(self, x):
-        return .5 * (x**2).sum(axis=0)
+        return .5 * (x**2).sum()
     
     def gradPotentialEnergy(self, x):
         """
-        
         Required Inputs
             x :: np.matrix :: column vector
         

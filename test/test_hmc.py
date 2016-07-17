@@ -21,7 +21,7 @@ class Test(object):
         self.qho = Quantum_Harmonic_Oscillator(phi_4=0.)
         self.sho = Simple_Harmonic_Oscillator()
         self.bg = Multivariate_Gaussian()
-        self.lf = Leap_Frog(duE = self.sho.duE, step_size = 0.1, n_steps = 10)
+        self.lf = Leap_Frog(duE = self.sho.duE, step_size = 0.1, n_steps = 20)
         
         x0 = np.asarray([[0.]]) # start at 0 by default
         self.hmc = Hybrid_Monte_Carlo(x0, self.lf, self.sho, self.rng)
@@ -49,20 +49,19 @@ class Test(object):
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)
-        self.samples = np.asarray(samples).reshape(dim, -1)
-        self.burn_in = np.asarray(burn_in).reshape(dim, -1)
-        self.p_samples = p_samples
+        self.samples = np.asarray(samples).reshape(-1, dim)
         
-        mean = self.samples.mean(axis=0)
-        # covariance assumes observations in columns
-        # we have observations in rows so specify rowvar=0
-        cov = np.cov(self.samples, rowvar=0)
         
-        act_mean = np.asarray([[0.]]).sum(axis=0)
-        act_cov = np.asarray([[1.]]).sum(axis=0)
+        # is this right?
+        w = (1 + .25) # w  = 1/(sigma)^2
+        sigma = 1./np.sqrt(2.*w)
         
-        mean_tol = np.full(act_mean.shape, tol)
-        cov_tol = np.full(act_cov.shape, tol)
+        mean = self.samples.ravel().mean()
+        cov = np.var(self.samples)
+        act_mean = 0.
+        act_cov = sigma
+        
+        cov_tol = mean_tol = tol
         
         passed *= (np.abs(mean - act_mean) <= mean_tol).all()
         passed *= (np.abs(cov - act_cov) <= cov_tol).all()
@@ -154,6 +153,7 @@ class Test(object):
         spacing = 1.
         step_size = 0.1
         n_steps = 20
+        mu = 1.
         
         x_nd = np.random.random((n,)*dim)
         p0 = np.random.random((n,)*dim)
@@ -178,8 +178,8 @@ class Test(object):
         s = np.asarray(self.samples).reshape(n_samples+1, n)
         fitted = norm.fit(s.ravel())
         
-        w = np.sqrt(1.25) # w  = 1/(sigma)^2
-        sigma = 1./np.sqrt(2*w)
+        w = mu**2*(1 + .25*(spacing*mu)**2) # w  = 1/(sigma)^2
+        sigma = 1./np.sqrt(2.*w)
         
         passed *= (np.abs(fitted[0] - 0) <= tol)
         passed *= (np.abs(fitted[1] - sigma) <= tol)
@@ -203,10 +203,10 @@ class Test(object):
     
 #
 if __name__ == '__main__':
-    rng = np.random.RandomState(1241)
+    rng = np.random.RandomState()
     utils.logging.root.setLevel(utils.logging.DEBUG)
     test = Test(rng)
     utils.newTest(test.id)
-    test.hmcSho1d(n_samples = 1000, n_burn_in = 15, tol = 1e-1)
-    test.hmcGaus2d(n_samples = 1000, n_burn_in = 15, tol = 1e-1)
+    test.hmcSho1d(n_samples = 10000, n_burn_in = 15, tol = 1e-2)
+    # test.hmcGaus2d(n_samples = 100000, n_burn_in = 15, tol = 1e-1)
     test.hmcQho(n_samples = 1000, n_burn_in = 15, tol = 1e-1)
