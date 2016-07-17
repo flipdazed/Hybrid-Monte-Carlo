@@ -42,7 +42,6 @@ def plot(res, actual, save):
     ax[1].set_ylabel(r"$\Delta$", fontsize=pp.tfont-2)
     ax[1].legend(loc='best', shadow=True, fontsize = pp.tfont, fancybox=True)
     ax[1].set_xlabel(r'Autocorrelation Time, $t$', fontsize=pp.tfont)
-    plt.show()
     
     for i in ax: i.grid(True) 
     pp.save_or_show(save, PLOT_LOC)

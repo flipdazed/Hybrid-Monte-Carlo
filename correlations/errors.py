@@ -102,6 +102,10 @@ def covarianceN(acorr, window, var = None):
     
     Optional Inputs
         var   :: float :: variance estimate of the underlying function
+    
+    Comments:
+    Possible error in the indexing of the matlab arrays that I carried forwards
+    see uWerr for more comments
     """
     if var is None: var = acorr[0]
     c = var + 2.*acorr[1:window+1].sum()
@@ -159,6 +163,16 @@ def uWerr(f_ret, s_tau=1.5):
     s_tau or Stau in the original code doesn't work for the 0 case so I removed it.
     see https://github.com/flipdazed/Hybrid-Monte-Carlo/issues/34#issuecomment-232472657
     for info.
+    
+    Comments:
+    I think U.Wolf might have made a mistake with the indexing of Matlab. When calculating
+    his version of covarianceN() he uses an array of (2:Wopt + 1) however in matlab
+    this includes the final indexed item, arr[Wopt+1]. This doesn't seem right as in
+    all other calculations he explicitly mentions that matlab has a mapping of indices 
+    from w -> w+1 but I think he has just forgotten it is actually a mapping on both 
+    sides of the indexing (w->w+1 : w -> w) with respect to the paper!
+    This is also noted in comparing to the matlab code for itau_aav, acorr where
+    to get the correct shape we must use 2w+1 as the final index.
     """
     checks.tryAssertNotEqual(s_tau, 0,
         's_tau cannot be zero, see:\n' \
