@@ -91,23 +91,20 @@ def gW(t, g_int, s_tau, n):
     g_w = np.exp(-t/tau_w) - tau_w/np.sqrt(t*n)
     return g_w
 #
-def covarianceN(acorr, var = None, window = None):
+def covarianceN(acorr, window, var = None):
     """Covariance*N as defined in Eq. (12, 26, 35)
     Practical estimate of variance is the t=0 autocorrelation
     as per Eq. 35 which is taken as the normalisation
     
     Required Inputs
         acorr :: np.ndarray :: unnormalised autocorellations
+        window :: int  :: optional window to integrate up to
     
     Optional Inputs
         var   :: float :: variance estimate of the underlying function
-        window :: int  :: optional window to integrate up to
     """
-    if var is None: var  = acorr[0]
-    if window is None: # assume already windowed
-        c = var + 2*acorr[1:].sum()
-    else:
-        c = var + 2*acorr[1:window].sum()
+    if var is None: var = acorr[0]
+    c = var + 2.*acorr[1:window+1].sum()
     checks.tryAssertLt(0, c, 'Estimated error^2 < 0...\n sum = {}'.format(c))
     return c
 #
@@ -138,7 +135,6 @@ def autoWindow(acorrn, s_tau, n, t_max = None):
         checks.tryAssertNotEqual(False, False,
         'Windowing condition failed up to W = {}'.format(g_int.size))
         # UWerr actually returns min(t_max, 2*t) anyway
-    print w
     return w
 #
 def uWerr(f_ret, s_tau=1.5):
@@ -190,9 +186,10 @@ def uWerr(f_ret, s_tau=1.5):
     w = autoWindow(acorrn=acorr/norm, s_tau=s_tau, n=n)
     
     # correct acorr for variance in the function
-    c_aav  = covarianceN(acorr=acorr, var=norm, window=w)   # var = c_aav/n     Eq. 35
+    c_aav  = covarianceN(acorr=acorr, window=w, var=norm) # var = c_aav/n     Eq. 35
     acorr += c_aav/n                                        # correct for bias  Eq. 32,49
-    c_aav  = covarianceN(acorr=acorr, var=norm, window=w)
+    norm   = acorr[0]
+    c_aav  = covarianceN(acorr=acorr, window=w, var=norm)
     acorrn = acorr/norm                                     # normalise corrected a/c fn.
     
     itau, itau_diff, itau_aav = intAcorr(acorrn=acorrn, n=n, window=w)
@@ -200,7 +197,7 @@ def uWerr(f_ret, s_tau=1.5):
     f_ddiff = f_diff*np.sqrt((w + .5)/n)   # error on error of f   Eq. (42)
     
     # return relevant values - perhaps this is all better as a class?
-    return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav[:2*w], acorrn[:2*w]
+    return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav[:2*w+1], acorr[:2*w+1]
 
 if __name__ == '__main__':
     pass

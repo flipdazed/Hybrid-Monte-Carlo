@@ -1,4 +1,4 @@
-function [value,dvalue,ddvalue,tauint,dtauint,Qval] = ...
+function [value,dvalue,ddvalue,tauint,dtauint,Wopt,GammaFbb,CFbbopt,tauintFbb, N] = ...
 UWerr(Data,Stau,Nrep,Name,Quantity,varargin)
 %
 % call:
@@ -151,7 +151,7 @@ ddvalue = 0;
 tauint  = 0.5;
 dtauint = 0;
 Qval=[];
-  
+
 %----------------------------------------------------------------------------  
 % Computation of Gamma, automatic windowing
 % note: W=1,2,3,.. in Matlab-vectorindex <-> W=0,1,2,.. in the paper!

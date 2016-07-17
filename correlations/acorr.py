@@ -9,7 +9,7 @@ def acorr(op_samples, mean, separation, norm = None):
     """autocorrelation of a measured operator with optional normalisation
     
     Required Inputs
-        op_samples     :: np.ndarray :: the operator samples from a number of lattices
+        op_samples  :: np.ndarray :: the operator samples
         mean        :: float :: the mean of the operator
         separation  :: int :: the separation between HMC steps
         norm        :: float :: the autocorrelation with separation=0
@@ -21,7 +21,7 @@ def acorr(op_samples, mean, separation, norm = None):
         1. Each sample contains un-averaged operator measurements at each lattice site
         2. Each sample contains averaged op measurements
     
-    1. each sample will be an n-dim array
+    1. each sample will be an n-dim array***
     2. each sample will be a scalar from averaging across all sites
     
     This func handles both by 'ravelling' as:
@@ -44,9 +44,7 @@ def acorr(op_samples, mean, separation, norm = None):
     # normalise if a normalisation is given
     if norm is not None: acorrs /= norm
     
-    # av over all even if random trjectories
-    # high # have n_steps average 
-    # as Geom~expo dist for p<<1
+    # av over all even of random trjectories
     acorr = acorrs.ravel().mean()
     return acorr
 

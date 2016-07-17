@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
 import matplotlib.pyplot as plt
-from plotter import Pretty_Plotter, PLOT_LOC
 
+from plotter import Pretty_Plotter, PLOT_LOC
 from models import Basic_GHMC as Model
 from utils import saveOrDisplay
 
