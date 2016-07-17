@@ -5,6 +5,54 @@ from hmc import checks
 from hmc.common import Init
 from .common import Base
 
+def correlatedData(tau = 5, n = 10000):
+    r"""A sequence of n normally distributed r.v. unit variance
+    and vanishing mean. From this construct:
+    $$
+      \nu_1 = \eta_1,\quad \nu_{i+1} = \sqrt{1 - a^2} \eta_{i+1} + a
+      \nu_i\,,\\
+      a = \frac {2 \tau - 1}{2\tau + 1}, \quad \tau \geq \frac 1 2\,,
+    $$
+    where $\tau$ is the autocorrelation time
+    
+    Adapted from:
+    https://github.com/dhesse/py-uwerr/blob/master/puwr.py
+    """
+    nu = np.random.rand(n)
+    e = nu.copy()
+    a  = (2. * tau - 1.)/(2. * tau + 1.)
+    nu[1:]    *= np.sqrt(1. - a**2)
+    for i in range(1, n):
+        nu[i] += a * nu[i-1]
+    return nu*.2 + 1.
+    
+def correlated_data(tau = 5, n = 10000):
+    r"""Generate correlated data as explained in the appendix of
+    [1]_. One draws a sequence of :math:`n` normally distributed
+    random numbers :math:`\eta_i, i = 1,\ldots,n` with unit variance
+    and vanishing mean. From this one constructs
+    .. math::
+      \nu_1 = \eta_1,\quad \nu_{i+1} = \sqrt{1 - a^2} \eta_{i+1} + a
+      \nu_i\,,\\
+      a = \frac {2 \tau - 1}{2\tau + 1}, \quad \tau \geq \frac 1 2\,,
+    where :math:`\tau` is the autocorrelation time::
+      >>> from puwr import correlated_data
+      >>> correlated_data(2, 10)
+      [[array([ 1.02833043,  1.08615234,  1.16421776,  1.15975754,
+                1.23046603,  1.13941114,  1.1485227 ,  1.13464388,
+                1.12461557,  1.15413354])]]
+    :param tau: Target autocorrelation time.
+    :param n: Number of data points to generate.
+    """
+    eta = np.random.rand(n)
+    a = (2. * tau - 1)/(2. * tau + 1)
+    asq = a**2
+    nu = np.zeros(n)
+    nu[0] = eta[0]
+    for i in range(1, n):
+        nu[i] = np.sqrt(1 - asq)*eta[i] + a * nu[i-1]
+    return [[nu*0.2 + 1]]
+
 def acorr(op_samples, mean, separation, norm = None):
     """autocorrelation of a measured operator with optional normalisation
     
