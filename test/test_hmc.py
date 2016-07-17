@@ -42,15 +42,15 @@ class Test(object):
         dim = x0.shape[0] # dimension the column vector
         
         self.lf.duE = self.sho.duE # reassign leapfrog gradient
-        self.hmc.__init__(x0, self.lf, self.sho, self.rng)
+        self.hmc.__init__(x0.copy(), self.lf, self.sho, self.rng)
         
         p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in,
             verbose = True)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
         # flatten last dimension to a shape of (n, dim)
-        self.samples = np.asarray(samples).T.reshape(dim, -1).T
-        self.burn_in = np.asarray(burn_in).T.reshape(dim, -1).T
+        self.samples = np.asarray(samples).reshape(dim, -1)
+        self.burn_in = np.asarray(burn_in).reshape(dim, -1)
         self.p_samples = p_samples
         
         mean = self.samples.mean(axis=0)

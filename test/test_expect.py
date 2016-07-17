@@ -22,7 +22,7 @@ class Test(object):
         dim :: int  :: number of dimensions
         spacing :: float :: lattice spacing
     """
-    def __init__(self, rng, spacing=.1, length = 100, dim = 1, verbose = False):
+    def __init__(self, rng, spacing=.1, length = 101, dim = 1, verbose = False):
         self.id  = 'Expectations: <x(0)x(0)>, <exp{-𝛿H}>, <P_acc>'
         self.rng = rng
         self.length = length
@@ -58,7 +58,7 @@ class Test(object):
                     })
         return passed
     
-    def qhoCorellation(self, mu = 1., tol = 1e-2, print_out = True):
+    def qhoCorrelation(self, mu = 1., tol = 1e-2, print_out = True):
         """calculates the value <x(0)x(0)> for the QHO
         
         Optional Inputs
@@ -69,8 +69,8 @@ class Test(object):
         passed = True
         
         pot = QHO(mu=mu)
-        measured_xx = self._runCorellation(pot)
-        expected_xx = corr.qho_theory(self.spacing, mu, self.n)
+        measured_xx = self._runCorrelation(pot)
+        expected_xx = corr.twoPointTheoryQHO(self.spacing, mu, self.n)
         
         passed *= np.abs(measured_xx - expected_xx) <= tol
         
@@ -119,7 +119,7 @@ class Test(object):
                     })
         return passed
     
-    def _runDeltaH(self, pot, n_samples = 100, n_burn_in = 20, n_steps=20, step_size=.1):
+    def _runDeltaH(self, pot, n_samples = 2000, n_burn_in = 20, n_steps=20, step_size=.1):
         """Obtains the average exponentiated change in H for 
         a given potential
         
@@ -139,7 +139,7 @@ class Test(object):
         av_acc          = np.asscalar(accept_rates.mean())
         return (delta_hs, av_acc)
     
-    def _runCorellation(self, pot, n_samples = 100, n_burn_in = 20):
+    def _runCorrelation(self, pot, n_samples = 2000, n_burn_in = 20):
         """Runs the correlation function calculation
         and instantiates all the necessary functions
         using an arbitrary potential
@@ -150,9 +150,9 @@ class Test(object):
         """
         x0 = np.random.random(self.lattice_shape)
         model = Model(x0, pot, spacing=self.spacing)
-        self.c = corr.Corellations_1d(model, 'run', 'samples')
+        self.c = corr.Correlations_1d(model, attr_run='run', attr_samples='samples')
         self.c.runModel(n_samples = n_samples, n_burn_in = n_burn_in, verbose = True)
-        xx = self.c.twoPoint(separation=0)
+        xx = self.c.getTwoPoint(separation=0)
         return xx
 #
 if __name__ == '__main__':
@@ -161,5 +161,5 @@ if __name__ == '__main__':
     test = Test(rng)
     utils.newTest(test.id)
     test.kgAcceptance(1, .1)
-    test.qhoCorellation()
+    test.qhoCorrelation()
     test.qhoDeltaH()

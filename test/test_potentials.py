@@ -73,14 +73,14 @@ class Test(object):
         passed_fns = []
         failed_fns = []
         for i in f_list: # iterate functions
-            for idx in idx_list:                # iterate through indices
-                try:
-                    i_ret = i(x=x, p=p, idx=idx)
-                    passed_fns.append(i.__name__+':{}'.format(idx))
-                except Exception as e:
-                    passed = False
-                    checks.fullTrace()
-                    failed_fns.append(i.__name__+':{} :: {}'.format(idx, e))
+            # for idx in idx_list:                # iterate through indices
+            try:
+                i_ret = i(x=x, p=p)
+                passed_fns.append(i.__name__)
+            except Exception as e:
+                passed = False
+                checks.fullTrace()
+                failed_fns.append(i.__name__+':{}'.format(e))
         
         if self.print_out:
             utils.display(name, passed,

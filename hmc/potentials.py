@@ -1,6 +1,7 @@
 import numpy as np
 
-from lattice import laplacian, gradSquared
+from lattice import Periodic_Lattice, laplacian, gradSquared
+from scipy import ndimage
 from . import checks
 
 __all__ = [ 'Klein_Gordon',
@@ -20,13 +21,13 @@ class Shared(object):
     def _lattice(self):
         self.kE  = lambda p, *args, **kwargs: self.kineticEnergy(p=p)
         self.uE  = lambda x, *args, **kwargs: self.potentialEnergy(positions=x)
-        self.duE = lambda x, idx, *args, **kwargs: self.gradPotentialEnergy(positions=x, idx=idx)
+        self.duE = lambda x, *args, **kwargs: self.gradPotentialEnergy(positions=x)
         pass
     
     def _nonLattice(self):
         self.kE = lambda p, *args, **kwargs: self.kineticEnergy(p=p)
         self.uE = lambda x, *args, **kwargs: self.potentialEnergy(x=x)
-        self.duE = lambda x, idx=0, *args, **kwargs: self.gradPotentialEnergy(x=x, idx=idx)
+        self.duE = lambda x, *args, **kwargs: self.gradPotentialEnergy(x=x)
         pass
     
     def hamiltonian(self, p, x):
@@ -94,31 +95,33 @@ class Klein_Gordon(Shared):
             positions :: class :: see lattice.py for info
         """
         lattice = positions # shortcut for brevity
-        
+        a = lattice.lattice_spacing
         x_sq_sum = np.power(lattice.ravel(), 2).sum()
         
-        p_sq_sum = np.array(0.)
+        # p_sq_sum = np.array(0.)
         # sum (integrate) across euclidean-space (i.e. all lattice sites)
-        for idx in np.ndindex(lattice.shape):
-            
-            x = lattice[idx] # iterates single points of the lattice
-            
-            # kinetic term: - x * (Lattice laplacian of x) * lattice spacing
-            p_sq = laplacian(positions, idx, a_power=1) 
-            
-            # gradient should be an array of the length of degrees of freedom 
-            checks.tryAssertEqual(p_sq.shape, (),
-                 ' laplacian shape should be scalar' \
-                 + '\n> p_sq shape: {}'.format(p_sq.shape))
-            
-            p_sq_sum += np.dot(x.T, p_sq)
-            
-            # x.p_sq is a scalar
-            checks.tryAssertEqual(p_sq_sum.shape, (),
-                 'p_sq * x should be scalar.' \
-                 + '\n> p_sq: {} \n> x: {}'.format(p_sq, x.T)
-                 + '\n> p_sq_sum {}'.format(p_sq_sum)
-                 )
+        p_sq = ndimage.filters.laplace(lattice, mode='wrap').view(Periodic_Lattice) / float(a)
+        p_sq_sum = (lattice * p_sq).sum()
+        # for idx in np.ndindex(lattice.shape):
+        #
+        #     x = lattice[idx] # iterates single points of the lattice
+        #
+        #     # kinetic term: - x * (Lattice laplacian of x) * lattice spacing
+        #     p_sq = laplacian(positions, idx, a_power=1)
+        #
+        #     # gradient should be an array of the length of degrees of freedom
+        #     checks.tryAssertEqual(p_sq.shape, (),
+        #          ' laplacian shape should be scalar' \
+        #          + '\n> p_sq shape: {}'.format(p_sq.shape))
+        #
+        #     p_sq_sum += np.dot(x.T, p_sq)
+        #
+        #     # x.p_sq is a scalar
+        #     checks.tryAssertEqual(p_sq_sum.shape, (),
+        #          'p_sq * x should be scalar.' \
+        #          + '\n> p_sq: {} \n> x: {}'.format(p_sq, x.T)
+        #          + '\n> p_sq_sum {}'.format(p_sq_sum)
+        #          )
         
         #### free action S_0: 1/2 \phi(m^2 - \klein_gordon)\phi 
         kinetic = - .5 * p_sq_sum
@@ -150,7 +153,7 @@ class Klein_Gordon(Shared):
             ret_val = euclidean_action
         return ret_val
     
-    def gradPotentialEnergy(self, positions, idx):
+    def gradPotentialEnergy(self, positions):
         """Gradient of the action
         
         Here the laplacian in the action is used with 1/a
@@ -163,15 +166,17 @@ class Klein_Gordon(Shared):
         
         # don't want the whole lattice in here!
         # the laplacian indexs the other elements
-        x = positions[idx]
-        
+        # x = positions[idx]
+        x = positions
+        a = positions.lattice_spacing
         # gradient of kinetic term x \klein_gordon^2 x = 2 \klein_gordon^2 x
-        p_sq = laplacian(positions, idx, a_power=1)
+        p_sq = ndimage.filters.laplace(x, mode='wrap').view(Periodic_Lattice) / float(a)
+        # p_sq = laplacian(positions, idx, a_power=1)
         
         # gradient should be an array of the length of degrees of freedom 
-        checks.tryAssertEqual(p_sq.shape, (),
-             ' laplacian shape should be scalar' \
-             + '\n> p_sq shape: {}'.format(p_sq.shape))
+        # checks.tryAssertEqual(p_sq.shape, (),
+        #      ' laplacian shape should be scalar' \
+        #      + '\n> p_sq shape: {}'.format(p_sq.shape))
         
         #### grad of free action S_0: 2/2 * (m^2 - \klein_gordon^2)\phi
         kinetic = - p_sq
@@ -296,7 +301,7 @@ class Quantum_Harmonic_Oscillator(Shared):
         
         return ret_val
     
-    def gradPotentialEnergy(self, positions, idx):
+    def gradPotentialEnergy(self, positions):
         """Gradient of the action
         
         Here the laplacian in the action is used with 1/a
@@ -309,18 +314,20 @@ class Quantum_Harmonic_Oscillator(Shared):
         
         # don't want the whole lattice in here!
         # the laplacian indexs the other elements
-        x = positions[idx]
+        x = positions
         
         # derivative of velocity squared
         # the derivative of the velocity squared is actually
         # identical to - \klein_gordon^2
-        v_sq =  laplacian(positions, idx, a_power=1)
+        a = positions.lattice_spacing
+        # gradient of kinetic term x \klein_gordon^2 x = 2 \klein_gordon^2 x
+        v_sq = ndimage.filters.laplace(x, mode='wrap').view(Periodic_Lattice)/float(a)
         
         # gradient should be an array of the length of degrees of freedom 
-        checks.tryAssertEqual(v_sq.shape, (),
-             ' derivative^2 shape should be scalar' \
-             + '\n> v_sq shape: {}'.format(v_sq.shape)
-             )
+        # checks.tryAssertEqual(v_sq.shape, (),
+        #      ' derivative^2 shape should be scalar' \
+        #      + '\n> v_sq shape: {}'.format(v_sq.shape)
+        #      )
         
         #### free action S_0: m/2 \phi(v^2 + m)\phi
         kinetic = - self.m0 * v_sq
@@ -364,12 +371,12 @@ class Simple_Harmonic_Oscillator(Shared):
         pass
     
     def kineticEnergy(self, p):
-        return .5 * np.dot(p.T, p).sum(axis=0)
+        return .5 * (p**2).sum(axis=0)
     
     def potentialEnergy(self, x):
-        return .5 * np.dot(x.T, x).sum(axis=0)
+        return .5 * (x**2).sum(axis=0)
     
-    def gradPotentialEnergy(self, x, idx=0):
+    def gradPotentialEnergy(self, x):
         """
         
         Required Inputs
@@ -381,7 +388,7 @@ class Simple_Harmonic_Oscillator(Shared):
             discard just stores extra arguments passed for compatibility
             with the lattice versions
         """
-        return self.k * x[idx]
+        return self.k * x
     
 #
 class Multivariate_Gaussian(Shared):
@@ -418,7 +425,7 @@ class Multivariate_Gaussian(Shared):
         """
         checks.tryAssertEqual(len(p.shape), 2,
              ' expected momentum dims = 2.\n> p: {}'.format(p))
-        return .5 * np.square(p).sum(axis=0)
+        return .5 * (p**2).sum(axis=0)
     
     def potentialEnergy(self, x):
         """n-dim potential
@@ -432,7 +439,7 @@ class Multivariate_Gaussian(Shared):
         x -= self.mean
         return .5 * ( np.dot(x.T, self.cov_inv) * x).sum(axis=0)
     
-    def gradPotentialEnergy(self, x, idx=(0,0)):
+    def gradPotentialEnergy(self, x):
         """n-dim gradient
         
         Notes
@@ -444,7 +451,7 @@ class Multivariate_Gaussian(Shared):
              ' expected position dims = 2.\n> x: {}'.format(x))
         
         # this is constant irrelevent of the index
-        return np.dot(self.cov_inv[idx[0],:], x)
+        return np.dot(self.cov_inv, x)
 #
 if __name__ == '__main__':
     pass

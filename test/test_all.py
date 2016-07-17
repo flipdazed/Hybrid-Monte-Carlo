@@ -23,7 +23,7 @@ logging.root.setLevel(logging.DEBUG)
 def testExpectations():
     test = test_expect.Test(rng=rng, spacing=.1, length = 100, dim = 1)
     utils.newTest(test.id)
-    assert test.qhoCorellation(mu = 1., tol = 1e-2)
+    assert test.qhoCorrelation(mu = 1., tol = 1e-2)
     assert test.qhoDeltaH(tol = 1e-1)
     pass
 
@@ -84,7 +84,7 @@ def testHMC():
     n_burn_in   = 15
     tol         = 1e-1
     
-    assert test.hmcSho1d(n_samples = 1000, n_burn_in = n_burn_in, tol = tol)
+    # assert test.hmcSho1d(n_samples = 1000, n_burn_in = n_burn_in, tol = tol)
     # assert test.hmcGaus2d(n_samples = 10000, n_burn_in = n_burn_in, tol = tol)
     assert test.hmcQho(n_samples = 100, n_burn_in = n_burn_in, tol = tol)
     pass
@@ -106,7 +106,7 @@ def testMomentum():
     pass
 
 if __name__ == '__main__':
-    testExpectations()
+    # testExpectations()
     testPotentials()
     testDynamics()
     testLattice()

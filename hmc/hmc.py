@@ -48,6 +48,7 @@ class Hybrid_Monte_Carlo(Init):
         checks.tryAssertEqual(*shapes,
              error_msg=' x0.shape != p0.shape' \
              +'\n x0: {}, p0: {}'.format(*shapes))
+        self.h_old = None
         pass
     
     def sample(self, n_samples, n_burn_in = 20, mixing_angle=.5*np.pi, verbose = False, verb_pos = 0):
@@ -70,6 +71,7 @@ class Hybrid_Monte_Carlo(Init):
         a function that varies the angle with respect to some input
         """
         p, x = self.p0.copy(), self.x0.copy()
+        self.h_old = None
         
         # Burn in section
         self.burn_in_p = [p.copy()]
@@ -142,9 +144,13 @@ class Hybrid_Monte_Carlo(Init):
         p = self.momentum.flip(p)
         
         # Metropolis-Hastings accept / reject condition
-        h_old = self.potential.hamiltonian(p0, x0)      # get old hamiltonian
-        h_new = self.potential.hamiltonian(p, x)        # get new hamiltonian
-        accept = self.accept.metropolisHastings(h_old=h_old, h_new=h_new)
+        if self.h_old is None:
+            self.h_old = self.potential.hamiltonian(p0, x0)  # get old hamiltonian
+        else:
+            self.h_old = self.h_new
+        
+        self.h_new = self.potential.hamiltonian(p, x)        # get new hamiltonian
+        accept = self.accept.metropolisHastings(h_old=self.h_old, h_new=self.h_new)
         
         if accept:
             return p,x

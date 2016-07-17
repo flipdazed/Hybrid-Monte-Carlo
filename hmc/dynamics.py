@@ -27,7 +27,7 @@ class Leap_Frog(Init):
             'save_path':False
             }
         self.initDefaults(kwargs)
-        if self.rand_steps: self.lengths = []
+        self.lengths = []
         self.newPaths() # create blank lists
         pass
     
@@ -86,7 +86,7 @@ class Leap_Frog(Init):
             p = self._moveP(p, x, frac_step=0.5)
             x = self._moveX(p, x)
             p = self._moveP(p, x, frac_step=0.5)
-            self._storeSteps(p, x) # store moves
+            self._storeSteps(p, x, self.n) # store moves
         
         # remember that any usage of self.p, self.x will be stored as a pointer
         # must slice or use a self.p.copy() to "freeze" the current value in mem
@@ -161,11 +161,12 @@ class Leap_Frog(Init):
         """
         # the extra value in the case of a non lattice potential is
         # garbaged by *args
-        for index in np.ndindex(p.shape):
-            try:
-                p[index] -= frac_step*self.step_size*self.duE(x, index)
-            except:
-                checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(x, index)))
+        # for index in np.ndindex(p.shape):
+        try:
+            p -= frac_step*self.step_size*self.duE(x)
+            # p[index] -= frac_step*self.step_size*self.duE(x, index)
+        except:
+            checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(x, index)))
         return p
     
     def _storeSteps(self, p, x, l):
