@@ -23,7 +23,7 @@ def plot(x, lines, subtitle, op_name, save):
         op_name  :: str  :: the name of the operator for the title
         save     :: bool :: True saves the plot, False prints to the screen
     """
-    
+    x /= np.pi
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
     pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
@@ -55,8 +55,9 @@ def plot(x, lines, subtitle, op_name, save):
     
     # Fix the limits so the plots have nice room 
     for a in ax:                            # 5% extra room at top & add legend
-        # ax[a].set_xlim(xmin= xi-.05*(xf-xi))    # decent view of the first point
-        # xi,xf = ax[a].get_xlim()
+        # xi,xf = a.get_xlim()
+        # a.set_xlim(xmin= xi-.05*(xf-xi))    # decent view of the first point
+        # a.set_xlim(-0.001, 0.101)
         yi,yf = a.get_ylim()
         a.set_ylim(ymax= yf+.05*(yf-yi), ymin= yi-.05*(yf-yi))
         # a.legend(loc='best', shadow=True, fontsize = pp.axfont)
@@ -139,7 +140,8 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
             2:[(w_lst, None, r'Int. window, $w$')],
             3:[(p_lst, None, r'$\langle P_{\text{acc}}\rangle$')]
             }
-    all_plot = {'lines':lines, 'x':angls, 'subtitle':subtitle, 'op_name':op_name}
+    
+    all_plot = {'lines':lines, 'x':angle_fracs, 'subtitle':subtitle, 'op_name':op_name}
     store.store(all_plot, file_name, '_allPlot')
     
     # enter as keyword arguments

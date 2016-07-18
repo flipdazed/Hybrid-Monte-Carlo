@@ -1,6 +1,6 @@
 import numpy as np
 
-from common import multiangle
+from common import intac
 from hmc.potentials import Klein_Gordon as KG
 from correlations.corr import twoPoint
 
@@ -21,7 +21,7 @@ opFn = lambda samples: twoPoint(samples, separation=0)
 op_name = r'$\hat{O}_{pq} = \phi_0^2$'
 
 if '__main__' == __name__:
-    multiangle.main(x0, pot, file_name, 
+    intac.main(x0, pot, file_name, 
         n_samples = n_samples, n_burn_in = n_burn_in, spacing = spacing,
         rand_steps = rand_steps, step_size = step_size, n_steps = 1,
         opFn = opFn, op_name=op_name,
