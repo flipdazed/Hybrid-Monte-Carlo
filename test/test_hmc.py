@@ -17,15 +17,6 @@ class Test(object):
     def __init__(self, rng):
         self.id  = 'HMC'
         self.rng = rng
-        
-        self.qho = Quantum_Harmonic_Oscillator(phi_4=0.)
-        self.sho = Simple_Harmonic_Oscillator()
-        self.bg = Multivariate_Gaussian()
-        self.lf = Leap_Frog(duE = self.sho.duE, step_size = 0.1, n_steps = 20)
-        
-        x0 = np.asarray([[0.]]) # start at 0 by default
-        self.hmc = Hybrid_Monte_Carlo(x0, self.lf, self.sho, self.rng)
-        
         pass
     
     def hmcSho1d(self, n_samples = 1000, n_burn_in = 10, tol = 5e-2, print_out = True):
@@ -41,10 +32,13 @@ class Test(object):
         x0 = np.asarray([[1.]])
         dim = x0.shape[0] # dimension the column vector
         
-        self.lf.duE = self.sho.duE # reassign leapfrog gradient
-        self.hmc.__init__(x0.copy(), self.lf, self.sho, self.rng)
         
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in,
+        pot = Simple_Harmonic_Oscillator()
+        
+        lf = Leap_Frog(duE = pot.duE, step_size = 0.1, n_steps = 20)
+        hmc = Hybrid_Monte_Carlo(x0, lf, pot, self.rng)
+        
+        p_samples, samples = hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in,
             verbose = True)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         
@@ -96,16 +90,18 @@ class Test(object):
         x0 = np.asarray([[-3.5], [4.]])
         
         dim = x0.shape[0] # dimension the column vector
-        self.lf.duE = self.bg.duE # reassign leapfrog gradient
-        self.hmc.__init__(x0, self.lf, self.bg, self.rng)
+        pot = Multivariate_Gaussian()
         
-        act_mean = self.hmc.potential.mean
-        act_cov = self.hmc.potential.cov
+        lf = Leap_Frog(duE = pot.duE, step_size = 0.1, n_steps = 20)
+        hmc = Hybrid_Monte_Carlo(x0, lf, pot, self.rng)
+        
+        act_mean = hmc.potential.mean
+        act_cov = hmc.potential.cov
         
         mean_tol = np.full(act_mean.shape, tol)
         cov_tol = np.full(act_cov.shape, tol)
         
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in,
+        p_samples, samples = hmc.sample(n_samples = n_samples, n_burn_in=n_burn_in,
             verbose = True)
         burn_in, samples = samples # return the shape: (n, 2, 1)
         
@@ -159,14 +155,13 @@ class Test(object):
         p0 = np.random.random((n,)*dim)
         x0 = Periodic_Lattice(x_nd)
         
-        self.lf.duE = self.qho.duE # reassign leapfrog gradient
-        self.lf.step_size = step_size
-        self.lf.n_steps = n_steps
-        self.lf.lattice = True
+        pot = Quantum_Harmonic_Oscillator()
         
-        self.hmc.__init__(x0, self.lf, self.qho, self.rng)
+        lf = Leap_Frog(duE = pot.duE, 
+            step_size = step_size, n_steps = n_steps, lattice = True)
+        hmc = Hybrid_Monte_Carlo(x0, lf, pot, self.rng)
         
-        p_samples, samples = self.hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in,
+        p_samples, samples = hmc.sample(n_samples = n_samples, n_burn_in = n_burn_in,
             verbose = True)
         burn_in, samples = samples # return the shape: (n, dim, 1)
         

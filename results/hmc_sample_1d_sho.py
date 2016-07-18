@@ -10,8 +10,8 @@ pot = SHO()
 
 dim = 1; n = 1
 x0 = np.random.random((n,)*dim+(1,))
-
-n_burn_in, n_samples = 15, 100000
+x0 = np.asarray([[1.]])
+n_burn_in, n_samples = 15, 10000
 
 theory_label = r'$f(x) = \sqrt{{\frac{{\omega}}{{\pi}}}}e^{{-\omega x^2}}$ for $\omega=\frac{{1}}{{2}}$'
 def theory(x, samples):
@@ -21,7 +21,9 @@ def theory(x, samples):
         x :: np.array :: 1D array of x-axis
         samples :: np.array :: 1D array of HMC samples
     """
-    return (None,), norm.pdf(x)
+    w = 1.25
+    sigma_sq = 1./np.sqrt(2.*w)
+    return (None,), norm.pdf(x, 0, 0.79)
 def fitted(x, samples):
     """The fitted PDF curve
     
@@ -34,7 +36,8 @@ def fitted(x, samples):
 #
 extra_data = [ # this passes fucntions to plot when smaple are obtained
     {'f':theory,'label':'Theory, {}'.format(theory_label)},
-    {'f':fitted,'label':r'Fitted $\mu = {:4.2f}$; $\omega = {:4.2f}$'}]
+    {'f':fitted,'label':r'Fitted $\mu = {:4.2f}$; $\sigma = {:4.2f}: \omega = \frac{{1}}{{2\sigma^2}}$'}]
+    
 y_label = r'Sampled Potential, $e^{-V(x)}$'
 
 if __name__ == '__main__':
