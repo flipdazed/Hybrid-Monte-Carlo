@@ -13,7 +13,17 @@ __doc__ = """This code is based on ``Monte Carlo errors with less errors''
 
 The aim is to make the routine more readable and simplified with python
 """
-
+def getW(itau, itau_diff, n):
+    """Recreates integer w from the output of uWerr
+    
+    Required Inputs
+        itau        :: float :: integrated a/c time
+        itau_diff   :: float :: error in the integrated a/c time
+        n           :: int   :: number of original MCMC samples
+    """
+    w  = n*(.5*itau_diff/itau)**2 - .5 + itau
+    return int(np.around(w, 0))
+    
 def acorrnErr(acn, w, n):
     """Calculates the errors in the autocorrelations
     construct errors acc. to hep-lat/0409106 eq. (E.11)
