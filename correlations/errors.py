@@ -1,7 +1,7 @@
 import numpy as np
 
 from hmc import checks
-from acorr import acorr as getAcorr
+from acorr import acorr as getAcorr, correlatedData
 
 import matplotlib.pyplot as plt
 from matplotlib import colors
