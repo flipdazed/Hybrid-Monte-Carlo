@@ -21,7 +21,7 @@ def getW(itau, itau_diff, n):
         itau_diff   :: float :: error in the integrated a/c time
         n           :: int   :: number of original MCMC samples
     """
-    w  = n*(.5*itau_diff/itau)**2 - .5 + itau
+    w  = np.around((itau_diff/itau/2.)**2*n - .5 + itau, 0)
     return int(np.around(w, 0))
     
 def acorrnErr(acn, w, n):

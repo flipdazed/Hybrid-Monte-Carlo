@@ -15,7 +15,7 @@ rand_steps = True
 n_samples, n_burn_in = 10000, 20
 step_size =   .1
 
-angle_fracs = np.linspace(0, 2, 11, True)
+angle_fracs = np.linspace(0, .5, 100, True)
 
 opFn = lambda samples: twoPoint(samples, separation=0)
 op_name = r'$\hat{O}_{pq} = \phi_0^2$'
@@ -26,4 +26,4 @@ if '__main__' == __name__:
         rand_steps = rand_steps, step_size = step_size, n_steps = 1,
         opFn = opFn, op_name=op_name,
         angle_fracs = angle_fracs,
-        save = False)
+        save = True)
