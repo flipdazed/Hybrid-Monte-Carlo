@@ -151,7 +151,46 @@ def autoWindow(acorrn, s_tau, n, t_max = None):
         # UWerr actually returns min(t_max, 2*t) anyway
     return w
 #
-def uWerr(f_ret, s_tau=1.5):
+def windowing(f_ret, f_aav, s_tau, n, fast):
+    """
+    Required Inputs
+        f_ret   :: np.ndarray :: the return of a function action upon all f_ret
+        f_aav   :: float :: the average value of f_ret
+        s_tau   :: float>0 :: guess for the ratio S of tau/tauint [D=1.5]
+        n       :: int        :: number of MCMC samples
+        fast    :: bool :: Determines fast or slow method
+    """
+    
+    # get autocorrelations: Don't normalise until bias corrected
+    fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=None)
+    t_max = int(n//2) + 1
+    
+    if fast:
+        norm = np.average((f_ret-f_aav)**2)
+        acorr = [norm]
+        g_int = 0.
+        for w in range(1, t_max + 1):
+            v = fn(t=w)
+            acorr.append(v)
+            g_int += v/norm
+            if gW(w, g_int, s_tau, n) < 0: return norm, np.asarray(acorr), w
+        ## should exit before here!
+        checks.tryAssertNotEqual(False, False,
+        'Windowing condition failed up to W = {}'.format(g_int.size))
+    else:
+        acorr  = np.asarray([fn(t=t) for t in range(0, t_max)]) # t_max implicit n//2
+        
+        norm = acorr[0] # values for w = 0
+        checks.tryAssertNotEqual(norm, 0,
+            'Normalisation cannot be zero: No fluctuations.' \
+            + '\nNormalisation: {}'.format(norm))
+        
+        # The automatic windowing proceedure
+        w = autoWindow(acorrn=acorr/norm, s_tau=s_tau, n=n)
+        return norm, acorr, w
+    checks.tryAssertNotEqual(False, False, "Shouldn't get here! wtf...?!")
+#
+def uWerr(f_ret, s_tau=1.5, fast_threshold=5000):
     """autocorrelation-analysis of MC time-series following the Gamma-method
     This (simplified) implementation assumes f_ret have been acted upon by an operator
     and just completes basic calculations
@@ -163,7 +202,7 @@ def uWerr(f_ret, s_tau=1.5):
     
     Optional Inputs
         s_tau   :: float>0 :: guess for the ratio S of tau/tauint [D=1.5]
-    
+        fast_threshold :: int :: determines at what size array we use the faster method
     Notation notes:
         x_av0 is an average of x over the 0th dim - \bar{x}^r in the paper
         x_aav is the average over all dims        - \bbar{x} in the paper
@@ -196,18 +235,9 @@ def uWerr(f_ret, s_tau=1.5):
     
     f_aav = np.average(f_ret)           # get the mean of the function outputs
     n = float(f_ret.shape[0])           # number of MCMC samples
-    
-    # get autocorrelations: Don't normalise until bias corrected
-    fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=None)
-    acorr  = np.asarray([fn(t=t) for t in range(0, int(n//2))]) # t_max implicit n//2
-    
-    norm = acorr[0] # values for w = 0
-    checks.tryAssertNotEqual(norm, 0,
-        'Normalisation cannot be zero: No fluctuations.' \
-        + '\nNormalisation: {}'.format(norm))
-    
-    # The automatic windowing proceedure
-    w = autoWindow(acorrn=acorr/norm, s_tau=s_tau, n=n)
+    fast = (n >= fast_threshold)
+    norm, acorr, w = windowing(f_ret, f_aav, s_tau, n, fast=fast)
+    l = max(acorr.size, 2*w+1)
     
     # correct acorr for variance in the function
     c_aav  = covarianceN(acorr=acorr, window=w, var=norm) # var = c_aav/n     Eq. 35
@@ -221,7 +251,7 @@ def uWerr(f_ret, s_tau=1.5):
     f_ddiff = f_diff*np.sqrt((w + .5)/n)   # error on error of f   Eq. (42)
     
     # return relevant values - perhaps this is all better as a class?
-    return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav[:2*w+1], acorr[:2*w+1]
+    return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav[:l], acorr[:l]
 
 if __name__ == '__main__':
     pass
