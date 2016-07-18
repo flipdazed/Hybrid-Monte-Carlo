@@ -39,20 +39,24 @@ def plot(x, lines, subtitle, op_name, save):
     # Add top pseudo-title and bottom shared x-axis label
     ax[0].set_title(subtitle, fontsize=pp.tfont)
     ax[-1].set_xlabel(r'Mixing angle, $\theta$')
+    ax[0].set_ylabel(r'$\bar{\bar{\tau}}_{\text{int}}$')
+    ax[1].set_ylabel(r'$\langle \hat{O} \rangle_{L,\tau}$')
+    ax[2].set_ylabel(r'Int. window, $w$')
+    ax[3].set_ylabel(r'$\langle P_{\text{acc}}\rangle$')
+    
     def formatFunc(tic, tic_loc):
         return r"${}\pi$".format(tic)
     ax[-1].get_xaxis().set_major_formatter(ticker.FuncFormatter(formatFunc))
     # Fix colours: A bug sometimes forces all colours the same
     colour = (i for i in random.sample(clist, len(clist))) # defined top of file
     for k, v in lines.iteritems():
-        for (y, err, y_label) in v:
+        for (y, err, label) in v:
             c = next(colour)
             if err is None:
-                ax[k].plot(x, y, c=c, lw=1., alpha=0.6)
+                ax[k].plot(x, y, c=c, lw=1., alpha=0.6, label=label)
             else:
-                ax[k].errorbar(x, y, yerr=err, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5)
-        ax[k].set_ylabel(y_label)
-    
+                ax[k].errorbar(x, y, yerr=err, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
+                    label=label)
     # Fix the limits so the plots have nice room 
     for a in ax:                            # 5% extra room at top & add legend
         # xi,xf = a.get_xlim()
@@ -134,11 +138,11 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         + r"${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
             x0.shape, spacing, step_size, r'1 (KHMC)')
     
-    lines = { # format is [(y, Errorbar, y_label)] if no errorbars then None
-            0:[(itau_lst, itau_diffs_lst, r'$\bar{\bar{\tau}}_{\text{int}}$')], 
-            1:[(xx_lst, f_diff_lst, r'$\langle \hat{O} \rangle_{L,\tau}$')],
-            2:[(w_lst, None, r'Int. window, $w$')],
-            3:[(p_lst, None, r'$\langle P_{\text{acc}}\rangle$')]
+    lines = { # format is [(y, Errorbar, label)] if no errorbars then None
+            0:[(itau_lst, itau_diffs_lst, r'Measured')], 
+            1:[(xx_lst, f_diff_lst, r'Measured')],
+            2:[(w_lst, None, r'Measured')],
+            3:[(p_lst, None, r'Measured')]
             }
     
     all_plot = {'lines':lines, 'x':angle_fracs, 'subtitle':subtitle, 'op_name':op_name}
