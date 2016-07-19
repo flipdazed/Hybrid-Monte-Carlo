@@ -191,7 +191,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         
         store.store(cfn, file_name, '_cfn')     # store the function
         ans = errors.uWerr(cfn)                 # get the errors from uWerr
-        
+        lines, labels, w = preparePlot(cfn, ans=ans, n = n_samples, mcore = False)
         print '> measured at angle:{:3.1f}:'.format(mixing_angle) \
             + ' <x^2>_L = {}; <P_acc>_HMC = {:4.2f}'.format(xx , p)
     else:   # use multicore support
@@ -259,12 +259,12 @@ def preparePlot(op_samples, ans, n, mcore=False):
     f_aav, f_diff, f_ddiff, itau, itau_diff, itaus, acn = ans
     
     if not mcore: print ' > Re-deriving error parameters...'
-    t_max = int(n//2)
-    fn = lambda t: acorr.acorr(op_samples=op_samples, mean=f_aav, separation=t, norm=None)
-    ac  = np.asarray([fn(t=t) for t in range(0, t_max)])    # calculate autocorrelations
     w = round((f_ddiff/f_diff)**2*n - .5, 0)                # obtain the best windowing point
-    itaus_diff  = errors.itauErrors(itaus, n=n)             # calcualte error in itau
-    g_int = np.cumsum(ac[1:t_max]/ac[0])                                    # recreate the g_int function
+    l = min(itaus.size, int(2*w)+1)
+    fn = lambda t: acorr.acorr(op_samples=op_samples, mean=f_aav, separation=t, norm=None)
+    ac  = np.asarray([fn(t=t) for t in range(0, l)])      # calculate autocorrelations
+    itaus_diff  = errors.itauErrors(itaus, n=n)           # calcualte error in itau
+    g_int = np.cumsum(ac[1:l]/ac[0])                                        # recreate the g_int function
     g = np.asarray([errors.gW(t, v, 1.5, n) for t,v in enumerate(g_int,1)]) # recreate the gW function
     if not mcore: print ' > Done.'
     if not mcore: print ' > Calculating error in autocorrelation'
@@ -273,8 +273,7 @@ def preparePlot(op_samples, ans, n, mcore=False):
     
     itau_label = r"$\tau_{\text{int}}(w_{\text{best}} = " + "{}) = ".format(int(w)) \
         + r"{:.2f} \pm {:.2f}$".format(itau, itau_diff)
-    
-    x = np.arange(0, itaus.size) # same size for itaus and acn
-    lines = {0:(x[1:], g[:int(2*w)-1]), 1:(x, itaus, itaus_diff), 2:(x, acn, acn_diff)}
+    x = np.arange(l) # same size for itaus and acn
+    lines = {0:(x[1:], g[:l-1]), 1:(x, itaus, itaus_diff), 2:(x, acn, acn_diff)}
     labels = {1:itau_label}
     return lines, labels, w

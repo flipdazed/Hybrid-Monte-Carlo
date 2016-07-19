@@ -35,9 +35,10 @@ def acorrnErr(acn, w, n):
     """
     err = []
     if not isinstance(w, int): w = int(w)
-    pd = np.zeros(w*5)
+    l = acn.size
+    pd = np.zeros(2*l+w)   # make sure enough room
     pd[:acn.size] = acn
-    for t in range(0,int(w)*2): # this is a horrible loop 
+    for t in range(0,l): # this is a horrible loop 
         tmp = 0                 # but doesn't run that slow
         for k in range(max(1,t-w), t+w):
             tmp += (pd[k+t] + pd[abs(k-t)] - 2*pd[t]*pd[k])**2
@@ -190,7 +191,7 @@ def windowing(f_ret, f_aav, s_tau, n, fast):
         return norm, acorr, w
     checks.tryAssertNotEqual(False, False, "Shouldn't get here! wtf...?!")
 #
-def uWerr(f_ret, s_tau=1.5, fast_threshold=5000):
+def uWerr(f_ret, acorr=None, s_tau=1.5, fast_threshold=5000):
     """autocorrelation-analysis of MC time-series following the Gamma-method
     This (simplified) implementation assumes f_ret have been acted upon by an operator
     and just completes basic calculations
@@ -199,6 +200,7 @@ def uWerr(f_ret, s_tau=1.5, fast_threshold=5000):
     
     Required Inputs
         f_ret   :: np.ndarray :: the return of a function action upon all f_ret
+        acorr   :: np.ndarray :: provide autocorrelations if already calculated
     
     Optional Inputs
         s_tau   :: float>0 :: guess for the ratio S of tau/tauint [D=1.5]
@@ -235,8 +237,14 @@ def uWerr(f_ret, s_tau=1.5, fast_threshold=5000):
     
     f_aav = np.average(f_ret)           # get the mean of the function outputs
     n = float(f_ret.shape[0])           # number of MCMC samples
-    fast = (n >= fast_threshold)
-    norm, acorr, w = windowing(f_ret, f_aav, s_tau, n, fast=fast)
+    
+    if acorr is not None:
+        norm = acorr[0]
+        w = autoWindow(acorr/norm, s_tau, n, t_max = None)
+    else:
+        fast = (n >= fast_threshold)
+        norm, acorr, w = windowing(f_ret, f_aav, s_tau, n, fast=fast)
+    
     l = max(acorr.size, 2*w+1)
     
     # correct acorr for variance in the function

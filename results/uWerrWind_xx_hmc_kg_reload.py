@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import numpy as np
 from results.data.store import load
 from correlations.acorr import acorr as getAcorr

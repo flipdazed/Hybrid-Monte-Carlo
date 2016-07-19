@@ -121,7 +121,7 @@ class Autocorrelations_1d(Init, Base):
         self._setUp()
         pass
     
-    def getAcorr(self, separations, op_func):
+    def getAcorr(self, separations, op_func, norm = True):
         """Returns the autocorrelations for a specific sampled operator 
         
         Once the model is run then the samples can be passed through the autocorrelation
@@ -131,6 +131,8 @@ class Autocorrelations_1d(Init, Base):
             separations  :: iterable, int :: the separations between HMC steps
             op_func      :: func :: the operator function
         
+        Optional Inputs
+            norm    :: bool :: specifiy whether to normalise the autocorrelations
         
         Notes: op_func must be optimised to only take ALL HMC trajectories as an input
         """
@@ -156,8 +158,11 @@ class Autocorrelations_1d(Init, Base):
             self.acorr = [1.] # first entry is the normalisation
             separations = separations[1:]
         
-        self.acorr += [acorr(self.op_samples, self.op_mean, 
+        if norm:
+            self.acorr += [acorr(self.op_samples, self.op_mean, 
                             s, self.op_norm) for s in separations]
+        else:
+            self.acorr += [acorr(self.op_samples, self.op_mean, s) for s in separations]
         
         self.acorr = np.asarray(self.acorr)
         

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import numpy as np
 
 from common import intac
@@ -15,7 +16,7 @@ rand_steps = True
 points     = 100
 
 n_samples, n_burn_in = 20000, 20
-angle_fracs = np.linspace(0, .02, points, True)
+angle_fracs = np.linspace(0, .1, points, True)
 
 opFn = lambda samples: twoPoint(samples, separation=0)
 op_name = r'$\hat{O}_{pq} = \phi_0^2$'

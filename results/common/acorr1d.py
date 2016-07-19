@@ -5,12 +5,12 @@ import random
 from scipy import stats
 
 from data import store
-from correlations import acorr, corr
+from correlations import acorr, corr, errors
 from models import Basic_GHMC as Model
 from utils import saveOrDisplay, prll_map
 from plotter import Pretty_Plotter, PLOT_LOC
 
-def plot(acs, lines, subtitle, op_name, save):
+def plot(acns, lines, subtitle, op_name, save):
     """Plots the two-point correlation function
     
     Required Inputs
@@ -45,11 +45,15 @@ def plot(acs, lines, subtitle, op_name, save):
     clist = [i for i in colors.ColorConverter.colors if i != 'w']
     colour = (i for i in random.sample(clist, len(clist)))
     for label, line in lines.iteritems():
-        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, color = next(colour))
+        c = next(colour)
+        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, color = c)
     
-    for label, line in acs.iteritems():
-        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, color = next(colour))
-    
+    for label, (x, y, e) in acns.iteritems():
+        c = next(colour)
+        # ax[0].plot(x, y, alpha=0.4, label=label, color = c)#, marker='x', s=3)
+        ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.4, label=label)
+        # ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
+        #     label=label)
     # for label, stem in stems.iteritems():
     #     ax[0].stem(*stem, markerfmt='o', linefmt='k:', basefmt='k-',label=label)
     
@@ -94,7 +98,7 @@ def main(x0, pot, file_name,
     
     rng = np.random.RandomState()
     
-    subtitle = r"Potential: {}; Lattice Shape: ${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
+    subtitle = r"Potential: {}; Lattice: ${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
         pot.name, x0.shape, spacing, step_size, n_steps)
     
     print 'Running Model: {}'.format(file_name)
@@ -103,15 +107,20 @@ def main(x0, pot, file_name,
         i,a = a
         model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
           n_steps = n_steps, rand_steps=rand_steps)
+        
         c = acorr.Autocorrelations_1d(model)
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
-        ac = c.getAcorr(separations, opFn)
+        
+        acs = c.getAcorr(separations, opFn, norm = False)   # non norm for uWerr
+        ans = errors.uWerr(c.op_samples, acorr=acs)         # get errors
+        _, _, _, itau, itau_diff, _, acns = ans             # extract data
+        w = errors.getW(itau, itau_diff, n=n_samples)       # get window length
+        acns_err = errors.acorrnErr(acns, w, n_samples)     # get autocorr errors
         
         # get parameters generated
-        traj = c.model.traj
         p = c.model.p_acc
         xx = c.op_mean
-        return xx, ac, traj, p
+        return xx, acns, acns_err, p
     
     # use multiprocessing
     out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
@@ -122,19 +131,20 @@ def main(x0, pot, file_name,
     else:
         ans = prll_map(coreFunc, zip(range(al), mixing_angles), verbose=False)
     
-    xx, ac, traj, ps = zip(*ans) # unpack from multiprocessing
+    xx, acns, acns_err, ps = zip(*ans) # unpack from multiprocessing
     
     print '\n'*al # hack to avoid overlapping!
     for p, x, a in zip(ps, xx, mixing_angles):
         print out(p,x,a)
+    
     # create dictionary for plotting
-    acs = {l:(separations, y) for y, l in zip(ac, angle_labels)}
+    acns = {l:(separations, y, e) for y,e,l in zip(acns, acns_err, angle_labels)}
     
     print 'Finished Running Model: {}'.format(file_name)
     
-    store.store(lines, file_name, '_lines')
-    store.store(acs, file_name, '_acs')
-    plot(acs, lines,
-        subtitle, op_name,
+    all_plot = {'acns':acns, 'lines':lines, 'subtitle':subtitle, 'op_name':op_name}
+    store.store(all_plot, file_name, '_allPlot')
+    
+    plot(acns, lines, subtitle, op_name,
         save = saveOrDisplay(save, file_name))
     

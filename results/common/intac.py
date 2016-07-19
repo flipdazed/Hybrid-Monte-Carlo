@@ -9,6 +9,7 @@ from correlations import acorr, corr, errors
 from models import Basic_GHMC as Model
 from utils import saveOrDisplay, prll_map
 from plotter import Pretty_Plotter, PLOT_LOC
+from matplotlib.collections import LineCollection
 
 ignorecols = ['snow', 'white', 'k', 'w', 'r']
 clist = [i for i in colors.ColorConverter.colors if i not in ignorecols]
@@ -55,6 +56,8 @@ def plot(x, lines, subtitle, op_name, save):
             if err is None:
                 ax[k].plot(x, y, c=c, lw=1., alpha=0.6, label=label)
             else:
+                y = np.asarray(y); err = np.asarray(err)
+                # ax[k].fill_between(x, y-err, y+err, color=c, alpha=0.1)
                 ax[k].errorbar(x, y, yerr=err, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
                     label=label)
     # Fix the limits so the plots have nice room 
@@ -113,7 +116,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         p = c.model.p_acc           # get acceptance rates at each M-H step
         xx = np.average(cfn)        # get average of the function run over the samples
         return cfn, xx, p
-        
+    
     ans = prll_map(coreFunc, zip(range(angls.size), angls), verbose=1-explicit_prog)
     cfn_lst, xx_lst, p_lst = zip(*ans)          # unpack from multiprocessing
     print '\n'*angls.size*explicit_prog         # hack to avoid overlapping!
@@ -136,7 +139,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
     
     subtitle = r"Potential: {}; Lattice: ".format(pot.name) \
         + r"${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
-            x0.shape, spacing, step_size, r'1 (KHMC)')
+            x0.shape, spacing, step_size, n_steps)
     
     lines = { # format is [(y, Errorbar, label)] if no errorbars then None
             0:[(itau_lst, itau_diffs_lst, r'Measured')], 
