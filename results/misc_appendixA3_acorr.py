@@ -25,7 +25,8 @@ dy = (.0-.05)/5.
 fig = plt.figure(figsize=(8,8))
 ax = fig.add_subplot(111)
 
-ax.set_title(r'Matching vs. plot', fontsize=pp.ttfont)
+fig.suptitle(r"Verifying theory", fontsize=pp.tfont)
+ax.set_title(r'Overlaying functions on an image of a published figure', fontsize=pp.tfont)
 ax.set_xlabel(r'$t$', fontsize=pp.tfont)
 ax.set_ylabel(r'$C_{M^2}(t)$', fontsize=pp.tfont)
 
@@ -66,10 +67,10 @@ x = np.linspace(0, 1000, 1000, True)
 plt.plot(x, f.eval(x), linewidth=4., color='red', alpha=0.6, linestyle="--", 
     label = r'$r = \sqrt{3}m$')
 plt.plot(x, f.eval(x, r=next(r)), linewidth=4., color='green', alpha=0.6, linestyle="--",
-    label = r'$r = \frac{1}{2}(3\sqrt{3} + \sqrt{15})$')
+    label = r'$r = \frac{m}{2}(3\sqrt{3} + \sqrt{15})$')
 plt.plot(x, f.eval(x, r=next(r)), linewidth=4., color='blue', alpha=0.6, linestyle="--",
-    label = r'$r = \frac{1}{2}(3\sqrt{3} - \sqrt{15})$')
+    label = r'$r = \frac{m}{2}(3\sqrt{3} - \sqrt{15})$')
 
-ax.legend(loc='best', shadow=True, fancybox=True)
+ax.legend(loc='lower right', shadow=True, fancybox=True)
 
 pp.save_or_show(saveOrDisplay(save, file_name), PLOT_LOC)
