@@ -17,7 +17,7 @@ points     = 50
 angle_fracs = np.linspace(.005, .1, points, True)
 
 n_burn_in = 20
-n_samples = (100**(-np.log10(angle_fracs/10))).astype("int")
+n_samples = (100**(-np.log10(angle_fracs/100))).astype("int")
 
 opFn = lambda samples: twoPoint(samples, separation=0)
 op_name = r'$\hat{O}_{pq} = \phi_0^2$'

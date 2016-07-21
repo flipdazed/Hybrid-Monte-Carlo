@@ -189,11 +189,12 @@ class M2_Exp(object):
     Explicitly calculated in Appendix A.3 of [1]
     
     Required Inputs
-        r   :: float    :: inverse average trajectory length
+        tau   :: float    :: average trajectory length
         m   :: float    :: mass parameter - the lowest frequenxy mode
     
     Optional Inputs
         pa :: float :: average acceptance rate
+        theta :: float :: mixing angle
         p_thresh :: float :: point where pa \approx 1
     
     * An approximation for small r where Geom(r) \approx Expon(r)
@@ -203,12 +204,14 @@ class M2_Exp(object):
         self.setRoots(tau, m, pa, theta)
         pass
     
-    def lapTfm(self, b, m):
+    def lapTfm(self, b, tau, m, pa):
         """Laplace-transformed function
         
         Required Inputs
-            b   :: float :: Laplace-transformed time
+            tau :: float    :: average trajectory length
             m   :: float    :: mass parameter - the lowest frequency mode
+            pa  :: float    :: average acceptance probability
+            theta :: float  :: mixing angle
         """
         
         if theta == .5*pi:
@@ -285,8 +288,10 @@ class M2_Exp(object):
             t      :: float :: time (the inverse of \beta)
         
         Optional Inputs
-            r   :: float    :: inverse average trajectory length
+            tau :: float    :: average trajectory length
             m   :: float    :: mass parameter - the lowest frequency mode
+            pa  :: float    :: average acceptance probability
+            theta :: float  :: mixing angle
         """
         if None in [tau, m, pa, theta]:
             if tau is not None: self.tau = tau
