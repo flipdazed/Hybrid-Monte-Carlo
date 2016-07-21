@@ -59,7 +59,9 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs,
         label=r'$H(t)$')
     
     ax[1].set_ylabel(r'$\exp{-\delta H}$')
-    ax[1].plot(xrng, exp_delta_hs, linestyle='-', color='blue', linewidth=2., alpha=0.4,
+    
+    fine_x = np.linspace(0, l, exp_delta_hs.size, True)
+    ax[1].plot(fine_x, exp_delta_hs, linestyle='-', color='blue', linewidth=2., alpha=0.4,
         label=r'$\exp{ -\delta H(t)}$')
     
     ax[2].set_ylabel(r'Acceptance Prob., $P_{\text{acc}}$')
@@ -132,9 +134,8 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False,
         plot_mdmc       :: bool     :: plots all intermediate MDMC steps
     """
     
-    model = Model(x0, pot, step_size=step_size, n_steps=n_steps, spacing=spacing)
-    model.sampler.accept.store_acceptance = True
-    model.sampler.accept.accept_all = accept_all
+    accept_kwargs={'store_acceptance':True, 'accept_all':True}
+    model = Model(x0, pot, step_size=step_size, n_steps=n_steps, spacing=spacing, accept_kwargs=accept_kwargs)
     
     # plots out mdmc path in full for each HMC trajctory
     model.sampler.dynamics.save_path = plot_mdmc
@@ -156,7 +157,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False,
     av_acc      = np.asscalar(accept_rates.mean())
     meas_av_acc = np.asscalar(accept_rejects.mean())
     meas_av_exp_dh  = np.asscalar(np.exp(-delta_hs).mean())
-    
+    exp_delta_hs = np.exp(-delta_hs)
     print '\n\t<Prob. Accept>: {:4.2f}'.format(av_acc)
     print '\t<Prob. Accept>: {:4.2f}     (Measured)'.format(meas_av_acc)
     print '\t<exp{{-𝛿H}}>:     {:8.2E} (Measured)\n'.format(meas_av_exp_dh)
@@ -184,8 +185,8 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False,
         x_mdmc = model.sampler.dynamics.x_ar # so shape is n_steps + 1
     
         # these are both lists so need to vonvert back to ararys
-        kE_mdmc = map(model.sampler.potentialential.kE, p_mdmc) # calculate kE
-        uE_mdmc = map(model.sampler.potentialential.uE, x_mdmc) # calculate uE
+        kE_mdmc = map(model.sampler.potential.kE, p_mdmc) # calculate kE
+        uE_mdmc = map(model.sampler.potential.uE, x_mdmc) # calculate uE
         h_mdmc = np.asarray(np.asarray(kE_mdmc) + np.asarray(uE_mdmc))
         
         # filters out all the values multiples of n_steps

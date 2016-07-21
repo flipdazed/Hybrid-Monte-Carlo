@@ -15,4 +15,4 @@ x0 = np.random.random((n,)*dim)
 if __name__ == '__main__':
     n_rng = np.arange(1, 41, 1)
     acceptance.main(x0, pot, file_name, n_rng, 
-      n_samples = 1000, step_size = .2, save = False)
+      n_samples = 10000, step_size = .2, save = False)

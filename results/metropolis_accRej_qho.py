@@ -14,4 +14,4 @@ n_burn_in, n_samples = 10, 100
 
 if __name__ == '__main__':
     metropolis_accRej.main(x0, pot, file_name, n_samples, n_burn_in,
-        save = True, step_size=.08, n_steps=30, spacing=1)
+        save = False, step_size=.08, n_steps=30, spacing=1)

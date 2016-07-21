@@ -6,7 +6,7 @@ from matplotlib import colors
 import random
 
 from data import store
-from utils import saveOrDisplay, prll_map
+from utils import saveOrDisplay, prll_map, tqdm
 from models import Basic_HMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
 from hmc.lattice import Periodic_Lattice, laplacian
@@ -111,7 +111,7 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
             delta_hs += model.sampler.accept.delta_hs[n_burn_in:]
             samples.append(model.samples.copy())
             av_dh = np.mean(delta_hs)
-            if av_dh < 0: print 'running again -ve av_dh'
+            if av_dh < 0: tqdm.write('running again -ve av_dh')
         
         samples = np.concatenate(tuple(samples), axis=0)
         prob = np.mean(accept_rates)

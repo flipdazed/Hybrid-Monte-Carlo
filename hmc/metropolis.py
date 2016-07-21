@@ -28,8 +28,8 @@ class Accept_Reject(Init):
         self.initDefaults(kwargs)
         
         # legacy code to support prev versions
-        if self.store_acceptance: 
-            for k in new: setattr(self, 'get_' + k, True)
+        if self.store_acceptance:
+            for k in self.store: setattr(self, 'get_' + k, True)
         
         # set up the lists as empty
         for k in self.store: 
