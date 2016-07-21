@@ -9,6 +9,7 @@ from correlations import acorr, corr, errors
 from models import Basic_GHMC as Model
 from utils import saveOrDisplay, prll_map
 from plotter import Pretty_Plotter, PLOT_LOC
+from theory.autocorrelations import 
 
 def plot(acns, lines, subtitle, op_name, save):
     """Plots the two-point correlation function

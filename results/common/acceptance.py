@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
-from scipy.special import j0, jn, erfc
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import random
@@ -10,63 +9,13 @@ from utils import saveOrDisplay, prll_map
 from models import Basic_HMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
 from hmc.lattice import Periodic_Lattice, laplacian
+from theory.dynamics import accLMC1dFree, accHMC1dFree
 
 __doc__ == """
 References
     [1] : ADK, BP, `Acceptances and Auto Correlations in Hybrid Monte Carlo'
     [2] : ADK, BP, `Cost of the generalised hybrid Monte Carlo algorithm for free field theory'
 """
-
-def probLMC1dFree(dtau, m, n):
-    """Acceptance probability routines for Langevin Monte Carlo: 
-        (HMC with 1 Leap Frog step) in one dimension
-         -- for the case of the free field
-    
-    As defined in [1], Eq. (2.3).
-    
-    Required Input
-        n   :: int   :: number of lattice sites
-        dtau :: float :: the Leap Frog step length
-        m    :: float :: mass
-    """
-    sigma = 20. + 18.*m**2 + 6.*m**4 + m**6
-    return erfc(.125*dtau**3*np.sqrt(.5*n*sigma))
-
-def probHMC1dFree(tau, dtau, m, lattice_p=np.array([])):
-    """Acceptance probability routine for Hybrid Monte Carlo
-     -- for the case of the free field
-    
-    Required Input
-        dtau :: float :: the Leap Frog step length
-        tau  :: float :: the trajectory length, $n*\delta \tau$
-        m    :: float :: mass
-    
-    Optional Input
-        lattice_p :: np.ndarray :: momentum at each lattice site
-    
-    The massless soln is defined in [1] as $\tau_0$. The subscript
-    denoting that this is valid for 0th order 
-    Leap Frog integration
-    
-    Notes
-        1. If m == 0: no lattice required
-           If m != 0: requires lattice
-        3. To clarify: $\tau / \delta\tau = n$ where $n$ is the 
-        number of Leap Frog steps for each trajectory
-    """
-    
-    n = lattice_p.size
-    if (m == 0) & (lattice_p.size >= 10):
-        c = 4.*tau
-        sigma = .75 - .75*j0(c) + jn(2, c) - .25*jn(4,c)
-    else:
-        if lattice_p.size == 0:
-            raise ValueError('lattice velocities required if m != 0 or n < 10')
-        p = lattice_p.ravel()
-        a = m**2 + 4*np.sin(np.pi*p/n)**2
-        sigma = .125*(a**2*(1. - np.cos(2.*tau*np.sqrt(a)))).mean()
-    
-    return erfc(.25*dtau**2*np.sqrt(.5*n*sigma))
 
 def plot(scats, lines, subtitle, save):
     """Reproduces figure 1 from [1]
@@ -131,7 +80,7 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
     scats = {}
     
     print 'Running Model: {}'.format(file_name)
-    f = np.vectorize(lambda t: probHMC1dFree(t, step_size, 0, np.arange(1, x0.size+1)))
+    f = np.vectorize(lambda t: accHMC1dFree(t, step_size, 0, np.arange(1, x0.size+1)))
     x_fine = np.linspace(0, n_rng[-1]*step_size,101, True)
     theory1 = f(x_fine)
     

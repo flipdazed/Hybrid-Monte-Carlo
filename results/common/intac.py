@@ -24,7 +24,6 @@ def plot(x, lines, subtitle, op_name, save):
         op_name  :: str  :: the name of the operator for the title
         save     :: bool :: True saves the plot, False prints to the screen
     """
-    x /= np.pi
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
     pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
@@ -96,6 +95,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         save        :: bool :: True saves the plot, False prints to the screen
     """
     if not isinstance(angle_fracs, np.ndarray): angle_fracs = np.asarray(angle_fracs)
+    if not hasattr(n_samples, '__iter__'): n_samples = [n_samples]*angle_fracs.size
     rng = np.random.RandomState()
     angls = np.pi*angle_fracs
     
@@ -103,7 +103,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
     explicit_prog = (angls.size <= 16)
     def coreFunc(a):
         """runs the below for an angle, a"""
-        i,a = a
+        i,a, n_samples = a
         model = Model(x0, pot=pot, spacing=spacing, # set up model
             rng=rng, step_size = step_size,
             n_steps = n_steps, rand_steps=rand_steps)
@@ -117,12 +117,9 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         xx = np.average(cfn)        # get average of the function run over the samples
         return cfn, xx, p
     
-    ans = prll_map(coreFunc, zip(range(angls.size), angls), verbose=1-explicit_prog)
+    ans = prll_map(coreFunc, zip(range(angls.size), angls, n_samples), verbose=1-explicit_prog)
     cfn_lst, xx_lst, p_lst = zip(*ans)          # unpack from multiprocessing
     print '\n'*angls.size*explicit_prog         # hack to avoid overlapping!
-    
-    store.store(cfn_lst, file_name, '_cfn')     # store the function
-    store.store(angls, file_name, '_angles')    # store angles used
     
     print '\n > Calculating integrated autocorrelations...\n'
     def coreFunc2(cfn):

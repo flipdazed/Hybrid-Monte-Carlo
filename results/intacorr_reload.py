@@ -5,9 +5,9 @@ from common.intac import plot
 from common.utils import saveOrDisplay
 
 save = True
-file_name = 'intac_xx_ghmc_kg_0p00t0p50.py'
+file_name = 'intac_xx_ghmc_kg_0p00t0p50'
 
-dest = 'results/data/other_objs/intac_xx_ghmc_kg_0p00t0p50_allPlot.pkl'
+dest = 'results/data/other_objs/{}_allPlot.pkl'.format(file_name)
 a = load(dest)
 
 a['subtitle'] = r"Potential: {}; Lattice: ".format('Klein-Gordon') \
