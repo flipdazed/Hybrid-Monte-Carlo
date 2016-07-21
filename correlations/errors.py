@@ -57,6 +57,8 @@ def itauErrors(itau, n, window = None):
         window :: int  :: optional window to integrate up to
     """
     if window is None: window = np.arange(itau.size)
+    checks.tryAssertLt(0, window - itau + .5,
+    'Window is too small.\n > W = {}; \n > itau = {}'.format(window, itau))
     return itau*2*np.sqrt((window - itau + .5)/n)
 #
 def intAcorr(acorrn, n, window = None):

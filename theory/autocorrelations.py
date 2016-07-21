@@ -236,7 +236,7 @@ class M2_Exp(object):
                 ValueError("Not implemented yet")
         return numerator / denominator
     
-    def setRoots(self, b, tau, m, pa, theta=.5*pi, verbose = False):
+    def setRoots(self, tau, m, pa, theta=.5*pi, verbose = False):
         """Laplace-transformed function
         
         Required Inputs
@@ -340,11 +340,16 @@ class M2_Exp(object):
                 return real(ans)
             else:
                 print pa
-                raise ValueError("Not implemented yet: pa < p_thresh & theta == pi/2")
+                raise ValueError(
+                    "Not implemented yet: {} < p_thresh & theta == pi/2".format(pa))
         else:
             if pa > self.p_thresh:
-                raise ValueError("Not implemented yet: pa > p_thresh & theta != pi/2")
+                raise ValueError(
+                    "Not implemented yet: {} > p_thresh & {} != pi/2".format(
+                        pa, self.theta))
             else:
-                raise ValueError("Not implemented yet: pa < p_thresh & theta != pi/2")
+                raise ValueError(
+                    "Not implemented yet: {} < p_thresh & {} != pi/2".format(
+                        pa, self.theta))
         
 #

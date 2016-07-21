@@ -213,23 +213,17 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
             traj = c.model.traj         # get trajectory lengths for each LF step
             ps = c.model.p_acc          # get acceptance rates at each M-H step
             xx = np.average(cfn)        # get average of the function run over the samples
-            return cfn, xx, traj, ps
+            
+            ans = errors.uWerr(cfn)
+            lines, labels, w = preparePlot(cfn, ans=ans, n = n_samples, mcore = True)
+            return xx, traj, ps, lines, labels, w
         
         l = len(mixing_angle)
         ans = prll_map(coreFunc, zip(range(l), mixing_angle), verbose=False)
-        cfn, xx, traj, ps = zip(*ans)               # unpack from multiprocessing
-        print '\n'*l                               # hack to avoid overlapping!
-        for p, x, a in zip(ps, xx, mixing_angle):  # print intermediate results to screen
+        xx, traj, ps, lines, labels, w = zip(*ans) # unpack from multiprocessing
+        print '\n'*l                                # hack to avoid overlapping!
+        for p, x, a in zip(ps, xx, mixing_angle):   # print intermediate results to screen
             print out(p,x,a)
-        store.store(cfn, file_name, '_cfn')         # store the function
-        
-        print '\n > Calculating errors and plots...\n'
-        def coreFunc2(cfn):
-            ans = errors.uWerr(cfn)
-            out = preparePlot(cfn, ans=ans, n = n_samples, mcore = True)
-            return out
-        ans = prll_map(coreFunc2, cfn, verbose=True)
-        lines, labels, w = zip(*ans)               # unpack from multiprocessing
     
     print 'Finished Running Model: {}'.format(file_name)
     

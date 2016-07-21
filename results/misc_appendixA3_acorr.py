@@ -8,10 +8,10 @@ from scipy.signal import residuez, tf2zpk
 from data import store
 from plotter import Pretty_Plotter, PLOT_LOC
 from common.utils import saveOrDisplay
-from common.acorrTheory import expTrajM2
+from theory.autocorrelations import M2_Exp
 
 file_name = __file__
-save = True
+save = False
 
 # start plotting
 pp = Pretty_Plotter()
@@ -61,14 +61,14 @@ ax.imshow(im, extent=xlim+ylim, aspect='auto', label = r'paper')
 m = 0.01
 r = iter([np.sqrt(3)*m, .5*m*(3*np.sqrt(3)+np.sqrt(15)), .5*m*(3*np.sqrt(3)-np.sqrt(15))])
 
-f = expTrajM2(next(r), m)
+f = M2_Exp(next(r), m)
 x = np.linspace(0, 1000, 1000, True)
 
 plt.plot(x, f.eval(x), linewidth=4., color='red', alpha=0.6, linestyle="--", 
     label = r'$r = \sqrt{3}m$')
-plt.plot(x, f.eval(x, r=next(r)), linewidth=4., color='green', alpha=0.6, linestyle="--",
+plt.plot(x, f.eval(x, tau=1/next(r)), linewidth=4., color='green', alpha=0.6, linestyle="--",
     label = r'$r = \frac{m}{2}(3\sqrt{3} + \sqrt{15})$')
-plt.plot(x, f.eval(x, r=next(r)), linewidth=4., color='blue', alpha=0.6, linestyle="--",
+plt.plot(x, f.eval(x, tau=1/next(r)), linewidth=4., color='blue', alpha=0.6, linestyle="--",
     label = r'$r = \frac{m}{2}(3\sqrt{3} - \sqrt{15})$')
 
 ax.legend(loc='lower right', shadow=True, fancybox=True)

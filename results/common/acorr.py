@@ -40,16 +40,16 @@ def plot(acns, lines, subtitle, op_name, save):
     
     ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
     
-    ax[0].set_xlabel(r'Av. trajectories between samples, $\langle\tau_{i+t} - \tau_{i}\rangle / n\delta\tau$')
-    ax[0].set_ylabel(r'$\mathcal{C}(t) = {\langle (\hat{O}_i - \langle\hat{O}\rangle)' \
-        + r'(\hat{O}_{i+t} - \langle\hat{O}\rangle) \rangle}/{\langle \hat{O}_0^2 \rangle}$')
+    ax[0].set_xlabel(r'Fictitious sample time, $t = \sum^j_{i=0}\tau_i \stackrel{j\to\infty}{=} j\bar{\tau} = j \delta \tau \bar{n}$')
+    ax[0].set_ylabel(r'Normalised Autocorrelation, $C(t)$')# \
+        # + r'(\hat{O}_{i+t} - \langle\hat{O}\rangle) \rangle}/{\langle \hat{O}_0^2 \rangle}$')
     
     clist = [i for i in colors.ColorConverter.colors if i != 'w']
     colour = (i for i in random.sample(clist, len(clist)))
     for label, (x, y, e) in acns.iteritems():
         c = next(colour)
-        # ax[0].plot(x, y, alpha=0.4, label=label, color = c)#, marker='x', s=3)
-        p2 = ax[0].add_patch(Rectangle((0, 0), 0, 0, fc=c, linewidth=0, alpha=.4, label=label))
+        # for some reason I occisionally need to add a fake plot
+        # p2 = ax[0].add_patch(Rectangle((0, 0), 0, 0, fc=c, linewidth=0, alpha=.4, label=label))
         ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.4, label=label)
         # ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
         #     label=label)
@@ -58,7 +58,7 @@ def plot(acns, lines, subtitle, op_name, save):
     darkcolour = (i for i in random.sample(darkclist, len(darkclist)))
     for label, line in lines.iteritems():
         dc = next(darkcolour)
-        ax[0].plot(*line, linestyle='-', linewidth=1.5, alpha=1, label=label, color = dc)
+        ax[0].plot(*line, linestyle='-', linewidth=1, alpha=1, label=label, color = dc)
     
     xi,xf = ax[0].get_xlim()
     ax[0].set_xlim(xmin=xi-0.05*(xf-xi)) # give a decent view of the first point
@@ -98,14 +98,13 @@ def main(x0, pot, file_name,
     
     lines = {} # contains the label as the key and a tuple as (x,y) data in the entry
     acs = {}
-    
+    if not isinstance(separations, np.ndarray): separations = np.asarray(separations)
     rng = np.random.RandomState()
     
-    subtitle = r"Potential: {}; Lattice: ${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
+    subtitle = r"Potential: {}; Lattice: ${}$; $a={:.1f}; \delta\tau={:.2f}; n={}$".format(
         pot.name, x0.shape, spacing, step_size, n_steps)
     
     print 'Running Model: {}'.format(file_name)
-    if not isinstance(separations, np.ndarray): separations = np.asarray(separations)
     
     def coreFunc(a):
         """runs the below for an angle, a"""
@@ -126,11 +125,10 @@ def main(x0, pot, file_name,
         p = c.model.p_acc
         xx = c.op_mean
         
-        m = M2_Exp(tau = step_size*n_steps, m = 1, pa = p)
-        f = m.eval(separations)
-        f /= f[0]
+        m = M2_Exp(tau = (step_size*n_steps), m = 1, pa = 1)
+        f = m.eval
         print 'Finished Running Model: {}'.format(file_name)
-        return xx, acns, acns_err, p, f
+        return xx, acs, acns_err, p, f, w
     
     # use multiprocessing
     out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
@@ -141,15 +139,18 @@ def main(x0, pot, file_name,
     else:
         ans = prll_map(coreFunc, zip(range(al), mixing_angles), verbose=False)
     
-    xx, acns, acns_err, ps, fs = zip(*ans) # unpack from multiprocessing
+    xx, acns, acns_err, ps, fs, ws = zip(*ans) # unpack from multiprocessing
     
     print '\n'*al # hack to avoid overlapping!
     for p, x, a in zip(ps, xx, mixing_angles):
         print out(p,x,a)
     
     # create dictionary for plotting
-    acns = {r'Measured: $F^{\text{exp}}_{\phi^2}(\langle P_{\text{acc}}\rangle'+r'={:4.2f}; '.format(p)+r'\theta = {})$'.format(l):(separations, y, e) for y,e,l,p in zip(acns, acns_err, angle_labels, ps)}
-    lines = {r'Theory: $F^{\text{exp}}_{\phi^2}(\langle P_{\text{acc}}\rangle \approx 1; '+r'\theta = {})$'.format(l):(separations, f) for f,l in zip(fs, angle_labels)}
+    max_len = min(2*np.max(ws), separations.size)
+    x = separations*step_size*n_steps
+    fx = np.linspace(0, separations[:max_len][-1]*step_size*n_steps, separations[:max_len].size*100+1, True)
+    acns = {r'Measured: $C^{\text{exp}}_{\phi^2}(t; \langle P_{\text{acc}}\rangle'+r'={:4.2f}; '.format(p)+r'\theta = {})$'.format(l):(x[:max_len], y[:max_len], e[:max_len]) for y,e,l,p in zip(acns, acns_err, angle_labels, ps)}
+    lines = {r'Theory: $C^{\text{exp}}_{\phi^2}(t; \langle P_{\text{acc}}\rangle \approx 1; '+r'\theta = {})$'.format(l):(fx, f(fx)) for f,l in zip(fs, angle_labels)}
     
     all_plot = {'acns':acns, 'lines':lines, 'subtitle':subtitle, 'op_name':op_name}
     store.store(all_plot, file_name, '_allPlot')

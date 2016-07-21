@@ -12,7 +12,7 @@ n, dim = 20, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.
 
-n_samples, n_burn_in = 100000, 25
+n_samples, n_burn_in = 10000, 25
 step_size =   .1
 n_steps   =  1
 c_len     = 200
@@ -29,7 +29,7 @@ angle_labels = [
 
 separations = range(c_len)
 opFn = lambda samples: twoPoint(samples, separation=0)
-op_name = r'$\hat{O} = x(0)x(0)$'
+op_name = r'$\Omega = x(0)x(0)$'
 
 if '__main__' == __name__:
     routine.main(x0, pot, file_name,

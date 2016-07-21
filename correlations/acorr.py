@@ -53,7 +53,7 @@ def correlated_data(tau = 5, n = 10000):
         nu[i] = np.sqrt(1 - asq)*eta[i] + a * nu[i-1]
     return [[nu*0.2 + 1]]
 
-def acorr(op_samples, mean, separation, norm = None):
+def acorr(op_samples, mean, separation, norm = 1):
     """autocorrelation of a measured operator with optional normalisation
     
     Required Inputs
@@ -86,11 +86,11 @@ def acorr(op_samples, mean, separation, norm = None):
     # Need to be wary that roll will roll all elements arouns the array boundary
     # so cannot take element from the end. The last sample that can have an acorr
     # of len m within N samples is x[N-1-m]x[N-1] so we want up to index N-m
-    n = op_samples.shape[0] # get the number of samples from the 0th dimension
+    n = op_samples.shape[0]
     acorrs = ((shifted - mean)*(op_samples - mean))[:n-separation] # indexing the 1st index for samples
     
     # normalise if a normalisation is given
-    if norm is not None: acorrs /= norm
+    acorrs /= norm
     
     # av over all even of random trjectories
     acorr = acorrs.ravel().mean()
@@ -121,7 +121,7 @@ class Autocorrelations_1d(Init, Base):
         self._setUp()
         pass
     
-    def getAcorr(self, separations, op_func, norm = True):
+    def getAcorr(self, separations, op_func, norm = False):
         """Returns the autocorrelations for a specific sampled operator 
         
         Once the model is run then the samples can be passed through the autocorrelation
@@ -149,20 +149,22 @@ class Autocorrelations_1d(Init, Base):
         
         # get mean for these samples if doesn't already exist - don't waste time doing multiple
         if not hasattr(self, 'op_mean'): self.op_mean = self.op_samples.ravel().mean()
-        if not hasattr(self, 'op_norm'):
-            self.op_norm = acorr(self.op_samples, self.op_mean, separation=0)
         
         # get normalised autocorrelations for each separation
         separations.sort()
-        if separations[0] == 0:
-            self.acorr = [1.] # first entry is the normalisation
-            separations = separations[1:]
         
         if norm:
+            if separations[0] == 0:
+                self.acorr = [1.] # first entry is the normalisation
+                separations = separations[1:]
+            
+            if not hasattr(self, 'op_norm'):
+                self.op_norm = acorr(self.op_samples, self.op_mean, separation=0)
+            
             self.acorr += [acorr(self.op_samples, self.op_mean, 
                             s, self.op_norm) for s in separations]
         else:
-            self.acorr += [acorr(self.op_samples, self.op_mean, s) for s in separations]
+            self.acorr = [acorr(self.op_samples, self.op_mean, s) for s in separations]
         
         self.acorr = np.asarray(self.acorr)
         
