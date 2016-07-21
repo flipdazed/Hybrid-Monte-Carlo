@@ -261,7 +261,7 @@ def uWerr(f_ret, acorr=None, s_tau=1.5, fast_threshold=5000):
     f_ddiff = f_diff*np.sqrt((w + .5)/n)   # error on error of f   Eq. (42)
     
     # return relevant values - perhaps this is all better as a class?
-    return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav[:l], acorr[:l]
+    return f_aav, f_diff, f_ddiff, itau, itau_diff, itau_aav[:l], acorrn[:l]
 
 if __name__ == '__main__':
     pass

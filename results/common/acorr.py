@@ -50,7 +50,7 @@ def plot(acns, lines, subtitle, op_name, save):
         c = next(colour)
         # for some reason I occisionally need to add a fake plot
         # p2 = ax[0].add_patch(Rectangle((0, 0), 0, 0, fc=c, linewidth=0, alpha=.4, label=label))
-        ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.4, label=label)
+        ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
         # ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
         #     label=label)
     
@@ -125,11 +125,15 @@ def main(x0, pot, file_name,
         p = c.model.p_acc
         xx = c.op_mean
         
-        m = M2_Exp(tau = (step_size*n_steps), m = 1, pa = 1)
-        f = m.eval
-        print 'Finished Running Model: {}'.format(file_name)
-        return xx, acs, acns_err, p, f, w
-    
+        if a == .5*np.pi:
+            m = M2_Exp(tau = (step_size*n_steps), m = 1, pa = 1)
+            fx = np.linspace(0, separations[:2*w][-1]*step_size*n_steps, separations[:2*w].size*100+1, True)
+            f = m.eval(fx)
+            f /= f[0]
+        else:
+            f = fx = None
+        return xx, acns, acns_err, p, fx, f, w
+    print 'Finished Running Model: {}'.format(file_name)
     # use multiprocessing
     out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
     al = len(mixing_angles)
@@ -139,18 +143,16 @@ def main(x0, pot, file_name,
     else:
         ans = prll_map(coreFunc, zip(range(al), mixing_angles), verbose=False)
     
-    xx, acns, acns_err, ps, fs, ws = zip(*ans) # unpack from multiprocessing
+    xx, acns, acns_err, ps, fxs, fs, ws = zip(*ans) # unpack from multiprocessing
     
     print '\n'*al # hack to avoid overlapping!
     for p, x, a in zip(ps, xx, mixing_angles):
         print out(p,x,a)
     
     # create dictionary for plotting
-    max_len = min(2*np.max(ws), separations.size)
     x = separations*step_size*n_steps
-    fx = np.linspace(0, separations[:max_len][-1]*step_size*n_steps, separations[:max_len].size*100+1, True)
-    acns = {r'Measured: $C^{\text{exp}}_{\phi^2}(t; \langle P_{\text{acc}}\rangle'+r'={:4.2f}; '.format(p)+r'\theta = {})$'.format(l):(x[:max_len], y[:max_len], e[:max_len]) for y,e,l,p in zip(acns, acns_err, angle_labels, ps)}
-    lines = {r'Theory: $C^{\text{exp}}_{\phi^2}(t; \langle P_{\text{acc}}\rangle \approx 1; '+r'\theta = {})$'.format(l):(fx, f(fx)) for f,l in zip(fs, angle_labels)}
+    acns = {r'Measured: $C^{\text{exp}}_{\phi^2}(t; \langle P_{\text{acc}}\rangle'+r'={:4.2f}; '.format(p)+r'\theta = {})$'.format(l):(x[:2*w], y[:2*w], e[:2*w]) for y,e,l,p,w in zip(acns, acns_err, angle_labels, ps, ws)}
+    lines = {r'Theory: $C^{\text{exp}}_{\phi^2}(t; \langle P_{\text{acc}}\rangle \approx 1; '+r'\theta = {})$'.format(l):(fx, f) for fx,f,l in zip(fxs, fs, angle_labels) if f is not None}
     
     all_plot = {'acns':acns, 'lines':lines, 'subtitle':subtitle, 'op_name':op_name}
     store.store(all_plot, file_name, '_allPlot')
