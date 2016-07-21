@@ -165,7 +165,7 @@ def windowing(f_ret, f_aav, s_tau, n, fast):
     """
     
     # get autocorrelations: Don't normalise until bias corrected
-    fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=None)
+    fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=1)
     t_max = int(n//2) + 1
     
     if fast:

@@ -117,9 +117,9 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         xx = np.average(cfn)        # get average of the function run over the samples
         return cfn, xx, p
     
-    ans = prll_map(coreFunc, zip(range(angls.size), angls, n_samples), verbose=1-explicit_prog)
+    ans = prll_map(coreFunc, zip(range(angle_fracs.size), angls, n_samples), verbose=1-explicit_prog)
     cfn_lst, xx_lst, p_lst = zip(*ans)          # unpack from multiprocessing
-    print '\n'*angls.size*explicit_prog         # hack to avoid overlapping!
+    print '\n'*angle_fracs.size*explicit_prog         # hack to avoid overlapping!
     
     print '\n > Calculating integrated autocorrelations...\n'
     def coreFunc2(cfn):

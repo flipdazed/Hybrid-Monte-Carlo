@@ -13,11 +13,11 @@ x0 = np.random.random((n,)*dim)
 spacing    = 1.
 step_size  = .1
 rand_steps = True
-points     = 50
+points     = 100
 angle_fracs = np.linspace(.005, .1, points, True)
 
 n_burn_in = 20
-n_samples = (100**(-np.log10(angle_fracs/100))).astype("int")
+n_samples = 10000
 
 opFn = lambda samples: twoPoint(samples, separation=0)
 op_name = r'$\hat{O}_{pq} = \phi_0^2$'

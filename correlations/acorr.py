@@ -90,7 +90,7 @@ def acorr(op_samples, mean, separation, norm = 1):
     acorrs = ((shifted - mean)*(op_samples - mean))[:n-separation] # indexing the 1st index for samples
     
     # normalise if a normalisation is given
-    acorrs /= norm
+    acorrs = acorrs / norm
     
     # av over all even of random trjectories
     acorr = acorrs.ravel().mean()
