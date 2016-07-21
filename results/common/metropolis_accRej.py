@@ -60,8 +60,7 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs,
     
     ax[1].set_ylabel(r'$\exp{-\delta H}$')
     
-    fine_x = np.linspace(0, l, exp_delta_hs.size, True)
-    ax[1].plot(fine_x, exp_delta_hs, linestyle='-', color='blue', linewidth=2., alpha=0.4,
+    ax[1].plot(xrng, exp_delta_hs, linestyle='-', color='blue', linewidth=2., alpha=0.4,
         label=r'$\exp{ -\delta H(t)}$')
     
     ax[2].set_ylabel(r'Acceptance Prob., $P_{\text{acc}}$')

@@ -142,12 +142,8 @@ class Hybrid_Monte_Carlo(Init):
         p = self.momentum.flip(p)
         
         # Metropolis-Hastings accept / reject condition
-        if self.h_old is None:
-            self.h_old = self.potential.hamiltonian(p0, x0)  # get old hamiltonian
-        else:
-            self.h_old = self.h_new
-        
-        self.h_new = self.potential.hamiltonian(p, x)        # get new hamiltonian
+        self.h_old = self.potential.hamiltonian(p0, x0)     # get old hamiltonian (after mom refresh)
+        self.h_new = self.potential.hamiltonian(p, x)       # get new hamiltonian
         accept = self.accept.metropolisHastings(h_old=self.h_old, h_new=self.h_new)
         
         if accept:
