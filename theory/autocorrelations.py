@@ -215,11 +215,20 @@ class M2_Exp(object):
         """
         
         if theta == .5*pi:
+            b2 = b**2
+            b3 = b**3
+            m2 = m**2
+            phi = m*tau
+            phi2 = phi**2
+            r2 = r**2
+            r3 = r**3
+            
             if pa > self.p_thresh:
-                numerator   = b**3 + 2*b**2*b + b*b**2 + 2*m**2*b
-                denominator = b**3 + 2*b*b**2 +(b**2 + 4*m**2)*b + 2*m**2*b
+                numerator   = r3 + 2*r2*b + r*b2 + 2*m2*r
+                denominator = b3 + 2*r*b2 +(r2 + 4*m2)*b + 2*m2*r
             else:
-                ValueError("Not implemented yet")
+                numerator   = b2*r + 2*r2*b + (4 - 2*pa)*phi2*r + r3
+                denominator = b3 + 2*r*b2 + (4*phi2 + 1)*r2*b + 2*pa*r3*phi2
         else:
             if pa > self.p_thresh:
                 ValueError("Not implemented yet")
@@ -227,7 +236,7 @@ class M2_Exp(object):
                 ValueError("Not implemented yet")
         return numerator / denominator
     
-    def setRoots(self, b, tau, m, pa, theta=.5*pi, verbose = True):
+    def setRoots(self, b, tau, m, pa, theta=.5*pi, verbose = False):
         """Laplace-transformed function
         
         Required Inputs
@@ -248,35 +257,32 @@ class M2_Exp(object):
         self.pa = pa
         
         if theta == .5*pi:
+            m2 = m**2
+            phi = m*tau
+            phi2 = phi**2
+            r2 = r**2
+            r3 = r**3
+            
             if pa > self.p_thresh:
-                numerator = [r, 2*r**2, 2*m**2*r+r**3]
-                denominator = [1, 2*r, r**2 + 4*m**2, 2*m**2*r]
-                
-                self.res, self.poles, self.const = tf2zpk(numerator, denominator)
-                self.roots = self.poles[:-1]
-                if verbose:
-                    display = lambda t, a, b: '\n{}: {}'.format(t, a, b)
-                    print display('Residues', self.res)
-                    print display('Poles', self.poles)
-                    print display('Constant', self.k)
+                numerator = [r, 2*r2, 2*m2*r + r3]
+                denominator = [1, 2*r, r2 + 4*m2, 2*m2*r]
             else:
-                ValueError("Work in Progress")
-                
-                numerator = [r, 2*r**2, 2*m**2*r+r**3]
-                denominator = [1, 2*r, r**2 + 4*m**2, 2*m**2*r]
-                
-                self.res, self.poles, self.const = tf2zpk(numerator, denominator)
-                self.roots = self.poles[:-1]
-                if verbose:
-                    display = lambda t, a, b: '\n{}: {}'.format(t, a, b)
-                    print display('Residues', self.res)
-                    print display('Poles', self.poles)
-                    print display('Constant', self.k)
+                numerator = [r, 2*r2, (4 - 2*pa)*phi2*r + r3]
+                denominator = [1, 2*r, (4*phi2 + 1)*r2, 2*pa*r3*phi2]
+            
+            # get the roots
+            self.res, self.poles, self.const = tf2zpk(numerator, denominator)
+            self.roots = self.poles[:-1]
+            if verbose:
+                display = lambda t, x: '\n{}: {}'.format(t, x)
+                print display('Residues', self.res)
+                print display('Poles', self.poles)
+                print display('Constant', self.const)
         else:
             if pa > self.p_thresh:
-                ValueError("Not implemented yet")
+                raise ValueError("Not implemented yet: pa > p_thresh & theta != pi/2")
             else:
-                ValueError("Not implemented yet")
+                raise ValueError("Not implemented yet: pa < p_thresh & theta != pi/2")
         return self.roots
     
     def eval(self, t, tau=None, m=None, pa=None, theta=None):
@@ -300,8 +306,8 @@ class M2_Exp(object):
             if theta is not None: self.theta = theta
             self.setRoots(self.tau, self.m, self.pa, self.theta)
         
-        
-        if self.theta==.5*pi:
+        pa = self.pa
+        if self.theta == .5*pi:
             if pa > self.p_thresh:
                 b1, b2 = self.roots
                 m, r = self.m, self.r
@@ -331,13 +337,14 @@ class M2_Exp(object):
                 
                 ans = t1*exp(b1*t) + t2*exp(b2*t) + t3*exp(-(2.*r+b1+b2)*t)
                 ans *= r/d
+                return real(ans)
             else:
-                ValueError("Not implemented yet")
+                print pa
+                raise ValueError("Not implemented yet: pa < p_thresh & theta == pi/2")
         else:
             if pa > self.p_thresh:
-                ValueError("Not implemented yet")
+                raise ValueError("Not implemented yet: pa > p_thresh & theta != pi/2")
             else:
-                ValueError("Not implemented yet")
+                raise ValueError("Not implemented yet: pa < p_thresh & theta != pi/2")
         
-        return real(ans)
 #

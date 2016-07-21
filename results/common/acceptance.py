@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
+from scipy.special import j0, jn, erfc
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import random
@@ -95,7 +96,7 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
             n_steps :: int :: the number of LF steps
         """
         
-        model = Model(x0.copy(), pot, step_size=step_size, n_steps=n_steps)
+        model = Model(x0.copy(), pot, step_size=step_size, n_steps=n_steps, accept_kwargs={'get_delta_hs':True})
         model.sampler.accept.store_acceptance = True
         
         prob = 1.

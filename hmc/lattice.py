@@ -128,7 +128,7 @@ def laplacian(lattice, position, a_power=0):
     lap = lap.sum()
     
     # multiply by approciate power of lattice spacing
-    if a_power: lap /= lattice.lattice_spacing**a_power
+    if a_power: lap = lap / lattice.lattice_spacing**a_power
     
     return lap
 
@@ -184,7 +184,7 @@ def gradSquared(lattice, position, a_power=0):
     grad = (forwards**2).sum()
     
     # lattice spacing
-    if a_power: grad /= lattice.lattice_spacing**a_power
+    if a_power: grad = grad / 1.0**a_power
     
     return grad
     

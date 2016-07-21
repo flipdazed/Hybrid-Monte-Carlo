@@ -18,12 +18,13 @@ class Accept_Reject(Init):
             'accept_all':False,
             'store_acceptance':False
             }
-            
+        
         # these are the plurals (+'s') of each paramter
         # we want to record
         self.store = ['accept_rates', 'accept_rejects',
             'delta_hs', 'h_olds', 'h_news']
         for k in self.store: self.defaults['get_'+k] = False
+        
         self.initDefaults(kwargs)
         
         # legacy code to support prev versions

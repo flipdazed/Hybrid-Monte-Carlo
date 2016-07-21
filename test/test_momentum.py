@@ -29,24 +29,25 @@ class Test(object):
             outcome = passed,
             details = {
                 'original array: {}'.format(np.bmat([[p],[self.noise]])):[],
-                'rotation matrix: {}'.format(self.m.rot):[],
+                #'rotation matrix: {}'.format(self.m.rot):[],
                 'mix + flip: {}'.format(self.mixed):[],
                 'expected: {}'.format(expected):[]
                 })
             pass
         
-        p14 = np.mat([[1.,7.,-1., 400.]])
-        self.noise = np.mat([[0.1, 3., 1., -2]])
+        p14 = np.asarray([[1.,7.,-1., 400.]])
+        self.noise = np.asarray([[0.1, 3., 1., -2]])
         
-        expected_0 = np.mat([[-1., -7., 1., -400.,-0.1, -3., -1., 2.]])
-        expected_halfpi = np.mat([[-0.1, -3., -1., 2., 1., 7., -1., 400.]])
+        expected_0 = np.asarray([[-1., -7., 1., -400.,-0.1, -3., -1., 2.]])
+        expected_halfpi = np.asarray([[-0.1, -3., -1., 2., 1., 7., -1., 400.]])
         expected_pi = -expected_0
-        expected_quartpi = np.mat( [[-0.778, -7.071,  0.,   -281.428,
+        expected_quartpi = np.asarray( [[-0.778, -7.071,  0.,   -281.428,
                                       0.636,  2.828, -1.414, 284.257]])
-        expected_0 = expected_0.T
-        expected_halfpi = expected_halfpi.T
-        expected_pi = expected_pi.T
-        expected_quartpi = expected_quartpi.T
+        
+        expected_0 = expected_0.flatten()[:4]
+        expected_halfpi = expected_halfpi.flatten()[:4]
+        expected_pi = expected_pi.flatten()[:4]
+        expected_quartpi = expected_quartpi.flatten()[:4]
         
         self.mixed = self.m._refresh(p14, self.noise, theta = 0.)
         passed = (np.around(self.mixed, 3) == expected_0).all()
@@ -91,7 +92,7 @@ class Test(object):
             outcome = passed,
             details = {
                 'original array: {}'.format(np.bmat([[p],[self.m.noise]])):[],
-                'rotation matrix: {}'.format(self.m.rot):[],
+                # 'rotation matrix: {}'.format(self.m.rot):[],
                 'mix + flip: {}'.format(p_mixed):[],
                 })
         

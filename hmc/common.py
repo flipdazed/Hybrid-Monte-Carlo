@@ -12,11 +12,16 @@ class Init(object):
         Expectations
             has an attribute of self.defaults to check against
         """
+        
         for k,v in self.defaults.iteritems():
             if k in kwargs: # use assigned values
                 setattr(self, k, kwargs[k])
             else: # use default values
-                setattr(self, k, self.defaults[k])
+                setattr(self, k, v)
+        
+        for k,v in kwargs.iteritems():
+            if k not in self.defaults:
+                setattr(self, k, v)
         pass
     
     def initArgs(self, args):

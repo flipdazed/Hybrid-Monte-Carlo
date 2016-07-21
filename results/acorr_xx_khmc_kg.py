@@ -20,11 +20,11 @@ c_len     = 200
 mixing_angles = 1/np.asarray([8, 6, 4, 3, 2], dtype='float64')*np.pi
 angle_labels = [
     # r'$\theta = \pi/10$',
-    r'KHMC for $\theta = \pi/8$',
-    r'KHMC for $\theta = \pi/6$',
-    r'KHMC for $\theta = \pi/4$',
-    r'KHMC for $\theta = \pi/3$',
-    r'KHMC for $\theta = \pi/2$'
+    r'\pi/8',
+    r'\pi/6',
+    r'\pi/4',
+    r'\pi/3',
+    r'\pi/2'
 ]
 
 separations = range(c_len)

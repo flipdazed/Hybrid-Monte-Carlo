@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
+from matplotlib.patches import Rectangle
 import random
 from scipy import stats
 
@@ -9,7 +10,7 @@ from correlations import acorr, corr, errors
 from models import Basic_GHMC as Model
 from utils import saveOrDisplay, prll_map
 from plotter import Pretty_Plotter, PLOT_LOC
-from theory.autocorrelations import 
+from theory.autocorrelations import M2_Exp
 
 def plot(acns, lines, subtitle, op_name, save):
     """Plots the two-point correlation function
@@ -45,18 +46,19 @@ def plot(acns, lines, subtitle, op_name, save):
     
     clist = [i for i in colors.ColorConverter.colors if i != 'w']
     colour = (i for i in random.sample(clist, len(clist)))
-    for label, line in lines.iteritems():
-        c = next(colour)
-        ax[0].plot(*line, linestyle='-', linewidth=2., alpha=0.4, label=label, color = c)
-    
     for label, (x, y, e) in acns.iteritems():
         c = next(colour)
         # ax[0].plot(x, y, alpha=0.4, label=label, color = c)#, marker='x', s=3)
+        p2 = ax[0].add_patch(Rectangle((0, 0), 0, 0, fc=c, linewidth=0, alpha=.4, label=label))
         ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.4, label=label)
         # ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
         #     label=label)
-    # for label, stem in stems.iteritems():
-    #     ax[0].stem(*stem, markerfmt='o', linefmt='k:', basefmt='k-',label=label)
+    
+    darkclist = [i for i in colors.cnames if 'dark' in i]
+    darkcolour = (i for i in random.sample(darkclist, len(darkclist)))
+    for label, line in lines.iteritems():
+        dc = next(darkcolour)
+        ax[0].plot(*line, linestyle='-', linewidth=1.5, alpha=1, label=label, color = dc)
     
     xi,xf = ax[0].get_xlim()
     ax[0].set_xlim(xmin=xi-0.05*(xf-xi)) # give a decent view of the first point
@@ -103,6 +105,8 @@ def main(x0, pot, file_name,
         pot.name, x0.shape, spacing, step_size, n_steps)
     
     print 'Running Model: {}'.format(file_name)
+    if not isinstance(separations, np.ndarray): separations = np.asarray(separations)
+    
     def coreFunc(a):
         """runs the below for an angle, a"""
         i,a = a
@@ -121,7 +125,12 @@ def main(x0, pot, file_name,
         # get parameters generated
         p = c.model.p_acc
         xx = c.op_mean
-        return xx, acns, acns_err, p
+        
+        m = M2_Exp(tau = step_size*n_steps, m = 1, pa = p)
+        f = m.eval(separations)
+        f /= f[0]
+        print 'Finished Running Model: {}'.format(file_name)
+        return xx, acns, acns_err, p, f
     
     # use multiprocessing
     out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
@@ -132,16 +141,15 @@ def main(x0, pot, file_name,
     else:
         ans = prll_map(coreFunc, zip(range(al), mixing_angles), verbose=False)
     
-    xx, acns, acns_err, ps = zip(*ans) # unpack from multiprocessing
+    xx, acns, acns_err, ps, fs = zip(*ans) # unpack from multiprocessing
     
     print '\n'*al # hack to avoid overlapping!
     for p, x, a in zip(ps, xx, mixing_angles):
         print out(p,x,a)
     
     # create dictionary for plotting
-    acns = {l:(separations, y, e) for y,e,l in zip(acns, acns_err, angle_labels)}
-    
-    print 'Finished Running Model: {}'.format(file_name)
+    acns = {r'Measured: $F^{\text{exp}}_{\phi^2}(\langle P_{\text{acc}}\rangle'+r'={:4.2f}; '.format(p)+r'\theta = {})$'.format(l):(separations, y, e) for y,e,l,p in zip(acns, acns_err, angle_labels, ps)}
+    lines = {r'Theory: $F^{\text{exp}}_{\phi^2}(\langle P_{\text{acc}}\rangle \approx 1; '+r'\theta = {})$'.format(l):(separations, f) for f,l in zip(fs, angle_labels)}
     
     all_plot = {'acns':acns, 'lines':lines, 'subtitle':subtitle, 'op_name':op_name}
     store.store(all_plot, file_name, '_allPlot')

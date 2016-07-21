@@ -43,8 +43,14 @@ class Base(object):
             n_steps = self.n_steps,
             rand_steps = self.rand_steps)
         
+        if hasattr(self, 'accept_kwargs'):
+            if 'get_accept_rates' not in self.accept_kwargs:
+                self.accept_kwargs['get_accept_rates'] = True
+        else:
+            self.accept_kwargs = {'get_accept_rates':True}
+            
         self.sampler = Hybrid_Monte_Carlo(self.x0, dynamics, self.pot, self.rng,
-            accept_kwargs = {'get_accept_rates':True})
+            accept_kwargs = self.accept_kwargs)
         pass
 #
 class Basic_HMC(Init, Base):
@@ -70,6 +76,7 @@ class Basic_HMC(Init, Base):
             'n_steps': 20,
             'rand_steps':False
         }
+        
         self.initDefaults(kwargs)
         self._getInstances()
         pass

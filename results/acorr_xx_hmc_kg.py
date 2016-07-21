@@ -18,7 +18,7 @@ n_steps   =  20
 c_len     = 50
 
 mixing_angles = 1/np.arange(2,0,-2, dtype='float64')*np.pi
-angle_labels = [r'{} HMC Samples'.format(n_samples)]
+angle_labels = [r'\frac{\pi}{2}']
 
 separations = range(c_len)
 opFn = lambda samples: twoPoint(samples, separation=0)
