@@ -1,0 +1,1654 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     59554,       1645]
+NotebookOptionsPosition[     54488,       1465]
+NotebookOutlinePosition[     54865,       1482]
+CellTagsIndexPosition[     54822,       1479]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[TextData[StyleBox["Autocorrelations for Generalised Hybrid Monte Carlo", \
+"Title"]], "Text",
+ CellChangeTimes->{
+  3.67817938154908*^9, {3.6781794314068117`*^9, 3.6781794685753527`*^9}, {
+   3.678179545069066*^9, 3.6781795663555193`*^9}, {3.678193359044594*^9, 
+   3.678193366940531*^9}, {3.6781934792035913`*^9, 3.678193536257924*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Quadratic Operators with Fixed Length Trajectories", "Subtitle",
+ CellChangeTimes->{{3.678193507844821*^9, 3.6781935459618053`*^9}, {
+  3.6781952473676853`*^9, 3.678195254703648*^9}, {3.678216753049254*^9, 
+  3.678216757057041*^9}}],
+
+Cell[TextData[{
+ "Based on the pape",
+ "\[Tau],",
+ StyleBox[" \[OpenCurlyDoubleQuote]Cost of the Generalised Hybrid Monte Carlo \
+Algorithm for Free Field Theory\[CloseCurlyDoubleQuote],",
+  FontSlant->"Italic"],
+ " this notebook contains a Mathematica format for selected equations. The \
+aim is to provide a dynamic method of working with the theory."
+}], "Text",
+ CellChangeTimes->{{3.6781795848660307`*^9, 3.678179667993949*^9}, {
+   3.6781796994743423`*^9, 3.6781797254330187`*^9}, {3.6781797613084507`*^9, 
+   3.67817984330331*^9}, {3.678179910966352*^9, 3.678179942436851*^9}, {
+   3.678179976124398*^9, 3.678179976805286*^9}, {3.67818943346625*^9, 
+   3.678189440593206*^9}, 3.6782201544100723`*^9}],
+
+Cell[TextData[{
+ "The paper provides the ",
+ StyleBox["Laplace Transform",
+  FontWeight->"Bold"],
+ " of the autocorrelations which will be denoted by ",
+ StyleBox["F[...]", "Code"],
+ " where \[Beta] is the Laplace transformed time, ",
+ StyleBox["t",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.6781800559197083`*^9, 3.67818014398647*^9}, {
+  3.67818024207262*^9, 3.678180271767714*^9}, {3.678180304351842*^9, 
+  3.678180474244748*^9}, {3.678180537756089*^9, 3.678180671985888*^9}, {
+  3.678189441913189*^9, 3.678189514879827*^9}, {3.67818955822323*^9, 
+  3.678189561815913*^9}, {3.678189592726706*^9, 3.678189592838373*^9}}],
+
+Cell[TextData[{
+ " ",
+ StyleBox["Unless explicitly stated, all equations are in Laplace Transformed \
+format",
+  FontWeight->"Bold"]
+}], "Item",
+ CellChangeTimes->{{3.6781895164261417`*^9, 3.6781895409514837`*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Throughout the plots, the following parameters will be used:", "Text",
+ CellChangeTimes->{{3.678200991843731*^9, 3.678201038136747*^9}, {
+  3.6782205869839067`*^9, 3.678220587794348*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Laplace Transformed GHMC Autocorrelation Function", "Chapter",
+ CellChangeTimes->{{3.678181358024951*^9, 3.678181374482401*^9}, {
+   3.6781815082853403`*^9, 3.6781815092288857`*^9}, {3.678192522794112*^9, 
+   3.678192523049375*^9}, 3.6781925655616407`*^9, {3.678192832420581*^9, 
+   3.678192833568637*^9}}],
+
+Cell[TextData[{
+ "The form is exceedingly long and so has been broken apart into testable \
+segments specified by ",
+ StyleBox["a", "Code"],
+ StyleBox["n", "Code",
+  FontColor->RGBColor[0, 0, 1]],
+ StyleBox["[...]", "Code"],
+ ","
+}], "Text",
+ CellChangeTimes->{{3.6781895649144287`*^9, 3.678189581606763*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"a0", "[", 
+   RowBox[{"\[Rho]_", ",", "\[Phi]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"-", "\[Rho]"}], " ", 
+    SuperscriptBox[
+     RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], "-", "1", "+", 
+   "\[Rho]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"a1", "[", 
+   RowBox[{"\[Theta]_", ",", "\[Rho]_"}], "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", 
+     RowBox[{"2", "\[Rho]"}]}], ")"}], 
+   SuperscriptBox[
+    RowBox[{"Cos", "[", "\[Theta]", "]"}], "3"]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"a2", "[", 
+   RowBox[{"\[Theta]_", ",", " ", "\[Rho]_", ",", "\[Phi]_"}], "]"}], " ", ":=",
+   " ", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "2"}], "\[Rho]"}], "+", "1", "+", 
+     RowBox[{"2", "\[Rho]", " ", 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}]}], ")"}], 
+   SuperscriptBox[
+    RowBox[{"Cos", "[", "\[Theta]", "]"}], "2"]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"a3", "[", 
+   RowBox[{"\[Theta]_", ",", " ", "\[Rho]_", ",", "\[Phi]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"\[Rho]", "+", 
+     RowBox[{"\[Rho]", " ", 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], "-", "1"}], ")"}], 
+   RowBox[{"Cos", "[", "\[Theta]", "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"a4", "[", 
+   RowBox[{"\[Theta]_", ",", " ", "\[Rho]_", ",", "\[Phi]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], "\[Rho]", " ", 
+       SuperscriptBox[
+        RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], "+", "1"}], ")"}], 
+    RowBox[{"Cos", "[", "\[Theta]", "]"}]}], "+", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Theta]", "]"}], "2"], "+", "1"}], ")"}], 
+    RowBox[{"a0", "[", 
+     RowBox[{"\[Theta]", ",", "\[Rho]"}], 
+     "]"}]}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"a5", "[", 
+   RowBox[{"\[Theta]_", ",", " ", "\[Rho]_", ",", "\[Phi]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "\[Rho]", "+", 
+     SuperscriptBox[
+      RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], ")"}], 
+   SuperscriptBox[
+    RowBox[{"Cos", "[", "\[Theta]", "]"}], "3"]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"a6", "[", 
+   RowBox[{"\[Theta]_", ",", " ", "\[Rho]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"1", "-", 
+     RowBox[{"2", "\[Rho]"}]}], ")"}], 
+   SuperscriptBox[
+    RowBox[{"Cos", "[", "\[Theta]", "]"}], "3"]}]}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.6781705993977413`*^9, 3.678170723924141*^9}, {
+   3.678170784707287*^9, 3.6781707848671637`*^9}, {3.678170879795224*^9, 
+   3.6781708801535873`*^9}, {3.6781710022319*^9, 3.678171361003139*^9}, {
+   3.678171427258727*^9, 3.678171603270768*^9}, {3.678171670925613*^9, 
+   3.678171789835837*^9}, {3.678171853460781*^9, 3.6781719703231564`*^9}, {
+   3.678172024274287*^9, 3.67817213862227*^9}, {3.678172231453321*^9, 
+   3.678172261750602*^9}, 3.678172312291767*^9, {3.678172466889328*^9, 
+   3.6781724752122517`*^9}, {3.678176070777915*^9, 3.678176125483067*^9}, {
+   3.6781761680737963`*^9, 3.678176304014147*^9}, {3.6781763517114983`*^9, 
+   3.678176441940083*^9}, {3.678176522995295*^9, 3.6781765275225983`*^9}, {
+   3.678176644664815*^9, 3.678176701105344*^9}, {3.6781768956529818`*^9, 
+   3.678177105443372*^9}, {3.678177143747411*^9, 3.678177211507164*^9}, {
+   3.678177266850424*^9, 3.678177309737246*^9}, {3.678177476716489*^9, 
+   3.678177536774128*^9}, 3.678177676043185*^9, {3.678177724866435*^9, 
+   3.678177730324374*^9}, {3.678177863457358*^9, 3.678178033667737*^9}, {
+   3.6781781424977303`*^9, 3.678178310992465*^9}, {3.67817836326357*^9, 
+   3.6781783810411053`*^9}, {3.678178425367749*^9, 3.6781784255343857`*^9}, {
+   3.678178485423057*^9, 3.6781786180511827`*^9}, {3.67817865211693*^9, 
+   3.678178654595337*^9}, {3.6781788661518793`*^9, 3.678178962189233*^9}, {
+   3.6781789989271383`*^9, 3.678179005731943*^9}, {3.678179177145434*^9, 
+   3.678179178580381*^9}, {3.678179872319964*^9, 3.678179904278742*^9}, {
+   3.67818000328503*^9, 3.67818001834373*^9}, {3.678182317225333*^9, 
+   3.678182336111772*^9}, {3.678183974672194*^9, 3.67818397500705*^9}, {
+   3.6781861992600822`*^9, 3.678186199499769*^9}, {3.6781871041160393`*^9, 
+   3.678187148135289*^9}, {3.6781917965891*^9, 3.678191796983512*^9}, 
+   3.678191845517189*^9, 3.678192268330546*^9, {3.678216808393147*^9, 
+   3.6782170064699993`*^9}, {3.678217284513502*^9, 3.678217309721093*^9}, {
+   3.678217387872068*^9, 3.6782174308474207`*^9}, {3.6782174938465776`*^9, 
+   3.67821749411845*^9}, {3.6782175304377327`*^9, 3.678217674548107*^9}, {
+   3.678217733675363*^9, 3.678217835809263*^9}, {3.678217934215768*^9, 
+   3.678217980647306*^9}, {3.678218035737241*^9, 3.678218202308311*^9}, {
+   3.678218257219338*^9, 3.678218259099462*^9}, {3.6782182897148857`*^9, 
+   3.6782183181703463`*^9}, {3.678218442016429*^9, 3.67821844318435*^9}}],
+
+Cell["\<\
+The Laplace Transform of the autocorrelation for quadratic operators is given \
+by,\
+\>", "Text",
+ CellChangeTimes->{{3.678180148754225*^9, 3.6781802284485273`*^9}, {
+  3.678181104003924*^9, 3.678181126291298*^9}, {3.6781813559358892`*^9, 
+  3.6781813564958344`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"F", "[", 
+   RowBox[{
+   "\[Beta]_", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", " ", 
+    "\[Rho]_", ",", " ", "\[Tau]_"}], "]"}], ":=", 
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "\[Beta]"}], "\[Tau]"}], "]"}], 
+      RowBox[{"a0", "[", 
+       RowBox[{"\[Theta]", ",", " ", "\[Rho]"}], "]"}]}], "-", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "3"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+      RowBox[{"a1", "[", 
+       RowBox[{"\[Theta]", ",", " ", "\[Rho]"}], "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "2"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+      RowBox[{"a2", "[", 
+       RowBox[{"\[Theta]", ",", " ", "\[Rho]"}], "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "2"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+      RowBox[{"a3", "[", 
+       RowBox[{"\[Theta]", ",", " ", "\[Rho]"}], "]"}]}]}], 
+    RowBox[{
+     RowBox[{
+      RowBox[{"a4", "[", 
+       RowBox[{"\[Theta]", ",", "\[Rho]"}], "]"}], 
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "\[Beta]"}], " ", "\[Tau]"}], "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"a5", "[", 
+       RowBox[{"\[Theta]", ",", "\[Rho]"}], "]"}], 
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "2"}], "\[Beta]", " ", "\[Tau]"}], "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"a6", "[", 
+       RowBox[{"\[Theta]", ",", "\[Rho]"}], "]"}], 
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "3"}], "\[Beta]", " ", "\[Tau]"}], "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "2"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"a2", "[", 
+         RowBox[{"\[Theta]", ",", " ", "\[Rho]", ",", "\[Phi]"}], "]"}], "+", 
+        
+        RowBox[{"a3", "[", 
+         RowBox[{"\[Theta]", ",", " ", "\[Rho]", ",", "\[Phi]"}], "]"}]}], 
+       ")"}]}], "+", "1"}]]}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.6781786578668623`*^9, 3.6781786588351517`*^9}, {
+   3.678178730873884*^9, 3.678178739020939*^9}, {3.678178873753688*^9, 
+   3.678178880769476*^9}, 3.678178925583243*^9, {3.678178981678124*^9, 
+   3.678179155594836*^9}, {3.678179236026767*^9, 3.678179247312392*^9}, 
+   3.6781814102544327`*^9, {3.6781823465845757`*^9, 3.6781823580104094`*^9}, 
+   3.67818700236744*^9, {3.678216825288103*^9, 3.678216826488327*^9}, {
+   3.678217016525444*^9, 3.678217020837384*^9}, {3.678217067940618*^9, 
+   3.6782171630833797`*^9}, {3.67821725097823*^9, 3.678217264266036*^9}, {
+   3.6782174349916887`*^9, 3.67821754083774*^9}, 3.678217574781673*^9, {
+   3.678217705891576*^9, 3.678217706099362*^9}, {3.67821775518652*^9, 
+   3.6782177609544697`*^9}, {3.6782179186724243`*^9, 3.678217928952078*^9}, {
+   3.67821817374074*^9, 3.678218179748852*^9}, {3.678218320090169*^9, 
+   3.6782184036252213`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Unit Acceptance", "Subsection",
+ CellChangeTimes->{{3.678188585872508*^9, 3.678188600837685*^9}, {
+   3.678189387441862*^9, 3.678189419441227*^9}, 3.678192560960918*^9, {
+   3.678192926500181*^9, 3.6781929313712*^9}}],
+
+Cell["\<\
+Under unit acceptance, \[Rho]=1 the Laplace Transformed Autocorrelation is \
+given by,\
+\>", "Text",
+ CellChangeTimes->{{3.6781885889962473`*^9, 3.6781886478131866`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"a7", "[", 
+     RowBox[{"\[Theta]_", ",", " ", "\[Phi]_"}], "]"}], ":=", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "1"}], "+", 
+       RowBox[{"2", 
+        SuperscriptBox[
+         RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}]}], ")"}], 
+     SuperscriptBox[
+      RowBox[{"Cos", "[", "\[Theta]", "]"}], "2"]}]}], "\[IndentingNewLine]", 
+   
+   RowBox[{
+    RowBox[{"a8", "[", 
+     RowBox[{"\[Theta]_", ",", " ", "\[Phi]_"}], "]"}], ":=", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"], 
+       SuperscriptBox[
+        RowBox[{"Cos", "[", "\[Theta]", "]"}], "2"]}], "+", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"-", "1"}], "+", 
+         RowBox[{"2", 
+          SuperscriptBox[
+           RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}]}], ")"}], 
+       RowBox[{"Cos", "[", "\[Theta]", "]"}]}], "+", 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], ")"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"a9", "[", 
+     RowBox[{"\[Theta]_", ",", " ", "\[Phi]_"}], "]"}], ":=", 
+    RowBox[{
+     RowBox[{"a7", "[", 
+      RowBox[{"\[Theta]", ",", " ", "\[Phi]"}], "]"}], "-", 
+     RowBox[{
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"], 
+      RowBox[{"Cos", "[", "\[Theta]", "]"}]}]}]}]}]}]], "Input",
+ CellChangeTimes->{{3.678188931825486*^9, 3.678188946994108*^9}, {
+   3.6781889951758633`*^9, 3.6781890126878653`*^9}, 3.678189864251596*^9, 
+   3.6781922878644333`*^9, {3.678218578758563*^9, 3.678218583598153*^9}, {
+   3.6782186860291157`*^9, 3.678218690356695*^9}, {3.67821883240233*^9, 
+   3.6782188830655937`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Funit", "[", 
+   RowBox[{
+   "\[Beta]_", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", " ", 
+    "\[Tau]_"}], "]"}], ":=", 
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "\[Beta]"}], " ", "\[Tau]"}], "]"}], 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], "-", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "3"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Theta]", "]"}], "3"]}], "+", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "2"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+      RowBox[{"a7", "[", 
+       RowBox[{"\[Theta]", ",", " ", "\[Phi]"}], "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "2"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"], 
+      RowBox[{"Cos", "[", "\[Theta]", "]"}]}]}], 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "\[Beta]"}], " ", "\[Tau]"}], "]"}], 
+      RowBox[{"a8", "[", 
+       RowBox[{"\[Theta]", ",", " ", "\[Phi]"}], "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"Exp", "[", 
+         RowBox[{
+          RowBox[{"-", "3"}], "\[Beta]", " ", "\[Tau]"}], "]"}], "-", 
+        RowBox[{
+         RowBox[{"Exp", "[", 
+          RowBox[{
+           RowBox[{"-", "2"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+         SuperscriptBox[
+          RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}]}], ")"}], 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Theta]", "]"}], "3"]}], "-", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{
+        RowBox[{"-", "2"}], "\[Beta]", " ", "\[Tau]"}], "]"}], 
+      RowBox[{"a9", "[", 
+       RowBox[{"\[Theta]", ",", " ", "\[Phi]"}], "]"}]}], "-", 
+     "1"}]]}]}]], "Input",
+ CellChangeTimes->{{3.678188649425643*^9, 3.678188980248062*^9}, {
+   3.678189021040278*^9, 3.6781890327288*^9}, {3.6781890745354137`*^9, 
+   3.678189117271049*^9}, 3.678218436080619*^9, {3.678218483224448*^9, 
+   3.678218822202586*^9}, {3.6782188988739634`*^9, 3.678218906769514*^9}, 
+   3.6782190721908827`*^9, {3.678219185845303*^9, 3.6782192025568333`*^9}, 
+   3.6782197572045527`*^9}],
+
+Cell[TextData[{
+ StyleBox["Check ",
+  FontWeight->"Bold"],
+ "This should be equal to Equation (1) for \[Rho] =1:"
+}], "Item",
+ CellChangeTimes->{{3.678189777622389*^9, 3.6781898161973267`*^9}, {
+  3.678192377518194*^9, 3.6781923819562883`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"Funit", "[", 
+    RowBox[{
+    "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", "\[Tau]"}],
+     "]"}], "==", 
+   RowBox[{"F", "[", 
+    RowBox[{
+    "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", "1", ",", 
+     " ", "\[Tau]"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.678189897553487*^9, 3.678189946041338*^9}, {
+   3.678189994641996*^9, 3.678190001840712*^9}, {3.6781900589932213`*^9, 
+   3.678190095662901*^9}, {3.678190794014914*^9, 3.678190800724527*^9}, {
+   3.6781922374993687`*^9, 3.678192246691208*^9}, {3.678219205860795*^9, 
+   3.6782192080451202`*^9}, 3.678220709085978*^9, {3.6782207641180983`*^9, 
+   3.6782207645973063`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["HMC Condition", "Section",
+ CellChangeTimes->{{3.678192970072377*^9, 3.678192995386291*^9}}],
+
+Cell["\<\
+The GHMC form can be verified by comparing to the HMC form given below,\
+\>", "Text",
+ CellChangeTimes->{{3.678181420354692*^9, 3.678181433160824*^9}, {
+  3.6781814846050167`*^9, 3.67818150174854*^9}, {3.678181536347907*^9, 
+  3.6781816037396717`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FHMC", "[", 
+   RowBox[{
+   "\[Beta]_", ",", "\[Phi]_", ",", " ", "\[Rho]_", ",", " ", "\[Tau]_"}], 
+   "]"}], ":=", " ", 
+  FractionBox[
+   RowBox[{"-", 
+    RowBox[{"a0", "[", 
+     RowBox[{"\[Rho]", ",", "\[Phi]"}], "]"}]}], 
+   RowBox[{
+    RowBox[{"Exp", "[", 
+     RowBox[{"\[Beta]", " ", "\[Tau]"}], "]"}], "+", 
+    RowBox[{"a0", "[", 
+     RowBox[{"\[Rho]", ",", "\[Phi]"}], "]"}]}]]}]], "Input",
+ CellChangeTimes->{{3.678179501827902*^9, 3.67817951325175*^9}, {
+   3.678181917040097*^9, 3.6781819186222754`*^9}, {3.678182821296464*^9, 
+   3.67818286364867*^9}, {3.678182900673832*^9, 3.678182907305026*^9}, {
+   3.678182940984475*^9, 3.678182985861847*^9}, {3.678183525407305*^9, 
+   3.678183545014916*^9}, {3.6781843559467*^9, 3.6781843562562943`*^9}, {
+   3.67818803099131*^9, 3.678188034343802*^9}, {3.6781882638373747`*^9, 
+   3.6781882657967653`*^9}, {3.678189203133258*^9, 3.678189210196767*^9}, {
+   3.6782189513690367`*^9, 3.678219069046906*^9}, 3.678219109846184*^9, {
+   3.678219193508871*^9, 3.6782191999568577`*^9}, {3.678219435041438*^9, 
+   3.6782194354333553`*^9}}],
+
+Cell[TextData[{
+ StyleBox["Check ",
+  FontWeight->"Bold"],
+ "This should be equal to Equation (1) for \[Theta] = \[Pi]/2:"
+}], "Item",
+ CellChangeTimes->{{3.678181605941963*^9, 3.678181622714802*^9}, 
+   3.6781872054674797`*^9, {3.6781878552344627`*^9, 3.6781878553938437`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"F", "[", 
+    RowBox[{"\[Beta]", ",", " ", "\[Phi]", ",", " ", 
+     RowBox[{"\[Pi]", "/", "2"}], ",", " ", "\[Rho]", ",", " ", "\[Tau]"}], 
+    "]"}], "==", 
+   RowBox[{"FHMC", "[", 
+    RowBox[{"\[Beta]", ",", "\[Phi]", ",", "\[Rho]", ",", " ", "\[Tau]"}], 
+    "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.67818782211545*^9, 3.6781878224184103`*^9}, {
+  3.678187859121607*^9, 3.678187893593978*^9}, {3.678187941688519*^9, 
+  3.678187960575643*^9}, {3.678187990847352*^9, 3.678188015007085*^9}, {
+  3.6781880541368923`*^9, 3.6781880886298437`*^9}, {3.678188119815502*^9, 
+  3.678188156028892*^9}, {3.678188290620653*^9, 3.678188304019335*^9}, {
+  3.678188409955154*^9, 3.678188461792243*^9}, {3.678189215741044*^9, 
+  3.678189221596492*^9}, {3.678192316375793*^9, 3.6781923173568907`*^9}, {
+  3.6782191150861263`*^9, 3.6782191489816*^9}, {3.678219179485258*^9, 
+  3.678219180565043*^9}, {3.678219211564548*^9, 3.678219212996683*^9}}],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{3.6782212438269*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["HMC with Unit Acceptance", "Subsection",
+ CellChangeTimes->{{3.678189136793354*^9, 3.678189184204781*^9}, {
+   3.6781892999811497`*^9, 3.678189309818619*^9}, {3.678189354691413*^9, 
+   3.678189385673601*^9}, {3.678189423202386*^9, 3.6781894299050617`*^9}, {
+   3.678192650769865*^9, 3.67819265541558*^9}, {3.678192941379877*^9, 
+   3.678192954723619*^9}, 3.67819304705011*^9, {3.67819316213643*^9, 
+   3.6781931749514503`*^9}}],
+
+Cell["\<\
+The GHMC form can be verified by comparing to the HMC form given below,\
+\>", "Text",
+ CellChangeTimes->{{3.678189158944501*^9, 3.678189171600021*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FHMCunit", "[", 
+   RowBox[{"\[Beta]_", ",", " ", "\[Phi]_", ",", " ", "\[Tau]_"}], "]"}], " ",
+   ":=", 
+  FractionBox[
+   SuperscriptBox[
+    RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"], 
+   RowBox[{
+    RowBox[{"Exp", "[", 
+     RowBox[{"\[Beta]", " ", "\[Tau]"}], "]"}], "-", 
+    SuperscriptBox[
+     RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}]]}]], "Input",
+ CellChangeTimes->{{3.6781891950337152`*^9, 3.678189196653688*^9}, {
+  3.678189618695533*^9, 3.678189732557354*^9}, {3.678194223767931*^9, 
+  3.678194256447359*^9}, {3.6782192477883377`*^9, 3.678219291467462*^9}, {
+  3.678219368077854*^9, 3.678219414337749*^9}}],
+
+Cell[TextData[{
+ StyleBox["Check",
+  FontWeight->"Bold"],
+ " This should be equal to Equation (1) for \[Rho] = 1 and \[Theta]=\[Pi]/2:"
+}], "Item",
+ CellChangeTimes->{{3.678192351309095*^9, 3.678192404668195*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"FHMCunit", "[", 
+    RowBox[{"\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Tau]"}], "]"}], "==", 
+   
+   RowBox[{"F", "[", 
+    RowBox[{"\[Beta]", ",", " ", "\[Phi]", ",", " ", 
+     RowBox[{"\[Pi]", "/", "2"}], ",", " ", "1", ",", "\[Tau]"}], "]"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.678192413284155*^9, 3.678192429675375*^9}, {
+  3.678194244832429*^9, 3.6781942451351643`*^9}, {3.67819429842445*^9, 
+  3.6781942998946466`*^9}, {3.6782193019634657`*^9, 3.678219303971767*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   FractionBox["2", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", 
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"\[Beta]", " ", "\[Tau]"}]], " ", 
+      SuperscriptBox[
+       RowBox[{"Sec", "[", "\[Phi]", "]"}], "2"]}]}]], "+", 
+   FractionBox[
+    RowBox[{
+     RowBox[{"2", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"a2", "[", 
+         RowBox[{
+          FractionBox["\[Pi]", "2"], ",", "1"}], "]"}], "+", 
+        RowBox[{"a3", "[", 
+         RowBox[{
+          FractionBox["\[Pi]", "2"], ",", "1"}], "]"}]}], ")"}]}], "+", 
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"\[Beta]", " ", "\[Tau]"}]], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "2"}], "+", 
+        RowBox[{"\[Pi]", " ", 
+         SuperscriptBox[
+          RowBox[{"Sin", "[", "1", "]"}], "2"]}]}], ")"}]}]}], 
+    RowBox[{
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"2", " ", "\[Beta]", " ", "\[Tau]"}]], "+", 
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"\[Beta]", " ", "\[Tau]"}]], " ", 
+      RowBox[{"a4", "[", 
+       RowBox[{
+        FractionBox["\[Pi]", "2"], ",", "1"}], "]"}]}], "+", 
+     RowBox[{"a5", "[", 
+      RowBox[{
+       FractionBox["\[Pi]", "2"], ",", "1"}], "]"}]}]]}], "\[Equal]", 
+  "0"}]], "Output",
+ CellChangeTimes->{
+  3.678196177859042*^9, 3.678196284470687*^9, 3.6781963396698313`*^9, {
+   3.678203628850588*^9, 3.678203651291842*^9}, 3.6782061386334*^9, 
+   3.678206692038875*^9, 3.678221262514742*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Regular GHMC ",
+ StyleBox["Integrated",
+  FontSlant->"Italic"],
+ " Autocorrelation Function"
+}], "Chapter",
+ CellChangeTimes->{{3.678192797228715*^9, 3.678192829652664*^9}}],
+
+Cell[TextData[{
+ "The integrated autocorrelation for GHMC is obtained by setting \[Beta] = 0 \
+for the autocorrelation in Equation (1). As it no longer contains a \
+dependancy upon \[Beta], this is also ",
+ StyleBox["equivalent to the Inverse Laplace Transform",
+  FontWeight->"Bold"],
+ " i.e. the non-Transformed Integrated Autocorrelation Function,"
+}], "Text",
+ CellChangeTimes->{{3.6781842865063543`*^9, 3.678184327593273*^9}, {
+  3.678184426585253*^9, 3.678184504309751*^9}, {3.678192844933332*^9, 
+  3.678192868132708*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"A", "[", 
+   RowBox[{"\[Phi]_", ",", " ", "\[Theta]_", ",", " ", "\[Rho]_"}], "]"}], ":=", 
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "-", 
+        RowBox[{"2", "\[Rho]", " ", 
+         RowBox[{"Cos", "[", "\[Theta]", "]"}]}]}], ")"}], 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Theta]", "]"}], "2"]}], "+", 
+     RowBox[{"2", 
+      RowBox[{"Cos", "[", "\[Theta]", "]"}], "\[Rho]", " ", 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], "-", 
+     RowBox[{"\[Rho]", " ", 
+      SuperscriptBox[
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], "-", "1", "+", "\[Rho]"}], 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Cos", "[", "\[Theta]", "]"}], "-", "1"}], ")"}], 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Cos", "[", "\[Theta]", "]"}], "+", "1"}], ")"}], 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "-", "1"}], ")"}], 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Cos", "[", "\[Phi]", "]"}], "+", "1"}], ")"}], 
+     "\[Rho]"}]]}]}]], "Input",
+ CellChangeTimes->{{3.678184329422174*^9, 3.678184365048195*^9}, {
+   3.678184508982873*^9, 3.678184522653902*^9}, {3.6781846080063133`*^9, 
+   3.678184627819827*^9}, {3.678184664372088*^9, 3.678184674963822*^9}, {
+   3.6781855362939243`*^9, 3.678185543670506*^9}, 3.6781861543024607`*^9, 
+   3.678186229627256*^9, {3.67821947598477*^9, 3.678219705117344*^9}, 
+   3.678219739892861*^9}],
+
+Cell[TextData[{
+ StyleBox["Check ",
+  FontWeight->"Bold"],
+ "This should be equal to Equation (1) for \[Beta]=0:"
+}], "Item",
+ CellChangeTimes->{{3.678186746362998*^9, 3.678186797921856*^9}, {
+  3.678186879129506*^9, 3.67818688018461*^9}, {3.67818691440899*^9, 
+  3.678186930191765*^9}, {3.678187178565208*^9, 3.678187182788081*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"A", "[", 
+    RowBox[{"\[Phi]", ",", " ", "\[Theta]", ",", " ", "\[Rho]"}], "]"}], " ", 
+   "==", " ", 
+   RowBox[{"F", "[", 
+    RowBox[{
+    "0", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", "\[Rho]", ",", 
+     " ", "\[Tau]"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.678186799155952*^9, 3.678186869288866*^9}, {
+  3.678219876042685*^9, 3.6782198788905163`*^9}}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{
+  3.67819617787547*^9, 3.678196284488811*^9, 3.6781963396989594`*^9, {
+   3.678203628868347*^9, 3.678203651317357*^9}, 3.6782061386485357`*^9, 
+   3.678206692063189*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Unit Acceptance", "Subsection",
+ CellChangeTimes->{{3.678188585872508*^9, 3.678188600837685*^9}, {
+   3.678189387441862*^9, 3.678189419441227*^9}, 3.678192560960918*^9, {
+   3.678192926500181*^9, 3.6781929313712*^9}}],
+
+Cell["\<\
+Under unit acceptance, \[Rho]=1 the Laplace Transformed Autocorrelation is \
+given by,\
+\>", "Text",
+ CellChangeTimes->{{3.6781885889962473`*^9, 3.6781886478131866`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Aunit", "[", 
+   RowBox[{"\[Phi]_", ",", " ", "\[Theta]_"}], "]"}], ":=", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox[
+     RowBox[{"Cos", "[", "\[Theta]", "]"}], "2"], "-", 
+    RowBox[{"2", 
+     RowBox[{"Cos", "[", "\[Theta]", "]"}], 
+     SuperscriptBox[
+      RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], "-", 
+    SuperscriptBox[
+     RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], 
+   RowBox[{
+    RowBox[{
+     SuperscriptBox[
+      RowBox[{"Cos", "[", "\[Theta]", "]"}], "2"], 
+     SuperscriptBox[
+      RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}], "-", 
+    SuperscriptBox[
+     RowBox[{"Cos", "[", "\[Theta]", "]"}], "2"], "-", 
+    SuperscriptBox[
+     RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"], "+", "1"}]]}]], "Input",
+ CellChangeTimes->{{3.678188649425643*^9, 3.678188980248062*^9}, {
+  3.678189021040278*^9, 3.6781890327288*^9}, {3.6781890745354137`*^9, 
+  3.678189117271049*^9}, {3.6781936731756897`*^9, 3.6781936740401707`*^9}, {
+  3.678193739543025*^9, 3.678193836293252*^9}, {3.678193880485087*^9, 
+  3.678193887429722*^9}, {3.678219791020052*^9, 3.678219871074833*^9}}],
+
+Cell[TextData[{
+ StyleBox["Check ",
+  FontWeight->"Bold"],
+ "This should be equal to Equation (1) for \[Rho]=1 and \[Beta]=0:"
+}], "Item",
+ CellChangeTimes->{{3.678189777622389*^9, 3.6781898161973267`*^9}, {
+  3.678192377518194*^9, 3.6781923819562883`*^9}, {3.678193850253983*^9, 
+  3.678193871261023*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"Aunit", "[", 
+    RowBox[{"\[Phi]", ",", " ", "\[Theta]"}], "]"}], "==", 
+   RowBox[{"F", "[", 
+    RowBox[{
+    "0", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", "1", ",", " ", 
+     "\[Tau]"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.678189897553487*^9, 3.678189946041338*^9}, {
+   3.678189994641996*^9, 3.678190001840712*^9}, {3.6781900589932213`*^9, 
+   3.678190095662901*^9}, {3.678190794014914*^9, 3.678190800724527*^9}, {
+   3.6781922374993687`*^9, 3.678192246691208*^9}, {3.678193868077258*^9, 
+   3.6781939280439568`*^9}, 3.678219883370369*^9}],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{
+  3.6781961778909388`*^9, 3.6781962845235043`*^9, 3.678196339723682*^9, {
+   3.67820362890552*^9, 3.678203651363164*^9}, 3.678206138682917*^9, 
+   3.678206692106461*^9, 3.678221320264839*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The integrated autocorrelation under unit acceptance varying with mixing \
+angle,\
+\>", "Text",
+ CellChangeTimes->{{3.6782015842107563`*^9, 3.678201600738537*^9}, {
+  3.678201649310615*^9, 3.6782016536065903`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"Aunit", "[", 
+    RowBox[{"\[Tau]", ",", " ", "\[Theta]"}], "]"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"\[Theta]", ",", " ", "0", ",", " ", 
+     RowBox[{"2", "\[Pi]"}]}], "}"}], ",", 
+   RowBox[{"AxesLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<\[Theta]\>\"", ",", "\"\<A\>\""}], "}"}]}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.678201189654108*^9, 3.678201189854534*^9}, {
+  3.6782012701903563`*^9, 3.67820128509238*^9}, {3.678201633943432*^9, 
+  3.678201641191124*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{
+    FormBox["\"\[Theta]\"", TraditionalForm], 
+    FormBox["\"A\"", TraditionalForm]},
+  AxesOrigin->{0, 0},
+  DisplayFunction->Identity,
+  Frame->{{False, False}, {False, False}},
+  FrameLabel->{{None, None}, {None, None}},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultMeshStyle" -> 
+    AbsolutePointSize[6], "ScalingFunctions" -> None},
+  PlotRange->NCache[{{0, 2 Pi}, {0., 0.}}, {{0, 6.283185307179586}, {0., 0.}}],
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.05], 
+     Scaled[0.05]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{
+  3.6782011908459873`*^9, 3.678201287267968*^9, 3.678201645092907*^9, {
+   3.678203628947277*^9, 3.678203651406035*^9}, 3.678206138720562*^9, 
+   3.678206692143313*^9, 3.67822130221075*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["HMC Condition", "Section",
+ CellChangeTimes->{{3.6781846727892313`*^9, 3.678184688611289*^9}, {
+  3.6781891858608828`*^9, 3.678189186725843*^9}, {3.6781893679956284`*^9, 
+  3.678189372177762*^9}, {3.678192625969808*^9, 3.678192633295753*^9}, {
+  3.678192664855691*^9, 3.678192669831728*^9}, {3.678192916755786*^9, 
+  3.6781929185232058`*^9}}],
+
+Cell["\<\
+The GHMC form can be verified by comparing to the HMC form given below,\
+\>", "Text",
+ CellChangeTimes->{{3.6781846898401203`*^9, 3.678184702653365*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AHMC", "[", 
+   RowBox[{"\[Phi]_", ",", " ", "\[Rho]_"}], "]"}], ":=", 
+  FractionBox[
+   RowBox[{"-", 
+    RowBox[{"a0", "[", 
+     RowBox[{"\[Rho]", ",", "\[Phi]"}], "]"}]}], 
+   RowBox[{"\[Rho]", 
+    RowBox[{"(", 
+     RowBox[{"1", "-", " ", 
+      RowBox[{"Cos", "[", "\[Phi]", "]"}]}], ")"}], 
+    RowBox[{"(", 
+     RowBox[{"1", "+", 
+      RowBox[{"Cos", "[", "\[Phi]", "]"}]}], ")"}]}]]}]], "Input",
+ CellChangeTimes->{{3.678184718045204*^9, 3.678184782737692*^9}, {
+   3.678185586573646*^9, 3.678185587412859*^9}, 3.678186473439444*^9, {
+   3.6781866221170797`*^9, 3.678186639965098*^9}, {3.678189241133733*^9, 
+   3.678189241388253*^9}, {3.678219935457542*^9, 3.678220009352819*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ StyleBox["Check ",
+  FontWeight->"Bold"],
+ "This should be equal to Equation (1) for \[Theta] = \[Pi]/2 and \[Beta]=0:"
+}], "Item",
+ CellChangeTimes->{
+  3.678184714792104*^9, {3.678184789906178*^9, 3.6781848065562067`*^9}, {
+   3.678186708204872*^9, 3.678186731363323*^9}, {3.678186942503662*^9, 
+   3.678186949071375*^9}, {3.678187189043771*^9, 3.6781871967245398`*^9}, {
+   3.678193974262074*^9, 3.678194044082535*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"F", "[", 
+    RowBox[{"0", ",", "\[Phi]", ",", " ", 
+     RowBox[{"\[Pi]", "/", "2"}], ",", " ", "\[Rho]", ",", " ", "\[Tau]"}], 
+    "]"}], " ", "==", " ", 
+   RowBox[{"AHMC", "[", 
+    RowBox[{"\[Phi]", ",", " ", "\[Rho]"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.678184813206846*^9, 3.678184929952467*^9}, {
+   3.6781855538773623`*^9, 3.678185592068797*^9}, {3.678185669533718*^9, 
+   3.6781856702045193`*^9}, {3.67818627152595*^9, 3.6781863563608837`*^9}, {
+   3.6781864072729692`*^9, 3.678186412503985*^9}, 3.6781864530093327`*^9, {
+   3.6781864925513477`*^9, 3.678186529088065*^9}, {3.6781865698067913`*^9, 
+   3.67818664147665*^9}, {3.6781868088523293`*^9, 3.6781868109301147`*^9}, {
+   3.678189245158505*^9, 3.678189245404129*^9}, {3.678194050194709*^9, 
+   3.678194055658029*^9}, 3.6782198986985703`*^9}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{
+  3.678196177906227*^9, 3.6781962845404053`*^9, 3.678196339749666*^9, {
+   3.678203628986725*^9, 3.678203651434811*^9}, 3.6782061387464027`*^9, 
+   3.678206692162429*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Showing the change in the HMC integrated autocorrelation varying with \
+acceptance rate,\
+\>", "Text",
+ CellChangeTimes->{{3.67820135820119*^9, 3.678201394139328*^9}, {
+  3.6782017909965057`*^9, 3.678201791412546*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"A", "[", 
+    RowBox[{"\[Tau]", ",", " ", 
+     RowBox[{"\[Pi]", "/", "2"}], ",", "\[Rho]"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Rho]", ",", " ", "0", ",", " ", "1"}], "}"}], ",", 
+   RowBox[{"AxesLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<\[Rho]\>\"", ",", "\"\<A\>\""}], "}"}]}]}], "]"}]], "Input",\
+
+ CellChangeTimes->{{3.678201076096074*^9, 3.678201173565803*^9}, {
+  3.678201205904499*^9, 3.678201239374442*^9}, {3.678201293846182*^9, 
+  3.678201294109104*^9}, {3.6782013245899343`*^9, 3.678201350267584*^9}, {
+  3.678201410115102*^9, 3.678201414026392*^9}, {3.6782014599620123`*^9, 
+  3.678201485482244*^9}, {3.678201525966042*^9, 3.6782015411216784`*^9}, {
+  3.6782017975411863`*^9, 3.678201797660614*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{
+    FormBox["\"\[Rho]\"", TraditionalForm], 
+    FormBox["\"A\"", TraditionalForm]},
+  AxesOrigin->{0, 0},
+  DisplayFunction->Identity,
+  Frame->{{False, False}, {False, False}},
+  FrameLabel->{{None, None}, {None, None}},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultMeshStyle" -> 
+    AbsolutePointSize[6], "ScalingFunctions" -> None},
+  PlotRange->{{0, 1}, {0., 0.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.05], 
+     Scaled[0.05]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{{3.6782011488846493`*^9, 3.6782011740318747`*^9}, 
+   3.678201240440404*^9, 3.678201296811831*^9, 3.678201350586152*^9, {
+   3.6782014111608963`*^9, 3.678201414268469*^9}, 3.678201464619265*^9, 
+   3.678201545629547*^9, 3.678201800156969*^9, {3.678203629017867*^9, 
+   3.6782036514672823`*^9}, 3.678206138771044*^9, 3.678206692192451*^9, 
+   3.6782213336215477`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["HMC with Unit Acceptance", "Subsection",
+ CellChangeTimes->{{3.678189136793354*^9, 3.678189184204781*^9}, {
+   3.6781892999811497`*^9, 3.678189309818619*^9}, {3.678189354691413*^9, 
+   3.678189385673601*^9}, {3.678189423202386*^9, 3.6781894299050617`*^9}, {
+   3.678192650769865*^9, 3.67819265541558*^9}, {3.678192941379877*^9, 
+   3.678192954723619*^9}, 3.67819304705011*^9, {3.67819316213643*^9, 
+   3.6781931749514503`*^9}}],
+
+Cell["\<\
+The GHMC form can be verified by comparing to the HMC form given below,\
+\>", "Text",
+ CellChangeTimes->{{3.678189158944501*^9, 3.678189171600021*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AHMCunit", "[", "\[Phi]_", "]"}], " ", ":=", 
+  FractionBox[
+   SuperscriptBox[
+    RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"], 
+   RowBox[{"1", "-", 
+    SuperscriptBox[
+     RowBox[{"Cos", "[", "\[Phi]", "]"}], "2"]}]]}]], "Input",
+ CellChangeTimes->{{3.6781891950337152`*^9, 3.678189196653688*^9}, {
+  3.678189618695533*^9, 3.678189732557354*^9}, {3.6781941389541616`*^9, 
+  3.678194171223886*^9}, {3.678194236175281*^9, 3.678194238239064*^9}, {
+  3.678220039736253*^9, 3.678220064432115*^9}}],
+
+Cell[TextData[{
+ StyleBox["Check",
+  FontWeight->"Bold"],
+ " This should be equal to Equation (1) for \[Theta]=\[Pi]/2, \[Beta]=0 and \
+\[Rho]=1:"
+}], "Item",
+ CellChangeTimes->{{3.678192351309095*^9, 3.678192404668195*^9}, {
+  3.678194177306016*^9, 3.678194196129973*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"AHMCunit", "[", "\[Phi]", "]"}], "==", 
+   RowBox[{"F", "[", 
+    RowBox[{"0", ",", " ", "\[Phi]", ",", " ", 
+     RowBox[{"\[Pi]", "/", "2"}], ",", " ", "1", ",", " ", "\[Tau]"}], 
+    "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.678192413284155*^9, 3.678192429675375*^9}, {
+   3.67819420307263*^9, 3.67819421356738*^9}, {3.6781943353903103`*^9, 
+   3.6781943501413183`*^9}, 3.678219903842383*^9}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{
+  3.67819617792083*^9, 3.6781962845571327`*^9, 3.678196339774654*^9, {
+   3.678203629048337*^9, 3.6782036514955597`*^9}, 3.678206138787676*^9, 
+   3.6782066922077513`*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Inverse Laplace Transforms: Regular GHMC Autocorrelations", "Chapter",
+ CellChangeTimes->{{3.678192797228715*^9, 3.678192829652664*^9}, {
+  3.678194906468748*^9, 3.678194962684761*^9}}],
+
+Cell[TextData[{
+ "Inverting the autocorrelation functions gets ",
+ StyleBox["very",
+  FontSlant->"Italic"],
+ " messy and so starting in reverse order now makes more sense, leaving the \
+most complicated for last."
+}], "Text",
+ CellChangeTimes->{{3.6781842865063543`*^9, 3.678184327593273*^9}, {
+  3.678184426585253*^9, 3.678184504309751*^9}, {3.678192844933332*^9, 
+  3.678192868132708*^9}, {3.6781949725565968`*^9, 3.6781950795068493`*^9}}],
+
+Cell["\<\
+There is a sepcific method provided in the paper howeve\[Tau], partial \
+fraction decomposition is not well supported in Mathematica so it makes more \
+sense to simply force the result for those that are no immediately obvious.\
+\>", "Text",
+ CellChangeTimes->{{3.6782020902549343`*^9, 3.67820215378318*^9}, 
+   3.678220154428628*^9}],
+
+Cell[CellGroupData[{
+
+Cell["HMC with Unit Acceptance", "Section",
+ CellChangeTimes->{{3.678189136793354*^9, 3.678189184204781*^9}, {
+   3.6781892999811497`*^9, 3.678189309818619*^9}, {3.678189354691413*^9, 
+   3.678189385673601*^9}, {3.678189423202386*^9, 3.6781894299050617`*^9}, {
+   3.678192650769865*^9, 3.67819265541558*^9}, {3.678192941379877*^9, 
+   3.678192954723619*^9}, 3.67819304705011*^9, {3.67819316213643*^9, 
+   3.6781931749514503`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The following line the inverted form of the Laplace - Transformed \
+Autocorrelation function and assigns it to a callable function,\
+\>", "Text",
+ CellChangeTimes->{{3.678199317504532*^9, 3.678199366017501*^9}, {
+  3.6782002100283117`*^9, 3.678200211731779*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"iFHMCunit", " ", "=", " ", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"InverseLaplaceTransform", "[", 
+     RowBox[{
+      RowBox[{"FHMCunit", "[", 
+       RowBox[{"\[Beta]", " ", ",", "\[Phi]", ",", " ", "\[Tau]"}], "]"}], 
+      ",", "\[Beta]", ",", "t"}], "]"}], " ", "//", "ToRadicals"}], " ", "//",
+    " ", "FullSimplify"}]}]], "Input",
+ CellChangeTimes->{{3.678200449650069*^9, 3.67820045169071*^9}, {
+   3.678200550575301*^9, 3.678200616759019*^9}, {3.678201955587666*^9, 
+   3.6782020249532633`*^9}, {3.678202424619438*^9, 3.678202431155465*^9}, 
+   3.67820364664179*^9, {3.6782066659345093`*^9, 3.678206666718487*^9}, 
+   3.678220140917797*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"CHMCunit", "[", 
+   RowBox[{"t_", ",", " ", "\[Phi]_", ",", "\[Tau]_"}], " ", "]"}], " ", ":=",
+   " ", 
+  RowBox[{"Evaluate", "[", "iFHMCunit", "]"}]}]], "Input",
+ CellChangeTimes->{{3.678199588895525*^9, 3.678199610022584*^9}, 
+   3.678202434691513*^9, 3.67822013004172*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Plotting shows the underdamped form for unit mass and averge trajector length \
+\[Tau],\
+\>", "Text",
+ CellChangeTimes->{{3.678201887342808*^9, 3.678201929415758*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"CHMCunit", "[", 
+    RowBox[{"t", ",", " ", "\[Tau]", ",", " ", 
+     RowBox[{"1", "/", "\[Tau]"}]}], "]"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"t", ",", " ", "0", ",", " ", "50"}], "}"}], ",", 
+   RowBox[{"PlotRange", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", "1"}], "}"}]}], ",", 
+   RowBox[{"AxesLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<t\>\"", ",", "\"\<C(t)\>\""}], "}"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.6781991082789793`*^9, 3.678199203811432*^9}, {
+   3.678199472225458*^9, 3.678199527903089*^9}, {3.678199613854969*^9, 
+   3.6781996928774014`*^9}, {3.678199945617002*^9, 3.678199951624483*^9}, {
+   3.678200930265499*^9, 3.678200937354685*^9}, 3.678201025880974*^9, {
+   3.678201817022689*^9, 3.678201856941826*^9}, 3.678202512819312*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["HMC without Unit Acceptance", "Subsection",
+ CellChangeTimes->{{3.6781846727892313`*^9, 3.678184688611289*^9}, {
+  3.6781891858608828`*^9, 3.678189186725843*^9}, {3.6781893679956284`*^9, 
+  3.678189372177762*^9}, {3.678192625969808*^9, 3.678192633295753*^9}, {
+  3.678192664855691*^9, 3.678192669831728*^9}, {3.678192916755786*^9, 
+  3.6781929185232058`*^9}, {3.678195128922331*^9, 3.6781951674647293`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The following line the inverted form of the Laplace - Transformed \
+Autocorrelation function and assigns it to a callable function,\
+\>", "Text",
+ CellChangeTimes->{{3.678199317504532*^9, 3.678199366017501*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"iFHMC", " ", "=", " ", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"InverseLaplaceTransform", "[", 
+     RowBox[{
+      RowBox[{"FHMC", "[", 
+       RowBox[{
+       "\[Beta]", " ", ",", "\[Phi]", ",", " ", "\[Rho]", ",", " ", 
+        "\[Tau]"}], "]"}], ",", "\[Beta]", ",", "t"}], "]"}], " ", "//", 
+    "ToRadicals"}], " ", "//", "FullSimplify"}]}]], "Input",
+ CellChangeTimes->{{3.678200449650069*^9, 3.67820045169071*^9}, {
+   3.678200550575301*^9, 3.678200616759019*^9}, {3.678201955587666*^9, 
+   3.6782020249532633`*^9}, 3.678202409237751*^9, {3.6782024411233463`*^9, 
+   3.678202473571404*^9}, 3.6782031930503597`*^9, {3.678203254327133*^9, 
+   3.6782032757268543`*^9}, {3.678206674174651*^9, 3.678206674798562*^9}, 
+   3.678220154442206*^9, 3.6782201968771753`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"CHMC", "[", 
+   RowBox[{
+   "t_", ",", " ", "\[Phi]_", ",", " ", "\[Rho]_", ",", " ", "\[Tau]_"}], " ",
+    "]"}], " ", ":=", " ", 
+  RowBox[{"Evaluate", "[", "iFHMC", "]"}]}]], "Input",
+ CellChangeTimes->{{3.678199588895525*^9, 3.678199610022584*^9}, 
+   3.678202443387198*^9, {3.678202478987822*^9, 3.678202485603691*^9}, 
+   3.678202805685627*^9, 3.6782201300551567`*^9, 3.67822022197339*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Plotting for varying acceptance rate at ",
+ StyleBox["t",
+  FontSlant->"Italic"],
+ "=0,"
+}], "Text",
+ CellChangeTimes->{{3.678201887342808*^9, 3.678201929415758*^9}, {
+  3.678202530572019*^9, 3.678202566394101*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"CHMC", "[", 
+    RowBox[{"0", ",", " ", "\[Tau]", ",", " ", 
+     RowBox[{"1", "/", "\[Rho]"}], ",", " ", "\[Tau]"}], "]"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"\[Rho]", ",", " ", "0", ",", " ", "1"}], "}"}], ",", 
+   RowBox[{"PlotRange", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", "1"}], "}"}]}], ",", 
+   RowBox[{"AxesLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<\[Rho]\>\"", ",", "\"\<C(0)\>\""}], "}"}]}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.6781991082789793`*^9, 3.678199203811432*^9}, {
+   3.678199472225458*^9, 3.678199527903089*^9}, {3.678199613854969*^9, 
+   3.6781996928774014`*^9}, {3.678199945617002*^9, 3.678199951624483*^9}, {
+   3.678200930265499*^9, 3.678200937354685*^9}, 3.678201025880974*^9, {
+   3.678201817022689*^9, 3.678201856941826*^9}, 3.678202512819312*^9, {
+   3.678202543026947*^9, 3.678202590632588*^9}, 3.6782028090056143`*^9, 
+   3.678220196879342*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell["", "Subsection",
+ CellChangeTimes->{{3.678188585872508*^9, 3.678188600837685*^9}, {
+   3.678189387441862*^9, 3.678189419441227*^9}, 3.678192560960918*^9, {
+   3.678192926500181*^9, 3.6781929313712*^9}, {3.678202332404532*^9, 
+   3.67820233412418*^9}, {3.678202369057662*^9, 3.678202372700097*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["GHMC with Unit Acceptance", "Section",
+ CellChangeTimes->{{3.678189136793354*^9, 3.678189184204781*^9}, {
+   3.6781892999811497`*^9, 3.678189309818619*^9}, {3.678189354691413*^9, 
+   3.678189385673601*^9}, {3.678189423202386*^9, 3.6781894299050617`*^9}, {
+   3.678192650769865*^9, 3.67819265541558*^9}, {3.678192941379877*^9, 
+   3.678192954723619*^9}, 3.67819304705011*^9, {3.67819316213643*^9, 
+   3.6781931749514503`*^9}, 3.6782023783077803`*^9}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The following line the inverted form of the Laplace - Transformed \
+Autocorrelation function and assigns it to a callable function,\
+\>", "Text",
+ CellChangeTimes->{{3.678199317504532*^9, 3.678199366017501*^9}, {
+  3.6782002100283117`*^9, 3.678200211731779*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"iFunit", " ", "=", " ", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"InverseLaplaceTransform", "[", 
+     RowBox[{
+      RowBox[{"Funit", "[", 
+       RowBox[{
+       "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", 
+        "\[Tau]"}], "]"}], ",", "\[Beta]", ",", "t"}], "]"}], " ", "//", 
+    "ToRadicals"}], " ", "//", " ", "FullSimplify"}]}]], "Input",
+ CellChangeTimes->{{3.678200449650069*^9, 3.67820045169071*^9}, {
+   3.678200550575301*^9, 3.678200616759019*^9}, {3.678201955587666*^9, 
+   3.6782020249532633`*^9}, {3.678202447981296*^9, 3.678202448548009*^9}, {
+   3.678202612080641*^9, 3.678202612320877*^9}, {3.6782026832960873`*^9, 
+   3.678202689088736*^9}, 3.6782031420567713`*^9, {3.678203362928256*^9, 
+   3.67820336749326*^9}, {3.678203460685444*^9, 3.6782034651317863`*^9}, {
+   3.6782039649109907`*^9, 3.6782039652284803`*^9}, {3.678206678942416*^9, 
+   3.6782066802938633`*^9}, 3.678220140912669*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Cunit", "[", 
+   RowBox[{
+   "t_", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", " ", "\[Tau]_"}], 
+   "]"}], " ", ":=", " ", 
+  RowBox[{"Evaluate", "[", "iFunit", "]"}]}]], "Input",
+ CellChangeTimes->{{3.678199588895525*^9, 3.678199610022584*^9}, {
+   3.6782026144249353`*^9, 3.678202650577466*^9}, 3.678203089645481*^9, {
+   3.678203374983965*^9, 3.678203379414605*^9}, {3.678203466635894*^9, 
+   3.678203467557362*^9}, {3.678203498164155*^9, 3.678203498467454*^9}, {
+   3.6782039701018476`*^9, 3.678203970380374*^9}, 3.678220130032319*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["varying with mixing angle \[Theta],", "Text",
+ CellChangeTimes->{{3.678201887342808*^9, 3.678201929415758*^9}, {
+  3.678203331574971*^9, 3.67820333847758*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Plot3D", "[", 
+  RowBox[{
+   RowBox[{"Cunit", "[", 
+    RowBox[{"t", ",", "\[Tau]", ",", "\[Theta]", ",", 
+     FractionBox["1", "\[Tau]"]}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"t", ",", "0", ",", "50"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Theta]", ",", 
+     RowBox[{"0.15", "\[Pi]"}], ",", 
+     RowBox[{
+      RowBox[{"2", " ", "\[Pi]"}], "-", 
+      RowBox[{"0.15", "\[Pi]"}]}]}], "}"}], ",", 
+   RowBox[{"PlotTheme", "\[Rule]", "\"\<Scientific\>\""}], ",", 
+   RowBox[{"PlotRange", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", "1"}], "}"}]}], ",", 
+   RowBox[{"AxesLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<t\>\"", ",", "\"\<\[Theta]\>\"", ",", "\"\<C(t)\>\""}], 
+     "}"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.678204299111958*^9, 3.678204321599601*^9}},
+ NumberMarks->False]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["GHMC without Unit Acceptance", "Subsection",
+ CellChangeTimes->{{3.678189136793354*^9, 3.678189184204781*^9}, {
+   3.6781892999811497`*^9, 3.678189309818619*^9}, {3.678189354691413*^9, 
+   3.678189385673601*^9}, {3.678189423202386*^9, 3.6781894299050617`*^9}, {
+   3.678192650769865*^9, 3.67819265541558*^9}, {3.678192941379877*^9, 
+   3.678192954723619*^9}, 3.67819304705011*^9, {3.67819316213643*^9, 
+   3.6781931749514503`*^9}, 3.6782023783077803`*^9, {3.678203847110159*^9, 
+   3.678203847326118*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The following line the inverted form of the Laplace - Transformed \
+Autocorrelation function and assigns it to a callable function,\
+\>", "Text",
+ CellChangeTimes->{{3.678199317504532*^9, 3.678199366017501*^9}, {
+  3.6782002100283117`*^9, 3.678200211731779*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"iF", " ", "=", " ", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"InverseLaplaceTransform", "[", 
+     RowBox[{
+      RowBox[{"F", "[", 
+       RowBox[{
+       "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", 
+        "\[Rho]", ",", " ", "\[Tau]"}], "]"}], ",", "\[Beta]", ",", "t"}], 
+     "]"}], " ", "//", "ToRadicals"}], " ", "//", " ", 
+   "FullSimplify"}]}]], "Input",
+ CellChangeTimes->{{3.678200449650069*^9, 3.67820045169071*^9}, {
+   3.678200550575301*^9, 3.678200616759019*^9}, {3.678201955587666*^9, 
+   3.6782020249532633`*^9}, {3.678202447981296*^9, 3.678202448548009*^9}, {
+   3.678202612080641*^9, 3.678202612320877*^9}, {3.6782026832960873`*^9, 
+   3.678202689088736*^9}, 3.6782031420567713`*^9, {3.678203362928256*^9, 
+   3.67820336749326*^9}, {3.678203460685444*^9, 3.6782034651317863`*^9}, {
+   3.678203933246284*^9, 3.67820394594075*^9}, {3.678206683534919*^9, 
+   3.6782066842058887`*^9}, 3.678220154401647*^9, 3.678220196873293*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"CF", "[", 
+   RowBox[{
+   "t_", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", "  ", "\[Rho]_", 
+    ",", " ", "\[Tau]_"}], "]"}], " ", ":=", " ", 
+  RowBox[{"Evaluate", "[", "iF", "]"}]}]], "Input",
+ CellChangeTimes->{{3.678199588895525*^9, 3.678199610022584*^9}, {
+   3.6782026144249353`*^9, 3.678202650577466*^9}, 3.678203089645481*^9, {
+   3.678203374983965*^9, 3.678203379414605*^9}, {3.678203466635894*^9, 
+   3.678203467557362*^9}, {3.678203498164155*^9, 3.678203498467454*^9}, {
+   3.6782039492366533`*^9, 3.678203950166132*^9}, {3.678203981870051*^9, 
+   3.678203982157505*^9}, {3.6782042598169394`*^9, 3.678204261368628*^9}, 
+   3.678220130035762*^9, 3.6782202219686527`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["varying with mixing angle \[Theta] and acceptance probability,", "Text",
+ CellChangeTimes->{{3.678201887342808*^9, 3.678201929415758*^9}, {
+  3.678203331574971*^9, 3.67820333847758*^9}, {3.678204039756171*^9, 
+  3.678204044899892*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Plot3D", "[", 
+  RowBox[{
+   RowBox[{"CF", "[", 
+    RowBox[{"t", ",", "\[Tau]", ",", 
+     RowBox[{"\[Pi]", "/", "4"}], ",", 
+     FractionBox["1", "\[Tau]"], ",", "\[Rho]"}], " ", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"t", ",", "0", ",", "50"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Rho]", " ", ",", "0.6", ",", "1"}], "}"}], ",", 
+   RowBox[{"PlotTheme", "\[Rule]", "\"\<Scientific\>\""}], ",", 
+   RowBox[{"PlotRange", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", "1"}], "}"}]}], ",", 
+   RowBox[{"AxesLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<t\>\"", ",", "\"\<\[Rho]\>\"", ",", "\"\<C(t)\>\""}], 
+     "}"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.678203993164358*^9, 3.678204085706911*^9}, 
+   3.678204266080268*^9},
+ NumberMarks->False]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"DumpSave", "[", 
+  RowBox[{"\"\<dump.mx\>\"", ",", " ", "\"\<Global`\>\""}], "]"}]], "Input",
+ CellChangeTimes->{{3.678206514280299*^9, 3.678206532951724*^9}}]
+},
+CellGrouping->Manual,
+WindowSize->{1419, 911},
+WindowMargins->{{Automatic, 142}, {5, Automatic}},
+ShowCellTags->True,
+FrontEndVersion->"10.2 for Linux x86 (64-bit) (July 29, 2015)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 342, 5, 70, "Text"],
+Cell[CellGroupData[{
+Cell[947, 31, 238, 3, 54, "Subtitle"],
+Cell[1188, 36, 707, 13, 55, "Text"],
+Cell[1898, 51, 637, 14, 33, "Text"],
+Cell[2538, 67, 214, 6, 31, "Item"]
+}, Open  ]]
+}, Open  ]],
+Cell[2779, 77, 193, 2, 33, "Text"],
+Cell[CellGroupData[{
+Cell[2997, 83, 312, 4, 69, "Chapter"],
+Cell[3312, 89, 309, 9, 33, "Text"],
+Cell[3624, 100, 5108, 117, 184, "Input",
+ InitializationCell->True],
+Cell[8735, 219, 277, 6, 33, "Text"],
+Cell[9015, 227, 3034, 77, 66, "Input",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[12074, 308, 223, 3, 47, "Subsection"],
+Cell[12300, 313, 180, 4, 33, "Text"],
+Cell[12483, 319, 1791, 51, 108, "Input"],
+Cell[14277, 372, 2380, 67, 70, "Input"],
+Cell[16660, 441, 244, 6, 31, "Item"],
+Cell[16907, 449, 747, 16, 32, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17691, 470, 98, 1, 67, "Section"],
+Cell[17792, 473, 262, 5, 33, "Text"],
+Cell[18057, 480, 1125, 24, 66, "Input"],
+Cell[19185, 506, 278, 6, 31, "Item"],
+Cell[CellGroupData[{
+Cell[19488, 516, 1006, 18, 32, "Input"],
+Cell[20497, 536, 75, 1, 32, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20609, 542, 433, 6, 47, "Subsection"],
+Cell[21045, 550, 161, 3, 33, "Text"],
+Cell[21209, 555, 659, 16, 70, "Input"],
+Cell[21871, 573, 213, 5, 31, "Item"],
+Cell[CellGroupData[{
+Cell[22109, 582, 553, 12, 32, "Input"],
+Cell[22665, 596, 1559, 47, 67, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[24297, 651, 191, 6, 70, "Chapter"],
+Cell[24491, 659, 529, 10, 55, "Text"],
+Cell[25023, 671, 1529, 40, 68, "Input"],
+Cell[26555, 713, 333, 7, 31, "Item"],
+Cell[CellGroupData[{
+Cell[26913, 724, 448, 11, 32, "Input"],
+Cell[27364, 737, 221, 4, 32, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[27622, 746, 223, 3, 47, "Subsection"],
+Cell[27848, 751, 180, 4, 33, "Text"],
+Cell[28031, 757, 1127, 28, 70, "Input"],
+Cell[29161, 787, 306, 7, 31, "Item"],
+Cell[CellGroupData[{
+Cell[29492, 798, 636, 13, 32, "Input"],
+Cell[30131, 813, 247, 4, 32, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[30415, 822, 224, 5, 33, "Text"],
+Cell[CellGroupData[{
+Cell[30664, 831, 551, 14, 32, "Input"],
+Cell[31218, 847, 1097, 29, 238, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[32376, 883, 348, 5, 67, "Section"],
+Cell[32727, 890, 163, 3, 33, "Text"],
+Cell[32893, 895, 729, 18, 66, "Input"],
+Cell[CellGroupData[{
+Cell[33647, 917, 439, 9, 31, "Item"],
+Cell[CellGroupData[{
+Cell[34111, 930, 890, 16, 32, "Input"],
+Cell[35004, 948, 222, 4, 32, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[35275, 958, 228, 5, 33, "Text"],
+Cell[CellGroupData[{
+Cell[35528, 967, 796, 17, 32, "Input"],
+Cell[36327, 986, 1224, 31, 238, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[37600, 1023, 433, 6, 47, "Subsection"],
+Cell[38036, 1031, 161, 3, 33, "Text"],
+Cell[38200, 1036, 530, 12, 70, "Input"],
+Cell[38733, 1050, 273, 7, 31, "Item"],
+Cell[CellGroupData[{
+Cell[39031, 1061, 469, 10, 32, "Input"],
+Cell[39503, 1073, 223, 4, 32, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[39799, 1085, 191, 2, 69, "Chapter"],
+Cell[39993, 1089, 441, 9, 33, "Text"],
+Cell[40437, 1100, 344, 6, 55, "Text"],
+Cell[CellGroupData[{
+Cell[40806, 1110, 430, 6, 67, "Section"],
+Cell[CellGroupData[{
+Cell[41261, 1120, 272, 5, 33, "Text"],
+Cell[CellGroupData[{
+Cell[41558, 1129, 671, 14, 32, "Input"],
+Cell[42232, 1145, 311, 7, 32, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[42580, 1157, 177, 4, 33, "Text"],
+Cell[42760, 1163, 849, 18, 32, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[43646, 1186, 413, 5, 47, "Subsection"],
+Cell[CellGroupData[{
+Cell[44084, 1195, 221, 4, 33, "Text"],
+Cell[CellGroupData[{
+Cell[44330, 1203, 790, 16, 32, "Input"],
+Cell[45123, 1221, 430, 9, 32, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[45590, 1235, 233, 7, 33, "Text"],
+Cell[45826, 1244, 977, 21, 32, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[46866, 1272, 303, 4, 47, "Subsection"],
+Cell[CellGroupData[{
+Cell[47194, 1280, 455, 6, 53, "Section"],
+Cell[CellGroupData[{
+Cell[47674, 1290, 272, 5, 33, "Text"],
+Cell[CellGroupData[{
+Cell[47971, 1299, 950, 18, 32, "Input"],
+Cell[48924, 1319, 580, 11, 32, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[49541, 1335, 165, 2, 33, "Text"],
+Cell[49709, 1339, 851, 23, 62, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[50597, 1367, 511, 7, 47, "Subsection"],
+Cell[CellGroupData[{
+Cell[51133, 1378, 272, 5, 33, "Text"],
+Cell[CellGroupData[{
+Cell[51430, 1387, 984, 19, 32, "Input"],
+Cell[52417, 1408, 722, 13, 32, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[53176, 1426, 241, 3, 33, "Text"],
+Cell[53420, 1431, 806, 21, 62, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[54301, 1460, 183, 3, 32, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)

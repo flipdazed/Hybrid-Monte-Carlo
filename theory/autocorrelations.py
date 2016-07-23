@@ -339,7 +339,6 @@ class M2_Exp(object):
                 ans *= r/d
                 return real(ans)
             else:
-                print pa
                 raise ValueError(
                     "Not implemented yet: {} < p_thresh & theta == pi/2".format(pa))
         else:
