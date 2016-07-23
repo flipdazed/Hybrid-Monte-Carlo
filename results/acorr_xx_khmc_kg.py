@@ -29,7 +29,7 @@ angle_labels = [
 
 separations = range(c_len)
 opFn = lambda samples: twoPoint(samples, separation=0)
-op_name = r'$\hat{O} = \sum_{pq} \Omega \phi_p\phi_q :\Omega = \delta_{p0}\delta{q0}$'
+op_name = r'$\hat{O} = \sum_{pq} \Omega \phi_p\phi_q :\Omega = \delta_{p0}\delta_{q0}$'
 
 if '__main__' == __name__:
     routine.main(x0, pot, file_name,

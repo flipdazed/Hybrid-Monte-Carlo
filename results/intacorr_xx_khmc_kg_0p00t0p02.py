@@ -15,7 +15,7 @@ step_size  = .1
 rand_steps = True
 points     = 100
 
-n_samples, n_burn_in = 20000, 20
+n_samples, n_burn_in = 100000, 20
 angle_fracs = np.linspace(0, .02, points, True)
 
 opFn = lambda samples: twoPoint(samples, separation=0)

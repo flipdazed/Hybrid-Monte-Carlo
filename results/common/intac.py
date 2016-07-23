@@ -56,9 +56,9 @@ def plot(x, lines, subtitle, op_name, save):
                 ax[k].plot(x, y, c=c, lw=1., alpha=0.6, label=label)
             else:
                 y = np.asarray(y); err = np.asarray(err)
-                # ax[k].fill_between(x, y-err, y+err, color=c, alpha=0.1)
-                ax[k].errorbar(x, y, yerr=err, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
-                    label=label)
+                ax[k].fill_between(x, y-err, y+err, color=c, alpha=0.9)
+                # ax[k].errorbar(x, y, yerr=err, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
+                #     label=label)
     # Fix the limits so the plots have nice room 
     for a in ax:                            # 5% extra room at top & add legend
         # xi,xf = a.get_xlim()
@@ -114,23 +114,19 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         
         # get parameters generated
         p = c.model.p_acc           # get acceptance rates at each M-H step
-        xx = np.average(cfn)        # get average of the function run over the samples
-        return cfn, xx, p
+        
+        # Calculating integrated autocorrelations
+        ans = errors.uWerr(cfn)
+        xx, f_diff, _, itau, itau_diff, itaus, _ = ans
+        w = errors.getW(itau, itau_diff, n=cfn.shape[0])
+        out = itau, itau_diff, f_diff, w
+        return xx, p, itau, itau_diff, f_diff, w
     
     ans = prll_map(coreFunc, zip(range(angle_fracs.size), angls, n_samples), verbose=1-explicit_prog)
-    cfn_lst, xx_lst, p_lst = zip(*ans)          # unpack from multiprocessing
+    
+    # unpack from multiprocessing
+    xx_lst, p_lst, itau_lst, itau_diffs_lst, f_diff_lst, w_lst = zip(*ans)
     print '\n'*angle_fracs.size*explicit_prog         # hack to avoid overlapping!
-    
-    print '\n > Calculating integrated autocorrelations...\n'
-    def coreFunc2(cfn):
-        ans = errors.uWerr(cfn)
-        _, f_diff, _, itau, itau_diff, itaus, _ = ans
-        w = errors.getW(itau, itau_diff, n=cfn.shape[0])
-        out = (itau, itau_diff, f_diff, w)
-        return out
-    
-    ans = prll_map(coreFunc2, cfn_lst, verbose=True)
-    itau_lst, itau_diffs_lst, f_diff_lst, w_lst = zip(*ans) # unpack from multiprocessing
     
     print 'Finished Running Model: {}'.format(file_name)
     
