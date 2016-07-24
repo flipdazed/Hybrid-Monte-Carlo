@@ -1,6 +1,8 @@
 from __future__ import division
-from numpy import exp, real, cos, sin, pi, array, log, asscalar
+from numpy import exp, real, cos, sin, pi, array, log, asscalar, array, absolute
 from scipy.signal import tf2zpk
+import warnings
+
 from hmc import checks
 
 __doc__ = """::References::
@@ -26,7 +28,17 @@ class M2_Fix(object):
         self.p_thresh = p_thresh
         self.setRoots(tau, m, pa, theta)
         pass
-    
+    def validate(self, roots):
+        """Requirement for an analytic solution
+        
+        Required Inputs
+            root :: float :: the roots obtained
+        """
+        req = (absolute(array(roots)) > 1).all()
+        if not req:
+            print 'Warning: Magnitude of roots not all > 1:\n{}'.format(roots)
+        return req
+        
     def lapTfm(self, b, tau, m, pa, theta=.5*pi):
         """Laplace-transformed function
         
@@ -110,8 +122,14 @@ class M2_Fix(object):
             self.res = self.poles = self.const = None
             
             if pa > self.p_thresh:
+                warnings.warn("Warning: Implementation may be incorrect." \
+                    + "\nRead http://tinyurl.com/hjlkgsq for more information")
+                
                 self.roots = cos(m*tau)**2
             else:
+                warnings.warn("Warning: Implementation may be incorrect." \
+                    + "\nRead http://tinyurl.com/hjlkgsq for more information")
+                
                 self.roots = pa*cos(m*tau)**2 + 1 - pa
         else:
             cos_phi    = cos(m*tau)
@@ -126,6 +144,7 @@ class M2_Fix(object):
             a4 = 1 - 2*pa
             
             if pa > self.p_thresh:
+                raise ValueError("Issue with implementation")
                 numerator    = array([cos_theta3, a0*cos_theta2 + cos_phi2*cos_theta, cos_phi2, 0])
                 denominator = [cos_theta3, (cos_theta3*cos_phi2)    \
                                             - (cos_phi2*cos_theta)  \
@@ -134,6 +153,7 @@ class M2_Fix(object):
                 self.res, self.poles, self.const = tf2zpk(numerator, denominator)
                 self.roots = self.poles[:-1] # want all but the last entry
             else:
+                raise ValueError("Issue with implementation")
                 numerator    = array([a4*cos_theta3, a2*cos_theta2 + a3*cos_theta, 0])
                 denominator = [-a4*cos_theta3, (-1 + pa + pa*cos_phi2)*cos_theta3   \
                                                 + a2*cos_theta2                     \
@@ -141,7 +161,7 @@ class M2_Fix(object):
                 numerator   *= -1
                 self.res, self.poles, self.const = tf2zpk(numerator, denominator)
                 self.roots = self.poles[:-1] # want all but the last entry
-                
+        self.validate(self.roots)
         return self.roots
     
     def eval(self, t, tau = None, m = None, pa = None, theta = None):
@@ -167,12 +187,11 @@ class M2_Fix(object):
             if theta is not None: self.theta = theta
             self.setRoots(self.tau, self.m, self.pa, self.theta)
         
+        # For for both P_acc = 1 and P_acc != 1 is the same
         if self.theta==.5*pi:
-            # note that incidentally the root, b1, is also the numerator
-            # also the for for both P_acc = 1 and P_acc != 1 is the same
             b1 = self.roots
-            n = t/self.tau # the number of HMC trajectories (samples)
-            ans = b1*np.exp(-(n+1)*log(b1))
+            n = t/self.tau  # the number of HMC trajectories (samples)
+            ans = b1**(n)   # see http://math.stackexchange.com/q/1869017/272850
         else:
             if self.pa > self.p_thresh:
                 raise ValueError("not implemented")
