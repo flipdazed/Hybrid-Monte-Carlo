@@ -11,7 +11,25 @@ Throughout the code the roots, $B_k$, are referred to as `poles` and the constan
 of partial fractioning, $A_k$, are referred to as residues.
 """
 
-class M2_Fix(object):
+
+class Common(object):
+    """Common functions"""
+    def __init__(self):
+        pass
+    
+    def integrated(self, tau, m, pa, theta):
+        """Regular (inverted) Integrated function
+        
+        Required Inputs
+            tau     :: float    :: average trajectory length
+            m       :: float    :: mass parameter - the lowest frequency mode
+            pa      :: float    :: average acceptance probability
+            theta   :: float    :: mixing angle
+        """
+        ans = self.lapTfm(0, tau, m, pa, theta)
+        return ans
+#
+class M2_Fix(Common):
     """A/C of M^2 for tau = fixed
     (Magnetic Suceptibility)
     
@@ -27,6 +45,7 @@ class M2_Fix(object):
         p_thresh :: float :: point where pa \approx 1
     """
     def __init__(self, tau, m, pa=1, theta=.5*pi, p_thresh=0.95):
+        super(M2_Fix, self).__init__()
         self.p_thresh = p_thresh
         self.setRoots(tau, m, pa, theta)
         pass
@@ -198,9 +217,8 @@ class M2_Fix(object):
             else:
                 raise ValueError("not implemented")
         return ans
-    
 #
-class M2_Exp(object):
+class M2_Exp(Common):
     """A/C of M^2 for tau ~ Geom
     (Magnetic Suceptibility)
     
@@ -219,6 +237,7 @@ class M2_Exp(object):
     * An approximation for small r where Geom(r) \approx Expon(r)
     """
     def __init__(self, tau, m, pa=1, theta=.5*pi, p_thresh=0.95):
+        super(M2_Exp, self).__init__()
         self.p_thresh = p_thresh
         self.setRoots(tau, m, pa, theta)
         pass
