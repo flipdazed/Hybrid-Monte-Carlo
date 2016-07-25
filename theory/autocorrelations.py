@@ -1,12 +1,14 @@
 from __future__ import division
 from numpy import exp, real, cos, sin, pi, array, log, asscalar, array, absolute
-from scipy.signal import tf2zpk
-import warnings
+from scipy.signal import residuez
 
 from hmc import checks
 
 __doc__ = """::References::
 [1] Cost of the Generalised Hybrid Monte Carlo Algorithm for Free Field Theory
+
+Throughout the code the roots, $B_k$, are referred to as `poles` and the constants
+of partial fractioning, $A_k$, are referred to as residues.
 """
 
 class M2_Fix(object):
@@ -122,15 +124,15 @@ class M2_Fix(object):
             self.res = self.poles = self.const = None
             
             if pa > self.p_thresh:
-                warnings.warn("Warning: Implementation may be incorrect." \
-                    + "\nRead http://tinyurl.com/hjlkgsq for more information")
+                print "Warning: Implementation may be incorrect." \
+                    + "\nRead http://tinyurl.com/hjlkgsq for more information"
                 
-                self.roots = cos(m*tau)**2
+                self.poles = cos(m*tau)**2
             else:
-                warnings.warn("Warning: Implementation may be incorrect." \
-                    + "\nRead http://tinyurl.com/hjlkgsq for more information")
+                print "Warning: Implementation may be incorrect." \
+                    + "\nRead http://tinyurl.com/hjlkgsq for more information"
                 
-                self.roots = pa*cos(m*tau)**2 + 1 - pa
+                self.poles = pa*cos(m*tau)**2 + 1 - pa
         else:
             cos_phi    = cos(m*tau)
             cos_theta  = cos(theta)
@@ -150,8 +152,7 @@ class M2_Fix(object):
                                             - (cos_phi2*cos_theta)  \
                                             - (-1 + 2*cos_phi2)*cos_theta2, -1]
                 numerator   *= -1
-                self.res, self.poles, self.const = tf2zpk(numerator, denominator)
-                self.roots = self.poles[:-1] # want all but the last entry
+                self.res, self.poles, self.const = residuez(numerator, denominator)
             else:
                 raise ValueError("Issue with implementation")
                 numerator    = array([a4*cos_theta3, a2*cos_theta2 + a3*cos_theta, 0])
@@ -159,10 +160,9 @@ class M2_Fix(object):
                                                 + a2*cos_theta2                     \
                                                 + a3*cos_theta, +1]
                 numerator   *= -1
-                self.res, self.poles, self.const = tf2zpk(numerator, denominator)
-                self.roots = self.poles[:-1] # want all but the last entry
-        self.validate(self.roots)
-        return self.roots
+                self.res, self.poles, self.const = residuez(numerator, denominator)
+        self.validate(self.poles)
+        return self.poles
     
     def eval(self, t, tau = None, m = None, pa = None, theta = None):
         """The Inverted Laplace Transform using partial fractioning
@@ -189,7 +189,7 @@ class M2_Fix(object):
         
         # For for both P_acc = 1 and P_acc != 1 is the same
         if self.theta==.5*pi:
-            b1 = self.roots
+            b1 = self.poles
             n = t/self.tau  # the number of HMC trajectories (samples)
             ans = b1**(n)   # see http://math.stackexchange.com/q/1869017/272850
         else:
@@ -249,10 +249,57 @@ class M2_Exp(object):
                 numerator   = b2*r + 2*r2*b + (4 - 2*pa)*phi2*r + r3
                 denominator = b3 + 2*r*b2 + (4*phi2 + 1)*r2*b + 2*pa*r3*phi2
         else:
+            bt = b*tau
+            cos_theta = cos(theta)
+            cos_theta2 = cos_theta**2
+            cos_theta3 = cos_theta**3
+            b4 = b2**2
+            r4 = r2**2
+            b5 = b**5
+            r5 = r**5
             if pa > self.p_thresh:
-                ValueError("Not implemented yet")
+                a7 = 2 - cos_theta - cos_theta2
+                a8 = 1 - cos_theta - cos_theta2 + cos_theta3
+                
+                numerator = b2*r + b*r2*a7 + r3*(a8 + 2*phi2)
+                
+                denominator = b3 + b2*r*a7 + b*r2*(4*phi2 + a8)             \
+                    + r3*(2*phi2 - 2*phi2*cos_theta2)
             else:
-                ValueError("Not implemented yet")
+                a0 = 4 + (1 - 2*pa)*cos_theta - cos_theta2
+                a1 = 6 + (3 - 6*pa)*cos_theta - 3*cos_theta2 + ( - 1 + 2*pa)*cos_theta3
+                
+                a2 = (3 - 6*pa + ( - 2 + pa)*( - 2 + 2*pa)*phi2)*cos_theta  \
+                    + ( - 3 + ( - 4 + 4*pa)*phi2)*cos_theta2                \
+                    + ( - 2 + 4*pa)*cos_theta3                              \
+                    + 4 + (8 - 4*pa)*phi2 + a2a + a2b + a2c
+                
+                a3 = 4 + (8 + 2*pa)*phi2                                    \
+                    + (3 - 6*pa + (4 - 4*pa)*phi2)*cos_theta                \
+                    + ( - 3 + ( - 4 + 2*pa)*phi2)*cos_theta2                \
+                    + ( - 2 + 4*pa)*cos_theta3
+                
+                a4 = (1 - 2*pa + ( - 2 + pa)*( - 2 + 2*pa)*phi2)*cos_theta  \
+                    + ( - 1 + ( - 4 + 4*pa)*phi2)*cos_theta2                \
+                    + ( - 1 + 2*pa - 4*( - 1 + pa)**2*phi2)*cos_theta3      \
+                    + 1 + (4 - 2*pa)*phi2 + a4a + a4b + a4c
+                
+                a5 = 1 + (4 + 4*pa)*phi2                                    \
+                    + (1 - 2*pa + ( - 4 - 2*pa)*( - 1 + pa)*phi2)*cos_theta \
+                    + ( - 1 - 4*phi2)*cos_theta2                            \
+                    + ( - 1 + 2*pa + (2 - 2*pa)*( - 2 + pa)*phi2)*cos_theta3
+                
+                a6 = 2*pa*phi2                                              \
+                    - 2*( - 1 + pa)*pa*phi2*cos_theta                       \
+                    - 2*pa*phi2*cos_theta2                                  \
+                    + 2*( - 1 + pa)*pa*phi2*cos_theta3
+                
+                numerator = b4*r + b3*r2*a0 + b2*r3*((4 - 2*pa)*phi2 + a1)  \
+                    + b*r4*a2 + r5*a4
+                
+                denominator = b5 + b4*r*a0 + b3*r2*(4*phi2 + a1)            \
+                    + b2*r3*a3 + b*r4*a5 + r5*a6
+                
         return numerator / denominator
     
     def setRoots(self, tau, m, pa, theta=.5*pi, verbose = False):
@@ -267,7 +314,7 @@ class M2_Exp(object):
         Optional Inputs
             theta :: float :: mixing angle
             verbose :: bool :: prints out residues, poles and constant from
-                                scipy's tf2zpk function
+                                scipy's residuez function
         """
         self.tau = tau
         self.r = r = 1./tau
@@ -290,8 +337,7 @@ class M2_Exp(object):
                 denominator = [1, 2*r, (4*phi2 + 1)*r2, 2*pa*r3*phi2]
             
             # get the roots
-            self.res, self.poles, self.const = tf2zpk(numerator, denominator)
-            self.roots = self.poles[:-1]
+            self.res, self.poles, self.const = residuez(numerator, denominator)
             if verbose:
                 display = lambda t, x: '\n{}: {}'.format(t, x)
                 print display('Residues', self.res)
@@ -302,7 +348,7 @@ class M2_Exp(object):
                 raise ValueError("Not implemented yet: pa > p_thresh & theta != pi/2")
             else:
                 raise ValueError("Not implemented yet: pa < p_thresh & theta != pi/2")
-        return self.roots
+        return self.poles
     
     def eval(self, t, tau=None, m=None, pa=None, theta=None):
         """The Inverted Laplace Transform using partial fractioning
@@ -328,7 +374,11 @@ class M2_Exp(object):
         pa = self.pa
         if self.theta == .5*pi:
             if pa > self.p_thresh:
-                b1, b2 = self.roots
+                # here this format has been analytically derived
+                # thus we know that b1,b2 are two poles and a third
+                # pole exists as a linear combination of b1,b2
+                # therefore we discard the first pole
+                b1, b2 = self.poles[1:]
                 m, r = self.m, self.r
                 
                 m2 = m**2 ; m4 = m**4
