@@ -15,13 +15,7 @@ This directory contains theoretical results and predictions
  
 <a name="acorr"/>
 ## Autocorrelation Functions
-
- - Magnetic Susceptibility, $\phi^2$
-  * Fixed length trajectories
-  * Exponentially distributed trajectories
- 
-<a name="iacorr"/>
-## Integrated Autocorrelation Functions
+Note: integrated autocorrelations are also called from here by the `.integrated()` method
 
  - Magnetic Susceptibility, $\phi^2$
   * Fixed length trajectories
