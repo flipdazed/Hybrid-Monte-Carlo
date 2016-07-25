@@ -210,7 +210,7 @@ class M2_Fix(Common):
         if self.theta==.5*pi:
             b1 = self.poles
             n = t/self.tau  # the number of HMC trajectories (samples)
-            ans = b1**(n)   # see http://math.stackexchange.com/q/1869017/272850
+            ans = b1**n     # see http://math.stackexchange.com/q/1869017/272850
         else:
             if self.pa > self.p_thresh:
                 raise ValueError("not implemented")

@@ -13,7 +13,7 @@ for \beta
 
 Firstly I want to determine
 """
-tau = 0.1
+tau = 1
 m = 1
 
 
@@ -71,12 +71,12 @@ if __name__ == '__main__':
     print 'Exp Constant',me.const
     print
     
-    t = np.linspace(0,100,1000)
+    t = np.linspace(0,10,1000)
     fE = lambda t: np.real(np.asarray([a_i*np.exp(b_i*t) for a_i, b_i in zip(me.res, me.poles)]).sum(0))
     
     mu=np.cos(m*tau)**2  
     r,p,k = residuez([mu,0], [1,-np.cos(m*tau)**2])
-    fF = lambda t: np.real(np.asarray(k) + np.asarray([a_i*np.exp((t/tau+1)*np.log(b_i)) for a_i, b_i in zip(r,p)]).sum(0))
+    fF = lambda t: np.real(np.sum(k) + np.asarray([a_i/b_i*b_i**(t/tau) for a_i, b_i in zip(r,p)]).sum(0))
     
     lines = {
         0:[(t, fE(t), r'\verb|scipy.signal.residuez()|'),(t, me.eval(t), r'Analytical partial fractioning')],
@@ -85,8 +85,8 @@ if __name__ == '__main__':
     
     app = r"$\tau={:4.2f};m={:3.1f}$".format(tau, m)
     subtitles = {
-        0:"Exponentially Distributed Trajectories"+app, 
-        1:"Fixed Trajectories"+app
+        0:"Exponentially Distributed Trajectories "+app, 
+        1:"Fixed Trajectories "+app
         }
     
     plot(lines, subtitles, 
