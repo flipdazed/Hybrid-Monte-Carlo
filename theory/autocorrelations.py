@@ -1,7 +1,8 @@
 from __future__ import division
-from numpy import exp, real, cos, sin, pi, array, log, asscalar, array, absolute
+from numpy import exp, real, cos, sin, pi, array, log, asscalar, array, absolute, sum
 from scipy.signal import residuez
 
+from _mathematicaFunctions import expCunit
 from hmc import checks
 
 __doc__ = """::References::
@@ -149,7 +150,7 @@ class M2_Fix(Common):
                 self.poles = cos(m*tau)**2
             else:
                 print "Warning: Implementation may be incorrect." \
-                    + "\nRead http://tinyurl.com/hjlkgsq for more information"
+                    + "\n\tRead http://tinyurl.com/hjlkgsq for more information"
                 
                 self.poles = pa*cos(m*tau)**2 + 1 - pa
         else:
@@ -427,13 +428,17 @@ class M2_Exp(Common):
                 ans *= r/d
                 return real(ans)
             else:
-                raise ValueError(
-                    "Not implemented yet: {} < p_thresh & theta == pi/2".format(pa))
+                b = self.poles
+                a = self.res
+                c = self.const
+                if sum(c) != 0: 
+                    print 'Warning: Non-zero constant term:\n\t{}'.format(c)
+                ans = sum([a_i*exp(b_i*t) for a_i, b_i in zip(a, b)])
+                return real(ans)
         else:
             if pa > self.p_thresh:
-                raise ValueError(
-                    "Not implemented yet: {} > p_thresh & {} != pi/2".format(
-                        pa, self.theta))
+                ans = expCunit(t, self.tau, self.m, self.theta)
+                return ans
             else:
                 raise ValueError(
                     "Not implemented yet: {} < p_thresh & {} != pi/2".format(
