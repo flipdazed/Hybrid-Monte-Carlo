@@ -1,8 +1,12 @@
 from __future__ import division
 from numpy import cos, exp, sqrt, real
+from numpy.polynomial.polynomial import polyroots
 
 __doc__ = """These functions correspond to the inverted functions from the
 Mathematica workbooks"""
+
+s = open('theory/__CmainBody.txt', 'r').read()
+s = s.replace('\n', '')
 
 def expCunit(t, tau, m, theta):
     """The analytic a/c for GHMC with unit acceptance
@@ -89,21 +93,93 @@ def expCunit(t, tau, m, theta):
     ans = numerator/denominator
     return real(ans)
 
+def expC(t, tau, m, theta, pa):
+    """The analytic a/c for GHMC with unit acceptance
+        To be explicit, this is the function f(t)
+    
+    Required Inputs
+        t      :: float :: time (the inverse of \beta)
+        tau :: float    :: average trajectory length
+        m   :: float    :: mass parameter - the lowest frequency mode
+        theta :: float  :: mixing angle
+        pa :: float :: acceptance probability
+    """
+    phi = m*tau
+    r = 1/tau
+    
+    ct = cos(theta)
+    r2 = r*r
+    r3 = r2*r
+    r4 = r3*r
+    r5 = r4*r
+    ct2 = ct*ct
+    ct3 = ct2*ct
+    ct4 = ct3*ct
+    ct5 = ct4*ct
+    ct6 = ct5*ct
+    p2 = phi*phi
+    pa2 = pa*pa
+    # the Root object polynomial as returned by Mathematica
+    # f = poly[0] + poly[1]*x**1 + poly[2]*x**2 + ... + poly[n]*x**n
+    poly = [
+        (2*pa2*p2*ct3 - 2*pa2*p2*ct - 2*pa*p2*ct3 - 2*pa*p2*ct2         \
+            + 2*pa*p2*ct + 2*pa*p2)*r5,
+        (-2*pa2*p2*ct3 - 2*pa2*p2*ct + 6*pa*p2*ct3 - 2*pa*p2*ct         \
+            + 4*pa*p2 + 2*pa*ct3 - 2*pa*ct - 4*p2*ct3 - 4*p2*ct2            \
+            + 4*p2*ct + 4*p2 - ct3 - ct2 + ct + 1)*r4,
+        (2*pa*p2*ct2 - 4*pa*p2*ct + 2*pa*p2 + 4*pa*ct3 - 6*pa*ct - 4*p2*ct2 \
+            + 4*p2*ct + 8*p2 - 2*ct3 - 3*ct2 + 3*ct + 4)*r3,
+        (2*pa*ct3 - 6*pa*ct + 4*p2 - ct3 - 3*ct2 + 3*ct + 6)*r2,
+        (-2*pa*ct - ct2 + ct + 4)*r,
+        1
+    ]
+    # Equivalent to rt1 = Root[func & , 1]
+    rt1,rt2,rt3,rt4,rt5  = polyroots(poly)
+    
+    etr1 = exp(t*rt1)
+    etr2 = exp(t*rt2)
+    etr3 = exp(t*rt3)
+    etr4 = exp(t*rt4)
+    etr5 = exp(t*rt5)
+    rt1p2 = rt1**2
+    rt2p2 = rt2**2
+    rt3p2 = rt3**2
+    rt4p2 = rt4**2
+    rt5p2 = rt5**2
+    rt1p3 = rt1**3
+    rt2p3 = rt2**3
+    rt3p3 = rt3**3
+    rt4p3 = rt4**3
+    rt5p3 = rt5**3
+    rt1p4 = rt1**4
+    rt2p4 = rt2**4
+    rt3p4 = rt3**4
+    rt4p4 = rt4**4
+    rt5p4 = rt5**4
+    
+    numerator = eval(s)
+    denominator = (rt1-rt2)*(rt1-rt3)*(rt2-rt3)*(rt1-rt4)*(rt2-rt4)*(rt3-rt4)*(rt1-rt5)*(rt2-rt5)*(rt3-rt5)*(rt4-rt5)
+    
+    ans = numerator/denominator
+    return real(ans)
+    
 if __name__ == '__main__':
     import numpy as np
     import matplotlib.pyplot as plt
     from autocorrelations import M2_Exp
     
+    
     tau = 2
-    x = np.linspace(0, 10, 1000)
-    
-    # y = fn(x, np.pi/2, tau, tau)
-    y3 = expCunit(x, tau, 1, np.pi/2)
     m = M2_Exp(tau, 1)
-    y2 = m.eval(x)
     
-    # plt.plot(x, y/y[0], label='long func cython')
-    plt.plot(x, y2/y2[0], label='M2_EXP')
-    plt.plot(x, y3/y3[0], label='long func')
+    x = np.linspace(0, 10, 1000)
+    y1 = expC(x, tau, 1, np.pi/2, 1)
+    y2 = m.eval(x)
+    y3 = expCunit(x, tau, 1, np.pi/2)
+    
+    plt.plot(x, y3/y3[0], label='expCunit', linewidth=4.0, alpha=.2)
+    plt.plot(x, y1/y1[0], label='expC', linewidth=2.0, linestyle='--', alpha=.2)
+    plt.plot(x, y2/y2[0], label='M2_EXP', linestyle='--', alpha=.2)
+        
     plt.legend()
     plt.show()

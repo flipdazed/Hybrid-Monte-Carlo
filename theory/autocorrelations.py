@@ -1,7 +1,8 @@
 from __future__ import division
-from numpy import exp, real, cos, sin, pi, array, log, asscalar, array, absolute, sum
+from numpy import exp, real, cos, sin, pi, array, log, sqrt
+from numpy import asscalar, array, absolute, nansum, abs
 from scipy.signal import residuez
-
+    
 from _mathematicaFunctions import expCunit
 from hmc import checks
 
@@ -12,25 +13,8 @@ Throughout the code the roots, $B_k$, are referred to as `poles` and the constan
 of partial fractioning, $A_k$, are referred to as residues.
 """
 
-
-class Common(object):
-    """Common functions"""
-    def __init__(self):
-        pass
-    
-    def integrated(self, tau, m, pa, theta):
-        """Regular (inverted) Integrated function
-        
-        Required Inputs
-            tau     :: float    :: average trajectory length
-            m       :: float    :: mass parameter - the lowest frequency mode
-            pa      :: float    :: average acceptance probability
-            theta   :: float    :: mixing angle
-        """
-        ans = self.lapTfm(0, tau, m, pa, theta)
-        return ans
 #
-class M2_Fix(Common):
+class M2_Fix(object):
     """A/C of M^2 for tau = fixed
     (Magnetic Suceptibility)
     
@@ -50,16 +34,6 @@ class M2_Fix(Common):
         self.p_thresh = p_thresh
         self.setRoots(tau, m, pa, theta)
         pass
-    def validate(self, roots):
-        """Requirement for an analytic solution
-        
-        Required Inputs
-            root :: float :: the roots obtained
-        """
-        req = (absolute(array(roots)) > 1).all()
-        if not req:
-            print 'Warning: Magnitude of roots not all > 1:\n{}'.format(roots)
-        return req
         
     def lapTfm(self, b, tau, m, pa, theta=.5*pi):
         """Laplace-transformed function
@@ -123,8 +97,7 @@ class M2_Fix(Common):
             numerator *= -1 # non HMC are BOTH multiplied by -1
             
         return numerator / denominator
-
-        
+    
     def setRoots(self, tau, m, pa, theta):
         """Gets the roots
         
@@ -133,55 +106,69 @@ class M2_Fix(Common):
             m   :: float    :: mass parameter - the lowest frequency mode
             pa  :: float    :: average acceptance probability
             theta :: float  :: mixing angle
+        
+        Numerator and Denominator are defined as polynomial arrays
+        increasing in order stating from 0th order and ending at nth order
         """
         self.tau = tau
         self.m = m
         self.theta = theta
         self.pa = pa
         
-        if theta==.5*pi:
+        if theta==.5*pi: # checked with Mathematica
             # no scipy needed for theta = pi/2
             self.res = self.poles = self.const = None
             
             if pa > self.p_thresh:
-                print "Warning: Implementation may be incorrect." \
-                    + "\nRead http://tinyurl.com/hjlkgsq for more information"
-                
-                self.poles = cos(m*tau)**2
+                self.poles = array(cos(m*tau)**2)
             else:
-                print "Warning: Implementation may be incorrect." \
-                    + "\n\tRead http://tinyurl.com/hjlkgsq for more information"
-                
-                self.poles = pa*cos(m*tau)**2 + 1 - pa
+                self.poles = array(pa*cos(m*tau)**2 + 1 - pa)
+            # poles are 1/B_k as defined in the paper for pi/2 case
         else:
             cos_phi    = cos(m*tau)
+            cos_phi2   = cos_phi*cos_phi
             cos_theta  = cos(theta)
-            cos_theta2 = cos_theta**2
-            cos_theta3 = cos_theta**3
-            
-            a0 = -1 + 2*cos_phi2
-            a1 = -pa*cos_phi2 - 1 + pa
-            a2 = -2*pa + 1 + 2*pa*cos_phi2
-            a3 = +pa*cos_phi2 - 1 + pa
-            a4 = 1 - 2*pa
+            cos_theta2 = cos_theta*cos_theta
+            cos_theta3 = cos_theta2*cos_theta
+            print "\nWarning: Implementation may be incorrect." \
+                + "\n> Read http://tinyurl.com/hjlkgsq for more information"
             
             if pa > self.p_thresh:
-                raise ValueError("Issue with implementation")
-                numerator    = array([cos_theta3, a0*cos_theta2 + cos_phi2*cos_theta, cos_phi2, 0])
-                denominator = [cos_theta3, (cos_theta3*cos_phi2)    \
-                                            - (cos_phi2*cos_theta)  \
-                                            - (-1 + 2*cos_phi2)*cos_theta2, -1]
-                numerator   *= -1
-                self.res, self.poles, self.const = residuez(numerator, denominator)
+                numerator = [ # checked and verified with Mathematica
+                    0,
+                    -cos_phi2, 
+                    2*cos_phi2*cos_theta2 + cos_phi2*cos_theta \
+                        - cos_theta2,
+                    -cos_theta3]
+                
+                
+                denominator = [ # checked and verified with Mathematica
+                    1,
+                    -cos_phi2*cos_theta2 - 2*cos_phi2*cos_theta - cos_phi2 + cos_theta,
+                    cos_theta*cos_phi2 + cos_theta3*cos_phi2 + cos_theta2*(-1 + 2*cos_phi2),
+                    -cos_theta3]
             else:
-                raise ValueError("Issue with implementation")
-                numerator    = array([a4*cos_theta3, a2*cos_theta2 + a3*cos_theta, 0])
-                denominator = [-a4*cos_theta3, (-1 + pa + pa*cos_phi2)*cos_theta3   \
-                                                + a2*cos_theta2                     \
-                                                + a3*cos_theta, +1]
-                numerator   *= -1
-                self.res, self.poles, self.const = residuez(numerator, denominator)
-        self.validate(self.poles)
+                numerator = [ # checked with mathematica
+                    0,
+                    pa*cos_phi2 - pa + 1,
+                    -2*pa*cos_phi2*cos_theta2 - pa*cos_phi2*cos_theta \
+                        + 2*pa*cos_theta2 - pa*cos_theta - cos_theta2 \
+                        + cos_theta,
+                    (-1 + 2*pa)*cos_theta3]
+                
+                denominator = [
+                    1,
+                    -pa*cos_phi2*cos_theta2                         \
+                        - 2*pa*cos_phi2*cos_theta - pa*cos_phi2     \
+                        + pa*cos_theta2 + pa - cos_theta2           \
+                        + cos_theta - 1,
+                        (-1 + pa + pa*cos_phi2)*cos_theta           \
+                            + (1 - 2*pa + 2*pa*cos_phi2)*cos_theta2 \
+                            + (-1 + pa + pa*cos_phi2)*cos_theta3,
+                    -2*pa*cos_theta3 + cos_theta3]
+            self.d = denominator
+            self.n = numerator
+            self.res, self.poles, self.const = map(array, residuez(numerator, denominator))
         return self.poles
     
     def eval(self, t, tau = None, m = None, pa = None, theta = None):
@@ -200,26 +187,62 @@ class M2_Fix(Common):
         
         Note the delta function at zero does not exist as C = 0
         """
-        if None in [tau, m, pa, theta]:
-            if tau is not None: self.tau = tau
-            if m is not None: self.m = m
-            if pa is not None: self.pa = pa
-            if theta is not None: self.theta = theta
-            self.setRoots(self.tau, self.m, self.pa, self.theta)
+        if tau is not None: self.tau = tau
+        if m is not None: self.m = m
+        if pa is not None: self.pa = pa
+        if theta is not None: self.theta = theta
+        self.setRoots(self.tau, self.m, self.pa, self.theta)
+        
+        print "\nWarning: Implementation may be incorrect." \
+            + "\n> The Fixed autocorrelation doesn't have an analytic solution!"
+        
+        n = t/self.tau  # the number of HMC trajectories (samples)
+        b = self.poles
+        c = nansum(self.const) if self.const is not None else 0
         
         # For for both P_acc = 1 and P_acc != 1 is the same
         if self.theta==.5*pi:
-            b1 = self.poles
-            n = t/self.tau  # the number of HMC trajectories (samples)
-            ans = b1**n     # see http://math.stackexchange.com/q/1869017/272850
+            req = (absolute(array(self.poles)) < 1).all()
+            if not req:
+                print '\n\tWarning: Magnitude of roots' \
+                 + 'not all < 1:\n\t > {}'.format(self.poles)
+            # see http://math.stackexchange.com/q/1869017/272850
+            # this uses a different way of summing the geometric series
+            # to the more general method below
+            
+            ans = array(b**n)
+            # in the case where there are muilple roots
+            if len(ans.shape) > 1: ans = nansum(ans, axis=0)
         else:
-            if self.pa > self.p_thresh:
-                raise ValueError("not implemented")
-            else:
-                raise ValueError("not implemented")
+            req = (absolute(array(self.poles)) < 1).all()
+            if not req:
+                print '\n\tWarning: Magnitude of roots' \
+                 + 'not all > 1:\n\t > {}'.format(self.poles)
+            a = self.res
+            # see http://math.stackexchange.com/q/1869017/272850
+            ans = - array([a_i/b_i*b_i**(n) for a_i,b_i in zip(a, b)])
+            
+            # in the case where there are muilple roots
+            if len(ans.shape) > 1: ans = nansum(ans, axis=0)
+            
+            # introduce C*delta(t-0)
+            ans[t == 0] = c
+            
+        return real(ans)
+    
+    def integrated(self, tau, m, pa, theta):
+        """Regular (inverted) Integrated function
+        
+        Required Inputs
+            tau     :: float    :: average trajectory length
+            m       :: float    :: mass parameter - the lowest frequency mode
+            pa      :: float    :: average acceptance probability
+            theta   :: float    :: mixing angle
+        """
+        ans = self.lapTfm(b=0, tau=tau, m=m, pa=pa, theta=theta)
         return ans
 #
-class M2_Exp(Common):
+class M2_Exp(object):
     """A/C of M^2 for tau ~ Geom
     (Magnetic Suceptibility)
     
@@ -243,7 +266,7 @@ class M2_Exp(Common):
         self.setRoots(tau, m, pa, theta)
         pass
     
-    def lapTfm(self, b, tau, m, pa):
+    def lapTfm(self, b, tau, m, pa, theta=.5*pi):
         """Laplace-transformed function
         
         Required Inputs
@@ -253,6 +276,7 @@ class M2_Exp(Common):
             theta :: float  :: mixing angle
         """
         
+        r = 1/tau
         if theta == .5*pi:
             b2 = b**2
             b3 = b**3
@@ -335,6 +359,9 @@ class M2_Exp(Common):
             theta :: float :: mixing angle
             verbose :: bool :: prints out residues, poles and constant from
                                 scipy's residuez function
+        
+        Numerator and Denominator are defined as polynomial arrays
+        increasing in order stating from 0th order and ending at nth order
         """
         self.tau = tau
         self.r = r = 1./tau
@@ -357,7 +384,7 @@ class M2_Exp(Common):
                 denominator = [1, 2*r, (4*phi2 + 1)*r2, 2*pa*r3*phi2]
             
             # get the roots
-            self.res, self.poles, self.const = residuez(numerator, denominator)
+            self.res, self.poles, self.const = map(array, residuez(numerator, denominator))
             if verbose:
                 display = lambda t, x: '\n{}: {}'.format(t, x)
                 print display('Residues', self.res)
@@ -365,9 +392,12 @@ class M2_Exp(Common):
                 print display('Constant', self.const)
         else:
             if pa > self.p_thresh:
-                raise ValueError("Not implemented yet: pa > p_thresh & theta != pi/2")
+                denominator = numerator = None
             else:
-                raise ValueError("Not implemented yet: pa < p_thresh & theta != pi/2")
+                denominator = numerator = None
+        
+        self.d = denominator
+        self.n = numerator
         return self.poles
     
     def eval(self, t, tau=None, m=None, pa=None, theta=None):
@@ -384,13 +414,13 @@ class M2_Exp(Common):
             pa  :: float    :: average acceptance probability
             theta :: float  :: mixing angle
         """
-        if None in [tau, m, pa, theta]:
-            if tau is not None: self.tau = tau
-            if m is not None: self.m = m
-            if pa is not None: self.pa = pa
-            if theta is not None: self.theta = theta
-            self.setRoots(self.tau, self.m, self.pa, self.theta)
+        if tau is not None: self.tau = tau
+        if m is not None: self.m = m
+        if pa is not None: self.pa = pa
+        if theta is not None: self.theta = theta
+        self.setRoots(self.tau, self.m, self.pa, self.theta)
         
+        t = array(t)
         pa = self.pa
         if self.theta == .5*pi:
             if pa > self.p_thresh:
@@ -431,17 +461,98 @@ class M2_Exp(Common):
                 b = self.poles
                 a = self.res
                 c = self.const
-                if sum(c) != 0: 
+                if nansum(c) != 0: 
                     print 'Warning: Non-zero constant term:\n\t{}'.format(c)
-                ans = sum([a_i*exp(b_i*t) for a_i, b_i in zip(a, b)])
+                ans = array([a_i*exp(b_i*t) for a_i, b_i in zip(a, b)])
+                ans = nansum(ans, axis=0)
                 return real(ans)
         else:
             if pa > self.p_thresh:
                 ans = expCunit(t, self.tau, self.m, self.theta)
                 return ans
             else:
-                raise ValueError(
-                    "Not implemented yet: {} < p_thresh & {} != pi/2".format(
-                        pa, self.theta))
+                ans = expC(t, self.tau, self.m, self.theta, self.pa)
+                return ans
         
+    def integrated(self, tau, m, pa, theta):
+        """Regular (inverted) Integrated function
+        
+        Required Inputs
+            tau     :: float    :: average trajectory length
+            m       :: float    :: mass parameter - the lowest frequency mode
+            pa      :: float    :: average acceptance probability
+            theta   :: float    :: mixing angle
+        
+        This needs to be normalised by the inverted function
+        """
+        ans = self.lapTfm(b=0,tau=tau, m=m, pa=pa, theta=theta)
+        norm = self.eval(t=0,tau=tau, m=m, pa=pa, theta=theta)
+        ans /= norm
+        return ans
 #
+if "__main__" == __name__:
+    
+    def test(ex, ac, s, r):
+        print '\n{}'.format(s)
+        print "Expected: {}".format(ex)
+        print "Actual: {}".format(ac)
+        print "result {}".format(r)
+        pass
+    
+    e  = 1e-4 # tolerance
+    
+    print "Testing M2_Fix"
+    print 'Testing for P_acc = 0.78'
+    # numerator:    {0, 0.992226, -1.41564, 0.481734}
+    # denominator:  1 - 2.40751 x + 1.89069 x^2 - 0.481734 x^3
+    expected_n = array([0, 0.992226, -1.41564, 0.481734])
+    expected_d = array([1, -2.40751, 1.89069, -0.481734])
+    m = M2_Fix(tau=0.1, m=1, pa=0.78, theta=pi/10., p_thresh=1.)
+    result = (abs(array(m.n) - expected_n)< e).all()
+    test(expected_n, m.n, "numerator", result)
+    result = (abs(array(m.d) - expected_d)< e).all()
+    test(expected_d, m.d, "denominator", result)
+    
+    print '\n\nTesting for P_acc = 1'
+    # numerator:    {0, 0.990033, -1.82806, (5/8 + Sqrt[5]/8)^(3/2)}
+    # denominator:  1, -2.81763, 2.67972, -(5/8 + Sqrt[5]/8)^(3/2)
+    c0 = (5/8. + sqrt(5)/8.)**(3/2.)
+    expected_n = array([0, 0.990033, -1.82806, c0])
+    expected_d = array([1, -2.81763, 2.67972, -c0])
+    m = M2_Fix(tau=0.1, m=1, pa=1, theta=pi/10., p_thresh=1.)
+    result = (abs(array(m.n) - expected_n)< e).all()
+    test(expected_n, m.n, "numerator", result)
+    result = (abs(array(m.d) - expected_d)< e).all()
+    test(expected_d, m.d, "denominator", result)
+    
+    
+    # plot some examples
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import theory.autocorrelations
+    reload(theory.autocorrelations)
+    import itertools
+    
+    plt.ion()
+    plt.show()
+    plt.cla()
+    tau = np.linspace(0.01, 0.1, 3)
+    theta =  np.pi/np.linspace(2, 10, 3)
+    pa = np.linspace(0.2, 1.0, 3)
+    x = np.linspace(0, 50, 1001)
+    
+    m = theory.autocorrelations.M2_Fix(0.1, 1)
+    for ta, th, p in list(itertools.product(tau, theta, pa)):
+        y = m.eval(x, ta, 1, p, th)
+        plt.plot(x, y/y[0], label="tau:{}, theta:{}, pa:{}".format(ta, th, p))
+    plt.legend()
+    plt.draw()
+    
+    f1 = m.integrated(ta, 1, 1, th)
+    f2 = np.trapz(y/y[0], x)
+    print 'Func:', f1
+    print 'Numpy integration:',f2
+    print 'ratio:', f1/f2
+    print 'res:', m.res
+    print 'roots:', m.poles
+    print 'const:', m.const

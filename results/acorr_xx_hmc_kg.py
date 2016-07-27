@@ -12,9 +12,9 @@ n, dim = 20, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.
 
-n_samples, n_burn_in = 10000, 25
+n_samples, n_burn_in = 1000, 25
 step_size =  .1
-n_steps   =  20
+n_steps   =  100
 c_len     = 200
 
 mixing_angles = [.5*np.pi]

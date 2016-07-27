@@ -125,13 +125,10 @@ def main(x0, pot, file_name,
         p = c.model.p_acc
         xx = c.op_mean
         
-        if a == .5*np.pi:
-            m = M2_Exp(tau = (step_size*n_steps), m = 1, pa = 1)
-            fx = np.linspace(0, separations[:2*w][-1]*step_size*n_steps, separations[:2*w].size*100+1, True)
-            f = m.eval(fx)
-            f /= f[0]
-        else:
-            f = fx = None
+        m = M2_Exp(tau = 1/(step_size*n_steps), m = 1, pa = p, p_thresh=1)
+        fx = np.linspace(0, separations[:2*w][-1]*step_size*n_steps, separations[:2*w].size*100+1, True)
+        f = m.eval(fx)
+        f /= f[0]
         return xx, acns, acns_err, p, fx, f, w
     print 'Finished Running Model: {}'.format(file_name)
     # use multiprocessing
