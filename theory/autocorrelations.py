@@ -141,7 +141,6 @@ class M2_Fix(object):
                         - cos_theta2,
                     -cos_theta3]
                 
-                
                 denominator = [ # checked and verified with Mathematica
                     1,
                     -cos_phi2*cos_theta2 - 2*cos_phi2*cos_theta - cos_phi2 + cos_theta,
@@ -276,15 +275,15 @@ class M2_Exp(object):
             theta :: float  :: mixing angle
         """
         
-        r = 1/tau
+        r = 1./tau
+        b2 = b*b
+        b3 = b2*b
+        r2 = r*r
+        r3 = r2*r
+        phi = m*tau
+        phi2 = phi*phi
         if theta == .5*pi:
-            b2 = b**2
-            b3 = b**3
-            m2 = m**2
-            phi = m*tau
-            phi2 = phi**2
-            r2 = r**2
-            r3 = r**3
+            m2 = m*m
             
             if pa > self.p_thresh:
                 numerator   = r3 + 2*r2*b + r*b2 + 2*m2*r
@@ -295,12 +294,12 @@ class M2_Exp(object):
         else:
             bt = b*tau
             cos_theta = cos(theta)
-            cos_theta2 = cos_theta**2
-            cos_theta3 = cos_theta**3
-            b4 = b2**2
-            r4 = r2**2
-            b5 = b**5
-            r5 = r**5
+            cos_theta2 = cos_theta*cos_theta
+            cos_theta3 = cos_theta2*cos_theta
+            r4 = r2*r2
+            r5 = r4*r
+            b4 = b2*b2
+            b5 = b4*b
             if pa > self.p_thresh:
                 a7 = 2 - cos_theta - cos_theta2
                 a8 = 1 - cos_theta - cos_theta2 + cos_theta3
@@ -370,11 +369,11 @@ class M2_Exp(object):
         self.pa = pa
         
         if theta == .5*pi:
-            m2 = m**2
+            m2 = m*m
             phi = m*tau
-            phi2 = phi**2
-            r2 = r**2
-            r3 = r**3
+            phi2 = phi*phi
+            r2 = r*r
+            r3 = r2*r
             
             if pa > self.p_thresh:
                 numerator = [r, 2*r2, 2*m2*r + r3]

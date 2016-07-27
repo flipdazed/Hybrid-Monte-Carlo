@@ -12,7 +12,7 @@ from plotter import Pretty_Plotter, PLOT_LOC
 from matplotlib.collections import LineCollection
 
 ignorecols = ['snow', 'white', 'k', 'w', 'r']
-clist = [i for i in colors.ColorConverter.colors if i not in ignorecols]
+clist = [i for i in colors.ColorConverter.colors if i not in ignorecols]*5
 
 def plot(x, lines, subtitle, op_name, save):
     """Plots the two-point correlation function
@@ -49,24 +49,27 @@ def plot(x, lines, subtitle, op_name, save):
     ax[-1].get_xaxis().set_major_formatter(ticker.FuncFormatter(formatFunc))
     # Fix colours: A bug sometimes forces all colours the same
     colour = (i for i in random.sample(clist, len(clist))) # defined top of file
+    
     for k, v in lines.iteritems():
-        for (y, err, label) in v:
-            c = next(colour)
+        for i, (y, err, label) in enumerate(v):
+            if i > 0:
+                s = '--'
+                c = 'r'
+            else:
+                s = '-'
+                c = next(colour)
+            
             if err is None:
-                ax[k].plot(x, y, c=c, lw=1., alpha=0.6, label=label)
+                ax[k].plot(x, y, c=c, lw=1., alpha=0.6, label=label, linestyle=s)
             else:
                 y = np.asarray(y); err = np.asarray(err)
-                ax[k].fill_between(x, y-err, y+err, color=c, alpha=0.9)
+                ax[k].fill_between(x, y-err, y+err, color=c, alpha=0.9, label=label)
                 # ax[k].errorbar(x, y, yerr=err, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
                 #     label=label)
-    # Fix the limits so the plots have nice room 
-    for a in ax:                            # 5% extra room at top & add legend
-        # xi,xf = a.get_xlim()
-        # a.set_xlim(xmin= xi-.05*(xf-xi))    # decent view of the first point
-        # a.set_xlim(-0.001, 0.101)
-        yi,yf = a.get_ylim()
-        a.set_ylim(ymax= yf+.05*(yf-yi), ymin= yi-.05*(yf-yi))
-        # a.legend(loc='best', shadow=True, fontsize = pp.axfont)
+            if i == 0:
+                yi,yf = ax[k].get_ylim()
+                ax[k].set_ylim(ymax= yf+.05*(yf-yi), ymin= yi-.05*(yf-yi))
+        ax[k].legend(loc='best', shadow=True, fontsize = pp.axfont)
     
     pp.save_or_show(save, PLOT_LOC)
     pass
