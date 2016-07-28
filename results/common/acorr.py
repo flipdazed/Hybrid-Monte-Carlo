@@ -10,7 +10,18 @@ from correlations import acorr, corr, errors
 from models import Basic_GHMC as Model
 from utils import saveOrDisplay, prll_map
 from plotter import Pretty_Plotter, PLOT_LOC
-from theory.autocorrelations import M2_Exp
+
+# generatte basic colours list
+clist = [i for i in colors.ColorConverter.colors if i != 'w']
+colour = [i for i in random.sample(clist, len(clist))]
+
+# generate only dark colours
+darkclist = [i for i in colors.cnames if 'dark' in i]
+darkcolour = [i for i in random.sample(darkclist, len(darkclist))]
+lightcolour = map(lambda strng: strng.replace('dark',''), darkcolour)
+
+theory_colours = iter(colour)
+measured_colours = iter(colour)
 
 def plot(acns, lines, subtitle, op_name, save):
     """Plots the two-point correlation function
@@ -40,24 +51,29 @@ def plot(acns, lines, subtitle, op_name, save):
     
     ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
     
-    ax[0].set_xlabel(r'Fictitious sample time, $t = \sum^j_{i=0}\tau_i \stackrel{j\to\infty}{=} j\bar{\tau} = j \delta \tau \bar{n}$')
+    ax[0].set_xlabel(r'Fictitious sample time, '                            \
+        + r'$t = \sum^j_{i=0}\tau_i \stackrel{j\to\infty}{=} j\bar{\tau} '  \
+        + r'= j \delta \tau \bar{n}$')
+    
     ax[0].set_ylabel(r'Normalised Autocorrelation, $C(t)$')# \
         # + r'(\hat{O}_{i+t} - \langle\hat{O}\rangle) \rangle}/{\langle \hat{O}_0^2 \rangle}$')
     
-    clist = [i for i in colors.ColorConverter.colors if i != 'w']
-    colour = (i for i in random.sample(clist, len(clist)))
-    for label, (x, y, e) in acns.iteritems():
-        c = next(colour)
+    for label, (x, y, e) in sorted(acns.iteritems()):
+        c = next(measured_colours)
         # for some reason I occisionally need to add a fake plot
         # p2 = ax[0].add_patch(Rectangle((0, 0), 0, 0, fc=c, linewidth=0, alpha=.4, label=label))
-        ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
+        try:
+            ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
+        except Exception, e:
+            print 'Failed for "{}"'.format(label)
+            print 'Shapes: x:{} y:{} e:{}'.format(x.shape, y.shape, e.shape)
+            print 'Error:'
+            print e
         # ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
         #     label=label)
     
-    darkclist = [i for i in colors.cnames if 'dark' in i]
-    darkcolour = (i for i in random.sample(darkclist, len(darkclist)))
-    for label, line in lines.iteritems():
-        dc = next(darkcolour)
+    for label, line in sorted(lines.iteritems()):
+        dc = next(theory_colours)
         ax[0].plot(*line, linestyle='-', linewidth=1, alpha=1, label=label, color = dc)
     
     xi,xf = ax[0].get_xlim()
@@ -72,7 +88,8 @@ def plot(acns, lines, subtitle, op_name, save):
 def main(x0, pot, file_name,
         n_samples, n_burn_in,
         mixing_angles, angle_labels, opFn, op_name, separations, 
-        rand_steps= False, step_size = .5, n_steps = 1, spacing = 1., 
+        rand_steps= False, step_size = .5, n_steps = 1, spacing = 1.,
+        Theory_Cls = None,
         save = False):
     """A wrapper function
     
@@ -92,12 +109,20 @@ def main(x0, pot, file_name,
         rand_steps :: bool :: probability of with prob
         step_size :: float :: MDMC step size
         n_steps :: int :: number of MDMC steps
-        spacing ::float :: lattice spacing
+        spacing :: float :: lattice spacing
+        Theory_Cls :: class :: a class object with .eval() for evaluating a theory
         save :: bool :: True saves the plot, False prints to the screen
+    
+    Expectations
+        1.  Theory_Cls must accept **kwargs: 'pa', 'tau' as it is expected it will vary
+            with respect to these parameters
+        2.  Theory_Cls must have a function '.eval(pa=pa, tau=tau)' to return predictions
     """
     
-    lines = {} # contains the label as the key and a tuple as (x,y) data in the entry
+    # required declarations. If no lines are provided this still allows iteration for 0 times
+    lines = {}  # contains the label as the key and a tuple as (x,y) data in the entry
     acs = {}
+    
     if not isinstance(separations, np.ndarray): separations = np.asarray(separations)
     rng = np.random.RandomState()
     
@@ -107,7 +132,9 @@ def main(x0, pot, file_name,
     print 'Running Model: {}'.format(file_name)
     
     def coreFunc(a):
-        """runs the below for an angle, a"""
+        """runs the below for an angle, a
+        Allows multiprocessing across a range of values for a
+        """
         i,a = a
         model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
           n_steps = n_steps, rand_steps=rand_steps)
@@ -124,33 +151,63 @@ def main(x0, pot, file_name,
         # get parameters generated
         p = c.model.p_acc
         xx = c.op_mean
-        
-        m = M2_Exp(tau = 1/(step_size*n_steps), m = 1, pa = p, p_thresh=1)
-        fx = np.linspace(0, separations[:2*w][-1]*step_size*n_steps, separations[:2*w].size*100+1, True)
-        f = m.eval(fx)
-        f /= f[0]
-        return xx, acns, acns_err, p, fx, f, w
+        return xx, acns, acns_err, p, w
+    #
     print 'Finished Running Model: {}'.format(file_name)
     # use multiprocessing
-    out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
-    al = len(mixing_angles)
-    if al == 1: # don't use multiprocessing for just 1
+    
+    al = len(mixing_angles) # the number of mixing angles
+    if al == 1:             # don't use multiprocessing for just 1 mixing angle
         a = mixing_angles[0]
         ans = [coreFunc((i, a)) for i,a in enumerate(mixing_angles)]
-    else:
+    else:                   # use multiprocessing for a number of mixing angles
         ans = prll_map(coreFunc, zip(range(al), mixing_angles), verbose=False)
     
-    xx, acns, acns_err, ps, fxs, fs, ws = zip(*ans) # unpack from multiprocessing
+    # results have now been obtained. This operation is a dimension shuffle
+    # Currently the first iterable dimension contains one copy of each item
+    # Want to split into separate arrays each of length n
+    xx, acns, acns_err, ps, ws = zip(*ans)
     
-    print '\n'*al # hack to avoid overlapping!
+    print '\n'*al           # hack to avoid overlapping with the progress bar from multiprocessing
+    out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
     for p, x, a in zip(ps, xx, mixing_angles):
-        print out(p,x,a)
+        print out(p,x,a)    # print output as defined above
     
-    # create dictionary for plotting
-    x = separations*step_size*n_steps
-    acns = {r'Measured: $C^{\text{exp}}_{\phi^2}(t; \langle P_{\text{acc}}\rangle'+r'={:4.2f}; '.format(p)+r'\theta = {})$'.format(l):(x[:2*w], y[:2*w], e[:2*w]) for y,e,l,p,w in zip(acns, acns_err, angle_labels, ps, ws)}
-    lines = {r'Theory: $C^{\text{exp}}_{\phi^2}(t; \langle P_{\text{acc}}\rangle \approx 1; '+r'\theta = {})$'.format(l):(fx, f) for fx,f,l in zip(fxs, fs, angle_labels) if f is not None}
+    # Decide a good total length for the plot
+    w = np.max(ws)                                  # same length for all theory and measured data
     
+    # Create Dictionary for Plotting Measured Data
+    windowed_separations = separations[:2*w]        # cut short to 2*window for a nicer plot
+    x = windowed_separations*step_size*n_steps      # create the x-axis in "ficticious HMC-time"
+    aclabel = r'Measured: $C^{\text{exp}}_{\phi^2}(t; '             \
+        + r'\langle P_{\text{acc}}\rangle'+r'={:4.2f}; '.format(p)
+    yelpw = zip(acns, acns_err, angle_labels, ps, ws)   # this is an iterable of all a/c plot values
+    yelpw = yelpw                                       # cut to the same window length as x-axis
+    
+    # create the dictionary item to pass to plot()
+    acns = {aclabel+r'\theta = {})$'.format(l) :(x, y[:2*w], e[:2*w]) for y,e,l,p,w_i in yelpw}
+    
+    if Theory_Cls is not None: # Create Dictionary for Plotting Theory
+        m = Theory_Cls                                      # create a shortcut for theory class
+        fx_res = 100                                        # points per x-value
+        fx_points = 2*w*fx_res+1                            # number of points to use
+        fx_f = windowed_separations[-1]*step_size*n_steps   # last trajectory separation length to plot
+        fx = np.linspace(0, fx_f, fx_points, True)          # create the x-axis for the theory
+        windowed_ps = ps[:2*w]                              # windowed acceptance probabilities
+        # calculcate theory across all tau, varying p_acc and normalise
+        vFn = lambda pt: m.eval(t=fx, pa=pt[0], theta=pt[1])/m.eval(t=0,pa=pt[0], theta=pt[1])
+        fs = map(vFn, zip(ps, mixing_angles))
+        th_label = r'Theory: $C^{\text{exp}}_{\phi^2}(t; ' \
+            + r'\langle P_{\text{acc}}\rangle \approx 1; '
+        fl = zip(fs, angle_labels)                          # this is an iterable of all theory plot values
+        fl = fl[:2*w]                                       # cut to the same window length as x-axis
+        
+        # create the dictionary item to pass to plot()
+        lines = {th_label+ r'\theta = {})$'.format(l): (fx, f) for f,l in fl if f is not None} 
+    else:
+        pass # lines = {} has been declared at the top so will allow the iteration in plot()
+    
+    # Bundle all data ready for Plot() and store data as .pkl or .json for future use
     all_plot = {'acns':acns, 'lines':lines, 'subtitle':subtitle, 'op_name':op_name}
     store.store(all_plot, file_name, '_allPlot')
     

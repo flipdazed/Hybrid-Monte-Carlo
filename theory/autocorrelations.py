@@ -195,7 +195,7 @@ class M2_Fix(object):
         print "\nWarning: Implementation may be incorrect." \
             + "\n> The Fixed autocorrelation doesn't have an analytic solution!"
         
-        n = t/self.tau  # the number of HMC trajectories (samples)
+        n = t/self.tau # the number of HMC trajectories (samples)
         b = self.poles
         c = nansum(self.const) if self.const is not None else 0
         
@@ -209,9 +209,9 @@ class M2_Fix(object):
             # this uses a different way of summing the geometric series
             # to the more general method below
             
-            ans = array(b**n)
+            ans = array(b**(n))
             # in the case where there are muilple roots
-            if len(ans.shape) > 1: ans = nansum(ans, axis=0)
+            if b.size > 1: ans = nansum(ans, axis=0)
         else:
             req = (absolute(array(self.poles)) < 1).all()
             if not req:
@@ -222,10 +222,12 @@ class M2_Fix(object):
             ans = - array([a_i/b_i*b_i**(n) for a_i,b_i in zip(a, b)])
             
             # in the case where there are muilple roots
-            if len(ans.shape) > 1: ans = nansum(ans, axis=0)
+            if b.size > 1: ans = nansum(ans, axis=0)
             
-            # introduce C*delta(t-0)
-            ans[t == 0] = c
+            if ans.size > 1: # implement the delta function
+                ans[t == 0] = c
+            else:
+                if t == 0: ans = c
             
         return real(ans)
     

@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     88993,       2151]
-NotebookOptionsPosition[     83732,       1965]
-NotebookOutlinePosition[     84132,       1983]
-CellTagsIndexPosition[     84089,       1980]
+NotebookDataLength[     88680,       2134]
+NotebookOptionsPosition[     83623,       1958]
+NotebookOutlinePosition[     84023,       1976]
+CellTagsIndexPosition[     83980,       1973]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -1578,10 +1578,29 @@ most complicated for last."
 Cell["\<\
 There is a sepcific method provided in the paper howeve\[Tau], partial \
 fraction decomposition is not well supported in Mathematica so it makes more \
-sense to simply force the result for those that are no immediately obvious.\
+sense to simply force the result for those that are not immediately obvious.\
 \>", "Text",
  CellChangeTimes->{{3.6782020902549343`*^9, 3.67820215378318*^9}, 
-   3.678220154428628*^9}],
+   3.678220154428628*^9, {3.678719375589197*^9, 3.6787193766504717`*^9}, {
+   3.6787194146746693`*^9, 3.6787194401206017`*^9}, 3.678719484031039*^9}],
+
+Cell["Important Note for Fixed Length Trajectories", "Subsubsection",
+ CellChangeTimes->{{3.6787194417006617`*^9, 3.67871946485469*^9}}],
+
+Cell[TextData[{
+ "The correlation function cannot be calculated by Mathematica. The code \
+below is an artifact to deomonstrate this fact. The issue resides in the \
+analytic form being that of a ",
+ StyleBox["Dirac Comb",
+  FontSlant->"Italic"],
+ " so the result for the correlation functions is just a meaningless \
+collection of Dirac Delta function infinities. See ",
+ StyleBox["Appendix Section A2",
+  FontWeight->"Bold"],
+ " of the referenced paper for the theory. As a result all the calculations \
+are commented out to prevent a waste of computation."
+}], "Text",
+ CellChangeTimes->{{3.678719489537038*^9, 3.678719657630538*^9}}],
 
 Cell[CellGroupData[{
 
@@ -1602,32 +1621,29 @@ Autocorrelation function and assigns it to a callable function,\
  CellChangeTimes->{{3.678199317504532*^9, 3.678199366017501*^9}, {
   3.6782002100283117`*^9, 3.678200211731779*^9}}],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[
  RowBox[{
-  RowBox[{"iFHMCunit", " ", "=", " ", 
-   RowBox[{"InverseLaplaceTransform", "[", 
-    RowBox[{
-     RowBox[{"FHMCunit", "[", 
-      RowBox[{"\[Beta]", " ", ",", "\[Phi]", ",", " ", "\[Tau]"}], "]"}], ",",
-      "\[Beta]", ",", "t"}], "]"}]}], " ", ";"}]], "Input",
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"iFHMCunit", " ", "=", " ", 
+     RowBox[{"InverseLaplaceTransform", "[", 
+      RowBox[{
+       RowBox[{"FHMCunit", "[", 
+        RowBox[{"\[Beta]", " ", ",", "\[Phi]", ",", " ", "\[Tau]"}], "]"}], 
+       ",", "\[Beta]", ",", "t"}], "]"}]}], " ", ";"}], "*)"}], "\n", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"CHMCunit", "[", 
+     RowBox[{"t_", ",", " ", "\[Phi]_", ",", "\[Tau]_"}], " ", "]"}], " ", ":=",
+     " ", 
+    RowBox[{"Evaluate", "[", "iFHMCunit", "]"}]}], "*)"}]}]], "Input",
  CellChangeTimes->{{3.678200449650069*^9, 3.67820045169071*^9}, {
    3.678200550575301*^9, 3.678200616759019*^9}, {3.678201955587666*^9, 
    3.6782020249532633`*^9}, {3.678202424619438*^9, 3.678202431155465*^9}, 
    3.67820364664179*^9, {3.6782066659345093`*^9, 3.678206666718487*^9}, 
    3.678220140917797*^9, {3.6785506451943808`*^9, 3.678550645432898*^9}, {
-   3.678718558449814*^9, 3.6787185589907*^9}}],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"CHMCunit", "[", 
-   RowBox[{"t_", ",", " ", "\[Phi]_", ",", "\[Tau]_"}], " ", "]"}], " ", ":=",
-   " ", 
-  RowBox[{"Evaluate", "[", "iFHMCunit", "]"}]}]], "Input",
- CellChangeTimes->{{3.678199588895525*^9, 3.678199610022584*^9}, 
-   3.678202434691513*^9, 3.67822013004172*^9}]
-}, Open  ]],
+   3.678718558449814*^9, 3.6787185589907*^9}, {3.678719663032366*^9, 
+   3.6787196684420767`*^9}}],
 
 Cell[CellGroupData[{
 
@@ -1686,36 +1702,31 @@ Autocorrelation function and assigns it to a callable function,\
 \>", "Text",
  CellChangeTimes->{{3.678199317504532*^9, 3.678199366017501*^9}}],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[
- RowBox[{
-  RowBox[{"iFHMC", " ", "=", " ", 
-   RowBox[{"InverseLaplaceTransform", "[", 
-    RowBox[{
-     RowBox[{"FHMC", "[", 
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"iFHMC", " ", "=", " ", 
+     RowBox[{"InverseLaplaceTransform", "[", 
       RowBox[{
-      "\[Beta]", " ", ",", "\[Phi]", ",", " ", "\[Rho]", ",", " ", "\[Tau]"}],
-       "]"}], ",", "\[Beta]", ",", "t"}], "]"}]}], " ", ";"}]], "Input",
+       RowBox[{"FHMC", "[", 
+        RowBox[{
+        "\[Beta]", " ", ",", "\[Phi]", ",", " ", "\[Rho]", ",", " ", 
+         "\[Tau]"}], "]"}], ",", "\[Beta]", ",", "t"}], "]"}]}], " ", ";"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{"CHMC", "[", 
+     RowBox[{
+     "t_", ",", " ", "\[Phi]_", ",", " ", "\[Rho]_", ",", " ", "\[Tau]_"}], 
+     " ", "]"}], " ", ":=", " ", 
+    RowBox[{"Evaluate", "[", "iFHMC", "]"}]}]}], "*)"}]], "Input",
  CellChangeTimes->{{3.678200449650069*^9, 3.67820045169071*^9}, {
    3.678200550575301*^9, 3.678200616759019*^9}, {3.678201955587666*^9, 
    3.6782020249532633`*^9}, 3.678202409237751*^9, {3.6782024411233463`*^9, 
    3.678202473571404*^9}, 3.6782031930503597`*^9, {3.678203254327133*^9, 
    3.6782032757268543`*^9}, {3.678206674174651*^9, 3.678206674798562*^9}, 
    3.678220154442206*^9, 3.6782201968771753`*^9, {3.678718546863707*^9, 
-   3.678718554463099*^9}}],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"CHMC", "[", 
-   RowBox[{
-   "t_", ",", " ", "\[Phi]_", ",", " ", "\[Rho]_", ",", " ", "\[Tau]_"}], " ",
-    "]"}], " ", ":=", " ", 
-  RowBox[{"Evaluate", "[", "iFHMC", "]"}]}]], "Input",
- CellChangeTimes->{{3.678199588895525*^9, 3.678199610022584*^9}, 
-   3.678202443387198*^9, {3.678202478987822*^9, 3.678202485603691*^9}, 
-   3.678202805685627*^9, 3.6782201300551567`*^9, 3.67822022197339*^9}]
-}, Open  ]],
+   3.678718554463099*^9}, 3.67871967411967*^9}],
 
 Cell[CellGroupData[{
 
@@ -1780,18 +1791,24 @@ Autocorrelation function and assigns it to a callable function,\
  CellChangeTimes->{{3.678199317504532*^9, 3.678199366017501*^9}, {
   3.6782002100283117`*^9, 3.678200211731779*^9}}],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[
- RowBox[{
-  RowBox[{"iFunit", " ", "=", " ", 
-   RowBox[{"InverseLaplaceTransform", "[", 
-    RowBox[{
-     RowBox[{"Funit", "[", 
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"iFunit", " ", "=", " ", 
+     RowBox[{"InverseLaplaceTransform", "[", 
       RowBox[{
-      "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", 
-       "\[Tau]"}], "]"}], ",", "\[Beta]", ",", "t"}], "]"}]}], ";"}]], "Input",\
-
+       RowBox[{"Funit", "[", 
+        RowBox[{
+        "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", 
+         "\[Tau]"}], "]"}], ",", "\[Beta]", ",", "t"}], "]"}]}], ";"}], "\n", 
+   
+   RowBox[{
+    RowBox[{"Cunit", "[", 
+     RowBox[{
+     "t_", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", " ", "\[Tau]_"}], 
+     "]"}], " ", ":=", " ", 
+    RowBox[{"Evaluate", "[", "iFunit", "]"}]}]}], "*)"}]], "Input",
  CellChangeTimes->{{3.678200449650069*^9, 3.67820045169071*^9}, {
    3.678200550575301*^9, 3.678200616759019*^9}, {3.678201955587666*^9, 
    3.6782020249532633`*^9}, {3.678202447981296*^9, 3.678202448548009*^9}, {
@@ -1801,22 +1818,7 @@ Cell[BoxData[
    3.6782039649109907`*^9, 3.6782039652284803`*^9}, {3.678206678942416*^9, 
    3.6782066802938633`*^9}, 3.678220140912669*^9, 3.678272399869981*^9, {
    3.6782745503892813`*^9, 3.678274551052787*^9}, {3.678551083721347*^9, 
-   3.6785510840492573`*^9}, 3.678718539295622*^9}],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"Cunit", "[", 
-   RowBox[{
-   "t_", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", " ", "\[Tau]_"}], 
-   "]"}], " ", ":=", " ", 
-  RowBox[{"Evaluate", "[", "iFunit", "]"}]}]], "Input",
- CellChangeTimes->{{3.678199588895525*^9, 3.678199610022584*^9}, {
-   3.6782026144249353`*^9, 3.678202650577466*^9}, 3.678203089645481*^9, {
-   3.678203374983965*^9, 3.678203379414605*^9}, {3.678203466635894*^9, 
-   3.678203467557362*^9}, {3.678203498164155*^9, 3.678203498467454*^9}, {
-   3.6782039701018476`*^9, 3.678203970380374*^9}, 3.678220130032319*^9, 
-   3.678272399873604*^9}]
-}, Open  ]],
+   3.6785510840492573`*^9}, 3.678718539295622*^9, 3.6787196809486647`*^9}],
 
 Cell[CellGroupData[{
 
@@ -1879,18 +1881,24 @@ Autocorrelation function and assigns it to a callable function,\
  CellChangeTimes->{{3.678199317504532*^9, 3.678199366017501*^9}, {
   3.6782002100283117`*^9, 3.678200211731779*^9}}],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[
- RowBox[{
-  RowBox[{"iF", " ", "=", " ", 
-   RowBox[{"InverseLaplaceTransform", "[", 
-    RowBox[{
-     RowBox[{"F", "[", 
+ RowBox[{"(*", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"iF", " ", "=", " ", 
+     RowBox[{"InverseLaplaceTransform", "[", 
       RowBox[{
-      "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", "\[Rho]",
-        ",", " ", "\[Tau]"}], "]"}], ",", "\[Beta]", ",", "t"}], "]"}]}], " ",
-   ";"}]], "Input",
+       RowBox[{"F", "[", 
+        RowBox[{
+        "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", " ", 
+         "\[Rho]", ",", " ", "\[Tau]"}], "]"}], ",", "\[Beta]", ",", "t"}], 
+      "]"}]}], " ", ";"}], "\n", 
+   RowBox[{
+    RowBox[{"CF", "[", 
+     RowBox[{
+     "t_", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", "  ", "\[Rho]_", 
+      ",", " ", "\[Tau]_"}], "]"}], " ", ":=", " ", 
+    RowBox[{"Evaluate", "[", "iF", "]"}]}]}], "*)"}]], "Input",
  CellChangeTimes->{{3.678200449650069*^9, 3.67820045169071*^9}, {
    3.678200550575301*^9, 3.678200616759019*^9}, {3.678201955587666*^9, 
    3.6782020249532633`*^9}, {3.678202447981296*^9, 3.678202448548009*^9}, {
@@ -1900,23 +1908,8 @@ Cell[BoxData[
    3.678203933246284*^9, 3.67820394594075*^9}, {3.678206683534919*^9, 
    3.6782066842058887`*^9}, 3.678220154401647*^9, 3.678220196873293*^9, 
    3.678272399919428*^9, {3.678274552661064*^9, 3.678274553204981*^9}, {
-   3.678551087281274*^9, 3.678551096256778*^9}, 3.678718531063733*^9}],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"CF", "[", 
-   RowBox[{
-   "t_", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", "  ", "\[Rho]_", 
-    ",", " ", "\[Tau]_"}], "]"}], " ", ":=", " ", 
-  RowBox[{"Evaluate", "[", "iF", "]"}]}]], "Input",
- CellChangeTimes->{{3.678199588895525*^9, 3.678199610022584*^9}, {
-   3.6782026144249353`*^9, 3.678202650577466*^9}, 3.678203089645481*^9, {
-   3.678203374983965*^9, 3.678203379414605*^9}, {3.678203466635894*^9, 
-   3.678203467557362*^9}, {3.678203498164155*^9, 3.678203498467454*^9}, {
-   3.6782039492366533`*^9, 3.678203950166132*^9}, {3.678203981870051*^9, 
-   3.678203982157505*^9}, {3.6782042598169394`*^9, 3.678204261368628*^9}, 
-   3.678220130035762*^9, 3.6782202219686527`*^9, 3.678272399924505*^9}]
-}, Open  ]],
+   3.678551087281274*^9, 3.678551096256778*^9}, 3.678718531063733*^9, 
+   3.678719685598838*^9}],
 
 Cell[CellGroupData[{
 
@@ -2093,59 +2086,49 @@ Cell[66980, 1548, 414, 6, 28, "Output"]
 Cell[CellGroupData[{
 Cell[67467, 1562, 191, 2, 65, "Chapter"],
 Cell[67661, 1566, 441, 9, 49, "Text"],
-Cell[68105, 1577, 344, 6, 49, "Text"],
+Cell[68105, 1577, 469, 7, 49, "Text"],
+Cell[68577, 1586, 136, 1, 35, "Subsubsection"],
+Cell[68716, 1589, 637, 13, 84, "Text"],
 Cell[CellGroupData[{
-Cell[68474, 1587, 430, 6, 64, "Section"],
+Cell[69378, 1606, 430, 6, 64, "Section"],
 Cell[CellGroupData[{
-Cell[68929, 1597, 272, 5, 30, "Text"],
+Cell[69833, 1616, 272, 5, 30, "Text"],
+Cell[70108, 1623, 1017, 22, 46, "Input"],
 Cell[CellGroupData[{
-Cell[69226, 1606, 697, 13, 28, "Input"],
-Cell[69926, 1621, 311, 7, 28, "Input"]
+Cell[71150, 1649, 177, 4, 30, "Text"],
+Cell[71330, 1655, 1443, 29, 46, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[70274, 1633, 177, 4, 30, "Text"],
-Cell[70454, 1639, 1443, 29, 46, "Input"]
-}, Open  ]],
+Cell[72810, 1689, 413, 5, 44, "Subsection"],
 Cell[CellGroupData[{
-Cell[71934, 1673, 413, 5, 44, "Subsection"],
+Cell[73248, 1698, 221, 4, 30, "Text"],
+Cell[73472, 1704, 1068, 24, 46, "Input"],
 Cell[CellGroupData[{
-Cell[72372, 1682, 221, 4, 30, "Text"],
-Cell[CellGroupData[{
-Cell[72618, 1690, 772, 15, 28, "Input"],
-Cell[73393, 1707, 430, 9, 28, "Input"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[73860, 1721, 233, 7, 30, "Text"],
-Cell[74096, 1730, 1027, 20, 28, "Input"]
+Cell[74565, 1732, 233, 7, 30, "Text"],
+Cell[74801, 1741, 1027, 20, 28, "Input"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
-Cell[75186, 1757, 303, 4, 44, "Subsection"],
+Cell[75891, 1768, 303, 4, 44, "Subsection"],
 Cell[CellGroupData[{
-Cell[75514, 1765, 455, 6, 50, "Section"],
+Cell[76219, 1776, 455, 6, 50, "Section"],
 Cell[CellGroupData[{
-Cell[75994, 1775, 272, 5, 30, "Text"],
+Cell[76699, 1786, 272, 5, 30, "Text"],
+Cell[76974, 1793, 1318, 27, 46, "Input"],
 Cell[CellGroupData[{
-Cell[76291, 1784, 1023, 19, 28, "Input"],
-Cell[77317, 1805, 606, 12, 28, "Input"]
+Cell[78317, 1824, 188, 2, 30, "Text"],
+Cell[78508, 1828, 1313, 32, 70, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[77960, 1822, 188, 2, 30, "Text"],
-Cell[78151, 1826, 1313, 32, 70, "Input"]
-}, Open  ]],
+Cell[79858, 1865, 511, 7, 44, "Subsection"],
 Cell[CellGroupData[{
-Cell[79501, 1863, 511, 7, 44, "Subsection"],
+Cell[80394, 1876, 272, 5, 30, "Text"],
+Cell[80669, 1883, 1369, 28, 46, "Input"],
 Cell[CellGroupData[{
-Cell[80037, 1874, 272, 5, 30, "Text"],
-Cell[CellGroupData[{
-Cell[80334, 1883, 1054, 19, 28, "Input"],
-Cell[81391, 1904, 744, 13, 28, "Input"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[82172, 1922, 265, 3, 30, "Text"],
-Cell[82440, 1927, 1204, 29, 70, "Input"]
+Cell[82063, 1915, 265, 3, 30, "Text"],
+Cell[82331, 1920, 1204, 29, 70, "Input"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
