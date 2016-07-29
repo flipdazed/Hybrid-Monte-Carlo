@@ -57,8 +57,19 @@ def itauErrors(itau, n, window = None):
         window :: int  :: optional window to integrate up to
     """
     if window is None: window = np.arange(itau.size)
-    checks.tryAssertLt(0, window - itau + .5,
-    'Window is too small.\n > W = {}; \n > itau = {}'.format(window, itau))
+    
+    # check that the error can be calculated
+    if hasattr(window, '__iter__'):
+        for i, (window_i, itau_i) in enumerate(zip(window, itau)):
+            checks.tryAssertLtEqual(0, window_i - itau_i + .5,
+                '{}th Window is too small.\n > W = {}; \n > itau = {}'.format(
+                i, window_i, itau_i) + \
+                '\n result: {}'.format(window_i - itau_i + .5)
+            )
+    else:
+        checks.tryAssertLtEqual(0, window - itau + .5,
+            'Window is too small.\n > W = {}; \n > itau = {}'.format(window, itau))
+    
     return itau*2*np.sqrt((window - itau + .5)/n)
 #
 def intAcorr(acorrn, n, window = None):
