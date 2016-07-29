@@ -7,7 +7,7 @@ References
     [2] : ADK, BP, `Cost of the generalised hybrid Monte Carlo algorithm for free field theory'
 """
 
-def accKHMC1dfree_opt(dtau, m, n):
+def accKHMC1dfree_opt(dtau, m, n, **kwargs):
     """Acceptance probability for KHMC as given on pg.37 of [2]
     This is only valid at the optimal parameter choices
     for the mixing angle, m and theta
@@ -21,7 +21,7 @@ def accKHMC1dfree_opt(dtau, m, n):
     ans = 1. - sqrt(.625/pi)*(1 + 9./20.*m**2 + 39./800.*m**4)*sqrt(x)
     return ans
 
-def accLMC1dFree(dtau, m, n):
+def accLMC1dFree(dtau, m, n, **kwargs):
     """Acceptance probability routines for Langevin Monte Carlo: 
         (HMC with 1 Leap Frog step) in one dimension
          -- for the case of the free field
@@ -36,7 +36,7 @@ def accLMC1dFree(dtau, m, n):
     sigma = 20. + 18.*m**2 + 6.*m**4 + m**6
     return erfc(.125*dtau**3*sqrt(.5*n*sigma))
 
-def accHMC1dFree(tau, dtau, m, lattice_p=array([])):
+def accHMC1dFree(tau, dtau, m, lattice_p=array([]), **kwargs):
     """Acceptance probability routine for Hybrid Monte Carlo
      -- for the case of the free field
     

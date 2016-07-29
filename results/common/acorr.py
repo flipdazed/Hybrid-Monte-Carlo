@@ -179,8 +179,8 @@ def main(x0, pot, file_name,
     # Create Dictionary for Plotting Measured Data
     windowed_separations = separations[:2*w]        # cut short to 2*window for a nicer plot
     x = windowed_separations*step_size*n_steps      # create the x-axis in "ficticious HMC-time"
-    aclabel = r'Measured: $C^{\text{exp}}_{\phi^2}(t; '             \
-        + r'\langle P_{\text{acc}}\rangle'+r'={:4.2f}; '.format(p)
+    aclabel = r'Measured: $C_{\phi^2}(t; '             \
+        + r'\bar{P}_{\text{acc}}'+r'={:4.2f}; '.format(p)
     yelpw = zip(acns, acns_err, angle_labels, ps, ws)   # this is an iterable of all a/c plot values
     yelpw = yelpw                                       # cut to the same window length as x-axis
     
@@ -196,9 +196,9 @@ def main(x0, pot, file_name,
         windowed_ps = ps[:2*w]                              # windowed acceptance probabilities
         # calculcate theory across all tau, varying p_acc and normalise
         vFn = lambda pt: m.eval(t=fx, pa=pt[0], theta=pt[1])/m.eval(t=0,pa=pt[0], theta=pt[1])
-        fs = map(vFn, zip(ps, mixing_angles))
-        th_label = r'Theory: $C^{\text{exp}}_{\phi^2}(t; ' \
-            + r'\langle P_{\text{acc}}\rangle \approx 1; '
+        fs = map(vFn, zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
+        th_label = r'Theory: $C_{\phi^2}(t; ' \
+            + r'\bar{P}_{\text{acc}} \approx 1; '
         fl = zip(fs, angle_labels)                          # this is an iterable of all theory plot values
         fl = fl[:2*w]                                       # cut to the same window length as x-axis
         

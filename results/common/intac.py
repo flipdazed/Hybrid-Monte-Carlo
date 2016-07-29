@@ -75,7 +75,8 @@ def plot(x, lines, subtitle, op_name, save):
     pass
 #
 def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
-        opFn, op_name, rand_steps = True, step_size = .1, n_steps = 1, spacing = 1., 
+        opFn, op_name, rand_steps = True, step_size = .1, n_steps = 1, spacing = 1.,
+        iTauTheory = None, pAccTheory = None, 
         save = False):
     """Takes a function: opFn. Runs HMC-MCMC. Runs opFn on GHMC samples.
         Calculates Integrated Autocorrelation + Errors across a number of angles
@@ -95,7 +96,10 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         step_size   :: float :: MDMC step size
         n_steps     :: int :: number of MDMC steps
         spacing     :: float :: lattice spacing
-        save        :: bool :: True saves the plot, False prints to the screen
+        iTauTheory :: func :: a function for theoretical integrated autocorrelation
+        pAccTheory :: func :: a function for theoretical acceptance probability
+        save :: bool :: True saves the plot, False prints to the screen
+    
     """
     if not isinstance(angle_fracs, np.ndarray): angle_fracs = np.asarray(angle_fracs)
     if not hasattr(n_samples, '__iter__'): n_samples = [n_samples]*angle_fracs.size
@@ -124,7 +128,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         w = errors.getW(itau, itau_diff, n=cfn.shape[0])
         out = itau, itau_diff, f_diff, w
         return xx, p, itau, itau_diff, f_diff, w
-    
+    #
     ans = prll_map(coreFunc, zip(range(angle_fracs.size), angls, n_samples), verbose=1-explicit_prog)
     
     # unpack from multiprocessing
@@ -137,12 +141,27 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         + r"${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
             x0.shape, spacing, step_size, n_steps)
     
+    # Create dictionary item for the measured data
     lines = { # format is [(y, Errorbar, label)] if no errorbars then None
             0:[(itau_lst, itau_diffs_lst, r'Measured')], 
             1:[(xx_lst, f_diff_lst, r'Measured')],
             2:[(w_lst, None, r'Measured')],
             3:[(p_lst, None, r'Measured')]
             }
+    
+    # append theory lines to each dictionary list item
+    
+    # add theory for integrated autocorrelations if provided
+    if iTauTheory is not None:
+        vFn = lambda pt: iTauTheory(fx, tau=n_steps*step_size, pa=pt[0], theta=pt[1])
+        f = map(vFn, zip(p_lst, angls))                 # map the a/c function to acceptance & angles
+        lines[0].append((f, None, r'Theory'))
+    
+    # add theory for acceptance probabilities
+    if pAccTheory is not None:
+        f = pAccTheory(dtau=step_size, m=1, n=x0.size, n_steps=n_steps) # probability is constant vs. angle
+        f = np.full(angls.shape, f)
+        lines[3].append((f, None, 'Theory'))
     
     all_plot = {'lines':lines, 'x':angle_fracs, 'subtitle':subtitle, 'op_name':op_name}
     store.store(all_plot, file_name, '_allPlot')
