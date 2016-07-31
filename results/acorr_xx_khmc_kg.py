@@ -34,7 +34,8 @@ op_name = r'$\hat{O} = \sum_{pq} \Omega \phi_p\phi_q :\Omega = \delta_{p0}\delta
 
 # this intiial declaration doesn't really matter
 # as eval() re-evaluates every time anyway
-th = Theory(tau=step_size*n_steps, m=1)
+th = Theory(tau = n_steps*step_size, m=pot.mu)
+acFunc = lambda pt: th.eval(t=fx, pa=pt[0], theta=pt[1]) / th.eval(t=0, pa=pt[0], theta=pt[1])
 
 if '__main__' == __name__:
     routine.main(x0, pot, file_name,
@@ -42,5 +43,5 @@ if '__main__' == __name__:
         mixing_angles=mixing_angles, angle_labels = angle_labels,
         separations = separations, opFn = opFn, op_name = op_name,
         step_size = step_size, n_steps = n_steps,
-        Theory_Cls = th,
+        acFunc = acFunc,
         save = False)

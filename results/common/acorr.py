@@ -89,7 +89,7 @@ def main(x0, pot, file_name,
         n_samples, n_burn_in,
         mixing_angles, angle_labels, opFn, op_name, separations, 
         rand_steps= False, step_size = .5, n_steps = 1, spacing = 1.,
-        Theory_Cls = None,
+        acFunc = None,
         save = False):
     """A wrapper function
     
@@ -110,13 +110,8 @@ def main(x0, pot, file_name,
         step_size :: float :: MDMC step size
         n_steps :: int :: number of MDMC steps
         spacing :: float :: lattice spacing
-        Theory_Cls :: class :: a class object with .eval() for evaluating a theory
+        acFunc :: func :: function for evaluating autocorrelations
         save :: bool :: True saves the plot, False prints to the screen
-    
-    Expectations
-        1.  Theory_Cls must accept **kwargs: 'pa', 'tau' as it is expected it will vary
-            with respect to these parameters
-        2.  Theory_Cls must have a function '.eval(pa=pa, tau=tau)' to return predictions
     """
     
     # required declarations. If no lines are provided this still allows iteration for 0 times
@@ -176,7 +171,7 @@ def main(x0, pot, file_name,
     
     # Decide a good total length for the plot
     w = np.max(ws)                                  # same length for all theory and measured data
-    
+    print 'Window is:{}'.format(w)
     # Create Dictionary for Plotting Measured Data
     windowed_separations = separations[:2*w]        # cut short to 2*window for a nicer plot
     x = windowed_separations*step_size*n_steps      # create the x-axis in "ficticious HMC-time"
@@ -188,23 +183,21 @@ def main(x0, pot, file_name,
     # create the dictionary item to pass to plot()
     acns = {aclabel+r'\theta = {})$'.format(l) :(x, y[:2*w], e[:2*w]) for y,e,l,p,w_i in yelpw}
     
-    if Theory_Cls is not None: # Create Dictionary for Plotting Theory
-        m = Theory_Cls                                      # create a shortcut for theory class
+    if acFunc is not None: # Create Dictionary for Plotting Theory
         fx_res = 100                                        # points per x-value
         fx_points = 2*w*fx_res+1                            # number of points to use
         fx_f = windowed_separations[-1]*step_size*n_steps   # last trajectory separation length to plot
         fx = np.linspace(0, fx_f, fx_points, True)          # create the x-axis for the theory
         windowed_ps = ps[:2*w]                              # windowed acceptance probabilities
         # calculcate theory across all tau, varying p_acc and normalise
-        vFn = lambda pt: m.eval(t=fx, pa=pt[0], theta=pt[1])/m.eval(t=0,pa=pt[0], theta=pt[1])
-        fs = map(vFn, zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
+        fs = map(acFunc, zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
         th_label = r'Theory: $C_{\phi^2}(t; ' \
-            + r'\bar{P}_{\text{acc}} \approx 1; '
-        fl = zip(fs, angle_labels)                          # this is an iterable of all theory plot values
-        fl = fl[:2*w]                                       # cut to the same window length as x-axis
+            + r'\bar{P}_{\text{acc}} = '
+        pfl = zip(ps, fs, angle_labels)                          # this is an iterable of all theory plot values
+        pfl = pfl[:2*w]                                       # cut to the same window length as x-axis
         
         # create the dictionary item to pass to plot()
-        lines = {th_label+ r'\theta = {})$'.format(l): (fx, f) for f,l in fl if f is not None} 
+        lines = {th_label+ r'{:4.2f}; \theta = {})$'.format(p, l): (fx, f) for p,f,l in pfl if f is not None} 
     else:
         pass # lines = {} has been declared at the top so will allow the iteration in plot()
     

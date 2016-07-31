@@ -9,6 +9,7 @@ from hmc.potentials import Quantum_Harmonic_Oscillator as QHO
 from hmc.potentials import Klein_Gordon as KG
 from hmc.hmc import *
 from correlations import corr
+import theory.operators
 from models import Basic_HMC as Model
 
 class Test(object):
@@ -70,7 +71,7 @@ class Test(object):
         
         pot = QHO(mu=mu)
         measured_xx = self._runCorrelation(pot)
-        expected_xx = corr.twoPointTheoryQHO(self.spacing, mu, self.n)
+        expected_xx = theory.operators.phi2_1df(self.spacing, mu, self.n)
         
         passed *= np.abs(measured_xx - expected_xx) <= tol
         

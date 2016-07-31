@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
 from matplotlib import colors, ticker
 import random
 
-from data import store
 from correlations import acorr, corr, errors
 from models import Basic_GHMC as Model
+from data import store
 from utils import saveOrDisplay, prll_map
 from plotter import Pretty_Plotter, PLOT_LOC
-from matplotlib.collections import LineCollection
 
 ignorecols = ['snow', 'white', 'k', 'w', 'r']
 clist = [i for i in colors.ColorConverter.colors if i not in ignorecols]*5
@@ -76,7 +76,7 @@ def plot(x, lines, subtitle, op_name, save):
 #
 def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         opFn, op_name, rand_steps = True, step_size = .1, n_steps = 1, spacing = 1.,
-        iTauTheory = None, pAccTheory = None, 
+        iTauTheory = None, pacc_theory = None, op_theory = None,
         save = False):
     """Takes a function: opFn. Runs HMC-MCMC. Runs opFn on GHMC samples.
         Calculates Integrated Autocorrelation + Errors across a number of angles
@@ -96,8 +96,9 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         step_size   :: float :: MDMC step size
         n_steps     :: int :: number of MDMC steps
         spacing     :: float :: lattice spacing
-        iTauTheory :: func :: a function for theoretical integrated autocorrelation
-        pAccTheory :: func :: a function for theoretical acceptance probability
+        iTauTheory  :: func :: a function for theoretical integrated autocorrelation
+        pacc_theory :: float :: a value for theoretical acceptance probability
+        op_theory   :: float :: a value for the operator at 0 separation
         save :: bool :: True saves the plot, False prints to the screen
     
     """
@@ -157,10 +158,13 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         f = map(vFn, zip(p_lst, angls))                 # map the a/c function to acceptance & angles
         lines[0].append((f, None, r'Theory'))
     
+    if op_theory is not None:
+        f = np.full(angls.shape, op_theory)
+        lines[1].append((f, None, r'Theory'))
+    
     # add theory for acceptance probabilities
-    if pAccTheory is not None:
-        f = pAccTheory(dtau=step_size, m=1, n=x0.size, n_steps=n_steps) # probability is constant vs. angle
-        f = np.full(angls.shape, f)
+    if pacc_theory is not None:
+        f = np.full(angls.shape, pacc_theory)
         lines[3].append((f, None, 'Theory'))
     
     all_plot = {'lines':lines, 'x':angle_fracs, 'subtitle':subtitle, 'op_name':op_name}

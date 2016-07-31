@@ -4,6 +4,7 @@ import numpy as np
 from hmc.common import Init
 from hmc import checks
 from .common import Base
+import theory.operators
 
 def twoPoint(samples, separation):
     """Delivers the UNAVERAGED two point with a given separation
@@ -23,29 +24,6 @@ def twoPoint(samples, separation):
     two_point = (shifted*samples)
     
     return two_point
-
-def twoPointTheoryQHO(spacing, mu, length, separation=0.):
-    """Theoretical prediction for the 1D 2-point correlation function
-    
-    Required Inputs
-      spacing  :: float :: lattice spacing
-      mu       :: float :: mass-coupling
-      length   :: int   :: length of 1D lattice
-      separation :: int :: number of sites between observables <x(0)x(separation)>
-    """
-    amu = mu*spacing
-    if np.abs(amu) <= 0.1: 
-        r = 1. - amu + .5*amu**2
-        print '> approximating R = 1. - aµ + aµ**2/2 as |aµ| <= 0.1 '
-    else:
-        r = 1. + .5*amu**2 - amu*np.sqrt(1. + .25*amu**2)
-    if separation == 0:
-        ratio = (1. + r**length)/(1. - r**length)
-    else:
-        ratio = (r**separation + r**(length-separation))/(1. - r**length)
-    
-    av_xx = ratio / (2.*mu*np.sqrt(1. + .25*amu**2))
-    return av_xx
 
 class Correlations_1d(Init, Base):
     """Runs a model and calculates the 1 dimensional correlation function
