@@ -24,7 +24,7 @@ a['subtitle'] = r"Potential: {}; Lattice: ".format('Klein-Gordon') \
 # format :: {'lines':lines, 'x':angle_fracs, 'subtitle':subtitle, 'op_name':op_name}
 # lines are [[y, err, label],..., [y, err, label]]
 from theory.autocorrelations import M2_Fix, M2_Exp
-from theory.dynamics import accLMC1dFree
+from theory.theory import acceptance
 
 x = a['x'] # fractions of pi
 pacc = a['lines'][3][0][0] # 3rd key, 0th line, y-value
@@ -33,7 +33,7 @@ m = M2_Exp(tau=tau,m=1)
 y = np.asarray([m.integrated(tau=tau, m=mass, pa=pa_i, theta=theta*np.pi) for theta, pa_i in zip(x, pacc)])
 a['lines'][0].append([y, None, r'Theory'])
 
-y = np.full(x.shape, accLMC1dFree(dtau=dtau, m=mass, n=sites))
+y = np.full(x.shape, acceptance(tau=tau, dtau=dtau, m=mass, n=sites))
 a['lines'][3].append([y, None, r'Theory'])
 
 plot(save = saveOrDisplay(save, file_name), **a)
