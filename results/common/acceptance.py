@@ -10,7 +10,7 @@ from utils import saveOrDisplay, prll_map, tqdm
 from models import Basic_HMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
 from hmc.lattice import Periodic_Lattice, laplacian
-from theory.dynamics import accLMC1dFree, accHMC1dFree
+import theory.acceptance
 
 __doc__ == """
 References
@@ -117,19 +117,19 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
         prob = np.mean(accept_rates)
         meas_av_exp_dh  = np.asscalar((1./np.exp(delta_hs)).mean())
         
-        t3 = erfc(.5*np.sqrt(av_dh))
+        theory = theory.acceptance.acceptance(delta_h = av_dh) 
         
-        return prob, t3
+        return prob, theory
     
     # use multi-core support to speed up
     ans = prll_map(coreFunc, n_rng, verbose=True)
     print 'Finished Running Model: {}'.format(file_name)
     
-    prob, theory3 = zip(*ans)
+    prob, theory = zip(*ans)
     
     x = np.asarray(n_rng)*step_size
     # theories[r'$p_{HMC}$'] = (x2, theory2)
-    scats[r'$\text{erfc}(\sqrt{\langle \delta H \rangle}/2)$'] = (x, theory3)
+    scats[r'$\text{erfc}(\sqrt{\langle \delta H \rangle}/2)$'] = (x, theory)
     scats[r'Measured'] = (x, prob)
     
     # one long subtitle - long as can't mix LaTeX and .format()

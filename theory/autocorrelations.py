@@ -3,7 +3,7 @@ from numpy import exp, real, cos, sin, pi, array, log, sqrt
 from numpy import asscalar, array, absolute, nansum, abs
 from scipy.signal import residuez
     
-from _mathematicaFunctions import expCunit
+from _mathematicaFunctions import expCunit, expC
 from hmc import checks
 
 __doc__ = """::References::
@@ -20,16 +20,14 @@ class M2_Fix(object):
     
     Intended for fixed length trajectories
     
-    Required Inputs
-        tau   :: float    :: average trajectory length
-        m   :: float    :: mass parameter - the lowest frequenxy mode
-    
     Optional Inputs
-        pa :: float :: average acceptance rate
-        theta :: float :: mixing angle
+        tau     :: float    :: average trajectory length
+        m       :: float    :: mass parameter - the lowest frequenxy mode
+        pa      :: float :: average acceptance rate
+        theta   :: float :: mixing angle
         p_thresh :: float :: point where pa \approx 1
     """
-    def __init__(self, tau, m, pa=1, theta=.5*pi, p_thresh=0.95):
+    def __init__(self, tau=0.1, m=1, pa=1, theta=.5*pi, p_thresh=0.95):
         super(M2_Fix, self).__init__()
         self.p_thresh = p_thresh
         self.setRoots(tau, m, pa, theta)
@@ -250,18 +248,16 @@ class M2_Exp(object):
     Intended for exponentially distributed trajectories*
     Explicitly calculated in Appendix A.3 of [1]
     
-    Required Inputs
-        tau   :: float    :: average trajectory length
-        m   :: float    :: mass parameter - the lowest frequenxy mode
-    
     Optional Inputs
-        pa :: float :: average acceptance rate
-        theta :: float :: mixing angle
+        tau     :: float    :: average trajectory length
+        m       :: float    :: mass parameter - the lowest frequenxy mode
+        pa      :: float :: average acceptance rate
+        theta   :: float :: mixing angle
         p_thresh :: float :: point where pa \approx 1
     
     * An approximation for small r where Geom(r) \approx Expon(r)
     """
-    def __init__(self, tau, m, pa=1, theta=.5*pi, p_thresh=0.95):
+    def __init__(self, tau=2, m=1, pa=1, theta=.5*pi, p_thresh=0.95):
         super(M2_Exp, self).__init__()
         self.p_thresh = p_thresh
         self.setRoots(tau, m, pa, theta)

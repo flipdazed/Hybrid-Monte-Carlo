@@ -17,7 +17,7 @@ m0  - m=0 assumed
 lfi - order i  of leapfrog assumed
 """
 
-def acceptance(dtau, delta_h=None, **kwargs):
+def acceptance(dtau, delta_h=None, tau=None, m=None, n=None, **kwargs):
     """Theoretical acceptance rate. Eq (22) of [2]
     
     Required Inputs
@@ -25,6 +25,9 @@ def acceptance(dtau, delta_h=None, **kwargs):
     
     Optional Inputs
         delta_h :: float :: average change in hamiltonian
+        tau  :: float :: av. trajectory length  : required if delta_h = None
+        m    :: float :: mass                   : required if delta_h = None
+        n    :: int   :: number of lattice sites: required if delta_h = None
     """
     
     if delta_h is None:
@@ -93,7 +96,7 @@ def HMC1dfVm0lf0(tau, dtau, n, **kwargs):
     sigma = .75 - .75*j0(c) + jn(2, c) - .25*jn(4,c)
     return acceptance(dtau=dtau,delta_h=.5*n*sigma)
 
-def HMC1dfL(tau, dtau, m, lattice_p, i=0, **kwargs):
+def GHMC1dfL(tau, dtau, m, lattice_p, i=0, **kwargs):
     """Acceptance probability routine for Hybrid Monte Carlo
     
     Required Input

@@ -24,7 +24,7 @@ a['subtitle'] = r"Potential: {}; Lattice: ".format('Klein-Gordon') \
 # format :: {'lines':lines, 'x':angle_fracs, 'subtitle':subtitle, 'op_name':op_name}
 # lines are [[y, err, label],..., [y, err, label]]
 from theory.autocorrelations import M2_Fix, M2_Exp
-from theory.theory import acceptance
+from theory.acceptance import acceptance
 
 x = a['x'] # fractions of pi
 pacc = a['lines'][3][0][0] # 3rd key, 0th line, y-value

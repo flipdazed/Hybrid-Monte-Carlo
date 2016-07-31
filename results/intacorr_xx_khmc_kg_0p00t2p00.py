@@ -4,6 +4,7 @@ import numpy as np
 from common import intac
 from hmc.potentials import Klein_Gordon as KG
 from correlations.corr import twoPoint
+from theory.operators import phi2_1df
 
 file_name = __file__
 pot = KG()
@@ -29,4 +30,5 @@ if '__main__' == __name__:
         rand_steps = rand_steps, step_size = step_size, n_steps = 1,
         opFn = opFn, op_name=op_name,
         angle_fracs = angle_fracs,
+        iTauTheory = None, pacc_theory = None, op_theory = None,
         save = True)
