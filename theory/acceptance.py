@@ -17,7 +17,7 @@ m0  - m=0 assumed
 lfi - order i  of leapfrog assumed
 """
 
-def acceptance(dtau, delta_h=None, tau=None, m=None, n=None, **kwargs):
+def acceptance(dtau, delta_h=None, **kwargs):
     """Theoretical acceptance rate. Eq (22) of [2]
     
     Required Inputs
@@ -31,8 +31,9 @@ def acceptance(dtau, delta_h=None, tau=None, m=None, n=None, **kwargs):
     """
     
     if delta_h is None:
-        if all(k in kwargs for k in ['tau','m', 'n']):
-            delta_h = leapfrog.avH(tau=tau, dtau=dtau, m=m, n=n)
+        reqs = ['tau','m','n', 't']
+        if all(k in kwargs for k in reqs):
+            delta_h = leapfrog.avH(dtau=dtau, **kwargs)
         else:
             raise ValueError('Need to define: tau, m, m if delta_h is None')
     return erfc(.25*dtau**2*sqrt(delta_h))

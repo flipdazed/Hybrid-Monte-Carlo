@@ -34,7 +34,7 @@ op_name = r'$\hat{O} = \sum_{pq} \Omega \phi_p\phi_q :\Omega = \delta_{p0}\delta
 
 # this intiial declaration doesn't really matter
 # as eval() re-evaluates every time anyway
-th = Theory(tau = n_steps*step_size, m=pot.mu)
+th = Theory(tau = n_steps*step_size, m=pot.m)
 acFunc = lambda pt: th.eval(t=fx, pa=pt[0], theta=pt[1]) / th.eval(t=0, pa=pt[0], theta=pt[1])
 
 if '__main__' == __name__:

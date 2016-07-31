@@ -28,9 +28,10 @@ opFn        = lambda samples: twoPoint(samples, separation=0)
 op_name     = r'$\hat{O}_{pq} = \phi_0^2$'
 
 # theoretical calculations
-op_theory   = phi2_1df(mu=pot.mu, n=x0.size, a=spacing, sep=0)
-pacc_theory = acceptance(dtau=step_size, tau=step_size*n_steps, n=x0.size, m=pot.mu)
-iTauTheory  = 
+op_theory   = phi2_1df(mu=pot.m, n=x0.size, a=spacing, sep=0)
+pacc_theory = acceptance(dtau=step_size, tau=step_size*n_steps, n=x0.size, m=pot.m)
+m2fix = M2_Fix(tau=n_steps*step_size, m=pot.m)
+iTauTheory  = m2fix.integrated
 
 if '__main__' == __name__:
     intac.main(x0, pot, file_name, 

@@ -1,3 +1,5 @@
+from __future__ import division
+from scipy.special import j0, jn, erfc
 from numpy import exp, pi, sin, cos, sqrt, array, ndarray
 
 __doc__ == """
@@ -50,15 +52,16 @@ def s2(m, tau, t, **kwargs):
         tau :: float :: av. trajectory length
         t   :: float :: fictitious time
     """
+    print "Warning: t may be incorrectly defined"
     c = 4.*tau
     m2 = m*m
     m4 = m2*m2
-    sigma = 3 - 3*j0(c) + jn(2, c) - jn(4,c) \
-            m2*(2 - 2*j0(c) + 4*t*jn(1, c) + jn(2, c)) \
-            .5*m4*(1 + (2*t**2 - 1)*j0(c) + 3*t*jn(1, c))
+    sigma = 3 - 3*j0(c) + jn(2, c) - jn(4,c)                \
+            + m2*(2 - 2*j0(c) + 4*t*jn(1, c) + jn(2, c))    \
+            + .5*m4*(1 + (2*t**2 - 1)*j0(c) + 3*t*jn(1, c))
     return sigma
 #
-def avH(tau, dtau, m, n, i=1, **kwargs):
+def avH(tau, dtau, m, n, t, i=1, **kwargs):
     """Average hamiltonian in Leap Frog MDMC
     
     Required Inputs
@@ -66,10 +69,9 @@ def avH(tau, dtau, m, n, i=1, **kwargs):
         dtau    :: float :: step size
         m       :: float :: mass
         n       :: integer :: number of lattice sites
+        t       :: float :: ficticious HMC - time (i_samples * n_steps * step_size) 
     """
-    raise NotImplemented("What is t?!?")
     if i > 1: 
         raise NotImplemented("Requires implementation for i>1")
     x = n*dtau**(4*i + 4)
-    2*pi1[0]**2*x*s2(m, tau, )
-    return 
+    return 2*pi1[0]**2*x*s2(m=m, tau=tau,t=t)

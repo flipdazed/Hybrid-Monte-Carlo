@@ -190,7 +190,8 @@ def main(x0, pot, file_name,
         fx = np.linspace(0, fx_f, fx_points, True)          # create the x-axis for the theory
         windowed_ps = ps[:2*w]                              # windowed acceptance probabilities
         # calculcate theory across all tau, varying p_acc and normalise
-        fs = map(acFunc, zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
+        normFn = lambda pt: acFunc(t=fx, pa=pt[0], theta=pt[1]) / acFunc(t=0, pa=pt[0], theta=pt[1])
+        fs = map(normFn, zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
         th_label = r'Theory: $C_{\phi^2}(t; ' \
             + r'\bar{P}_{\text{acc}} = '
         pfl = zip(ps, fs, angle_labels)                          # this is an iterable of all theory plot values

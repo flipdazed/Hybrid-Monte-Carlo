@@ -35,7 +35,7 @@ def phi2_1df(mu, n, a, sep):
     r = fnR(mu, a)
     w = fnW(mu, a)
     
-    if separation == 0:
+    if sep == 0:
         ratio = (1. + r**n)/(1. - r**n)
     else:
         ratio = (r**sep + r**(n-sep))/(1. - r**n)
