@@ -8,9 +8,9 @@ from theory.autocorrelations import M2_Exp as Theory
 from theory.operators import phi2_1df
 from theory.acceptance import acceptance
 
-m = 1#0.4
-step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/20.
-n_steps   = 20
+m = 0.4
+step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/40.
+n_steps   = 40
 tau       = step_size*n_steps
 
 tau = n_steps*step_size
@@ -19,12 +19,12 @@ th = Theory(tau=1/(step_size*n_steps), m=m)
 file_name = __file__
 pot = KG(m=m)
 
-n, dim = 20, 1
+n, dim = 100, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.
 
-n_samples, n_burn_in = 1000, 25
-c_len     = 500
+n_samples, n_burn_in = 10000, 25
+c_len     = 5000
 
 mixing_angles = [.5*np.pi]
 angle_labels = [r'\frac{\pi}{2}']
@@ -38,6 +38,8 @@ pacc_theory = acceptance(dtau=step_size, tau=tau, n=x0.size, m=pot.m, t=tau*n_sa
 th = Theory(tau = tau)
 acFunc = th.eval
 
+print '> Trajectory Length: tau: {}'.format(tau)
+print '> Step Size: {}'.format(step_size)
 print '> Theoretical <x^2>: {}'.format(op_theory)
 print '> Theoretical <P_acc>: {}'.format(pacc_theory)
 

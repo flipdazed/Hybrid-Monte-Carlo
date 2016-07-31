@@ -75,7 +75,7 @@ def plot(x, lines, subtitle, op_name, save):
     pass
 #
 def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
-        opFn, op_name, rand_steps = True, step_size = .1, n_steps = 1, spacing = 1.,
+        opFn, op_name, rand_steps = False, step_size = .1, n_steps = 1, spacing = 1.,
         iTauTheory = None, pacc_theory = None, op_theory = None,
         save = False):
     """Takes a function: opFn. Runs HMC-MCMC. Runs opFn on GHMC samples.
@@ -154,7 +154,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
     
     # add theory for integrated autocorrelations if provided
     if iTauTheory is not None:
-        vFn = lambda pt: iTauTheory(fx, tau=n_steps*step_size, pa=pt[0], theta=pt[1])
+        vFn = lambda pt: iTauTheory(tau=n_steps*step_size, m=pot.m, pa=pt[0], theta=pt[1])
         f = map(vFn, zip(p_lst, angls))                 # map the a/c function to acceptance & angles
         lines[0].append((f, None, r'Theory'))
     
@@ -168,7 +168,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, angle_fracs,
         lines[3].append((f, None, 'Theory'))
     
     all_plot = {'lines':lines, 'x':angle_fracs, 'subtitle':subtitle, 'op_name':op_name}
-    store.store(all_plot, file_name, '_allPlot')
+    if save: store.store(all_plot, file_name, '_allPlot')
     
     # enter as keyword arguments
     plot(save = saveOrDisplay(save, file_name), **all_plot)

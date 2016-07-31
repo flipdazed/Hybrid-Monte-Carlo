@@ -43,7 +43,7 @@ def siL(m, tau, lattice_p, i=2, **kwargs):
     
     return (w4*sin(tau*w)).mean()
     
-
+#
 def s2(m, tau, t, **kwargs):
     """2nd order spectral average of frequencies
     
@@ -56,9 +56,13 @@ def s2(m, tau, t, **kwargs):
     c = 4.*tau
     m2 = m*m
     m4 = m2*m2
-    sigma = 3 - 3*j0(c) + jn(2, c) - jn(4,c)                \
-            + m2*(2 - 2*j0(c) + 4*t*jn(1, c) + jn(2, c))    \
-            + .5*m4*(1 + (2*t**2 - 1)*j0(c) + 3*t*jn(1, c))
+    s0 = 3 - 3*j0(c) + jn(2, c) - jn(4,c)
+    s2 = m2*(2 - 2*j0(c) + 4*t*jn(1, c) + jn(2, c))
+    s4 = m4*.5*(1 + (2*t**2 - 1)*j0(c) + 3*t*jn(1, c))
+    sigma = s0 + s2 + s4
+    if sigma < 0:
+        print 'Warning: Sigma < 0... Coefficients of m**n listed:'
+        print '> m**0: {}\n> m**2: {}\n> m**4: {}'.format(s0, s2, s4)
     return sigma
 #
 def avH(tau, dtau, m, n, t, i=1, **kwargs):

@@ -78,7 +78,8 @@ def plot(acns, lines, subtitle, op_name, save):
     
     xi,xf = ax[0].get_xlim()
     ax[0].set_xlim(xmin=xi-0.05*(xf-xi)) # give a decent view of the first point
-    ax[0].set_ylim(ymax=1 + .05*np.diff(ax[0].get_ylim())) # give 5% extra room at top
+    yshft = np.diff(ax[0].get_ylim())
+    ax[0].set_ylim(ymax=1 + .05*yshft, ymin=0-.05*yshft) # give 5% extra room at top
 #    ax[0].set_yscale("log", nonposy='clip')
     
     ax[0].legend(loc='best', shadow=True, fontsize = pp.axfont)
