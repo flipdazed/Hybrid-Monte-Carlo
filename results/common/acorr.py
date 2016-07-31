@@ -149,6 +149,7 @@ def main(x0, pot, file_name,
         acns_err = errors.acorrnErr(acns, w, n_samples)     # get autocorr errors
         
         # get parameters generated
+        traj = c.trajs
         p = c.model.p_acc
         xx = c.op_mean
         return xx, acns, acns_err, p, w
