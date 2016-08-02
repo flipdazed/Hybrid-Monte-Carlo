@@ -12,15 +12,15 @@ Begin["`Private`"];
 
 flip[bool_] :=If[bool, -1, 1]
 
-getNumerator[func_, flipSign_:False, wait_:3]:=Collect[
+getNumerator[func_, flipSign_:False, wait_:3, form_:TraditionalForm]:=Collect[
 
 flip[flipSign]*Numerator[TimeConstrained[func//FullSimplify, wait, Together[func]]],
-{\[Beta],r,Cos[\[Theta]],\[Phi], \[Rho]}]//TraditionalForm
+{\[Beta],r,Cos[\[Theta]],\[Phi], \[Rho]}] // form
 
-getDenominator[func_, flipSign_:False, wait_:3]:=Collect[
+getDenominator[func_, flipSign_:False, wait_:3, form_:TraditionalForm]:=Collect[
 
 flip[flipSign]*Denominator[TimeConstrained[func//FullSimplify, wait, Together[func]]],
-{\[Beta],r,Cos[\[Theta]],\[Phi],\[Rho]}]//TraditionalForm
+{\[Beta],r,Cos[\[Theta]],\[Phi],\[Rho]}] // form
 
 maxSimplify[func_]:=getNumerator[func]/getDenominator[func];
 
@@ -99,5 +99,7 @@ setPrivateVars[varList_] :=
    Print["Set: ", var, " = ", expr ];
    ]
 ]
+
+
 End[]; 
 EndPackage[]; 
