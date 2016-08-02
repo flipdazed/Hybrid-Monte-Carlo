@@ -1,0 +1,4 @@
+#!/Applications/Mathematica.app/Contents/MacOS/WolframKernel -script
+
+value=ToExpression[$CommandLine[[4]]];
+Print[value];
