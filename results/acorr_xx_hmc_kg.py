@@ -1,30 +1,30 @@
 #!/usr/bin/env python
 import numpy as np
 
-from common import acorr as routine
+from results.common import acorr as routine
 from hmc.potentials import Klein_Gordon as KG
 from correlations.corr import twoPoint
 from theory.autocorrelations import M2_Exp as Theory
 from theory.operators import phi2_1df
 from theory.acceptance import acceptance
 
-m = 0.4
-step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/40.
+m = 1.0
 n_steps   = 40
+step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
 
 tau = n_steps*step_size
-th = Theory(tau=1/(step_size*n_steps), m=m)
+th = Theory(tau=step_size*n_steps, m=m)
 
 file_name = __file__
 pot = KG(m=m)
 
-n, dim = 100, 1
+n, dim = 10, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.
 
-n_samples, n_burn_in = 10000, 25
-c_len     = 5000
+n_samples, n_burn_in = 100000, 25
+c_len     = 10000
 
 mixing_angles = [.5*np.pi]
 angle_labels = [r'\frac{\pi}{2}']
@@ -50,4 +50,4 @@ if '__main__' == __name__:
         separations = separations, opFn = opFn, op_name = op_name,
         rand_steps= True, step_size = step_size, n_steps = n_steps,
         acFunc = acFunc,
-        save = False)
+        save = True)

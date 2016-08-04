@@ -53,8 +53,9 @@ def correlated_data(tau = 5, n = 10000):
         nu[i] = np.sqrt(1 - asq)*eta[i] + a * nu[i-1]
     return [[nu*0.2 + 1]]
 
-def acorr(op_samples, mean, separation, norm = 1):
+def acorr(op_samples, mean, separation, norm = 1.0):
     """autocorrelation of a measured operator with optional normalisation
+    the autocorrelation is measured over the 0th axis
     
     Required Inputs
         op_samples  :: np.ndarray :: the operator samples
@@ -76,25 +77,7 @@ def acorr(op_samples, mean, separation, norm = 1):
         acorr = acorrs.ravel().mean()
     as the mean of means is the same as the overall mean
     """
-    
-    if type(op_samples) != np.ndarray: op_samples = np.asarray(op_samples)
-    # shift the array by the separation
-    # need the axis=0 as this is the sample index, 1 is the lattice index
-    # -ve so that a[0]->a[sep] as default is sending a[0] -> a[-1]
-    shifted = np.roll(op_samples, -separation, axis = 0)
-    
-    # Need to be wary that roll will roll all elements arouns the array boundary
-    # so cannot take element from the end. The last sample that can have an acorr
-    # of len m within N samples is x[N-1-m]x[N-1] so we want up to index N-m
-    n = op_samples.shape[0]
-    acorrs = ((shifted - mean)*(op_samples - mean))[:n-separation] # indexing the 1st index for samples
-    
-    # normalise if a normalisation is given
-    acorrs = acorrs / norm
-    
-    # av over all even of random trjectories
-    acorr = acorrs.ravel().mean()
-    return acorr
+    return ((op_samples[:op_samples.size-separation]-mean)*(op_samples[separation:]-mean)).ravel().mean() / norm
 
 class Autocorrelations_1d(Init, Base):
     """Runs a model and calculates the 1 dimensional autocorrelation function

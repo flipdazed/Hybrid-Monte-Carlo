@@ -11,13 +11,13 @@ file_name = 'acorr_xx_hmc_kg'
 dest = 'results/data/other_objs/{}_allPlot.pkl'.format(file_name)
 a = load(dest)
 
-m = 0.4
-step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/20.
-n_steps   = 20
-
-tau = (n_steps*step_size)
+m = 1.0
+n_steps   = 40
+step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
+pa = 1.00
+tau = 1/(n_steps*step_size)
 th = Theory(tau=tau, m=m)
-vFn = lambda x: th.eval(t=x, pa=0.65, theta=np.pi/2)/th.eval(t=0, pa=0.65, theta=np.pi/2)
+vFn = lambda x: th.eval(t=x, pa=pa, theta=np.pi/2)/th.eval(t=0, pa=pa, theta=np.pi/2.)
         
 l = a['lines'].keys()[0]
 x, f0 = a['lines'][l]

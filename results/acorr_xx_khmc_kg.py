@@ -20,7 +20,7 @@ c_len     = 1000
 
 mixing_angles = 1/np.asarray([8, 6, 4, 3, 2], dtype='float64')*np.pi
 angle_labels = [
-    # r'$\theta = \pi/10$',
+    # r'\theta = \pi/10',
     r'\pi/8',
     r'\pi/6',
     r'\pi/4',
@@ -35,7 +35,7 @@ op_name = r'$\hat{O} = \sum_{pq} \Omega \phi_p\phi_q :\Omega = \delta_{p0}\delta
 # this intiial declaration doesn't really matter
 # as eval() re-evaluates every time anyway
 th = Theory(tau = n_steps*step_size, m=pot.m)
-acFunc = lambda pt: th.eval(t=fx, pa=pt[0], theta=pt[1]) / th.eval(t=0, pa=pt[0], theta=pt[1])
+acFunc = th.eval
 
 if '__main__' == __name__:
     routine.main(x0, pot, file_name,

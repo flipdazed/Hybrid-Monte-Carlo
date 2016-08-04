@@ -1,7 +1,7 @@
 import numpy as np
 
 from hmc import checks
-from acorr import acorr as getAcorr, correlatedData
+from acorr import acorr as getAcorr
 
 import matplotlib.pyplot as plt
 from matplotlib import colors
@@ -111,8 +111,9 @@ def gW(t, g_int, s_tau, n):
         n     :: int   :: f_ret.size
     """
     # np.nan handles the divisino by 0 fine (tested)
+    t = float(t)
     tau_w = s_tau / np.log(1. + 1./g_int.clip(0))
-    g_w = np.exp(-t/tau_w) - tau_w/np.sqrt(t*n)
+    g_w = np.exp(-t/tau_w) - tau_w/np.sqrt(t*float(n))
     return g_w
 #
 def covarianceN(acorr, window, var = None):
@@ -176,25 +177,23 @@ def windowing(f_ret, f_aav, s_tau, n, fast):
     """
     
     # get autocorrelations: Don't normalise until bias corrected
-    fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=1)
+    norm = ((f_ret-f_aav)**2).mean()
+    fn = lambda t: getAcorr(op_samples=f_ret, mean=f_aav, separation=t, norm=norm)
     t_max = int(n//2) + 1
-    
     if fast:
-        norm = np.average((f_ret-f_aav)**2)
-        acorr = [norm]
+        acorr = []
+        acorr.append(norm)
         g_int = 0.
         for w in range(1, t_max + 1):
             v = fn(t=w)
             acorr.append(v)
-            g_int += v/norm
+            g_int += v
             if gW(w, g_int, s_tau, n) < 0: return norm, np.asarray(acorr), w
         ## should exit before here!
         checks.tryAssertNotEqual(False, False,
         'Windowing condition failed up to W = {}'.format(g_int.size))
     else:
         acorr  = np.asarray([fn(t=t) for t in range(0, t_max)]) # t_max implicit n//2
-        
-        norm = acorr[0] # values for w = 0
         checks.tryAssertNotEqual(norm, 0,
             'Normalisation cannot be zero: No fluctuations.' \
             + '\nNormalisation: {}'.format(norm))
@@ -203,6 +202,7 @@ def windowing(f_ret, f_aav, s_tau, n, fast):
         w = autoWindow(acorrn=acorr/norm, s_tau=s_tau, n=n)
         return norm, acorr, w
     checks.tryAssertNotEqual(False, False, "Shouldn't get here! wtf...?!")
+    pass
 #
 def uWerr(f_ret, acorr=None, s_tau=1.5, fast_threshold=5000):
     """autocorrelation-analysis of MC time-series following the Gamma-method
@@ -248,7 +248,7 @@ def uWerr(f_ret, acorr=None, s_tau=1.5, fast_threshold=5000):
         'Only expects cuboid lattices: dims >2 are not equal.' \
         + '\nShape: {}'.format(f_ret.shape))
     
-    f_aav = np.average(f_ret)           # get the mean of the function outputs
+    f_aav = f_ret.mean()                # get the mean of the function outputs
     n = float(f_ret.shape[0])           # number of MCMC samples
     
     if acorr is not None:

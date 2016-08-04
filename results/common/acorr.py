@@ -6,9 +6,10 @@ import random
 from scipy import stats
 
 from data import store
+from utils import saveOrDisplay, prll_map
+
 from correlations import acorr, corr, errors
 from models import Basic_GHMC as Model
-from utils import saveOrDisplay, prll_map
 from plotter import Pretty_Plotter, PLOT_LOC
 
 # generatte basic colours list
@@ -63,14 +64,15 @@ def plot(acns, lines, subtitle, op_name, save):
         # for some reason I occisionally need to add a fake plot
         # p2 = ax[0].add_patch(Rectangle((0, 0), 0, 0, fc=c, linewidth=0, alpha=.4, label=label))
         try:
-            ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
+            if e is not None:
+                ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
+            else:
+                ax[0].scatter(x, y, c=c, ms=3, fmt='o', alpha=0.5, label=label)
         except Exception, e:
             print 'Failed for "{}"'.format(label)
             print 'Shapes: x:{} y:{} e:{}'.format(x.shape, y.shape, e.shape)
             print 'Error:'
             print e
-        # ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
-        #     label=label)
     
     for label, line in sorted(lines.iteritems()):
         dc = next(theory_colours)
@@ -139,6 +141,7 @@ def main(x0, pot, file_name,
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
         
         acs = c.getAcorr(separations, opFn, norm = False)   # non norm for uWerr
+        store.store(c.samples, file_name, '_samples')
         ans = errors.uWerr(c.op_samples, acorr=acs)         # get errors
         _, _, _, itau, itau_diff, _, acns = ans             # extract data
         w = errors.getW(itau, itau_diff, n=n_samples)       # get window length
@@ -191,7 +194,7 @@ def main(x0, pot, file_name,
         fx = np.linspace(0, fx_f, fx_points, True)          # create the x-axis for the theory
         windowed_ps = ps[:2*w]                              # windowed acceptance probabilities
         # calculcate theory across all tau, varying p_acc and normalise
-        normFn = lambda pt: acFunc(t=fx, pa=pt[0], theta=pt[1]) / acFunc(t=0, pa=pt[0], theta=pt[1])
+        normFn = lambda pt: acFunc(t=fx, pa=pt[0], theta=pt[1])# / acFunc(t=0, pa=pt[0], theta=pt[1])
         fs = map(normFn, zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
         th_label = r'Theory: $C_{\phi^2}(t; ' \
             + r'\bar{P}_{\text{acc}} = '
