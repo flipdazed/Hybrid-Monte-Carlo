@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     79172,       1661]
-NotebookOptionsPosition[     72929,       1517]
-NotebookOutlinePosition[     73282,       1533]
-CellTagsIndexPosition[     73239,       1530]
+NotebookDataLength[     79509,       1769]
+NotebookOptionsPosition[     75507,       1631]
+NotebookOutlinePosition[     76024,       1653]
+CellTagsIndexPosition[     75935,       1648]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -25,23 +25,26 @@ Cell[TextData[StyleBox["Autocorrelations for Generalised Hybrid Monte Carlo", \
    3.678179545069066*^9, 3.6781795663555193`*^9}, {3.678193359044594*^9, 
    3.678193366940531*^9}, {3.6781934792035913`*^9, 3.678193536257924*^9}}],
 
+Cell[CellGroupData[{
+
 Cell[TextData[{
  "Quadratic Operators with ",
  StyleBox["Fixed Length",
   FontWeight->"Bold"],
  " Trajectories"
 }], "Subtitle",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.678193507844821*^9, 3.6781935459618053`*^9}, {
-   3.6781952473676853`*^9, 3.678195254703648*^9}, {3.679166512443266*^9, 
-   3.6791665138973846`*^9}, 3.6791669682077503`*^9}],
+  3.6781952473676853`*^9, 3.678195254703648*^9}, {3.679349637277747*^9, 
+  3.6793496394511223`*^9}}],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[{
- RowBox[{"currentDir", " ", "=", " ", 
-  RowBox[{"SetDirectory", "[", 
-   RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"currentDir", " ", "=", " ", 
+   RowBox[{"SetDirectory", "[", 
+    RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"$Path", "=", 
    RowBox[{"AppendTo", "[", 
@@ -59,18 +62,17 @@ Cell[BoxData[{
     RowBox[{"$Path", ",", "parentsParent"}], "]"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"Needs", "[", "\"\<packageExpAutocorrelations`\>\"", "]"}], 
+  RowBox[{"Needs", "[", "\"\<packageFixAutocorrelations`\>\"", "]"}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Needs", "[", "\"\<mathematicaUtils`\>\"", "]"}], 
   ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"Needs", "[", "\"\<mathematicaToC.m\>\"", "]"}], 
-  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Needs", "[", "\"\<mathematicaToC`\>\"", 
+  "]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Needs", "[", "\"\<CCodeGenerator`\>\"", "]"}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"?", "\"\<packageExpAutocorrelations`*\>\""}], 
+  RowBox[{"?", "\"\<packageFixAutocorrelations`*\>\""}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{"?", "\"\<mathematicaUtils`*\>\""}], "\[IndentingNewLine]", 
  RowBox[{"?", "\"\<mathematicaToC`*\>\""}]}], "Input",
@@ -92,7 +94,11 @@ Cell[BoxData[{
    3.6791059677592077`*^9, 3.679106132082527*^9, {3.679125469031762*^9, 
    3.67912547562331*^9}, 3.67912641932516*^9, {3.67913975229418*^9, 
    3.6791399091053257`*^9}, {3.679139942279667*^9, 3.6791400508148327`*^9}, 
-   3.6791451249587393`*^9, {3.6791680788982267`*^9, 3.679168112249621*^9}}],
+   3.6791451249587393`*^9, {3.6791680788982267`*^9, 3.6791681102093077`*^9}, {
+   3.6793434922422047`*^9, 3.679343537789736*^9}, {3.6793436548022614`*^9, 
+   3.6793436577766447`*^9}, {3.679343863913754*^9, 3.679343864935297*^9}, 
+   3.6793439374373007`*^9, {3.679348009428444*^9, 3.679348069760758*^9}, {
+   3.679349645509171*^9, 3.679349652275391*^9}}],
 
 Cell[CellGroupData[{
 
@@ -102,86 +108,152 @@ Cell[BoxData[
    RowBox[{
     OpenerBox[Dynamic[Typeset`open$$],
      ImageSize->Small], 
-    StyleBox["packageFixAutocorrelations`", "InfoHeading"]}], True->GridBox[{
+    StyleBox["packageExpAutocorrelations`", "InfoHeading"]}], True->GridBox[{
      {
       RowBox[{
        OpenerBox[Dynamic[Typeset`open$$],
         ImageSize->Small], 
-       StyleBox["packageFixAutocorrelations`", "InfoHeading"]}]},
+       StyleBox["packageExpAutocorrelations`", "InfoHeading"]}]},
      {GridBox[{
+        {
+         ButtonBox["ghmc",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "ghmc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["ghmcLtDerived",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "ghmcLtDerived", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["hmcLt",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "hmcLt", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["ighmc1Acc",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "ighmc1Acc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"]},
+        {
+         ButtonBox["ghmc1Acc",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "ghmc1Acc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["ghmcNormalised",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "ghmcNormalised", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["hmcLt1Acc",
+          BaseStyle->"InformationLink",
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "hmcLt1Acc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["ihmc",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "ihmc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"]},
+        {
+         ButtonBox["ghmc1AccNormalised",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "ghmc1AccNormalised", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["hmc",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "hmc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["hmcLtDerived",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "hmcLtDerived", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["ihmc1Acc",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6053679352713-5671571", {
+            "ihmc1Acc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"]},
         {
          ButtonBox["ghmcLt",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679171100-1650598", {
-            "ghmcLt", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"], 
-         ButtonBox["ghmcLtCoeffs",
+           "Info6053679352713-5671571", {
+            "ghmcLt", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["hmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679171100-1650598", {
-            "ghmcLtCoeffs", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"], 
-         ButtonBox["hmcLt1Acc",
+           "Info6053679352713-5671571", {
+            "hmc1Acc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["hmcNormalised",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679171100-1650598", {
-            "hmcLt1Acc", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"], 
-         ButtonBox["ighmc1Acc",
-          BaseStyle->"InformationLink",
-          
-          ButtonData:>{
-           "Info203679171100-1650598", {
-            "ighmc1Acc", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"], 
-         ButtonBox["ihmc1Acc",
-          BaseStyle->"InformationLink",
-          
-          ButtonData:>{
-           "Info203679171100-1650598", {
-            "ihmc1Acc", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"]},
+           "Info6053679352713-5671571", {
+            "hmcNormalised", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], ""},
         {
          ButtonBox["ghmcLt1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679171100-1650598", {
-            "ghmcLt1Acc", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"], 
-         ButtonBox["hmcLt",
+           "Info6053679352713-5671571", {
+            "ghmcLt1Acc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
+         ButtonBox["hmc1AccNormalised",
           BaseStyle->"InformationLink",
+          
           ButtonData:>{
-           "Info203679171100-1650598", {
-            "hmcLt", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"], 
+           "Info6053679352713-5671571", {
+            "hmc1AccNormalised", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ighmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679171100-1650598", {
-            "ighmc", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"], 
-         ButtonBox["ihmc",
-          BaseStyle->"InformationLink",
-          
-          ButtonData:>{
-           "Info203679171100-1650598", {
-            "ihmc", "packageFixAutocorrelations`"}},
-          ButtonNote->"packageFixAutocorrelations`"], ""}
+           "Info6053679352713-5671571", {
+            "ighmc", "packageExpAutocorrelations`"}},
+          ButtonNote->"packageExpAutocorrelations`"], ""}
        },
        DefaultBaseStyle->"InfoGrid",
        GridBoxItemSize->{"Columns" -> {{
-            Scaled[0.19]}}}]}
+            Scaled[0.2375]}}}]}
     },
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.6791675003468437`*^9}],
+ CellChangeTimes->{3.679349113176239*^9}],
 
 Cell[BoxData[
  DynamicModuleBox[{Typeset`open$$ = True}, 
@@ -201,25 +273,27 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679171100-1650598", {"fullVerify", "mathematicaUtils`"}},
+           "Info6063679352713-5671571", {"fullVerify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["getHiddenVars",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679171100-1650598", {"getHiddenVars", "mathematicaUtils`"}},
+           "Info6063679352713-5671571", {
+            "getHiddenVars", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["maxSimplify",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679171100-1650598", {"maxSimplify", "mathematicaUtils`"}},
+           "Info6063679352713-5671571", {"maxSimplify", "mathematicaUtils`"}},
+          
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["setPrivateVars",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679171100-1650598", {
+           "Info6063679352713-5671571", {
             "setPrivateVars", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"]},
         {
@@ -227,21 +301,21 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679171100-1650598", {
+           "Info6063679352713-5671571", {
             "getDenominator", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["getNumerator",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679171100-1650598", {"getNumerator", "mathematicaUtils`"}},
-          
+           "Info6063679352713-5671571", {"getNumerator", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["quickVerify",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679171100-1650598", {"quickVerify", "mathematicaUtils`"}},
+           "Info6063679352713-5671571", {"quickVerify", "mathematicaUtils`"}},
+          
           ButtonNote->"mathematicaUtils`"], ""}
        },
        DefaultBaseStyle->"InfoGrid",
@@ -251,34 +325,72 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.679167500388826*^9}]
+ CellChangeTimes->{3.6793491132445908`*^9}],
+
+Cell[BoxData[
+ DynamicModuleBox[{Typeset`open$$ = True}, 
+  PaneSelectorBox[{False->
+   RowBox[{
+    OpenerBox[Dynamic[Typeset`open$$],
+     ImageSize->Small], 
+    StyleBox["mathematicaToC`", "InfoHeading"]}], True->GridBox[{
+     {
+      RowBox[{
+       OpenerBox[Dynamic[Typeset`open$$],
+        ImageSize->Small], 
+       StyleBox["mathematicaToC`", "InfoHeading"]}]},
+     {GridBox[{
+        {
+         ButtonBox["cleanCString",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6073679352713-5671571", {"cleanCString", "mathematicaToC`"}},
+          ButtonNote->"mathematicaToC`"], 
+         ButtonBox["makeMyComplex",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6073679352713-5671571", {"makeMyComplex", "mathematicaToC`"}},
+          
+          ButtonNote->"mathematicaToC`"], 
+         ButtonBox["writeFunc",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info6073679352713-5671571", {"writeFunc", "mathematicaToC`"}},
+          ButtonNote->"mathematicaToC`"]}
+       },
+       DefaultBaseStyle->"InfoGrid",
+       GridBoxItemSize->{"Columns" -> {{
+            Scaled[0.31666666666666665`]}}}]}
+    },
+    GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
+   Dynamic[Typeset`open$$],
+   ImageSize->Automatic]]], "Print", "InfoCell",
+ CellChangeTimes->{3.679349113304916*^9}]
 }, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["Check Compiler Details", "Section",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
- CellChangeTimes->{{3.679127164053917*^9, 3.6791271796627893`*^9}, 
-   3.6791669682091312`*^9}],
+ CellChangeTimes->{{3.679127164053917*^9, 3.6791271796627893`*^9}}],
 
 Cell["Ensure the compiler is recognised", "Text",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
- CellChangeTimes->{{3.679127232171749*^9, 3.679127236493249*^9}, 
-   3.6791669682091846`*^9}],
+ CellChangeTimes->{{3.679127232171749*^9, 3.679127236493249*^9}}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{"DefaultCCompiler", "[", "]"}], "\n", 
  RowBox[{"CCompilers", "[", "Full", "]"}], "\n", 
  RowBox[{"CCompilers", "[", "]"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679127169479401*^9, 3.6791271694879827`*^9}, {
-   3.679129214329311*^9, 3.6791292293879623`*^9}, {3.6791292654184732`*^9, 
-   3.679129265567644*^9}, {3.679133021737603*^9, 3.679133021977157*^9}, 
-   3.679166968209259*^9}],
+  3.679129214329311*^9, 3.6791292293879623`*^9}, {3.6791292654184732`*^9, 
+  3.679129265567644*^9}, {3.679133021737603*^9, 3.679133021977157*^9}}],
 
 Cell[BoxData["CCompilerDriver`ClangCompiler`ClangCompiler"], "Output",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679127169954404*^9, 3.679129215102482*^9, 3.6791292659603157`*^9, 
    3.679133023302566*^9, 3.67914864947745*^9, 3.6791486967743464`*^9, 
@@ -295,10 +407,10 @@ Cell[BoxData["CCompilerDriver`ClangCompiler`ClangCompiler"], "Output",
    3.679165025725534*^9, 3.679165105409354*^9, 3.679165147647716*^9, 
    3.679165179862164*^9, 3.679165366139348*^9, 3.679165403580447*^9, 
    3.679165532292602*^9, 3.6791656275128*^9, 3.679165658385356*^9, 
-   3.679166371514678*^9, {3.6791666733935633`*^9, 3.679166700530154*^9}, {
-   3.679166892481902*^9, 3.67916691405896*^9}, {3.679166968209322*^9, 
-   3.679167003650958*^9}, 3.679167041131178*^9, 3.679167092930616*^9, 
-   3.679167329920843*^9, 3.679167500433731*^9}],
+   3.679166371514678*^9, 3.679166407927911*^9, 3.6793436744216213`*^9, 
+   3.679343924857668*^9, 3.67934399340265*^9, 3.679345097439599*^9, 
+   3.67934514373221*^9, 3.679345496333713*^9, 3.67934561367735*^9, 
+   3.679346108857052*^9, 3.679349022403668*^9, 3.679349113595602*^9}],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -334,7 +446,6 @@ Cell[BoxData[
      RowBox[{"\<\"CompilerInstallation\"\>", "\[Rule]", "None"}], ",", 
      RowBox[{"\<\"CompilerName\"\>", "\[Rule]", "Automatic"}]}], "}"}]}], 
   "}"}]], "Output",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679127169954404*^9, 3.679129215102482*^9, 3.6791292659603157`*^9, 
    3.679133023302566*^9, 3.67914864947745*^9, 3.6791486967743464`*^9, 
@@ -351,10 +462,10 @@ Cell[BoxData[
    3.679165025725534*^9, 3.679165105409354*^9, 3.679165147647716*^9, 
    3.679165179862164*^9, 3.679165366139348*^9, 3.679165403580447*^9, 
    3.679165532292602*^9, 3.6791656275128*^9, 3.679165658385356*^9, 
-   3.679166371514678*^9, {3.6791666733935633`*^9, 3.679166700530154*^9}, {
-   3.679166892481902*^9, 3.67916691405896*^9}, {3.679166968209322*^9, 
-   3.679167003650958*^9}, 3.679167041131178*^9, 3.679167092930616*^9, 
-   3.679167329920843*^9, 3.679167500440827*^9}],
+   3.679166371514678*^9, 3.679166407927911*^9, 3.6793436744216213`*^9, 
+   3.679343924857668*^9, 3.67934399340265*^9, 3.679345097439599*^9, 
+   3.67934514373221*^9, 3.679345496333713*^9, 3.67934561367735*^9, 
+   3.679346108857052*^9, 3.679349022403668*^9, 3.679349113602331*^9}],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -376,7 +487,6 @@ Cell[BoxData[
      ",", 
      RowBox[{"\<\"CompilerName\"\>", "\[Rule]", "Automatic"}]}], "}"}]}], 
   "}"}]], "Output",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679127169954404*^9, 3.679129215102482*^9, 3.6791292659603157`*^9, 
    3.679133023302566*^9, 3.67914864947745*^9, 3.6791486967743464`*^9, 
@@ -393,99 +503,98 @@ Cell[BoxData[
    3.679165025725534*^9, 3.679165105409354*^9, 3.679165147647716*^9, 
    3.679165179862164*^9, 3.679165366139348*^9, 3.679165403580447*^9, 
    3.679165532292602*^9, 3.6791656275128*^9, 3.679165658385356*^9, 
-   3.679166371514678*^9, {3.6791666733935633`*^9, 3.679166700530154*^9}, {
-   3.679166892481902*^9, 3.67916691405896*^9}, {3.679166968209322*^9, 
-   3.679167003650958*^9}, 3.679167041131178*^9, 3.679167092930616*^9, 
-   3.679167329920843*^9, 3.679167500447423*^9}],
+   3.679166371514678*^9, 3.679166407927911*^9, 3.6793436744216213`*^9, 
+   3.679343924857668*^9, 3.67934399340265*^9, 3.679345097439599*^9, 
+   3.67934514373221*^9, 3.679345496333713*^9, 3.67934561367735*^9, 
+   3.679346108857052*^9, 3.679349022403668*^9, 3.679349113607346*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell["Initialisations", "Section",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
- CellChangeTimes->{{3.679127211114664*^9, 3.679127220501643*^9}, 
-   3.6791669682096148`*^9}],
+ CellChangeTimes->{{3.679127211114664*^9, 3.679127220501643*^9}}],
 
 Cell["\<\
-This section defines the locations for the functions to be stored etc.\
+This section defines the locations for the functions to be stored:\
 \>", "Text",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
- CellChangeTimes->{{3.679126339210435*^9, 3.679126359751759*^9}, 
-   3.67916696820967*^9}],
-
-Cell["Function Dump", "Chapter",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
- CellChangeTimes->{{3.6790958789287453`*^9, 3.679095889534965*^9}, {
-   3.67912419329854*^9, 3.6791241951130743`*^9}, 3.679166968210473*^9}],
+ CellChangeTimes->{{3.679126339210435*^9, 3.679126359751759*^9}, {
+  3.6793483410886097`*^9, 3.679348341511332*^9}}],
 
 Cell[BoxData[
  RowBox[{"Clear", "[", 
   RowBox[{
   "t", ",", " ", "ph", ",", " ", "th", ",", " ", "r", ",", " ", "tau"}], 
   "]"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
- CellChangeTimes->{{3.679165490014771*^9, 3.6791655123715363`*^9}, 
-   3.679166968210593*^9}],
+ CellChangeTimes->{{3.679165490014771*^9, 3.6791655123715363`*^9}}],
 
-Cell[BoxData[
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"parentsParentParent", " ", "=", " ", 
+   RowBox[{"FileNameJoin", "[", " ", 
+    RowBox[{"Most", "[", 
+     RowBox[{"FileNameSplit", "[", "parentsParent", "]"}], "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"saveLoc", " ", "=", 
+  RowBox[{"FileNameJoin", "[", 
+   RowBox[{"{", 
+    RowBox[{"parentsParentParent", ",", "\"\<clibs/autocorrelations/\>\""}], 
+    "}"}], "]"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"outDir", " ", "=", " ", 
    RowBox[{"FileNameJoin", "[", 
     RowBox[{"{", 
-     RowBox[{"currentDir", ",", "\"\<clibs\>\""}], "}"}], "]"}]}], 
-  ";"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
+     RowBox[{"saveLoc", ",", "\"\<fixed\>\""}], "}"}], "]"}]}], 
+  ";"}]}], "Input",
  CellChangeTimes->{{3.679145116259235*^9, 3.679145135285923*^9}, {
-   3.67914560015676*^9, 3.679145601138606*^9}, 3.67916696821068*^9}],
+  3.67914560015676*^9, 3.679145601138606*^9}, {3.679348295903565*^9, 
+  3.6793483360012293`*^9}, {3.6793490704808483`*^9, 3.679349103798818*^9}, {
+  3.6793496338210783`*^9, 3.679349634275599*^9}}],
+
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations\"\>"], "Output",
+ CellChangeTimes->{3.67934902244538*^9, 3.679349113639984*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Function Dump", "Chapter",
+ CellChangeTimes->{{3.6790958789287453`*^9, 3.679095889534965*^9}, {
+   3.67912419329854*^9, 3.6791241951130743`*^9}, 3.679166968210473*^9, 
+   3.679349625577848*^9}],
 
 Cell["\<\
 If the function myComplex.hpp doesn\[CloseCurlyQuote]t exist then it can be \
 created with this function:\
 \>", "Text",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
- CellChangeTimes->{{3.679166287061551*^9, 3.6791663066250887`*^9}, 
-   3.679166968210738*^9}],
+ CellChangeTimes->{{3.679166287061551*^9, 3.6791663066250887`*^9}, {
+  3.6793434272175703`*^9, 3.679343428288219*^9}}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{
-  RowBox[{"makeMyComplex", "[", "outDir_", "]"}], ":=", 
-  RowBox[{"Module", "[", 
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{"myFunc", ",", " ", "saveLoc", ",", " ", "fnName"}], "}"}], ",", 
-    "\n", 
-    RowBox[{"(*", " ", 
-     RowBox[{
-     "generate", " ", "the", " ", "save", " ", "name", " ", "and", " ", 
-      "location"}], " ", "*)"}], "\n", 
-    RowBox[{
-     RowBox[{"fnName", " ", "=", " ", "\"\<myComplex.hpp\>\""}], ";", "\n", 
-     RowBox[{"saveLoc", "=", 
-      RowBox[{
-       RowBox[{"FileNameJoin", "[", 
-        RowBox[{"{", 
-         RowBox[{"outDir", ",", "fnName"}], "}"}], "]"}], "//", 
-       "ToString"}]}], ";", "\n", "\n", 
-     RowBox[{"(*", 
-      RowBox[{"Save", " ", "the", " ", "Function"}], "*)"}], "\n", 
-     RowBox[{"myFunc", "=", 
-      RowBox[{"StringJoin", "[", "\n", 
-       RowBox[{"{", 
-        RowBox[{
-        "\"\<#include <complex>\\n\\n\>\"", ",", "\n", 
-         "\"\<std::complex<double> Complex(double x, double y){\\n\>\"", ",", 
-         "\"\<\\tconst std::complex<double> i(0.0,1.0);\\n\>\"", ",", "\n", 
-         "\"\<\\treturn x + y*i;\\n\>\"", ",", "\n", "\"\<}\>\""}], " ", 
-        "}"}], "\n", "]"}]}], ";", "\n", 
-     RowBox[{"WriteString", "[", 
-      RowBox[{"saveLoc", ",", " ", "myFunc"}], "]"}], ";"}]}], "\n", 
-   "]"}]}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
+ RowBox[{"?", "makeMyComplex"}]], "Input",
  CellChangeTimes->{{3.67916630383967*^9, 3.679166303848027*^9}, 
-   3.679166968210906*^9}],
+   3.679343284286381*^9, {3.679343885721128*^9, 3.6793438952474203`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"makeMyComplex[outDir_] this creates the function \
+'myComplex.hpp' at the location outDir_ with content:\\n     \\n     #include \
+<complex>\\n     \\n     std::complex<double> Complex(double x, double y){\\n \
+         const std::complex<double> i(0.0,1.0);\\n          return x + \
+y*i;\\n     }\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.679349113718362*^9},
+ CellTags->"Info6153679352713-5671571"]
+}, Open  ]],
 
 Cell[BoxData[
  RowBox[{"makeMyComplex", "[", "outDir", "]"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.6791663269284687`*^9, 3.6791663279044657`*^9}, 
-   3.679166968210988*^9}],
+   3.679166968210988*^9, 3.679349625577984*^9}],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -504,7 +613,6 @@ Cell[BoxData[
    RowBox[{"writeFunc", "[", 
     RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.67912693500245*^9, 3.679126964517372*^9}, 
    3.679127733993648*^9, {3.679127785068099*^9, 3.67912781634243*^9}, 
    3.6791278801038857`*^9, 3.679128057158238*^9, {3.6791280893731318`*^9, 
@@ -520,7 +628,8 @@ Cell[BoxData[
    3.679139495969645*^9}, {3.679139592183021*^9, 3.679139617848404*^9}, {
    3.679143556401628*^9, 3.679143559295664*^9}, {3.679144589751205*^9, 
    3.6791445898813553`*^9}, {3.679144644494327*^9, 3.679144676770677*^9}, {
-   3.6791478039038486`*^9, 3.679147808558634*^9}, 3.67916696821111*^9}],
+   3.6791478039038486`*^9, 3.679147808558634*^9}, 3.67916696821111*^9, 
+   3.679349625578044*^9}],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -544,12 +653,11 @@ Cell[BoxData[
    RowBox[{"writeFunc", "[", 
     RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679138548350367*^9, 3.6791385627737207`*^9}, 
    3.679139205915856*^9, {3.679144608479611*^9, 3.679144611829022*^9}, {
    3.679144692943007*^9, 3.679144701085663*^9}, {3.679144748941328*^9, 
    3.679144749179734*^9}, 3.679147803833065*^9, 3.679149709679736*^9, 
-   3.679166968211244*^9}],
+   3.679166968211244*^9, 3.679349625578105*^9}],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -574,10 +682,12 @@ Cell[BoxData[
     RowBox[{"writeFunc", "[", 
      RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.6791393819406776`*^9, 3.679139398077528*^9}, {
    3.679144706863597*^9, 3.6791447156554613`*^9}, {3.679144755309102*^9, 
-   3.679144755451639*^9}, 3.679147803836605*^9, 3.679166968211385*^9}],
+   3.679144755451639*^9}, 3.679147803836605*^9, 3.679166968211385*^9, 
+   3.679349625578166*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -593,13 +703,13 @@ Cell[BoxData[{
   RowBox[{"writeFunc", "[", 
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679139350829319*^9, 3.6791393589577713`*^9}, {
    3.679144727750942*^9, 3.679144767979344*^9}, 3.679147803839583*^9, 
-   3.6791669682114897`*^9}],
+   3.6791669682114897`*^9, 3.6793496255782213`*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData["\<\"E found in func\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791497988634577`*^9, 3.679149858373603*^9, 3.67914995619521*^9, 
    3.679150566560367*^9, 3.6791510063075314`*^9, 3.679151780212138*^9, 
@@ -618,10 +728,9 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.67916637431496*^9}, 3.679166704633243*^9, {3.679166892792994*^9, 
    3.679166917601204*^9}, {3.679166968211946*^9, 3.679167003775494*^9}, 
    3.679167041250308*^9, 3.6791670930543957`*^9, 3.679167330045125*^9, 
-   3.679167500557345*^9}],
+   3.679167500557345*^9, 3.679349625578279*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791497988634577`*^9, 3.679149858373603*^9, 3.67914995619521*^9, 
    3.679150566560367*^9, 3.6791510063075314`*^9, 3.679151780212138*^9, 
@@ -640,11 +749,10 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.67916637431496*^9}, 3.679166704633243*^9, {3.679166892792994*^9, 
    3.679166917601204*^9}, {3.679166968211946*^9, 3.679167003775494*^9}, 
    3.679167041250308*^9, 3.6791670930543957`*^9, 3.679167330045125*^9, 
-   3.679167500564052*^9}],
+   3.679167500564052*^9, 3.679349625578336*^9}],
 
 Cell[BoxData["\<\" double b, double p, double ph, double r, double th\"\>"], \
 "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791497988634577`*^9, 3.679149858373603*^9, 3.67914995619521*^9, 
    3.679150566560367*^9, 3.6791510063075314`*^9, 3.679151780212138*^9, 
@@ -663,11 +771,10 @@ Cell[BoxData["\<\" double b, double p, double ph, double r, double th\"\>"], \
    3.67916637431496*^9}, 3.679166704633243*^9, {3.679166892792994*^9, 
    3.679166917601204*^9}, {3.679166968211946*^9, 3.679167003775494*^9}, 
    3.679167041250308*^9, 3.6791670930543957`*^9, 3.679167330045125*^9, 
-   3.67916750057121*^9}],
+   3.67916750057121*^9, 3.679349625578392*^9}],
 
 Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
 mathematicaDerivations/fixed/clibs/ghmcLt.hpp\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791497988634577`*^9, 3.679149858373603*^9, 3.67914995619521*^9, 
    3.679150566560367*^9, 3.6791510063075314`*^9, 3.679151780212138*^9, 
@@ -686,7 +793,11 @@ mathematicaDerivations/fixed/clibs/ghmcLt.hpp\"\>"], "Print",
    3.67916637431496*^9}, 3.679166704633243*^9, {3.679166892792994*^9, 
    3.679166917601204*^9}, {3.679166968211946*^9, 3.679167003775494*^9}, 
    3.679167041250308*^9, 3.6791670930543957`*^9, 3.679167330045125*^9, 
-   3.679167500578988*^9}],
+   3.679167500578988*^9, 3.679349625578443*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -702,13 +813,13 @@ Cell[BoxData[{
   RowBox[{"writeFunc", "[", 
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.6791447247331657`*^9, 3.679144725564095*^9}, {
    3.679144772382402*^9, 3.679144777002837*^9}, 3.6791478038426037`*^9, 
-   3.6791669682123547`*^9}],
+   3.6791669682123547`*^9, 3.6793496255785007`*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149798893517*^9, 3.679149858397663*^9, 3.679149956213376*^9, 
    3.679150566577476*^9, 3.679151006324813*^9, 3.6791517802341423`*^9, 
@@ -727,10 +838,9 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679166374354785*^9}, 3.679166704686108*^9, {3.6791668930649233`*^9, 
    3.679166917852983*^9}, {3.679166968212468*^9, 3.679167003826481*^9}, 
    3.679167041296361*^9, 3.679167093106101*^9, 3.679167330098567*^9, 
-   3.6791675006091137`*^9}],
+   3.6791675006091137`*^9, 3.679349625578559*^9}],
 
 Cell[BoxData["\<\" double b, double ph, double r, double th\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149798893517*^9, 3.679149858397663*^9, 3.679149956213376*^9, 
    3.679150566577476*^9, 3.679151006324813*^9, 3.6791517802341423`*^9, 
@@ -749,11 +859,10 @@ Cell[BoxData["\<\" double b, double ph, double r, double th\"\>"], "Print",
    3.679166374354785*^9}, 3.679166704686108*^9, {3.6791668930649233`*^9, 
    3.679166917852983*^9}, {3.679166968212468*^9, 3.679167003826481*^9}, 
    3.679167041296361*^9, 3.679167093106101*^9, 3.679167330098567*^9, 
-   3.67916750061567*^9}],
+   3.67916750061567*^9, 3.679349625578615*^9}],
 
 Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
 mathematicaDerivations/fixed/clibs/ghmcLt1Acc.hpp\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149798893517*^9, 3.679149858397663*^9, 3.679149956213376*^9, 
    3.679150566577476*^9, 3.679151006324813*^9, 3.6791517802341423`*^9, 
@@ -772,7 +881,9 @@ mathematicaDerivations/fixed/clibs/ghmcLt1Acc.hpp\"\>"], "Print",
    3.679166374354785*^9}, 3.679166704686108*^9, {3.6791668930649233`*^9, 
    3.679166917852983*^9}, {3.679166968212468*^9, 3.679167003826481*^9}, 
    3.679167041296361*^9, 3.679167093106101*^9, 3.679167330098567*^9, 
-   3.679167500623145*^9}],
+   3.679167500623145*^9, 3.6793496255786657`*^9}]
+}, Open  ]]
+}, Open  ]],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -790,10 +901,9 @@ Cell[BoxData[
     RowBox[{"writeFunc", "[", 
      RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679144793825124*^9, 3.679144806048572*^9}, {
    3.679144878118636*^9, 3.679144878573275*^9}, 3.679147803848119*^9, 
-   3.6791669682129297`*^9}],
+   3.6791669682129297`*^9, 3.679349625578718*^9}],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -820,10 +930,9 @@ Cell[BoxData[
     RowBox[{"writeFunc", "[", 
      RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679144813831985*^9, {3.6791448453130007`*^9, 3.679144871125358*^9}, 
-   3.679147803852867*^9, 3.6791669682130632`*^9}],
+   3.679147803852867*^9, 3.6791669682130632`*^9, 3.679349625578775*^9}],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -848,9 +957,8 @@ Cell[BoxData[
     RowBox[{"writeFunc", "[", 
      RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.6791448942285137`*^9, 3.679144898148707*^9}, 
-   3.6791478038569613`*^9, 3.679166968213191*^9}],
+   3.6791478038569613`*^9, 3.679166968213191*^9, 3.679349625578829*^9}],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -872,9 +980,8 @@ Cell[BoxData[
     RowBox[{"writeFunc", "[", 
      RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679144907444091*^9, 3.679144913484152*^9}, 
-   3.6791478038609657`*^9, 3.679166968213324*^9}],
+   3.6791478038609657`*^9, 3.679166968213324*^9, 3.679349625578882*^9}],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -896,9 +1003,10 @@ Cell[BoxData[
     RowBox[{"writeFunc", "[", 
      RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679144923411634*^9, 3.6791449318944483`*^9}, 
-   3.679147803864818*^9, 3.679166968213438*^9}],
+   3.679147803864818*^9, 3.679166968213438*^9, 3.67934962557894*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -919,12 +1027,12 @@ Cell[BoxData[{
   RowBox[{"writeFunc", "[", 
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679144942740419*^9, 3.679144953083199*^9}, 
-   3.679147803868732*^9, 3.679166968213551*^9}],
+   3.679147803868732*^9, 3.679166968213551*^9, 3.679349625578992*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData["\<\"E found in func\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.67914980000758*^9, 3.679149859364797*^9, 3.679149957220407*^9, 
    3.679150567659493*^9, 3.679151007398162*^9, 3.679151781216242*^9, 
@@ -943,10 +1051,9 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.679166375267161*^9}, 3.6791667047777042`*^9, {3.679166893381262*^9, 
    3.679166918186812*^9}, {3.679166968213686*^9, 3.679167003926046*^9}, 
    3.67916704138048*^9, 3.679167093187106*^9, 3.679167330181185*^9, 
-   3.679167500690288*^9}],
+   3.679167500690288*^9, 3.679349625579043*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.67914980000758*^9, 3.679149859364797*^9, 3.679149957220407*^9, 
    3.679150567659493*^9, 3.679151007398162*^9, 3.679151781216242*^9, 
@@ -965,10 +1072,9 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679166375267161*^9}, 3.6791667047777042`*^9, {3.679166893381262*^9, 
    3.679166918186812*^9}, {3.679166968213686*^9, 3.679167003926046*^9}, 
    3.67916704138048*^9, 3.679167093187106*^9, 3.679167330181185*^9, 
-   3.6791675006964083`*^9}],
+   3.6791675006964083`*^9, 3.679349625579102*^9}],
 
 Cell[BoxData["\<\" double b, double p, double ph, double r\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.67914980000758*^9, 3.679149859364797*^9, 3.679149957220407*^9, 
    3.679150567659493*^9, 3.679151007398162*^9, 3.679151781216242*^9, 
@@ -987,11 +1093,10 @@ Cell[BoxData["\<\" double b, double p, double ph, double r\"\>"], "Print",
    3.679166375267161*^9}, 3.6791667047777042`*^9, {3.679166893381262*^9, 
    3.679166918186812*^9}, {3.679166968213686*^9, 3.679167003926046*^9}, 
    3.67916704138048*^9, 3.679167093187106*^9, 3.679167330181185*^9, 
-   3.679167500702878*^9}],
+   3.679167500702878*^9, 3.679349625579152*^9}],
 
 Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
 mathematicaDerivations/fixed/clibs/hmcLt.hpp\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.67914980000758*^9, 3.679149859364797*^9, 3.679149957220407*^9, 
    3.679150567659493*^9, 3.679151007398162*^9, 3.679151781216242*^9, 
@@ -1010,7 +1115,11 @@ mathematicaDerivations/fixed/clibs/hmcLt.hpp\"\>"], "Print",
    3.679166375267161*^9}, 3.6791667047777042`*^9, {3.679166893381262*^9, 
    3.679166918186812*^9}, {3.679166968213686*^9, 3.679167003926046*^9}, 
    3.67916704138048*^9, 3.679167093187106*^9, 3.679167330181185*^9, 
-   3.679167500708953*^9}],
+   3.679167500708953*^9, 3.6793496255792093`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -1029,12 +1138,12 @@ Cell[BoxData[{
   RowBox[{"writeFunc", "[", 
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679144960243771*^9, 3.679144969145866*^9}, 
-   3.679147803872588*^9, 3.6791669682141323`*^9}],
+   3.679147803872588*^9, 3.6791669682141323`*^9, 3.679349625579265*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData["\<\"E found in func\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149800046187*^9, 3.6791498593850317`*^9, 3.67914995727888*^9, 
    3.679150567696611*^9, 3.6791510074167957`*^9, 3.679151781249062*^9, 
@@ -1053,10 +1162,9 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.679166375316289*^9}, 3.679166704825296*^9, {3.679166893691649*^9, 
    3.6791669184186707`*^9}, {3.679166968214252*^9, 3.679167003977386*^9}, 
    3.679167041426176*^9, 3.679167093241314*^9, 3.679167330233214*^9, 
-   3.679167500744444*^9}],
+   3.679167500744444*^9, 3.679349625579318*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149800046187*^9, 3.6791498593850317`*^9, 3.67914995727888*^9, 
    3.679150567696611*^9, 3.6791510074167957`*^9, 3.679151781249062*^9, 
@@ -1075,10 +1183,9 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679166375316289*^9}, 3.679166704825296*^9, {3.679166893691649*^9, 
    3.6791669184186707`*^9}, {3.679166968214252*^9, 3.679167003977386*^9}, 
    3.679167041426176*^9, 3.679167093241314*^9, 3.679167330233214*^9, 
-   3.679167500752995*^9}],
+   3.679167500752995*^9, 3.6793496255793753`*^9}],
 
 Cell[BoxData["\<\" double b, double ph, double r\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149800046187*^9, 3.6791498593850317`*^9, 3.67914995727888*^9, 
    3.679150567696611*^9, 3.6791510074167957`*^9, 3.679151781249062*^9, 
@@ -1097,11 +1204,10 @@ Cell[BoxData["\<\" double b, double ph, double r\"\>"], "Print",
    3.679166375316289*^9}, 3.679166704825296*^9, {3.679166893691649*^9, 
    3.6791669184186707`*^9}, {3.679166968214252*^9, 3.679167003977386*^9}, 
    3.679167041426176*^9, 3.679167093241314*^9, 3.679167330233214*^9, 
-   3.679167500759118*^9}],
+   3.679167500759118*^9, 3.679349625579426*^9}],
 
 Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
 mathematicaDerivations/fixed/clibs/hmcLt1Acc.hpp\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149800046187*^9, 3.6791498593850317`*^9, 3.67914995727888*^9, 
    3.679150567696611*^9, 3.6791510074167957`*^9, 3.679151781249062*^9, 
@@ -1120,7 +1226,9 @@ mathematicaDerivations/fixed/clibs/hmcLt1Acc.hpp\"\>"], "Print",
    3.679166375316289*^9}, 3.679166704825296*^9, {3.679166893691649*^9, 
    3.6791669184186707`*^9}, {3.679166968214252*^9, 3.679167003977386*^9}, 
    3.679167041426176*^9, 3.679167093241314*^9, 3.679167330233214*^9, 
-   3.679167500765253*^9}],
+   3.679167500765253*^9, 3.679349625579479*^9}]
+}, Open  ]]
+}, Open  ]],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -1145,9 +1253,8 @@ Cell[BoxData[
     RowBox[{"writeFunc", "[", 
      RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.67914497837789*^9, 3.679144987627924*^9}, 
-   3.679147803876693*^9, 3.679166968214713*^9}],
+   3.679147803876693*^9, 3.679166968214713*^9, 3.679349625579537*^9}],
 
 Cell[BoxData[
  RowBox[{"(*", 
@@ -1172,9 +1279,10 @@ Cell[BoxData[
     RowBox[{"writeFunc", "[", 
      RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}]}], 
   "*)"}]], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.6791450040263863`*^9, 3.679145009068478*^9}, 
-   3.67914780388067*^9, 3.679166968214842*^9}],
+   3.67914780388067*^9, 3.679166968214842*^9, 3.679349625579591*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -1190,12 +1298,12 @@ Cell[BoxData[{
   RowBox[{"writeFunc", "[", 
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.6791450181043463`*^9, 3.679145064190612*^9}, 
-   3.679147803884677*^9, 3.679166968214954*^9}],
+   3.679147803884677*^9, 3.679166968214954*^9, 3.679349625579644*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149800732293*^9, 3.6791498598988333`*^9, 3.67914995777526*^9, 
    3.679150568202703*^9, 3.679151007904234*^9, 3.679151781750248*^9, 
@@ -1214,10 +1322,9 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679166375784006*^9}, 3.6791667048834677`*^9, {3.679166894038525*^9, 
    3.6791669187131367`*^9}, {3.679166968215077*^9, 3.679167004040689*^9}, 
    3.679167041500285*^9, 3.679167093306031*^9, 3.6791673302979116`*^9, 
-   3.679167500808791*^9}],
+   3.679167500808791*^9, 3.6793496255797033`*^9}],
 
 Cell[BoxData["\<\" double p, double ph, double th\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149800732293*^9, 3.6791498598988333`*^9, 3.67914995777526*^9, 
    3.679150568202703*^9, 3.679151007904234*^9, 3.679151781750248*^9, 
@@ -1236,11 +1343,10 @@ Cell[BoxData["\<\" double p, double ph, double th\"\>"], "Print",
    3.679166375784006*^9}, 3.6791667048834677`*^9, {3.679166894038525*^9, 
    3.6791669187131367`*^9}, {3.679166968215077*^9, 3.679167004040689*^9}, 
    3.679167041500285*^9, 3.679167093306031*^9, 3.6791673302979116`*^9, 
-   3.679167500814806*^9}],
+   3.679167500814806*^9, 3.6793496255797567`*^9}],
 
 Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
 mathematicaDerivations/fixed/clibs/ighmc.hpp\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.679149800732293*^9, 3.6791498598988333`*^9, 3.67914995777526*^9, 
    3.679150568202703*^9, 3.679151007904234*^9, 3.679151781750248*^9, 
@@ -1259,7 +1365,11 @@ mathematicaDerivations/fixed/clibs/ighmc.hpp\"\>"], "Print",
    3.679166375784006*^9}, 3.6791667048834677`*^9, {3.679166894038525*^9, 
    3.6791669187131367`*^9}, {3.679166968215077*^9, 3.679167004040689*^9}, 
    3.679167041500285*^9, 3.679167093306031*^9, 3.6791673302979116`*^9, 
-   3.679167500820999*^9}],
+   3.679167500820999*^9, 3.679349625579814*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -1275,12 +1385,12 @@ Cell[BoxData[{
   RowBox[{"writeFunc", "[", 
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679145068238309*^9, 3.679145073522807*^9}, 
-   3.679147803888941*^9, 3.67916696821546*^9}],
+   3.679147803888941*^9, 3.67916696821546*^9, 3.67934962557987*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498007631083`*^9, 3.679149859927265*^9, 3.679149957807124*^9, 
    3.679150568219413*^9, 3.679151007926033*^9, 3.6791517817627583`*^9, 
@@ -1299,10 +1409,9 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.6791663758332043`*^9}, 3.679166704937592*^9, {3.679166894316927*^9, 
    3.679166918974771*^9}, {3.6791669682155743`*^9, 3.679167004079571*^9}, 
    3.679167041541486*^9, 3.679167093347291*^9, 3.6791673303388042`*^9, 
-   3.679167500860113*^9}],
+   3.679167500860113*^9, 3.679349625579924*^9}],
 
 Cell[BoxData["\<\" double ph, double th\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498007631083`*^9, 3.679149859927265*^9, 3.679149957807124*^9, 
    3.679150568219413*^9, 3.679151007926033*^9, 3.6791517817627583`*^9, 
@@ -1321,11 +1430,10 @@ Cell[BoxData["\<\" double ph, double th\"\>"], "Print",
    3.6791663758332043`*^9}, 3.679166704937592*^9, {3.679166894316927*^9, 
    3.679166918974771*^9}, {3.6791669682155743`*^9, 3.679167004079571*^9}, 
    3.679167041541486*^9, 3.679167093347291*^9, 3.6791673303388042`*^9, 
-   3.679167500867284*^9}],
+   3.679167500867284*^9, 3.679349625579982*^9}],
 
 Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
 mathematicaDerivations/fixed/clibs/ighmc1Acc.hpp\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498007631083`*^9, 3.679149859927265*^9, 3.679149957807124*^9, 
    3.679150568219413*^9, 3.679151007926033*^9, 3.6791517817627583`*^9, 
@@ -1344,7 +1452,11 @@ mathematicaDerivations/fixed/clibs/ighmc1Acc.hpp\"\>"], "Print",
    3.6791663758332043`*^9}, 3.679166704937592*^9, {3.679166894316927*^9, 
    3.679166918974771*^9}, {3.6791669682155743`*^9, 3.679167004079571*^9}, 
    3.679167041541486*^9, 3.679167093347291*^9, 3.6791673303388042`*^9, 
-   3.679167500873355*^9}],
+   3.679167500873355*^9, 3.679349625580035*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -1360,12 +1472,12 @@ Cell[BoxData[{
   RowBox[{"writeFunc", "[", 
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.679145083229907*^9, 3.6791450882393007`*^9}, 
-   3.679147803893009*^9, 3.679166968216096*^9}],
+   3.679147803893009*^9, 3.679166968216096*^9, 3.67934962558009*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498007964983`*^9, 3.6791498599470587`*^9, 3.679149957840884*^9, 
    3.679150568241541*^9, 3.6791510079399433`*^9, 3.679151781784381*^9, 
@@ -1384,10 +1496,9 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679166375882125*^9}, 3.679166704986739*^9, {3.6791668945650253`*^9, 
    3.679166919235241*^9}, {3.6791669682162123`*^9, 3.679167004118064*^9}, 
    3.6791670415805597`*^9, 3.679167093390574*^9, 3.679167330387539*^9, 
-   3.679167500900041*^9}],
+   3.679167500900041*^9, 3.6793496255801477`*^9}],
 
 Cell[BoxData["\<\" double p, double ph\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498007964983`*^9, 3.6791498599470587`*^9, 3.679149957840884*^9, 
    3.679150568241541*^9, 3.6791510079399433`*^9, 3.679151781784381*^9, 
@@ -1406,11 +1517,10 @@ Cell[BoxData["\<\" double p, double ph\"\>"], "Print",
    3.679166375882125*^9}, 3.679166704986739*^9, {3.6791668945650253`*^9, 
    3.679166919235241*^9}, {3.6791669682162123`*^9, 3.679167004118064*^9}, 
    3.6791670415805597`*^9, 3.679167093390574*^9, 3.679167330387539*^9, 
-   3.679167500906241*^9}],
+   3.679167500906241*^9, 3.679349625580204*^9}],
 
 Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
 mathematicaDerivations/fixed/clibs/ihmc.hpp\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498007964983`*^9, 3.6791498599470587`*^9, 3.679149957840884*^9, 
    3.679150568241541*^9, 3.6791510079399433`*^9, 3.679151781784381*^9, 
@@ -1429,7 +1539,11 @@ mathematicaDerivations/fixed/clibs/ihmc.hpp\"\>"], "Print",
    3.679166375882125*^9}, 3.679166704986739*^9, {3.6791668945650253`*^9, 
    3.679166919235241*^9}, {3.6791669682162123`*^9, 3.679167004118064*^9}, 
    3.6791670415805597`*^9, 3.679167093390574*^9, 3.679167330387539*^9, 
-   3.679167500912402*^9}],
+   3.679167500912402*^9, 3.679349625580264*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -1443,12 +1557,12 @@ Cell[BoxData[{
   RowBox[{"writeFunc", "[", 
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{{3.6791450923895397`*^9, 3.6791451001168537`*^9}, 
-   3.6791478038972588`*^9, 3.679166968216607*^9}],
+   3.6791478038972588`*^9, 3.679166968216607*^9, 3.679349625580336*^9}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498008295403`*^9, 3.67914985997685*^9, 3.6791499578746233`*^9, 
    3.6791505682562113`*^9, 3.679151007958931*^9, 3.679151781795639*^9, 
@@ -1467,10 +1581,9 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679166375931827*^9}, 3.6791667050274982`*^9, {3.679166894854067*^9, 
    3.679166919513962*^9}, {3.6791669682167273`*^9, 3.679167004160306*^9}, 
    3.679167041618778*^9, 3.679167093439845*^9, 3.679167330433021*^9, 
-   3.679167500943039*^9}],
+   3.679167500943039*^9, 3.679349625580387*^9}],
 
 Cell[BoxData["\<\" double ph\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498008295403`*^9, 3.67914985997685*^9, 3.6791499578746233`*^9, 
    3.6791505682562113`*^9, 3.679151007958931*^9, 3.679151781795639*^9, 
@@ -1489,11 +1602,10 @@ Cell[BoxData["\<\" double ph\"\>"], "Print",
    3.679166375931827*^9}, 3.6791667050274982`*^9, {3.679166894854067*^9, 
    3.679166919513962*^9}, {3.6791669682167273`*^9, 3.679167004160306*^9}, 
    3.679167041618778*^9, 3.679167093439845*^9, 3.679167330433021*^9, 
-   3.6791675009492702`*^9}],
+   3.6791675009492702`*^9, 3.679349625580441*^9}],
 
 Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
 mathematicaDerivations/fixed/clibs/ihmc1Acc.hpp\"\>"], "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.},
  CellChangeTimes->{
   3.6791498008295403`*^9, 3.67914985997685*^9, 3.6791499578746233`*^9, 
    3.6791505682562113`*^9, 3.679151007958931*^9, 3.679151781795639*^9, 
@@ -1512,7 +1624,9 @@ mathematicaDerivations/fixed/clibs/ihmc1Acc.hpp\"\>"], "Print",
    3.679166375931827*^9}, 3.6791667050274982`*^9, {3.679166894854067*^9, 
    3.679166919513962*^9}, {3.6791669682167273`*^9, 3.679167004160306*^9}, 
    3.679167041618778*^9, 3.679167093439845*^9, 3.679167330433021*^9, 
-   3.6791675009510813`*^9}]
+   3.6791675009510813`*^9, 3.679349625580492*^9}]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 },
 WindowSize->{808, 911},
@@ -1525,143 +1639,137 @@ StyleDefinitions->"Default.nb"
 
 (* Internal cache information *)
 (*CellTagsOutline
-CellTagsIndex->{}
+CellTagsIndex->{
+ "Info6153679352713-5671571"->{
+  Cell[23179, 583, 446, 7, 160, "Print",
+   CellTags->"Info6153679352713-5671571"]}
+ }
 *)
 (*CellTagsIndex
-CellTagsIndex->{}
+CellTagsIndex->{
+ {"Info6153679352713-5671571", 75827, 1642}
+ }
 *)
 (*NotebookFileOutline
 Notebook[{
 Cell[558, 20, 342, 5, 122, "Text"],
-Cell[903, 27, 378, 9, 51, "Subtitle",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
 Cell[CellGroupData[{
-Cell[1306, 40, 2670, 54, 199, "Input",
+Cell[925, 29, 297, 8, 51, "Subtitle"],
+Cell[CellGroupData[{
+Cell[1247, 41, 2952, 59, 199, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[4001, 98, 3067, 85, 73, "Print"],
-Cell[7071, 185, 2412, 68, 73, "Print"]
+Cell[4224, 104, 5500, 151, 136, "Print"],
+Cell[9727, 257, 2445, 70, 73, "Print"],
+Cell[12175, 329, 1431, 41, 52, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9532, 259, 192, 3, 64, "Section",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[9727, 264, 198, 3, 30, "Text",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[9928, 269, 457, 8, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[10388, 279, 1482, 21, 28, "Output",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[11873, 302, 2930, 54, 148, "Output",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[14806, 358, 2200, 40, 80, "Output",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[17009, 400, 183, 3, 64, "Section",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[17195, 405, 240, 5, 30, "Text",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[17438, 412, 228, 3, 65, "Chapter",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[17669, 417, 290, 7, 28, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[17962, 426, 388, 9, 28, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[18353, 437, 278, 6, 30, "Text",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[18634, 445, 1472, 36, 267, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[20109, 483, 222, 4, 28, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[20334, 489, 1781, 33, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[22118, 524, 1026, 27, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[23147, 553, 971, 26, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[24121, 581, 675, 17, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[24799, 600, 1374, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[26176, 622, 1375, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[27554, 644, 1411, 21, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[28968, 667, 1457, 21, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[30428, 690, 664, 17, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[31095, 709, 1374, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[32472, 731, 1396, 20, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[33871, 753, 1458, 21, 38, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[35332, 776, 748, 19, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[36083, 797, 954, 28, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[37040, 827, 844, 25, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[37887, 854, 757, 22, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[38647, 878, 777, 22, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[39427, 902, 740, 21, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[40170, 925, 1360, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[41533, 947, 1363, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[42899, 969, 1385, 20, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[44287, 991, 1442, 21, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[45732, 1014, 692, 19, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[46427, 1035, 1365, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[47795, 1057, 1366, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[49164, 1079, 1380, 20, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[50547, 1101, 1451, 21, 38, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[52001, 1124, 859, 25, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[52863, 1151, 861, 25, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[53727, 1178, 597, 16, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[54327, 1196, 1372, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[55702, 1218, 1387, 20, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[57092, 1240, 1453, 21, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[58548, 1263, 587, 16, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[59138, 1281, 1383, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[60524, 1303, 1388, 20, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[61915, 1325, 1468, 21, 38, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[63386, 1348, 579, 16, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[63968, 1366, 1364, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[65335, 1388, 1368, 20, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[66706, 1410, 1444, 21, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[68153, 1433, 556, 14, 63, "Input",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[68712, 1449, 1371, 20, 21, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[70086, 1471, 1367, 20, 22, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}],
-Cell[71456, 1493, 1457, 21, 38, "Print",
- CellGroupingRules->{"GroupTogetherGrouping", 10000.}]
+Cell[13655, 376, 109, 1, 64, "Section"],
+Cell[13767, 379, 115, 1, 30, "Text"],
+Cell[CellGroupData[{
+Cell[13907, 384, 374, 6, 63, "Input"],
+Cell[14284, 392, 1441, 20, 28, "Output"],
+Cell[15728, 414, 2889, 53, 148, "Output"],
+Cell[18620, 469, 2159, 39, 80, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20828, 514, 100, 1, 64, "Section"],
+Cell[20931, 517, 207, 4, 30, "Text"],
+Cell[21141, 523, 209, 5, 28, "Input"],
+Cell[CellGroupData[{
+Cell[21375, 532, 894, 21, 63, "Input"],
+Cell[22272, 555, 173, 2, 28, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22506, 564, 199, 3, 65, "Chapter"],
+Cell[22708, 569, 248, 5, 30, "Text"],
+Cell[CellGroupData[{
+Cell[22981, 578, 195, 3, 28, "Input"],
+Cell[23179, 583, 446, 7, 160, "Print",
+ CellTags->"Info6153679352713-5671571"]
+}, Open  ]],
+Cell[23640, 593, 189, 3, 28, "Input"],
+Cell[23832, 598, 1752, 33, 63, "Input"],
+Cell[25587, 633, 993, 26, 63, "Input"],
+Cell[26583, 661, 942, 26, 63, "Input"],
+Cell[CellGroupData[{
+Cell[27550, 691, 644, 16, 63, "Input"],
+Cell[CellGroupData[{
+Cell[28219, 711, 1341, 19, 21, "Print"],
+Cell[29563, 732, 1342, 19, 21, "Print"],
+Cell[30908, 753, 1378, 20, 22, "Print"],
+Cell[32289, 775, 1424, 20, 22, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[33762, 801, 633, 16, 63, "Input"],
+Cell[CellGroupData[{
+Cell[34420, 821, 1341, 19, 21, "Print"],
+Cell[35764, 842, 1363, 19, 22, "Print"],
+Cell[37130, 863, 1427, 20, 38, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[38584, 887, 715, 18, 63, "Input"],
+Cell[39302, 907, 921, 27, 63, "Input"],
+Cell[40226, 936, 811, 24, 63, "Input"],
+Cell[41040, 962, 724, 21, 63, "Input"],
+Cell[41767, 985, 743, 21, 63, "Input"],
+Cell[CellGroupData[{
+Cell[42535, 1010, 707, 20, 63, "Input"],
+Cell[CellGroupData[{
+Cell[43267, 1034, 1327, 19, 21, "Print"],
+Cell[44597, 1055, 1330, 19, 21, "Print"],
+Cell[45930, 1076, 1352, 19, 22, "Print"],
+Cell[47285, 1097, 1411, 20, 22, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[48745, 1123, 659, 18, 63, "Input"],
+Cell[CellGroupData[{
+Cell[49429, 1145, 1332, 19, 21, "Print"],
+Cell[50764, 1166, 1335, 19, 21, "Print"],
+Cell[52102, 1187, 1347, 19, 22, "Print"],
+Cell[53452, 1208, 1418, 20, 38, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[54897, 1232, 826, 24, 63, "Input"],
+Cell[55726, 1258, 828, 24, 63, "Input"],
+Cell[CellGroupData[{
+Cell[56579, 1286, 564, 15, 63, "Input"],
+Cell[CellGroupData[{
+Cell[57168, 1305, 1341, 19, 21, "Print"],
+Cell[58512, 1326, 1356, 19, 22, "Print"],
+Cell[59871, 1347, 1420, 20, 22, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[61340, 1373, 553, 15, 63, "Input"],
+Cell[CellGroupData[{
+Cell[61918, 1392, 1350, 19, 21, "Print"],
+Cell[63271, 1413, 1355, 19, 22, "Print"],
+Cell[64629, 1434, 1435, 20, 38, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[66113, 1460, 545, 15, 63, "Input"],
+Cell[CellGroupData[{
+Cell[66683, 1479, 1333, 19, 21, "Print"],
+Cell[68019, 1500, 1335, 19, 22, "Print"],
+Cell[69357, 1521, 1411, 20, 22, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[70817, 1547, 523, 13, 63, "Input"],
+Cell[CellGroupData[{
+Cell[71365, 1564, 1338, 19, 21, "Print"],
+Cell[72706, 1585, 1334, 19, 22, "Print"],
+Cell[74043, 1606, 1424, 20, 38, "Print"]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 }
 ]

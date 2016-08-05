@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    105210,       2234]
-NotebookOptionsPosition[     99753,       2044]
-NotebookOutlinePosition[    100108,       2060]
-CellTagsIndexPosition[    100065,       2057]
+NotebookDataLength[    124865,       2540]
+NotebookOptionsPosition[    118995,       2336]
+NotebookOutlinePosition[    119513,       2358]
+CellTagsIndexPosition[    119424,       2353]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -39,9 +39,11 @@ Cell[TextData[{
 Cell[CellGroupData[{
 
 Cell[BoxData[{
- RowBox[{"currentDir", " ", "=", " ", 
-  RowBox[{"SetDirectory", "[", 
-   RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"currentDir", " ", "=", " ", 
+   RowBox[{"SetDirectory", "[", 
+    RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"$Path", "=", 
    RowBox[{"AppendTo", "[", 
@@ -64,9 +66,8 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{"Needs", "[", "\"\<mathematicaUtils`\>\"", "]"}], 
   ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"Needs", "[", "\"\<mathematicaToC.m\>\"", "]"}], 
-  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Needs", "[", "\"\<mathematicaToC`\>\"", 
+  "]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Needs", "[", "\"\<CCodeGenerator`\>\"", "]"}], ";"}], "\n", 
  RowBox[{
@@ -92,7 +93,10 @@ Cell[BoxData[{
    3.6791059677592077`*^9, 3.679106132082527*^9, {3.679125469031762*^9, 
    3.67912547562331*^9}, 3.67912641932516*^9, {3.67913975229418*^9, 
    3.6791399091053257`*^9}, {3.679139942279667*^9, 3.6791400508148327`*^9}, 
-   3.6791451249587393`*^9, {3.6791680788982267`*^9, 3.6791681102093077`*^9}}],
+   3.6791451249587393`*^9, {3.6791680788982267`*^9, 3.6791681102093077`*^9}, {
+   3.6793434922422047`*^9, 3.679343537789736*^9}, {3.6793436548022614`*^9, 
+   3.6793436577766447`*^9}, {3.679343863913754*^9, 3.679343864935297*^9}, 
+   3.6793439374373007`*^9, {3.679348009428444*^9, 3.679348069760758*^9}}],
 
 Cell[CellGroupData[{
 
@@ -114,28 +118,28 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ghmc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ghmcLtDerived",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ghmcLtDerived", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmcLt",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "hmcLt", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ighmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ighmc1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"]},
         {
@@ -143,27 +147,27 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ghmc1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ghmcNormalised",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ghmcNormalised", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmcLt1Acc",
           BaseStyle->"InformationLink",
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "hmcLt1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ihmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ihmc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"]},
         {
@@ -171,27 +175,27 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ghmc1AccNormalised", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {"hmc", "packageExpAutocorrelations`"}},
+           "Info203679354350-1533511", {"hmc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmcLtDerived",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "hmcLtDerived", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ihmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ihmc1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"]},
         {
@@ -199,21 +203,21 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ghmcLt", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "hmc1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmcNormalised",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "hmcNormalised", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], ""},
         {
@@ -221,21 +225,21 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ghmcLt1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmc1AccNormalised",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "hmc1AccNormalised", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ighmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info203679170007-2971235", {
+           "Info203679354350-1533511", {
             "ighmc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], ""}
        },
@@ -246,7 +250,7 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.679166407846653*^9}],
+ CellChangeTimes->{3.6793507508674192`*^9}],
 
 Cell[BoxData[
  DynamicModuleBox[{Typeset`open$$ = True}, 
@@ -266,25 +270,25 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679170007-2971235", {"fullVerify", "mathematicaUtils`"}},
+           "Info213679354350-1533511", {"fullVerify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["getHiddenVars",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679170007-2971235", {"getHiddenVars", "mathematicaUtils`"}},
+           "Info213679354350-1533511", {"getHiddenVars", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["maxSimplify",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679170007-2971235", {"maxSimplify", "mathematicaUtils`"}},
+           "Info213679354350-1533511", {"maxSimplify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["setPrivateVars",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679170007-2971235", {
+           "Info213679354350-1533511", {
             "setPrivateVars", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"]},
         {
@@ -292,21 +296,21 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679170007-2971235", {
+           "Info213679354350-1533511", {
             "getDenominator", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["getNumerator",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679170007-2971235", {"getNumerator", "mathematicaUtils`"}},
+           "Info213679354350-1533511", {"getNumerator", "mathematicaUtils`"}},
           
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["quickVerify",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info213679170007-2971235", {"quickVerify", "mathematicaUtils`"}},
+           "Info213679354350-1533511", {"quickVerify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], ""}
        },
        DefaultBaseStyle->"InfoGrid",
@@ -316,7 +320,49 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.6791664078872833`*^9}]
+ CellChangeTimes->{3.679350750911058*^9}],
+
+Cell[BoxData[
+ DynamicModuleBox[{Typeset`open$$ = True}, 
+  PaneSelectorBox[{False->
+   RowBox[{
+    OpenerBox[Dynamic[Typeset`open$$],
+     ImageSize->Small], 
+    StyleBox["mathematicaToC`", "InfoHeading"]}], True->GridBox[{
+     {
+      RowBox[{
+       OpenerBox[Dynamic[Typeset`open$$],
+        ImageSize->Small], 
+       StyleBox["mathematicaToC`", "InfoHeading"]}]},
+     {GridBox[{
+        {
+         ButtonBox["cleanCString",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info223679354350-1533511", {"cleanCString", "mathematicaToC`"}},
+          ButtonNote->"mathematicaToC`"], 
+         ButtonBox["makeMyComplex",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info223679354350-1533511", {"makeMyComplex", "mathematicaToC`"}},
+          ButtonNote->"mathematicaToC`"], 
+         ButtonBox["writeFunc",
+          BaseStyle->"InformationLink",
+          
+          ButtonData:>{
+           "Info223679354350-1533511", {"writeFunc", "mathematicaToC`"}},
+          ButtonNote->"mathematicaToC`"]}
+       },
+       DefaultBaseStyle->"InfoGrid",
+       GridBoxItemSize->{"Columns" -> {{
+            Scaled[0.31666666666666665`]}}}]}
+    },
+    GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
+   Dynamic[Typeset`open$$],
+   ImageSize->Automatic]]], "Print", "InfoCell",
+ CellChangeTimes->{3.679350750952793*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -355,7 +401,11 @@ Cell[BoxData["CCompilerDriver`ClangCompiler`ClangCompiler"], "Output",
    3.679165025725534*^9, 3.679165105409354*^9, 3.679165147647716*^9, 
    3.679165179862164*^9, 3.679165366139348*^9, 3.679165403580447*^9, 
    3.679165532292602*^9, 3.6791656275128*^9, 3.679165658385356*^9, 
-   3.679166371514678*^9, 3.679166407927911*^9}],
+   3.679166371514678*^9, 3.679166407927911*^9, 3.6793436744216213`*^9, 
+   3.679343924857668*^9, 3.67934399340265*^9, 3.679345097439599*^9, 
+   3.67934514373221*^9, 3.679345496333713*^9, 3.67934561367735*^9, 
+   3.679346108857052*^9, 3.679349022403668*^9, 3.679349113595602*^9, 
+   3.679349861222086*^9, 3.67935075099472*^9}],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -407,7 +457,11 @@ Cell[BoxData[
    3.679165025725534*^9, 3.679165105409354*^9, 3.679165147647716*^9, 
    3.679165179862164*^9, 3.679165366139348*^9, 3.679165403580447*^9, 
    3.679165532292602*^9, 3.6791656275128*^9, 3.679165658385356*^9, 
-   3.679166371514678*^9, 3.6791664079331827`*^9}],
+   3.679166371514678*^9, 3.679166407927911*^9, 3.6793436744216213`*^9, 
+   3.679343924857668*^9, 3.67934399340265*^9, 3.679345097439599*^9, 
+   3.67934514373221*^9, 3.679345496333713*^9, 3.67934561367735*^9, 
+   3.679346108857052*^9, 3.679349022403668*^9, 3.679349113595602*^9, 
+   3.679349861222086*^9, 3.679350750999496*^9}],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -445,7 +499,11 @@ Cell[BoxData[
    3.679165025725534*^9, 3.679165105409354*^9, 3.679165147647716*^9, 
    3.679165179862164*^9, 3.679165366139348*^9, 3.679165403580447*^9, 
    3.679165532292602*^9, 3.6791656275128*^9, 3.679165658385356*^9, 
-   3.679166371514678*^9, 3.6791664079381123`*^9}]
+   3.679166371514678*^9, 3.679166407927911*^9, 3.6793436744216213`*^9, 
+   3.679343924857668*^9, 3.67934399340265*^9, 3.679345097439599*^9, 
+   3.67934514373221*^9, 3.679345496333713*^9, 3.67934561367735*^9, 
+   3.679346108857052*^9, 3.679349022403668*^9, 3.679349113595602*^9, 
+   3.679349861222086*^9, 3.6793507510045567`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -455,9 +513,10 @@ Cell["Initialisations", "Section",
  CellChangeTimes->{{3.679127211114664*^9, 3.679127220501643*^9}}],
 
 Cell["\<\
-This section defines the locations for the functions to be stored etc.\
+This section defines the locations for the functions to be stored:\
 \>", "Text",
- CellChangeTimes->{{3.679126339210435*^9, 3.679126359751759*^9}}],
+ CellChangeTimes->{{3.679126339210435*^9, 3.679126359751759*^9}, {
+  3.6793483410886097`*^9, 3.679348341511332*^9}}],
 
 Cell[BoxData[
  RowBox[{"Clear", "[", 
@@ -466,15 +525,36 @@ Cell[BoxData[
   "]"}]], "Input",
  CellChangeTimes->{{3.679165490014771*^9, 3.6791655123715363`*^9}}],
 
-Cell[BoxData[
+Cell[CellGroupData[{
+
+Cell[BoxData[{
  RowBox[{
-  RowBox[{"outDir", " ", "=", " ", 
+  RowBox[{"parentsParentParent", " ", "=", " ", 
+   RowBox[{"FileNameJoin", "[", " ", 
+    RowBox[{"Most", "[", 
+     RowBox[{"FileNameSplit", "[", "parentsParent", "]"}], "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"saveLoc", " ", "=", 
    RowBox[{"FileNameJoin", "[", 
     RowBox[{"{", 
-     RowBox[{"currentDir", ",", "\"\<clibs\>\""}], "}"}], "]"}]}], 
-  ";"}]], "Input",
+     RowBox[{"parentsParentParent", ",", "\"\<clibs/autocorrelations/\>\""}], 
+     "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"outDir", " ", "=", " ", 
+  RowBox[{"FileNameJoin", "[", 
+   RowBox[{"{", 
+    RowBox[{"saveLoc", ",", "\"\<exponential\>\""}], "}"}], "]"}]}]}], "Input",\
+
  CellChangeTimes->{{3.679145116259235*^9, 3.679145135285923*^9}, {
-  3.67914560015676*^9, 3.679145601138606*^9}}]
+  3.67914560015676*^9, 3.679145601138606*^9}, {3.679348295903565*^9, 
+  3.6793483360012293`*^9}, {3.6793490704808483`*^9, 3.679349103798818*^9}, {
+  3.6793496803491793`*^9, 3.679349680907556*^9}}],
+
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential\"\>"], "Output",
+ CellChangeTimes->{3.67934902244538*^9, 3.679349113639984*^9, 
+  3.67934968126658*^9, 3.67934986126751*^9, 3.679350751042026*^9}]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]],
 
@@ -488,43 +568,25 @@ Cell["\<\
 If the function myComplex.hpp doesn\[CloseCurlyQuote]t exist then it can be \
 created with this function:\
 \>", "Text",
- CellChangeTimes->{{3.679166287061551*^9, 3.6791663066250887`*^9}}],
+ CellChangeTimes->{{3.679166287061551*^9, 3.6791663066250887`*^9}, {
+  3.6793434272175703`*^9, 3.679343428288219*^9}}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{
-  RowBox[{"makeMyComplex", "[", "outDir_", "]"}], ":=", 
-  RowBox[{"Module", "[", 
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{"myFunc", ",", " ", "saveLoc", ",", " ", "fnName"}], "}"}], ",", 
-    "\n", 
-    RowBox[{"(*", " ", 
-     RowBox[{
-     "generate", " ", "the", " ", "save", " ", "name", " ", "and", " ", 
-      "location"}], " ", "*)"}], "\n", 
-    RowBox[{
-     RowBox[{"fnName", " ", "=", " ", "\"\<myComplex.hpp\>\""}], ";", "\n", 
-     RowBox[{"saveLoc", "=", 
-      RowBox[{
-       RowBox[{"FileNameJoin", "[", 
-        RowBox[{"{", 
-         RowBox[{"outDir", ",", "fnName"}], "}"}], "]"}], "//", 
-       "ToString"}]}], ";", "\n", "\n", 
-     RowBox[{"(*", 
-      RowBox[{"Save", " ", "the", " ", "Function"}], "*)"}], "\n", 
-     RowBox[{"myFunc", "=", 
-      RowBox[{"StringJoin", "[", "\n", 
-       RowBox[{"{", 
-        RowBox[{
-        "\"\<#include <complex>\\n\\n\>\"", ",", "\n", 
-         "\"\<std::complex<double> Complex(double x, double y){\\n\>\"", ",", 
-         "\"\<\\tconst std::complex<double> i(0.0,1.0);\\n\>\"", ",", "\n", 
-         "\"\<\\treturn x + y*i;\\n\>\"", ",", "\n", "\"\<}\>\""}], " ", 
-        "}"}], "\n", "]"}]}], ";", "\n", 
-     RowBox[{"WriteString", "[", 
-      RowBox[{"saveLoc", ",", " ", "myFunc"}], "]"}], ";"}]}], "\n", 
-   "]"}]}]], "Input",
- CellChangeTimes->{{3.67916630383967*^9, 3.679166303848027*^9}}],
+ RowBox[{"?", "makeMyComplex"}]], "Input",
+ CellChangeTimes->{{3.67916630383967*^9, 3.679166303848027*^9}, 
+   3.679343284286381*^9, {3.679343885721128*^9, 3.6793438952474203`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"makeMyComplex[outDir_] this creates the function \
+'myComplex.hpp' at the location outDir_ with content:\\n     \\n     #include \
+<complex>\\n     \\n     std::complex<double> Complex(double x, double y){\\n \
+         const std::complex<double> i(0.0,1.0);\\n          return x + \
+y*i;\\n     }\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.679350751163419*^9},
+ CellTags->"Info303679354351-1533511"]
+}, Open  ]],
 
 Cell[BoxData[
  RowBox[{"makeMyComplex", "[", "outDir", "]"}]], "Input",
@@ -603,7 +665,11 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.679165152523814*^9, 3.679165179962658*^9}, 3.679165312525869*^9, 
    3.679165369877555*^9, 3.679165405392991*^9, 3.679165534846487*^9, 
    3.679165627608178*^9, 3.679165658511224*^9, {3.679166344523388*^9, 
-   3.679166371641728*^9}, 3.679166408085422*^9}],
+   3.679166371641728*^9}, 3.679166408085422*^9, 3.6793436745415697`*^9, 
+   3.6793439251042957`*^9, 3.679343993690757*^9, 3.679345097645363*^9, 
+   3.679345144021613*^9, 3.679345496569433*^9, 3.679345613922778*^9, 
+   3.6793461091115723`*^9, 3.6793490226453247`*^9, 3.679349113783934*^9, 
+   3.679349861484892*^9, 3.6793507512578382`*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
  CellChangeTimes->{
@@ -617,7 +683,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165152523814*^9, 3.679165179962658*^9}, 3.679165312525869*^9, 
    3.679165369877555*^9, 3.679165405392991*^9, 3.679165534846487*^9, 
    3.679165627608178*^9, 3.679165658511224*^9, {3.679166344523388*^9, 
-   3.679166371641728*^9}, 3.6791664096345673`*^9}],
+   3.679166371641728*^9}, 3.679166408085422*^9, 3.6793436745415697`*^9, 
+   3.6793439251042957`*^9, 3.679343993690757*^9, 3.679345097645363*^9, 
+   3.679345144021613*^9, 3.679345496569433*^9, 3.679345613922778*^9, 
+   3.6793461091115723`*^9, 3.6793490226453247`*^9, 3.679349113783934*^9, 
+   3.679349861484892*^9, 3.6793507522071*^9}],
 
 Cell[BoxData["\<\" double ph, double r, double t, double th\"\>"], "Print",
  CellChangeTimes->{
@@ -631,10 +701,14 @@ Cell[BoxData["\<\" double ph, double r, double t, double th\"\>"], "Print",
    3.679165152523814*^9, 3.679165179962658*^9}, 3.679165312525869*^9, 
    3.679165369877555*^9, 3.679165405392991*^9, 3.679165534846487*^9, 
    3.679165627608178*^9, 3.679165658511224*^9, {3.679166344523388*^9, 
-   3.679166371641728*^9}, 3.679166409640568*^9}],
+   3.679166371641728*^9}, 3.679166408085422*^9, 3.6793436745415697`*^9, 
+   3.6793439251042957`*^9, 3.679343993690757*^9, 3.679345097645363*^9, 
+   3.679345144021613*^9, 3.679345496569433*^9, 3.679345613922778*^9, 
+   3.6793461091115723`*^9, 3.6793490226453247`*^9, 3.679349113783934*^9, 
+   3.679349861484892*^9, 3.6793507522133427`*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ghmc1Acc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ghmc1Acc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.679157344624237*^9, 3.679157827345237*^9, 3.67915796041466*^9, 
    3.679158457496936*^9, 3.679158653572432*^9, 3.6791599333128157`*^9, 
@@ -646,7 +720,11 @@ mathematicaDerivations/exponential/clibs/ghmc1Acc.hpp\"\>"], "Print",
    3.679165152523814*^9, 3.679165179962658*^9}, 3.679165312525869*^9, 
    3.679165369877555*^9, 3.679165405392991*^9, 3.679165534846487*^9, 
    3.679165627608178*^9, 3.679165658511224*^9, {3.679166344523388*^9, 
-   3.679166371641728*^9}, 3.679166409647225*^9}]
+   3.679166371641728*^9}, 3.679166408085422*^9, 3.6793436745415697`*^9, 
+   3.6793439251042957`*^9, 3.679343993690757*^9, 3.679345097645363*^9, 
+   3.679345144021613*^9, 3.679345496569433*^9, 3.679345613922778*^9, 
+   3.6793461091115723`*^9, 3.6793490226453247`*^9, 3.679349113783934*^9, 
+   3.679349861484892*^9, 3.679350752219479*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -694,7 +772,11 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.679165153460246*^9, 3.679165181728323*^9}, 3.6791653133371887`*^9, 
    3.6791653706557913`*^9, 3.6791654061562977`*^9, 3.679165536232752*^9, 
    3.6791656290009193`*^9, 3.6791656599332933`*^9, {3.679166345922061*^9, 
-   3.6791663729810343`*^9}, 3.6791664097580338`*^9}],
+   3.6791663729810343`*^9}, 3.6791664097580338`*^9, 3.6793436756674843`*^9, 
+   3.67934392616573*^9, 3.679343994936472*^9, 3.6793450986887407`*^9, 
+   3.6793451452838173`*^9, 3.679345497734044*^9, 3.679345615003566*^9, 
+   3.6793461102001057`*^9, 3.6793490227133923`*^9, 3.6793491138309603`*^9, 
+   3.679349862629958*^9, 3.6793507523046017`*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
  CellChangeTimes->{
@@ -712,7 +794,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165153460246*^9, 3.679165181728323*^9}, 3.6791653133371887`*^9, 
    3.6791653706557913`*^9, 3.6791654061562977`*^9, 3.679165536232752*^9, 
    3.6791656290009193`*^9, 3.6791656599332933`*^9, {3.679166345922061*^9, 
-   3.6791663729810343`*^9}, 3.679166411169176*^9}],
+   3.6791663729810343`*^9}, 3.6791664097580338`*^9, 3.6793436756674843`*^9, 
+   3.67934392616573*^9, 3.679343994936472*^9, 3.6793450986887407`*^9, 
+   3.6793451452838173`*^9, 3.679345497734044*^9, 3.679345615003566*^9, 
+   3.6793461102001057`*^9, 3.6793490227133923`*^9, 3.6793491138309603`*^9, 
+   3.679349862629958*^9, 3.6793507533101397`*^9}],
 
 Cell[BoxData["\<\" double ph, double r, double t, double th\"\>"], "Print",
  CellChangeTimes->{
@@ -730,11 +816,14 @@ Cell[BoxData["\<\" double ph, double r, double t, double th\"\>"], "Print",
    3.679165153460246*^9, 3.679165181728323*^9}, 3.6791653133371887`*^9, 
    3.6791653706557913`*^9, 3.6791654061562977`*^9, 3.679165536232752*^9, 
    3.6791656290009193`*^9, 3.6791656599332933`*^9, {3.679166345922061*^9, 
-   3.6791663729810343`*^9}, 3.679166411175522*^9}],
+   3.6791663729810343`*^9}, 3.6791664097580338`*^9, 3.6793436756674843`*^9, 
+   3.67934392616573*^9, 3.679343994936472*^9, 3.6793450986887407`*^9, 
+   3.6793451452838173`*^9, 3.679345497734044*^9, 3.679345615003566*^9, 
+   3.6793461102001057`*^9, 3.6793490227133923`*^9, 3.6793491138309603`*^9, 
+   3.679349862629958*^9, 3.679350753316325*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ghmc1AccNormalised.hpp\"\>"], "Print",\
-
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ghmc1AccNormalised.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.6791497982887278`*^9, 3.679149858328486*^9, 3.6791499561588697`*^9, 
    3.679150566512022*^9, 3.679151006267846*^9, 3.679151780173869*^9, 
@@ -750,7 +839,11 @@ mathematicaDerivations/exponential/clibs/ghmc1AccNormalised.hpp\"\>"], "Print",\
    3.679165153460246*^9, 3.679165181728323*^9}, 3.6791653133371887`*^9, 
    3.6791653706557913`*^9, 3.6791654061562977`*^9, 3.679165536232752*^9, 
    3.6791656290009193`*^9, 3.6791656599332933`*^9, {3.679166345922061*^9, 
-   3.6791663729810343`*^9}, 3.6791664111826277`*^9}]
+   3.6791663729810343`*^9}, 3.6791664097580338`*^9, 3.6793436756674843`*^9, 
+   3.67934392616573*^9, 3.679343994936472*^9, 3.6793450986887407`*^9, 
+   3.6793451452838173`*^9, 3.679345497734044*^9, 3.679345615003566*^9, 
+   3.6793461102001057`*^9, 3.6793490227133923`*^9, 3.6793491138309603`*^9, 
+   3.679349862629958*^9, 3.6793507533224277`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -791,7 +884,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.6791651543770933`*^9, 3.6791651833391027`*^9}, 3.679165314114555*^9, 
    3.6791653713928747`*^9, 3.6791654068861523`*^9, 3.679165537681498*^9, 
    3.679165630475173*^9, 3.679165661339588*^9, {3.679166347422318*^9, 
-   3.67916637431496*^9}, 3.6791664112581863`*^9}],
+   3.67916637431496*^9}, 3.6791664112581863`*^9, 3.679343676801569*^9, 
+   3.679343927198317*^9, 3.679343995970667*^9, 3.6793450997298307`*^9, 
+   3.679345146445765*^9, 3.679345498775*^9, 3.679345616045282*^9, 
+   3.679346111291494*^9, 3.679349022772036*^9, 3.6793491138689528`*^9, 
+   3.679349863647931*^9, 3.6793507533619833`*^9}],
 
 Cell[BoxData["\<\" double b, double p, double ph, double r, double th\"\>"], \
 "Print",
@@ -810,10 +907,14 @@ Cell[BoxData["\<\" double b, double p, double ph, double r, double th\"\>"], \
    3.6791651543770933`*^9, 3.6791651833391027`*^9}, 3.679165314114555*^9, 
    3.6791653713928747`*^9, 3.6791654068861523`*^9, 3.679165537681498*^9, 
    3.679165630475173*^9, 3.679165661339588*^9, {3.679166347422318*^9, 
-   3.67916637431496*^9}, 3.679166411263973*^9}],
+   3.67916637431496*^9}, 3.6791664112581863`*^9, 3.679343676801569*^9, 
+   3.679343927198317*^9, 3.679343995970667*^9, 3.6793450997298307`*^9, 
+   3.679345146445765*^9, 3.679345498775*^9, 3.679345616045282*^9, 
+   3.679346111291494*^9, 3.679349022772036*^9, 3.6793491138689528`*^9, 
+   3.679349863647931*^9, 3.679350753366988*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ghmcLt.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ghmcLt.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.6791497988634577`*^9, 3.679149858373603*^9, 3.67914995619521*^9, 
    3.679150566560367*^9, 3.6791510063075314`*^9, 3.679151780212138*^9, 
@@ -829,7 +930,11 @@ mathematicaDerivations/exponential/clibs/ghmcLt.hpp\"\>"], "Print",
    3.6791651543770933`*^9, 3.6791651833391027`*^9}, 3.679165314114555*^9, 
    3.6791653713928747`*^9, 3.6791654068861523`*^9, 3.679165537681498*^9, 
    3.679165630475173*^9, 3.679165661339588*^9, {3.679166347422318*^9, 
-   3.67916637431496*^9}, 3.679166411270877*^9}]
+   3.67916637431496*^9}, 3.6791664112581863`*^9, 3.679343676801569*^9, 
+   3.679343927198317*^9, 3.679343995970667*^9, 3.6793450997298307`*^9, 
+   3.679345146445765*^9, 3.679345498775*^9, 3.679345616045282*^9, 
+   3.679346111291494*^9, 3.679349022772036*^9, 3.6793491138689528`*^9, 
+   3.679349863647931*^9, 3.6793507533736897`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -870,7 +975,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.6791651545875473`*^9, 3.679165183612584*^9}, 3.6791653141573677`*^9, 
    3.679165371433503*^9, 3.6791654069382687`*^9, 3.679165537735683*^9, 
    3.6791656305152817`*^9, 3.679165661389423*^9, {3.679166347468294*^9, 
-   3.679166374354785*^9}, 3.679166411324683*^9}],
+   3.679166374354785*^9}, 3.679166411324683*^9, 3.679343676842127*^9, 
+   3.679343927242942*^9, 3.679343996017125*^9, 3.679345099772551*^9, 
+   3.679345146487549*^9, 3.679345498816934*^9, 3.6793456160888653`*^9, 
+   3.679346111334447*^9, 3.6793490228320723`*^9, 3.679349113923983*^9, 
+   3.6793498636925087`*^9, 3.679350753400058*^9}],
 
 Cell[BoxData["\<\" double b, double ph, double r, double th\"\>"], "Print",
  CellChangeTimes->{
@@ -888,10 +997,14 @@ Cell[BoxData["\<\" double b, double ph, double r, double th\"\>"], "Print",
    3.6791651545875473`*^9, 3.679165183612584*^9}, 3.6791653141573677`*^9, 
    3.679165371433503*^9, 3.6791654069382687`*^9, 3.679165537735683*^9, 
    3.6791656305152817`*^9, 3.679165661389423*^9, {3.679166347468294*^9, 
-   3.679166374354785*^9}, 3.679166411329987*^9}],
+   3.679166374354785*^9}, 3.679166411324683*^9, 3.679343676842127*^9, 
+   3.679343927242942*^9, 3.679343996017125*^9, 3.679345099772551*^9, 
+   3.679345146487549*^9, 3.679345498816934*^9, 3.6793456160888653`*^9, 
+   3.679346111334447*^9, 3.6793490228320723`*^9, 3.679349113923983*^9, 
+   3.6793498636925087`*^9, 3.679350753404797*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ghmcLt1Acc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ghmcLt1Acc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.679149798893517*^9, 3.679149858397663*^9, 3.679149956213376*^9, 
    3.679150566577476*^9, 3.679151006324813*^9, 3.6791517802341423`*^9, 
@@ -907,7 +1020,11 @@ mathematicaDerivations/exponential/clibs/ghmcLt1Acc.hpp\"\>"], "Print",
    3.6791651545875473`*^9, 3.679165183612584*^9}, 3.6791653141573677`*^9, 
    3.679165371433503*^9, 3.6791654069382687`*^9, 3.679165537735683*^9, 
    3.6791656305152817`*^9, 3.679165661389423*^9, {3.679166347468294*^9, 
-   3.679166374354785*^9}, 3.679166411336671*^9}]
+   3.679166374354785*^9}, 3.679166411324683*^9, 3.679343676842127*^9, 
+   3.679343927242942*^9, 3.679343996017125*^9, 3.679345099772551*^9, 
+   3.679345146487549*^9, 3.679345498816934*^9, 3.6793456160888653`*^9, 
+   3.679346111334447*^9, 3.6793490228320723`*^9, 3.679349113923983*^9, 
+   3.6793498636925087`*^9, 3.679350753411475*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -928,7 +1045,9 @@ Cell[BoxData[{
    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
   ";"}]}], "Input",
  CellChangeTimes->{{3.679144793825124*^9, 3.679144806048572*^9}, {
-   3.679144878118636*^9, 3.679144878573275*^9}, 3.679147803848119*^9}],
+   3.679144878118636*^9, 3.679144878573275*^9}, 3.679147803848119*^9, {
+   3.679345317902276*^9, 3.6793453320182056`*^9}, {3.679349924962578*^9, 
+   3.679349926584207*^9}}],
 
 Cell[CellGroupData[{
 
@@ -948,11 +1067,15 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.67916515478564*^9, 3.6791651838439093`*^9}, 3.679165314197382*^9, 
    3.679165371477442*^9, 3.679165406988604*^9, 3.679165537783675*^9, 
    3.679165630565805*^9, 3.679165661449068*^9, {3.679166347524909*^9, 
-   3.679166374407777*^9}, 3.679166411404325*^9}],
+   3.679166374407777*^9}, 3.679166411404325*^9, 3.6793436768984118`*^9, 
+   3.679343927296917*^9, 3.679343996063986*^9, 3.67934509981905*^9, 
+   3.679345146540419*^9, 3.679345320353491*^9, 3.6793454988631563`*^9, 
+   3.6793456161370697`*^9, 3.6793461113862667`*^9, 3.6793490229113894`*^9, 
+   3.679349113964807*^9, 3.679349863733079*^9, 3.679349932468437*^9, 
+   3.6793500692763243`*^9, 3.6793507534500227`*^9}],
 
-Cell[BoxData["\<\" double b, double p, double \
-packageExpAutocorrelations`Private`j, double ph, double tau, double th\"\>"], \
-"Print",
+Cell[BoxData["\<\" double b, double p, double ph, double tau, double \
+th\"\>"], "Print",
  CellChangeTimes->{
   3.679149798929596*^9, 3.6791498584344254`*^9, 3.679149956256887*^9, 
    3.679150566646862*^9, 3.679151006365398*^9, 3.6791517802745123`*^9, 
@@ -968,10 +1091,15 @@ packageExpAutocorrelations`Private`j, double ph, double tau, double th\"\>"], \
    3.67916515478564*^9, 3.6791651838439093`*^9}, 3.679165314197382*^9, 
    3.679165371477442*^9, 3.679165406988604*^9, 3.679165537783675*^9, 
    3.679165630565805*^9, 3.679165661449068*^9, {3.679166347524909*^9, 
-   3.679166374407777*^9}, 3.6791664114110527`*^9}],
+   3.679166374407777*^9}, 3.679166411404325*^9, 3.6793436768984118`*^9, 
+   3.679343927296917*^9, 3.679343996063986*^9, 3.67934509981905*^9, 
+   3.679345146540419*^9, 3.679345320353491*^9, 3.6793454988631563`*^9, 
+   3.6793456161370697`*^9, 3.6793461113862667`*^9, 3.6793490229113894`*^9, 
+   3.679349113964807*^9, 3.679349863733079*^9, 3.679349932468437*^9, 
+   3.6793500692763243`*^9, 3.679350753454628*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ghmcLtDerived.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ghmcLtDerived.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.679149798929596*^9, 3.6791498584344254`*^9, 3.679149956256887*^9, 
    3.679150566646862*^9, 3.679151006365398*^9, 3.6791517802745123`*^9, 
@@ -987,7 +1115,12 @@ mathematicaDerivations/exponential/clibs/ghmcLtDerived.hpp\"\>"], "Print",
    3.67916515478564*^9, 3.6791651838439093`*^9}, 3.679165314197382*^9, 
    3.679165371477442*^9, 3.679165406988604*^9, 3.679165537783675*^9, 
    3.679165630565805*^9, 3.679165661449068*^9, {3.679166347524909*^9, 
-   3.679166374407777*^9}, 3.679166411417593*^9}]
+   3.679166374407777*^9}, 3.679166411404325*^9, 3.6793436768984118`*^9, 
+   3.679343927296917*^9, 3.679343996063986*^9, 3.67934509981905*^9, 
+   3.679345146540419*^9, 3.679345320353491*^9, 3.6793454988631563`*^9, 
+   3.6793456161370697`*^9, 3.6793461113862667`*^9, 3.6793490229113894`*^9, 
+   3.679349113964807*^9, 3.679349863733079*^9, 3.679349932468437*^9, 
+   3.6793500692763243`*^9, 3.679350753460907*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1037,7 +1170,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.6791651550020847`*^9, 3.67916518407063*^9}, 3.679165314242591*^9, 
    3.679165371523081*^9, 3.679165407042736*^9, 3.679165537864677*^9, 
    3.679165630608309*^9, 3.679165661484487*^9, {3.679166347567502*^9, 
-   3.679166374447665*^9}, 3.6791664114555283`*^9}],
+   3.679166374447665*^9}, 3.6791664114555283`*^9, 3.6793436769431562`*^9, 
+   3.679343927335197*^9, 3.6793439961024237`*^9, 3.679345099923747*^9, 
+   3.679345146585987*^9, 3.679345498903386*^9, 3.679345616184716*^9, 
+   3.679346111434403*^9, 3.6793490229644537`*^9, 3.6793491140099382`*^9, 
+   3.679349863777461*^9, 3.679350753492895*^9}],
 
 Cell[BoxData["\<\" double p, double ph, double r, double t, double th\"\>"], \
 "Print",
@@ -1056,10 +1193,14 @@ Cell[BoxData["\<\" double p, double ph, double r, double t, double th\"\>"], \
    3.6791651550020847`*^9, 3.67916518407063*^9}, 3.679165314242591*^9, 
    3.679165371523081*^9, 3.679165407042736*^9, 3.679165537864677*^9, 
    3.679165630608309*^9, 3.679165661484487*^9, {3.679166347567502*^9, 
-   3.679166374447665*^9}, 3.679166411461239*^9}],
+   3.679166374447665*^9}, 3.6791664114555283`*^9, 3.6793436769431562`*^9, 
+   3.679343927335197*^9, 3.6793439961024237`*^9, 3.679345099923747*^9, 
+   3.679345146585987*^9, 3.679345498903386*^9, 3.679345616184716*^9, 
+   3.679346111434403*^9, 3.6793490229644537`*^9, 3.6793491140099382`*^9, 
+   3.679349863777461*^9, 3.679350753497723*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ghmcNormalised.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ghmcNormalised.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.679149798966291*^9, 3.679149858457778*^9, 3.679149956274974*^9, 
    3.6791505666830187`*^9, 3.679151006388404*^9, 3.679151780291917*^9, 
@@ -1075,7 +1216,11 @@ mathematicaDerivations/exponential/clibs/ghmcNormalised.hpp\"\>"], "Print",
    3.6791651550020847`*^9, 3.67916518407063*^9}, 3.679165314242591*^9, 
    3.679165371523081*^9, 3.679165407042736*^9, 3.679165537864677*^9, 
    3.679165630608309*^9, 3.679165661484487*^9, {3.679166347567502*^9, 
-   3.679166374447665*^9}, 3.6791664114683104`*^9}]
+   3.679166374447665*^9}, 3.6791664114555283`*^9, 3.6793436769431562`*^9, 
+   3.679343927335197*^9, 3.6793439961024237`*^9, 3.679345099923747*^9, 
+   3.679345146585987*^9, 3.679345498903386*^9, 3.679345616184716*^9, 
+   3.679346111434403*^9, 3.6793490229644537`*^9, 3.6793491140099382`*^9, 
+   3.679349863777461*^9, 3.6793507535040216`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1122,7 +1267,11 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.679165155208914*^9, 3.67916518428494*^9}, 3.6791653142845488`*^9, 
    3.679165371564426*^9, 3.679165407091964*^9, 3.679165537927013*^9, 
    3.6791656306485558`*^9, 3.6791656615252666`*^9, {3.679166347613658*^9, 
-   3.679166374489624*^9}, 3.6791664114959717`*^9}],
+   3.679166374489624*^9}, 3.6791664114959717`*^9, 3.679343676985581*^9, 
+   3.6793439273828897`*^9, 3.679343996146508*^9, 3.679345099969262*^9, 
+   3.6793451466319447`*^9, 3.6793454989587793`*^9, 3.679345616234384*^9, 
+   3.6793461114846487`*^9, 3.6793490230313463`*^9, 3.679349114054064*^9, 
+   3.679349863825816*^9, 3.6793507535333977`*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
  CellChangeTimes->{
@@ -1140,7 +1289,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165155208914*^9, 3.67916518428494*^9}, 3.6791653142845488`*^9, 
    3.679165371564426*^9, 3.679165407091964*^9, 3.679165537927013*^9, 
    3.6791656306485558`*^9, 3.6791656615252666`*^9, {3.679166347613658*^9, 
-   3.679166374489624*^9}, 3.6791664118155527`*^9}],
+   3.679166374489624*^9}, 3.6791664114959717`*^9, 3.679343676985581*^9, 
+   3.6793439273828897`*^9, 3.679343996146508*^9, 3.679345099969262*^9, 
+   3.6793451466319447`*^9, 3.6793454989587793`*^9, 3.679345616234384*^9, 
+   3.6793461114846487`*^9, 3.6793490230313463`*^9, 3.679349114054064*^9, 
+   3.679349863825816*^9, 3.679350753806212*^9}],
 
 Cell[BoxData["\<\" double p, double ph, double r, double t\"\>"], "Print",
  CellChangeTimes->{
@@ -1158,10 +1311,14 @@ Cell[BoxData["\<\" double p, double ph, double r, double t\"\>"], "Print",
    3.679165155208914*^9, 3.67916518428494*^9}, 3.6791653142845488`*^9, 
    3.679165371564426*^9, 3.679165407091964*^9, 3.679165537927013*^9, 
    3.6791656306485558`*^9, 3.6791656615252666`*^9, {3.679166347613658*^9, 
-   3.679166374489624*^9}, 3.6791664118222322`*^9}],
+   3.679166374489624*^9}, 3.6791664114959717`*^9, 3.679343676985581*^9, 
+   3.6793439273828897`*^9, 3.679343996146508*^9, 3.679345099969262*^9, 
+   3.6793451466319447`*^9, 3.6793454989587793`*^9, 3.679345616234384*^9, 
+   3.6793461114846487`*^9, 3.6793490230313463`*^9, 3.679349114054064*^9, 
+   3.679349863825816*^9, 3.679350753812722*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/hmc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/hmc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.6791497993764677`*^9, 3.679149858865889*^9, 3.679149956690489*^9, 
    3.679150567127879*^9, 3.679151006866316*^9, 3.679151780725336*^9, 
@@ -1177,7 +1334,11 @@ mathematicaDerivations/exponential/clibs/hmc.hpp\"\>"], "Print",
    3.679165155208914*^9, 3.67916518428494*^9}, 3.6791653142845488`*^9, 
    3.679165371564426*^9, 3.679165407091964*^9, 3.679165537927013*^9, 
    3.6791656306485558`*^9, 3.6791656615252666`*^9, {3.679166347613658*^9, 
-   3.679166374489624*^9}, 3.6791664118289213`*^9}]
+   3.679166374489624*^9}, 3.6791664114959717`*^9, 3.679343676985581*^9, 
+   3.6793439273828897`*^9, 3.679343996146508*^9, 3.679345099969262*^9, 
+   3.6793451466319447`*^9, 3.6793454989587793`*^9, 3.679345616234384*^9, 
+   3.6793461114846487`*^9, 3.6793490230313463`*^9, 3.679349114054064*^9, 
+   3.679349863825816*^9, 3.6793507538196087`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1221,7 +1382,11 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.6791651555603123`*^9, 3.679165184949686*^9}, 3.6791653144417667`*^9, 
    3.679165371716309*^9, 3.6791654072467327`*^9, 3.679165538325495*^9, 
    3.679165630997322*^9, 3.67916566191057*^9, {3.679166347998805*^9, 
-   3.679166374850157*^9}, 3.6791664118697577`*^9}],
+   3.679166374850157*^9}, 3.6791664118697577`*^9, 3.679343677302876*^9, 
+   3.679343927682912*^9, 3.679343996444738*^9, 3.679345100268404*^9, 
+   3.679345146942432*^9, 3.679345499271474*^9, 3.6793456165350447`*^9, 
+   3.679346111805881*^9, 3.6793490230894823`*^9, 3.6793491140977097`*^9, 
+   3.6793498641261377`*^9, 3.679350753849964*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
  CellChangeTimes->{
@@ -1239,7 +1404,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.6791651555603123`*^9, 3.679165184949686*^9}, 3.6791653144417667`*^9, 
    3.679165371716309*^9, 3.6791654072467327`*^9, 3.679165538325495*^9, 
    3.679165630997322*^9, 3.67916566191057*^9, {3.679166347998805*^9, 
-   3.679166374850157*^9}, 3.679166412033646*^9}],
+   3.679166374850157*^9}, 3.6791664118697577`*^9, 3.679343677302876*^9, 
+   3.679343927682912*^9, 3.679343996444738*^9, 3.679345100268404*^9, 
+   3.679345146942432*^9, 3.679345499271474*^9, 3.6793456165350447`*^9, 
+   3.679346111805881*^9, 3.6793490230894823`*^9, 3.6793491140977097`*^9, 
+   3.6793498641261377`*^9, 3.6793507539861393`*^9}],
 
 Cell[BoxData["\<\" double ph, double r, double t\"\>"], "Print",
  CellChangeTimes->{
@@ -1257,10 +1426,14 @@ Cell[BoxData["\<\" double ph, double r, double t\"\>"], "Print",
    3.6791651555603123`*^9, 3.679165184949686*^9}, 3.6791653144417667`*^9, 
    3.679165371716309*^9, 3.6791654072467327`*^9, 3.679165538325495*^9, 
    3.679165630997322*^9, 3.67916566191057*^9, {3.679166347998805*^9, 
-   3.679166374850157*^9}, 3.6791664120404453`*^9}],
+   3.679166374850157*^9}, 3.6791664118697577`*^9, 3.679343677302876*^9, 
+   3.679343927682912*^9, 3.679343996444738*^9, 3.679345100268404*^9, 
+   3.679345146942432*^9, 3.679345499271474*^9, 3.6793456165350447`*^9, 
+   3.679346111805881*^9, 3.6793490230894823`*^9, 3.6793491140977097`*^9, 
+   3.6793498641261377`*^9, 3.67935075399282*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/hmc1Acc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/hmc1Acc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.679149799632618*^9, 3.679149859082643*^9, 3.679149956909089*^9, 
    3.679150567361237*^9, 3.679151007097129*^9, 3.679151780952476*^9, 
@@ -1276,7 +1449,11 @@ mathematicaDerivations/exponential/clibs/hmc1Acc.hpp\"\>"], "Print",
    3.6791651555603123`*^9, 3.679165184949686*^9}, 3.6791653144417667`*^9, 
    3.679165371716309*^9, 3.6791654072467327`*^9, 3.679165538325495*^9, 
    3.679165630997322*^9, 3.67916566191057*^9, {3.679166347998805*^9, 
-   3.679166374850157*^9}, 3.6791664120471897`*^9}]
+   3.679166374850157*^9}, 3.6791664118697577`*^9, 3.679343677302876*^9, 
+   3.679343927682912*^9, 3.679343996444738*^9, 3.679345100268404*^9, 
+   3.679345146942432*^9, 3.679345499271474*^9, 3.6793456165350447`*^9, 
+   3.679346111805881*^9, 3.6793490230894823`*^9, 3.6793491140977097`*^9, 
+   3.6793498641261377`*^9, 3.6793507539993343`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1320,7 +1497,11 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.679165155775325*^9, 3.679165185351812*^9}, 3.679165314484355*^9, 
    3.679165371766397*^9, 3.679165407298594*^9, 3.679165538542033*^9, 
    3.679165631204596*^9, 3.679165662122959*^9, {3.679166348225778*^9, 
-   3.679166375051128*^9}, 3.679166412079815*^9}],
+   3.679166375051128*^9}, 3.679166412079815*^9, 3.679343677460681*^9, 
+   3.679343927850881*^9, 3.679343996604246*^9, 3.679345100438817*^9, 
+   3.679345147115121*^9, 3.67934549945077*^9, 3.6793456167069817`*^9, 
+   3.67934611198361*^9, 3.679349023145932*^9, 3.679349114141798*^9, 
+   3.679349864275814*^9, 3.679350754025754*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
  CellChangeTimes->{
@@ -1338,7 +1519,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165155775325*^9, 3.679165185351812*^9}, 3.679165314484355*^9, 
    3.679165371766397*^9, 3.679165407298594*^9, 3.679165538542033*^9, 
    3.679165631204596*^9, 3.679165662122959*^9, {3.679166348225778*^9, 
-   3.679166375051128*^9}, 3.679166412274754*^9}],
+   3.679166375051128*^9}, 3.679166412079815*^9, 3.679343677460681*^9, 
+   3.679343927850881*^9, 3.679343996604246*^9, 3.679345100438817*^9, 
+   3.679345147115121*^9, 3.67934549945077*^9, 3.6793456167069817`*^9, 
+   3.67934611198361*^9, 3.679349023145932*^9, 3.679349114141798*^9, 
+   3.679349864275814*^9, 3.6793507541616592`*^9}],
 
 Cell[BoxData["\<\" double ph, double r, double t\"\>"], "Print",
  CellChangeTimes->{
@@ -1356,11 +1541,14 @@ Cell[BoxData["\<\" double ph, double r, double t\"\>"], "Print",
    3.679165155775325*^9, 3.679165185351812*^9}, 3.679165314484355*^9, 
    3.679165371766397*^9, 3.679165407298594*^9, 3.679165538542033*^9, 
    3.679165631204596*^9, 3.679165662122959*^9, {3.679166348225778*^9, 
-   3.679166375051128*^9}, 3.679166412281673*^9}],
+   3.679166375051128*^9}, 3.679166412079815*^9, 3.679343677460681*^9, 
+   3.679343927850881*^9, 3.679343996604246*^9, 3.679345100438817*^9, 
+   3.679345147115121*^9, 3.67934549945077*^9, 3.6793456167069817`*^9, 
+   3.67934611198361*^9, 3.679349023145932*^9, 3.679349114141798*^9, 
+   3.679349864275814*^9, 3.679350754168015*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/hmc1AccNormalised.hpp\"\>"], "Print",\
-
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/hmc1AccNormalised.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.679149799938003*^9, 3.6791498593335543`*^9, 3.679149957175414*^9, 
    3.679150567608056*^9, 3.679151007363295*^9, 3.679151781191557*^9, 
@@ -1376,7 +1564,11 @@ mathematicaDerivations/exponential/clibs/hmc1AccNormalised.hpp\"\>"], "Print",\
    3.679165155775325*^9, 3.679165185351812*^9}, 3.679165314484355*^9, 
    3.679165371766397*^9, 3.679165407298594*^9, 3.679165538542033*^9, 
    3.679165631204596*^9, 3.679165662122959*^9, {3.679166348225778*^9, 
-   3.679166375051128*^9}, 3.6791664122884293`*^9}]
+   3.679166375051128*^9}, 3.679166412079815*^9, 3.679343677460681*^9, 
+   3.679343927850881*^9, 3.679343996604246*^9, 3.679345100438817*^9, 
+   3.679345147115121*^9, 3.67934549945077*^9, 3.6793456167069817`*^9, 
+   3.67934611198361*^9, 3.679349023145932*^9, 3.679349114141798*^9, 
+   3.679349864275814*^9, 3.679350754174333*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1422,7 +1614,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165155993379*^9, 3.679165185753478*^9}, 3.679165314525004*^9, 
    3.6791653718169394`*^9, 3.679165407357297*^9, 3.679165538799876*^9, 
    3.679165631422901*^9, 3.679165662401306*^9, {3.679166348464176*^9, 
-   3.679166375267161*^9}, 3.679166412319604*^9}],
+   3.679166375267161*^9}, 3.679166412319604*^9, 3.679343677654787*^9, 
+   3.679343928036744*^9, 3.679343996788454*^9, 3.679345100639496*^9, 
+   3.6793451472833357`*^9, 3.679345499634594*^9, 3.679345616890842*^9, 
+   3.679346112167768*^9, 3.6793490232239513`*^9, 3.679349114182364*^9, 
+   3.679349864462178*^9, 3.679350754199717*^9}],
 
 Cell[BoxData["\<\" double b, double p, double ph, double r\"\>"], "Print",
  CellChangeTimes->{
@@ -1440,10 +1636,14 @@ Cell[BoxData["\<\" double b, double p, double ph, double r\"\>"], "Print",
    3.679165155993379*^9, 3.679165185753478*^9}, 3.679165314525004*^9, 
    3.6791653718169394`*^9, 3.679165407357297*^9, 3.679165538799876*^9, 
    3.679165631422901*^9, 3.679165662401306*^9, {3.679166348464176*^9, 
-   3.679166375267161*^9}, 3.679166412325502*^9}],
+   3.679166375267161*^9}, 3.679166412319604*^9, 3.679343677654787*^9, 
+   3.679343928036744*^9, 3.679343996788454*^9, 3.679345100639496*^9, 
+   3.6793451472833357`*^9, 3.679345499634594*^9, 3.679345616890842*^9, 
+   3.679346112167768*^9, 3.6793490232239513`*^9, 3.679349114182364*^9, 
+   3.679349864462178*^9, 3.679350754204879*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/hmcLt.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/hmcLt.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.67914980000758*^9, 3.679149859364797*^9, 3.679149957220407*^9, 
    3.679150567659493*^9, 3.679151007398162*^9, 3.679151781216242*^9, 
@@ -1459,7 +1659,11 @@ mathematicaDerivations/exponential/clibs/hmcLt.hpp\"\>"], "Print",
    3.679165155993379*^9, 3.679165185753478*^9}, 3.679165314525004*^9, 
    3.6791653718169394`*^9, 3.679165407357297*^9, 3.679165538799876*^9, 
    3.679165631422901*^9, 3.679165662401306*^9, {3.679166348464176*^9, 
-   3.679166375267161*^9}, 3.679166412332193*^9}]
+   3.679166375267161*^9}, 3.679166412319604*^9, 3.679343677654787*^9, 
+   3.679343928036744*^9, 3.679343996788454*^9, 3.679345100639496*^9, 
+   3.6793451472833357`*^9, 3.679345499634594*^9, 3.679345616890842*^9, 
+   3.679346112167768*^9, 3.6793490232239513`*^9, 3.679349114182364*^9, 
+   3.679349864462178*^9, 3.679350754211624*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1503,7 +1707,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165156197186*^9, 3.679165186007372*^9}, 3.679165314566493*^9, 
    3.679165371867907*^9, 3.679165407410533*^9, 3.679165538851413*^9, 
    3.679165631479748*^9, 3.6791656624427147`*^9, {3.679166348515602*^9, 
-   3.679166375316289*^9}, 3.6791664123635397`*^9}],
+   3.679166375316289*^9}, 3.6791664123635397`*^9, 3.679343677703292*^9, 
+   3.679343928082827*^9, 3.679343996836192*^9, 3.6793451006906023`*^9, 
+   3.6793451473204317`*^9, 3.679345499673648*^9, 3.679345616935371*^9, 
+   3.679346112206271*^9, 3.6793490233389263`*^9, 3.679349114225272*^9, 
+   3.679349864510193*^9, 3.679350754236219*^9}],
 
 Cell[BoxData["\<\" double b, double ph, double r\"\>"], "Print",
  CellChangeTimes->{
@@ -1521,10 +1729,14 @@ Cell[BoxData["\<\" double b, double ph, double r\"\>"], "Print",
    3.679165156197186*^9, 3.679165186007372*^9}, 3.679165314566493*^9, 
    3.679165371867907*^9, 3.679165407410533*^9, 3.679165538851413*^9, 
    3.679165631479748*^9, 3.6791656624427147`*^9, {3.679166348515602*^9, 
-   3.679166375316289*^9}, 3.679166412369781*^9}],
+   3.679166375316289*^9}, 3.6791664123635397`*^9, 3.679343677703292*^9, 
+   3.679343928082827*^9, 3.679343996836192*^9, 3.6793451006906023`*^9, 
+   3.6793451473204317`*^9, 3.679345499673648*^9, 3.679345616935371*^9, 
+   3.679346112206271*^9, 3.6793490233389263`*^9, 3.679349114225272*^9, 
+   3.679349864510193*^9, 3.6793507542412*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/hmcLt1Acc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/hmcLt1Acc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.679149800046187*^9, 3.6791498593850317`*^9, 3.67914995727888*^9, 
    3.679150567696611*^9, 3.6791510074167957`*^9, 3.679151781249062*^9, 
@@ -1540,7 +1752,11 @@ mathematicaDerivations/exponential/clibs/hmcLt1Acc.hpp\"\>"], "Print",
    3.679165156197186*^9, 3.679165186007372*^9}, 3.679165314566493*^9, 
    3.679165371867907*^9, 3.679165407410533*^9, 3.679165538851413*^9, 
    3.679165631479748*^9, 3.6791656624427147`*^9, {3.679166348515602*^9, 
-   3.679166375316289*^9}, 3.6791664123761797`*^9}]
+   3.679166375316289*^9}, 3.6791664123635397`*^9, 3.679343677703292*^9, 
+   3.679343928082827*^9, 3.679343996836192*^9, 3.6793451006906023`*^9, 
+   3.6793451473204317`*^9, 3.679345499673648*^9, 3.679345616935371*^9, 
+   3.679346112206271*^9, 3.6793490233389263`*^9, 3.679349114225272*^9, 
+   3.679349864510193*^9, 3.679350754248826*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1588,7 +1804,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165156408539*^9, 3.679165186217257*^9}, 3.67916531460911*^9, 
    3.679165371916645*^9, 3.679165407461059*^9, 3.679165538900446*^9, 
    3.679165631533668*^9, 3.6791656624902163`*^9, {3.679166348564431*^9, 
-   3.679166375365674*^9}, 3.679166412403771*^9}],
+   3.679166375365674*^9}, 3.679166412403771*^9, 3.6793436777770243`*^9, 
+   3.679343928132896*^9, 3.6793439968875637`*^9, 3.679345100743375*^9, 
+   3.6793451473651447`*^9, 3.679345499719495*^9, 3.679345616987104*^9, 
+   3.679346112251343*^9, 3.679349023464204*^9, 3.6793491142639637`*^9, 
+   3.6793498645645533`*^9, 3.679350754274872*^9}],
 
 Cell[BoxData["\<\" double b, double p, double ph, double tau\"\>"], "Print",
  CellChangeTimes->{
@@ -1606,10 +1826,14 @@ Cell[BoxData["\<\" double b, double p, double ph, double tau\"\>"], "Print",
    3.679165156408539*^9, 3.679165186217257*^9}, 3.67916531460911*^9, 
    3.679165371916645*^9, 3.679165407461059*^9, 3.679165538900446*^9, 
    3.679165631533668*^9, 3.6791656624902163`*^9, {3.679166348564431*^9, 
-   3.679166375365674*^9}, 3.679166412410236*^9}],
+   3.679166375365674*^9}, 3.679166412403771*^9, 3.6793436777770243`*^9, 
+   3.679343928132896*^9, 3.6793439968875637`*^9, 3.679345100743375*^9, 
+   3.6793451473651447`*^9, 3.679345499719495*^9, 3.679345616987104*^9, 
+   3.679346112251343*^9, 3.679349023464204*^9, 3.6793491142639637`*^9, 
+   3.6793498645645533`*^9, 3.679350754280023*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/hmcLtDerived.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/hmcLtDerived.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.67914980018407*^9, 3.679149859410871*^9, 3.679149957297716*^9, 
    3.679150567730545*^9, 3.679151007444079*^9, 3.67915178126574*^9, 
@@ -1625,7 +1849,11 @@ mathematicaDerivations/exponential/clibs/hmcLtDerived.hpp\"\>"], "Print",
    3.679165156408539*^9, 3.679165186217257*^9}, 3.67916531460911*^9, 
    3.679165371916645*^9, 3.679165407461059*^9, 3.679165538900446*^9, 
    3.679165631533668*^9, 3.6791656624902163`*^9, {3.679166348564431*^9, 
-   3.679166375365674*^9}, 3.6791664124167*^9}]
+   3.679166375365674*^9}, 3.679166412403771*^9, 3.6793436777770243`*^9, 
+   3.679343928132896*^9, 3.6793439968875637`*^9, 3.679345100743375*^9, 
+   3.6793451473651447`*^9, 3.679345499719495*^9, 3.679345616987104*^9, 
+   3.679346112251343*^9, 3.679349023464204*^9, 3.6793491142639637`*^9, 
+   3.6793498645645533`*^9, 3.679350754285803*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1672,7 +1900,11 @@ Cell[BoxData["\<\"E found in func\"\>"], "Print",
    3.679165156631198*^9, 3.6791651864356327`*^9}, 3.679165314649332*^9, 
    3.679165371965619*^9, 3.679165407522779*^9, 3.6791655389501333`*^9, 
    3.679165631578823*^9, 3.679165662527451*^9, {3.679166348613544*^9, 
-   3.6791663754147043`*^9}, 3.679166412448408*^9}],
+   3.6791663754147043`*^9}, 3.679166412448408*^9, 3.679343677822014*^9, 
+   3.6793439281737423`*^9, 3.679343996935996*^9, 3.6793451007875547`*^9, 
+   3.679345147407196*^9, 3.6793454997679787`*^9, 3.679345617035275*^9, 
+   3.679346112320075*^9, 3.679349023539034*^9, 3.6793491143085747`*^9, 
+   3.6793498646109743`*^9, 3.679350754311098*^9}],
 
 Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
  CellChangeTimes->{
@@ -1690,7 +1922,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165156631198*^9, 3.6791651864356327`*^9}, 3.679165314649332*^9, 
    3.679165371965619*^9, 3.679165407522779*^9, 3.6791655389501333`*^9, 
    3.679165631578823*^9, 3.679165662527451*^9, {3.679166348613544*^9, 
-   3.6791663754147043`*^9}, 3.6791664127843733`*^9}],
+   3.6791663754147043`*^9}, 3.679166412448408*^9, 3.679343677822014*^9, 
+   3.6793439281737423`*^9, 3.679343996935996*^9, 3.6793451007875547`*^9, 
+   3.679345147407196*^9, 3.6793454997679787`*^9, 3.679345617035275*^9, 
+   3.679346112320075*^9, 3.679349023539034*^9, 3.6793491143085747`*^9, 
+   3.6793498646109743`*^9, 3.679350754600968*^9}],
 
 Cell[BoxData["\<\" double p, double ph, double r, double t\"\>"], "Print",
  CellChangeTimes->{
@@ -1708,10 +1944,14 @@ Cell[BoxData["\<\" double p, double ph, double r, double t\"\>"], "Print",
    3.679165156631198*^9, 3.6791651864356327`*^9}, 3.679165314649332*^9, 
    3.679165371965619*^9, 3.679165407522779*^9, 3.6791655389501333`*^9, 
    3.679165631578823*^9, 3.679165662527451*^9, {3.679166348613544*^9, 
-   3.6791663754147043`*^9}, 3.679166412790169*^9}],
+   3.6791663754147043`*^9}, 3.679166412448408*^9, 3.679343677822014*^9, 
+   3.6793439281737423`*^9, 3.679343996935996*^9, 3.6793451007875547`*^9, 
+   3.679345147407196*^9, 3.6793454997679787`*^9, 3.679345617035275*^9, 
+   3.679346112320075*^9, 3.679349023539034*^9, 3.6793491143085747`*^9, 
+   3.6793498646109743`*^9, 3.6793507546073093`*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/hmcNormalised.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/hmcNormalised.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.6791498006423397`*^9, 3.679149859878365*^9, 3.679149957745949*^9, 
    3.679150568179572*^9, 3.679151007888184*^9, 3.679151781729393*^9, 
@@ -1727,7 +1967,11 @@ mathematicaDerivations/exponential/clibs/hmcNormalised.hpp\"\>"], "Print",
    3.679165156631198*^9, 3.6791651864356327`*^9}, 3.679165314649332*^9, 
    3.679165371965619*^9, 3.679165407522779*^9, 3.6791655389501333`*^9, 
    3.679165631578823*^9, 3.679165662527451*^9, {3.679166348613544*^9, 
-   3.6791663754147043`*^9}, 3.6791664127969437`*^9}]
+   3.6791663754147043`*^9}, 3.679166412448408*^9, 3.679343677822014*^9, 
+   3.6793439281737423`*^9, 3.679343996935996*^9, 3.6793451007875547`*^9, 
+   3.679345147407196*^9, 3.6793454997679787`*^9, 3.679345617035275*^9, 
+   3.679346112320075*^9, 3.679349023539034*^9, 3.6793491143085747`*^9, 
+   3.6793498646109743`*^9, 3.679350754613871*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1768,7 +2012,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165156975251*^9, 3.6791651870758333`*^9, 3.679165314808988*^9, 
    3.679165372115861*^9, 3.679165407707335*^9, 3.679165539327956*^9, 
    3.679165631998248*^9, 3.679165662917613*^9, {3.679166349040677*^9, 
-   3.679166375784006*^9}, 3.679166412815037*^9}],
+   3.679166375784006*^9}, 3.679166412815037*^9, 3.679343678155394*^9, 
+   3.679343928491199*^9, 3.679343997371046*^9, 3.679345101125986*^9, 
+   3.679345147739778*^9, 3.679345500142592*^9, 3.6793456173831244`*^9, 
+   3.679346112646195*^9, 3.679349023608212*^9, 3.679349114354192*^9, 
+   3.679349864971015*^9, 3.679350754648387*^9}],
 
 Cell[BoxData["\<\" double p, double ph, double th\"\>"], "Print",
  CellChangeTimes->{
@@ -1786,10 +2034,14 @@ Cell[BoxData["\<\" double p, double ph, double th\"\>"], "Print",
    3.679165156975251*^9, 3.6791651870758333`*^9, 3.679165314808988*^9, 
    3.679165372115861*^9, 3.679165407707335*^9, 3.679165539327956*^9, 
    3.679165631998248*^9, 3.679165662917613*^9, {3.679166349040677*^9, 
-   3.679166375784006*^9}, 3.679166412821303*^9}],
+   3.679166375784006*^9}, 3.679166412815037*^9, 3.679343678155394*^9, 
+   3.679343928491199*^9, 3.679343997371046*^9, 3.679345101125986*^9, 
+   3.679345147739778*^9, 3.679345500142592*^9, 3.6793456173831244`*^9, 
+   3.679346112646195*^9, 3.679349023608212*^9, 3.679349114354192*^9, 
+   3.679349864971015*^9, 3.6793507546534863`*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ighmc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ighmc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.679149800732293*^9, 3.6791498598988333`*^9, 3.67914995777526*^9, 
    3.679150568202703*^9, 3.679151007904234*^9, 3.679151781750248*^9, 
@@ -1805,7 +2057,11 @@ mathematicaDerivations/exponential/clibs/ighmc.hpp\"\>"], "Print",
    3.679165156975251*^9, 3.6791651870758333`*^9, 3.679165314808988*^9, 
    3.679165372115861*^9, 3.679165407707335*^9, 3.679165539327956*^9, 
    3.679165631998248*^9, 3.679165662917613*^9, {3.679166349040677*^9, 
-   3.679166375784006*^9}, 3.679166412827361*^9}]
+   3.679166375784006*^9}, 3.679166412815037*^9, 3.679343678155394*^9, 
+   3.679343928491199*^9, 3.679343997371046*^9, 3.679345101125986*^9, 
+   3.679345147739778*^9, 3.679345500142592*^9, 3.6793456173831244`*^9, 
+   3.679346112646195*^9, 3.679349023608212*^9, 3.679349114354192*^9, 
+   3.679349864971015*^9, 3.679350754659878*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1846,7 +2102,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.6791651571759872`*^9, 3.679165187286009*^9, 3.679165314849485*^9, 
    3.679165372166012*^9, 3.679165407765884*^9, 3.679165539386178*^9, 
    3.679165632055751*^9, 3.679165662972769*^9, {3.67916634909025*^9, 
-   3.6791663758332043`*^9}, 3.679166412856504*^9}],
+   3.6791663758332043`*^9}, 3.679166412856504*^9, 3.679343678203377*^9, 
+   3.679343928536426*^9, 3.679343997420425*^9, 3.6793451011699953`*^9, 
+   3.67934514778098*^9, 3.679345500210647*^9, 3.679345617418829*^9, 
+   3.679346112696638*^9, 3.679349023676012*^9, 3.679349114451744*^9, 
+   3.679349865016509*^9, 3.6793507546861343`*^9}],
 
 Cell[BoxData["\<\" double ph, double th\"\>"], "Print",
  CellChangeTimes->{
@@ -1864,10 +2124,14 @@ Cell[BoxData["\<\" double ph, double th\"\>"], "Print",
    3.6791651571759872`*^9, 3.679165187286009*^9, 3.679165314849485*^9, 
    3.679165372166012*^9, 3.679165407765884*^9, 3.679165539386178*^9, 
    3.679165632055751*^9, 3.679165662972769*^9, {3.67916634909025*^9, 
-   3.6791663758332043`*^9}, 3.6791664128637877`*^9}],
+   3.6791663758332043`*^9}, 3.679166412856504*^9, 3.679343678203377*^9, 
+   3.679343928536426*^9, 3.679343997420425*^9, 3.6793451011699953`*^9, 
+   3.67934514778098*^9, 3.679345500210647*^9, 3.679345617418829*^9, 
+   3.679346112696638*^9, 3.679349023676012*^9, 3.679349114451744*^9, 
+   3.679349865016509*^9, 3.679350754690929*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ighmc1Acc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ighmc1Acc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.6791498007631083`*^9, 3.679149859927265*^9, 3.679149957807124*^9, 
    3.679150568219413*^9, 3.679151007926033*^9, 3.6791517817627583`*^9, 
@@ -1883,7 +2147,11 @@ mathematicaDerivations/exponential/clibs/ighmc1Acc.hpp\"\>"], "Print",
    3.6791651571759872`*^9, 3.679165187286009*^9, 3.679165314849485*^9, 
    3.679165372166012*^9, 3.679165407765884*^9, 3.679165539386178*^9, 
    3.679165632055751*^9, 3.679165662972769*^9, {3.67916634909025*^9, 
-   3.6791663758332043`*^9}, 3.679166412869833*^9}]
+   3.6791663758332043`*^9}, 3.679166412856504*^9, 3.679343678203377*^9, 
+   3.679343928536426*^9, 3.679343997420425*^9, 3.6793451011699953`*^9, 
+   3.67934514778098*^9, 3.679345500210647*^9, 3.679345617418829*^9, 
+   3.679346112696638*^9, 3.679349023676012*^9, 3.679349114451744*^9, 
+   3.679349865016509*^9, 3.6793507546994543`*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -1924,7 +2192,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.679165157361219*^9, 3.679165187490243*^9, 3.67916531489116*^9, 
    3.67916537221725*^9, 3.679165407815097*^9, 3.679165539445318*^9, 
    3.679165632107321*^9, 3.679165663021988*^9, {3.679166349131562*^9, 
-   3.679166375882125*^9}, 3.679166412897377*^9}],
+   3.679166375882125*^9}, 3.679166412897377*^9, 3.679343678253483*^9, 
+   3.679343928582759*^9, 3.679343997462586*^9, 3.6793451012201767`*^9, 
+   3.679345147821313*^9, 3.679345500310278*^9, 3.679345617459337*^9, 
+   3.679346112749113*^9, 3.6793490237383204`*^9, 3.679349114510933*^9, 
+   3.679349865059896*^9, 3.679350754726591*^9}],
 
 Cell[BoxData["\<\" double p, double ph\"\>"], "Print",
  CellChangeTimes->{
@@ -1942,10 +2214,14 @@ Cell[BoxData["\<\" double p, double ph\"\>"], "Print",
    3.679165157361219*^9, 3.679165187490243*^9, 3.67916531489116*^9, 
    3.67916537221725*^9, 3.679165407815097*^9, 3.679165539445318*^9, 
    3.679165632107321*^9, 3.679165663021988*^9, {3.679166349131562*^9, 
-   3.679166375882125*^9}, 3.679166412903256*^9}],
+   3.679166375882125*^9}, 3.679166412897377*^9, 3.679343678253483*^9, 
+   3.679343928582759*^9, 3.679343997462586*^9, 3.6793451012201767`*^9, 
+   3.679345147821313*^9, 3.679345500310278*^9, 3.679345617459337*^9, 
+   3.679346112749113*^9, 3.6793490237383204`*^9, 3.679349114510933*^9, 
+   3.679349865059896*^9, 3.679350754732214*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ihmc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ihmc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.6791498007964983`*^9, 3.6791498599470587`*^9, 3.679149957840884*^9, 
    3.679150568241541*^9, 3.6791510079399433`*^9, 3.679151781784381*^9, 
@@ -1961,7 +2237,11 @@ mathematicaDerivations/exponential/clibs/ihmc.hpp\"\>"], "Print",
    3.679165157361219*^9, 3.679165187490243*^9, 3.67916531489116*^9, 
    3.67916537221725*^9, 3.679165407815097*^9, 3.679165539445318*^9, 
    3.679165632107321*^9, 3.679165663021988*^9, {3.679166349131562*^9, 
-   3.679166375882125*^9}, 3.679166412909474*^9}]
+   3.679166375882125*^9}, 3.679166412897377*^9, 3.679343678253483*^9, 
+   3.679343928582759*^9, 3.679343997462586*^9, 3.6793451012201767`*^9, 
+   3.679345147821313*^9, 3.679345500310278*^9, 3.679345617459337*^9, 
+   3.679346112749113*^9, 3.6793490237383204`*^9, 3.679349114510933*^9, 
+   3.679349865059896*^9, 3.679350754737647*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -2000,7 +2280,11 @@ Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
    3.6791651575633383`*^9, 3.67916518769665*^9, 3.6791653149336853`*^9, 
    3.67916537226729*^9, 3.67916540786098*^9, 3.679165539494266*^9, 
    3.679165632155343*^9, 3.6791656630735826`*^9, {3.67916634917353*^9, 
-   3.679166375931827*^9}, 3.679166412935875*^9}],
+   3.679166375931827*^9}, 3.679166412935875*^9, 3.67934367830309*^9, 
+   3.679343928633037*^9, 3.67934399750033*^9, 3.6793451012703047`*^9, 
+   3.67934514787096*^9, 3.679345500363564*^9, 3.67934561750492*^9, 
+   3.679346112808165*^9, 3.67934902380879*^9, 3.679349114575858*^9, 
+   3.679349865109997*^9, 3.679350754766973*^9}],
 
 Cell[BoxData["\<\" double ph\"\>"], "Print",
  CellChangeTimes->{
@@ -2018,10 +2302,14 @@ Cell[BoxData["\<\" double ph\"\>"], "Print",
    3.6791651575633383`*^9, 3.67916518769665*^9, 3.6791653149336853`*^9, 
    3.67916537226729*^9, 3.67916540786098*^9, 3.679165539494266*^9, 
    3.679165632155343*^9, 3.6791656630735826`*^9, {3.67916634917353*^9, 
-   3.679166375931827*^9}, 3.679166412939281*^9}],
+   3.679166375931827*^9}, 3.679166412935875*^9, 3.67934367830309*^9, 
+   3.679343928633037*^9, 3.67934399750033*^9, 3.6793451012703047`*^9, 
+   3.67934514787096*^9, 3.679345500363564*^9, 3.67934561750492*^9, 
+   3.679346112808165*^9, 3.67934902380879*^9, 3.679349114575858*^9, 
+   3.679349865109997*^9, 3.6793507547729473`*^9}],
 
-Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/\
-mathematicaDerivations/exponential/clibs/ihmc1Acc.hpp\"\>"], "Print",
+Cell[BoxData["\<\"/Users/alex/Dropbox/mscTheoPhys/thesis/code/theory/clibs/\
+autocorrelations/exponential/ihmc1Acc.hpp\"\>"], "Print",
  CellChangeTimes->{
   3.6791498008295403`*^9, 3.67914985997685*^9, 3.6791499578746233`*^9, 
    3.6791505682562113`*^9, 3.679151007958931*^9, 3.679151781795639*^9, 
@@ -2037,13 +2325,17 @@ mathematicaDerivations/exponential/clibs/ihmc1Acc.hpp\"\>"], "Print",
    3.6791651575633383`*^9, 3.67916518769665*^9, 3.6791653149336853`*^9, 
    3.67916537226729*^9, 3.67916540786098*^9, 3.679165539494266*^9, 
    3.679165632155343*^9, 3.6791656630735826`*^9, {3.67916634917353*^9, 
-   3.679166375931827*^9}, 3.679166412943802*^9}]
+   3.679166375931827*^9}, 3.679166412935875*^9, 3.67934367830309*^9, 
+   3.679343928633037*^9, 3.67934399750033*^9, 3.6793451012703047`*^9, 
+   3.67934514787096*^9, 3.679345500363564*^9, 3.67934561750492*^9, 
+   3.679346112808165*^9, 3.67934902380879*^9, 3.679349114575858*^9, 
+   3.679349865109997*^9, 3.6793507547818613`*^9}]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
 },
 WindowSize->{808, 911},
-WindowMargins->{{Automatic, 228}, {Automatic, 0}},
+WindowMargins->{{410, Automatic}, {57, Automatic}},
 FrontEndVersion->"10.4 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 11, \
 2016)",
 StyleDefinitions->"Default.nb"
@@ -2052,10 +2344,16 @@ StyleDefinitions->"Default.nb"
 
 (* Internal cache information *)
 (*CellTagsOutline
-CellTagsIndex->{}
+CellTagsIndex->{
+ "Info303679354351-1533511"->{
+  Cell[23196, 580, 445, 7, 160, "Print",
+   CellTags->"Info303679354351-1533511"]}
+ }
 *)
 (*CellTagsIndex
-CellTagsIndex->{}
+CellTagsIndex->{
+ {"Info303679354351-1533511", 119317, 2347}
+ }
 *)
 (*NotebookFileOutline
 Notebook[{
@@ -2063,176 +2361,184 @@ Cell[558, 20, 342, 5, 122, "Text"],
 Cell[CellGroupData[{
 Cell[925, 29, 259, 7, 51, "Subtitle"],
 Cell[CellGroupData[{
-Cell[1209, 40, 2672, 54, 199, "Input",
+Cell[1209, 40, 2902, 58, 199, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[3906, 98, 5469, 150, 136, "Print"],
-Cell[9378, 250, 2414, 68, 73, "Print"]
+Cell[4136, 102, 5471, 150, 136, "Print"],
+Cell[9610, 254, 2412, 68, 73, "Print"],
+Cell[12025, 324, 1417, 40, 52, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[11841, 324, 109, 1, 64, "Section"],
-Cell[11953, 327, 115, 1, 30, "Text"],
+Cell[13491, 370, 109, 1, 64, "Section"],
+Cell[13603, 373, 115, 1, 30, "Text"],
 Cell[CellGroupData[{
-Cell[12093, 332, 374, 6, 63, "Input"],
-Cell[12470, 340, 1210, 17, 28, "Output"],
-Cell[13683, 359, 2660, 50, 148, "Output"],
-Cell[16346, 411, 1930, 36, 80, "Output"]
+Cell[13743, 378, 374, 6, 63, "Input"],
+Cell[14120, 386, 1488, 21, 28, "Output"],
+Cell[15611, 409, 2937, 54, 148, "Output"],
+Cell[18551, 465, 2209, 40, 80, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[18325, 453, 100, 1, 64, "Section"],
-Cell[18428, 456, 160, 3, 30, "Text"],
-Cell[18591, 461, 209, 5, 28, "Input"],
-Cell[18803, 468, 311, 8, 28, "Input"]
+Cell[20809, 511, 100, 1, 64, "Section"],
+Cell[20912, 514, 207, 4, 30, "Text"],
+Cell[21122, 520, 209, 5, 28, "Input"],
+Cell[CellGroupData[{
+Cell[21356, 529, 900, 21, 63, "Input"],
+Cell[22259, 552, 252, 3, 28, "Output"]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[19163, 482, 150, 2, 65, "Chapter"],
-Cell[19316, 486, 197, 4, 30, "Text"],
-Cell[19516, 492, 1391, 34, 267, "Input"],
-Cell[20910, 528, 141, 2, 28, "Input"],
-Cell[21054, 532, 1705, 32, 63, "Input"],
+Cell[22572, 562, 150, 2, 65, "Chapter"],
+Cell[22725, 566, 248, 5, 30, "Text"],
 Cell[CellGroupData[{
-Cell[22784, 568, 869, 21, 63, "Input"],
+Cell[22998, 575, 195, 3, 28, "Input"],
+Cell[23196, 580, 445, 7, 160, "Print",
+ CellTags->"Info303679354351-1533511"]
+}, Open  ]],
+Cell[23656, 590, 141, 2, 28, "Input"],
+Cell[23800, 594, 1705, 32, 63, "Input"],
 Cell[CellGroupData[{
-Cell[23678, 593, 832, 12, 21, "Print"],
-Cell[24513, 607, 835, 12, 21, "Print"],
-Cell[25351, 621, 858, 12, 22, "Print"],
-Cell[26212, 635, 923, 13, 38, "Print"]
+Cell[25530, 630, 869, 21, 63, "Input"],
+Cell[CellGroupData[{
+Cell[26424, 655, 1122, 16, 21, "Print"],
+Cell[27549, 673, 1119, 16, 21, "Print"],
+Cell[28671, 691, 1148, 16, 22, "Print"],
+Cell[29822, 709, 1205, 17, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[27184, 654, 819, 22, 63, "Input"],
+Cell[31076, 732, 819, 22, 63, "Input"],
 Cell[CellGroupData[{
-Cell[28028, 680, 1127, 16, 21, "Print"],
-Cell[29158, 698, 1126, 16, 21, "Print"],
-Cell[30287, 716, 1151, 16, 22, "Print"],
-Cell[31441, 734, 1230, 18, 38, "Print"]
+Cell[31920, 758, 1420, 20, 21, "Print"],
+Cell[33343, 780, 1421, 20, 21, "Print"],
+Cell[34767, 802, 1444, 20, 22, "Print"],
+Cell[36214, 824, 1515, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[32720, 758, 592, 15, 63, "Input"],
+Cell[37778, 851, 592, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[33337, 777, 1128, 16, 21, "Print"],
-Cell[34468, 795, 1163, 17, 22, "Print"],
-Cell[35634, 814, 1214, 17, 38, "Print"]
+Cell[38395, 870, 1411, 20, 21, "Print"],
+Cell[39809, 892, 1446, 21, 22, "Print"],
+Cell[41258, 915, 1493, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[36897, 837, 581, 15, 63, "Input"],
+Cell[42800, 942, 581, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[37503, 856, 1123, 16, 21, "Print"],
-Cell[38629, 874, 1148, 16, 22, "Print"],
-Cell[39780, 892, 1215, 17, 38, "Print"]
+Cell[43406, 961, 1409, 20, 21, "Print"],
+Cell[44818, 983, 1434, 20, 22, "Print"],
+Cell[46255, 1005, 1495, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[41044, 915, 606, 15, 63, "Input"],
+Cell[47799, 1032, 708, 17, 63, "Input"],
 Cell[CellGroupData[{
-Cell[41675, 934, 1123, 16, 21, "Print"],
-Cell[42801, 952, 1211, 18, 38, "Print"],
-Cell[44015, 972, 1218, 17, 38, "Print"]
+Cell[48532, 1053, 1486, 21, 21, "Print"],
+Cell[50021, 1076, 1523, 22, 22, "Print"],
+Cell[51547, 1100, 1573, 22, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[45282, 995, 796, 24, 63, "Input"],
+Cell[53169, 1128, 796, 24, 63, "Input"],
 Cell[CellGroupData[{
-Cell[46103, 1023, 1119, 16, 21, "Print"],
-Cell[47225, 1041, 1154, 17, 22, "Print"],
-Cell[48382, 1060, 1215, 17, 38, "Print"]
+Cell[53990, 1156, 1407, 20, 21, "Print"],
+Cell[55400, 1178, 1444, 21, 22, "Print"],
+Cell[56847, 1201, 1499, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[49646, 1083, 692, 21, 63, "Input"],
+Cell[58395, 1228, 692, 21, 63, "Input"],
 Cell[CellGroupData[{
-Cell[50363, 1108, 1125, 16, 21, "Print"],
-Cell[51491, 1126, 1126, 16, 21, "Print"],
-Cell[52620, 1144, 1150, 16, 22, "Print"],
-Cell[53773, 1162, 1211, 17, 38, "Print"]
+Cell[59112, 1253, 1417, 20, 21, "Print"],
+Cell[60532, 1275, 1416, 20, 21, "Print"],
+Cell[61951, 1297, 1440, 20, 22, "Print"],
+Cell[63394, 1319, 1497, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[55033, 1185, 611, 18, 63, "Input"],
+Cell[64940, 1346, 611, 18, 63, "Input"],
 Cell[CellGroupData[{
-Cell[55669, 1207, 1126, 16, 21, "Print"],
-Cell[56798, 1225, 1125, 16, 21, "Print"],
-Cell[57926, 1243, 1141, 16, 22, "Print"],
-Cell[59070, 1261, 1216, 17, 38, "Print"]
+Cell[65576, 1368, 1414, 20, 21, "Print"],
+Cell[66993, 1390, 1417, 20, 21, "Print"],
+Cell[68413, 1412, 1428, 20, 22, "Print"],
+Cell[69844, 1434, 1500, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[60335, 1284, 631, 18, 63, "Input"],
+Cell[71393, 1461, 631, 18, 63, "Input"],
 Cell[CellGroupData[{
-Cell[60991, 1306, 1113, 16, 21, "Print"],
-Cell[62107, 1324, 1114, 16, 21, "Print"],
-Cell[63224, 1342, 1128, 16, 22, "Print"],
-Cell[64355, 1360, 1217, 18, 38, "Print"]
+Cell[72049, 1483, 1393, 20, 21, "Print"],
+Cell[73445, 1505, 1396, 20, 21, "Print"],
+Cell[74844, 1527, 1408, 20, 22, "Print"],
+Cell[76255, 1549, 1487, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[65621, 1384, 663, 20, 63, "Input"],
+Cell[77791, 1576, 663, 20, 63, "Input"],
 Cell[CellGroupData[{
-Cell[66309, 1408, 1113, 16, 21, "Print"],
-Cell[67425, 1426, 1137, 16, 22, "Print"],
-Cell[68565, 1444, 1200, 17, 38, "Print"]
+Cell[78479, 1600, 1397, 20, 21, "Print"],
+Cell[79879, 1622, 1421, 20, 22, "Print"],
+Cell[81303, 1644, 1478, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[69814, 1467, 613, 18, 63, "Input"],
+Cell[82830, 1671, 613, 18, 63, "Input"],
 Cell[CellGroupData[{
-Cell[70452, 1489, 1119, 16, 21, "Print"],
-Cell[71574, 1507, 1131, 16, 22, "Print"],
-Cell[72708, 1525, 1210, 17, 38, "Print"]
+Cell[83468, 1693, 1405, 20, 21, "Print"],
+Cell[84876, 1715, 1417, 20, 22, "Print"],
+Cell[86296, 1737, 1490, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[73967, 1548, 710, 22, 63, "Input"],
+Cell[87835, 1764, 710, 22, 63, "Input"],
 Cell[CellGroupData[{
-Cell[74702, 1574, 1111, 16, 21, "Print"],
-Cell[75816, 1592, 1137, 16, 22, "Print"],
-Cell[76956, 1610, 1203, 17, 38, "Print"]
+Cell[88570, 1790, 1401, 20, 21, "Print"],
+Cell[89974, 1812, 1427, 20, 22, "Print"],
+Cell[91404, 1834, 1489, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[78208, 1633, 709, 21, 63, "Input"],
+Cell[92942, 1861, 709, 21, 63, "Input"],
 Cell[CellGroupData[{
-Cell[78942, 1658, 1121, 16, 21, "Print"],
-Cell[80066, 1676, 1124, 16, 21, "Print"],
-Cell[81193, 1694, 1146, 16, 22, "Print"],
-Cell[82342, 1712, 1219, 17, 38, "Print"]
+Cell[93676, 1886, 1411, 20, 21, "Print"],
+Cell[95090, 1908, 1412, 20, 21, "Print"],
+Cell[96505, 1930, 1438, 20, 22, "Print"],
+Cell[97946, 1952, 1501, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[83610, 1735, 520, 15, 63, "Input"],
+Cell[99496, 1979, 520, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[84155, 1754, 1119, 16, 21, "Print"],
-Cell[85277, 1772, 1134, 16, 22, "Print"],
-Cell[86414, 1790, 1206, 17, 38, "Print"]
+Cell[100041, 1998, 1401, 20, 21, "Print"],
+Cell[101445, 2020, 1418, 20, 22, "Print"],
+Cell[102866, 2042, 1482, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[87669, 1813, 511, 15, 63, "Input"],
+Cell[104397, 2069, 511, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[88205, 1832, 1132, 16, 21, "Print"],
-Cell[89340, 1850, 1139, 16, 22, "Print"],
-Cell[90482, 1868, 1223, 17, 38, "Print"]
+Cell[104933, 2088, 1415, 20, 21, "Print"],
+Cell[106351, 2110, 1418, 20, 22, "Print"],
+Cell[107772, 2132, 1500, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[91754, 1891, 502, 15, 63, "Input"],
+Cell[109321, 2159, 502, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[92281, 1910, 1111, 16, 21, "Print"],
-Cell[93395, 1928, 1115, 16, 22, "Print"],
-Cell[94513, 1946, 1197, 17, 38, "Print"]
+Cell[109848, 2178, 1395, 20, 21, "Print"],
+Cell[111246, 2200, 1399, 20, 22, "Print"],
+Cell[112648, 2222, 1475, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[95759, 1969, 479, 13, 63, "Input"],
+Cell[114172, 2249, 479, 13, 63, "Input"],
 Cell[CellGroupData[{
-Cell[96263, 1986, 1120, 16, 21, "Print"],
-Cell[97386, 2004, 1114, 16, 22, "Print"],
-Cell[98503, 2022, 1210, 17, 38, "Print"]
+Cell[114676, 2266, 1397, 20, 21, "Print"],
+Cell[116076, 2288, 1393, 20, 22, "Print"],
+Cell[117472, 2310, 1483, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]

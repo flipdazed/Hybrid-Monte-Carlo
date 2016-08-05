@@ -5,13 +5,13 @@ from common.intac import plot
 from common.utils import saveOrDisplay
 
 save = False
-file_name = 'intacorr_xx_ghmc_kg_0p00t2p00'
+file_name = 'intacorr_xx_khmc_kg_0p00t2p00'
 
 dest = 'results/data/other_objs/{}_allPlot.pkl'.format(file_name)
 a = load(dest)
 
 sites   = 20
-n_steps = 20
+n_steps = 1
 dtau    = 0.1
 tau     = n_steps*dtau
 mass    = 1

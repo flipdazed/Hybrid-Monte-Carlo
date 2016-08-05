@@ -160,8 +160,6 @@ def autoWindow(acorrn, s_tau, n, t_max = None):
     # see http://stackoverflow.com/a/8534381/4013571
     try:
         w = next(t for t,v in enumerate(g_int,1) if gW(t, v, s_tau, n) < 0)
-        g_int[15]
-        print gW(16, g_int[15], s_tau, n)
     except:
         checks.tryAssertNotEqual(False, False,
         'Windowing condition failed up to W = {}'.format(g_int.size))

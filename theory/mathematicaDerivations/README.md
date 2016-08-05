@@ -2,11 +2,11 @@ Mathematica Derivations
 ===============
 
 ## Table of Contents
- .  [Calling Functions from Python](#acorr)
- .  [Integrated Autocorrelation Functions](#iacorr)
- .  [Molecular Dynamics](#mdmc)
+ -  [`pyMathematica` :: Calling Functions from Python](#pymm)
+ -  [`MathematicaToC` :: Automated `c++` code generation](#cmm)
+ -  [Derivations and Theory](#th)
  
-<a name="mdmc"/>
+<a name="pymm"/>
 ## Calling Functions from Python
 
 These instructions are adapted from [this Stack Exchange link](http://mathematica.stackexchange.com/a/4673/41800)
@@ -57,12 +57,18 @@ These instructions are adapted from [this Stack Exchange link](http://mathematic
 
 6. Now this can now be called from python using `pyMathematica`:
 
-        from pyMathematica import eval
-        eval('Exp[4] // N')
-<a name="acorr"/>
-## Autocorrelation Functions
-Note: integrated autocorrelations are also called from here by the `.integrated()` method
+        In [1]: %paste
+                from pyMathematica import eval
+                expr = "LaplaceTransform[1/x^(-t), t, s]"
+                eval(expr)
+        
+        ## -- End pasted text --
+        Out[1]: ['(s - Log[x])^(-1)']
+        
+<a name="cmm"/>
+## `MathematicaToC` :: Automated `c++` code generation
+Docs are all in `Mathematica` - Readme to come...
 
- .  Magnetic Susceptibility, $\phi^2$
-  * Fixed length trajectories
-  * Exponentially distributed trajectories
+<a name="th"/>
+## Derivations and Theory
+Docs to come.

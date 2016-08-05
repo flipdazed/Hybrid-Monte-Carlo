@@ -5,13 +5,13 @@ from results.data.store import load, store
 from hmc.potentials import Klein_Gordon as KG
 from correlations.corr import twoPoint
 from correlations.acorr import acorr as myAcorr
-from correlations.errors import gW, windowing, uWerr, getW, autoWindow
+from correlations.errors import gW, windowing, uWerr, getW, autoWindow, acorrnErr
 
-# from common.acorr import plot
-# from common.utils import saveOrDisplay
+from common.acorr import plot
+from common.utils import saveOrDisplay
 
-save      = False
-tol       = 1e-6
+file_name = __file__
+save      = True
 m         = 1.0
 n_steps   = 40
 step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
@@ -78,8 +78,8 @@ def preparePlot(my_data, comparison_data, my_err=None, comparison_err=None):
     
     # create the dictionary item to pass to plot()
     acns = {}
-    acns[r'My $C_{\phi^2}(\theta = \pi/2)$'] = (x, my_data, my_err) # add my data
-    acns[r'C.H. $C_{\phi^2}(\theta = \pi/2)$'] = (x, comparison_data, comparison_err) # add christians data
+    acns[r'My $C_{\phi^2}(\theta = \pi/2)$'] = (my_x, my_data, my_err) # add my data
+    acns[r'C.H. $C_{\phi^2}(\theta = \pi/2)$'] = (my_x, comparison_data, comparison_err) # add christians data
     
     # Bundle all data ready for Plot() and store data as .pkl or .json for future use
     all_plot = {'acns':acns, 'lines':{}, 'subtitle':subtitle, 'op_name':op_name}
@@ -147,38 +147,29 @@ print 'Comparing autocorrelation calculations...'
 av_xx = comparison_xx.mean()
 norm = ((comparison_xx-av_xx)**2).mean()
 my_acorr = np.asarray(map(lambda s: myAcorr(comparison_xx, av_xx, s), np.asarray(separations)))
-# In [3]: %timeit np.asarray([myAcorr(comparison_xx, comparison_xx.mean(), s) for s in separations])
-# 1 loop, best of 3: 6.5 s per loop#
 
 christian_class = Christian_Autocorrelation(comparison_xx)
 christian_acorr = christian_class.acf()[:c_len]
-# In [4]: christian_class = Christian_Autocorrelation(comparison_xx)
-# In [5]: %timeit christian_acorr = christian_class.acf()
-# 1 loop, best of 3: 12.3 s per loop
+
 christian_acorr = np.asarray(christian_acorr)
 diffs = christian_acorr[:my_acorr.size] - my_acorr
 print " > av. difference: {}".format(diffs.mean())
 
 print 'Checking integration window calculation:'
 christian_tint, christian_dtint, christian_w = christian_class.tauintW(False)
-# _, _, w = errors.windowing(f_ret=comparison_xx, f_aav=av_xx, s_tau=1.5, n=comparison_xx.size, fast=True)
-my_ans = uWerr(comparison_xx, acorr=my_acorr, fast_threshold=5000)
-_, _, _, my_itau, my_itau_diff, my_itau_aav, my_acorrn = my_ans
-my_w = getW(my_itau, my_itau_diff, comparison_xx.size)
+_,_,my_w = windowing(comparison_xx, av_xx, 1.0, comparison_xx.size, fast=True)
 
-# if __name__ == '__main__':
-#     from common.acorr import plot
-#     from common.utils import saveOrDisplay
-#
-#     file_name = __file__
-#     all_plot = preparePlot(christian_acorr, my_acorr)
-#     plot(save = saveOrDisplay(save, file_name+"_compareAc"), **all_plot)
-#     #
-#     # ans = errors.uWerr(op_samples, acorr=acorr)         # get errors
-#     # _, _, _, itau, itau_diff, _, acns = ans             # extract data
-#     # w = errors.getW(itau, itau_diff, n=n_samples)       # get window length
-#     # acns_err = errors.acorrnErr(acns, w, n_samples)     # get autocorr errors
-#     #
-#     #
-#     # store.store(all_plot, file_name, '_allPlot')
-#     plot(save = saveOrDisplay(save, file_name), **all_plot)
+print "Christian Window:{}".format(christian_w)
+print "My Window:{}".format(my_w)
+
+ans = uWerr(comparison_xx, acorr=my_acorr)   # get errors
+_, _, _, itau, itau_diff, _, acns = ans             # extract data
+my_w = getW(itau, itau_diff, n=comparison_xx.size)       # get window length
+
+my_err = acorrnErr(acns, my_w, comparison_xx.size)     # get autocorr errors
+christian_acorr = np.asarray(christian_acorr)
+christian_err = acorrnErr(christian_acorr, christian_w, comparison_xx.size)
+
+all_plot = preparePlot(christian_acorr[:2*my_w], acns[:2*my_w], my_err[:2*my_w], christian_err[:2*my_w])
+store(all_plot, file_name, '_allPlot')
+plot(save = saveOrDisplay(save, file_name+"_compareAc"), **all_plot)

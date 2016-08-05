@@ -6,13 +6,13 @@ hmcLtDerived::usage = "hmcLtDerived[\[Beta]_, \[Phi]_,\[Rho]_, \[Tau]_] is the f
 ghmcLt::usage = "ghmcLt[\[Beta]_, \[Phi]_, \[Theta]_, \[Rho]_, r_] is the Laplace transformed GHMC autocorrelation function"; 
 ghmcLt1Acc::usage = "ghmcLt1Acc[\[Beta]_, \[Phi]_, \[Theta]_, r_] is the Laplace transformed GHMC autocorrelation function with unit acceptance probability"; 
 hmcLt::usage = "hmcLt[\[Beta]_, \[Phi]_, \[Rho]_, r_] is the Laplace transformed HMC autocorrelation function"; 
-hmcLt1Acc::usage = "hmc1Acc[\[Beta]_, \[Phi]_, r_] is the Laplace transformed HMC autocorrelation function with unit acceptance probability"; 
+hmcLt1Acc::usage = "hmcLt1Acc[\[Beta]_, \[Phi]_, r_] is the Laplace transformed HMC autocorrelation function with unit acceptance probability"; 
 ighmc::usage = "ighmc[\[Phi]_, \[Theta]_, \[Rho]_] is the GHMC integrated autocorrelation function (note this is the inverted Laplace Transform)"; 
-ighmc1Acc::usage = "ighmc1Acc[\[Phi]_, \[Theta]_] is the GHMC integrated autocorrelation function with unit acceptance probability (note this is the inverted Laplace Transform)"; 
+ighmc1Acc::usage = "ighmc[\[Phi]_, \[Theta]_] is the GHMC integrated autocorrelation function with unit acceptance probability (note this is the inverted Laplace Transform)"; 
 ihmc::usage = "ihmc[\[Phi]_, \[Rho]_] is the HMC integrated autocorrelation function (note this is the inverted Laplace Transform)"; 
 ihmc1Acc::usage = "ihmc1Acc[\[Phi]_] is the HMC integrated autocorrelation function with unit acceptance probability (note this is the inverted Laplace Transform)"; 
-ghmc::usage = "ghmc[t_, \[Phi]_, \[Theta]_, \[Rho]_, r_] is the GHMC autocorrelation function (note this is the inverted Laplace Transform)"; 
-ghmc1Acc::usage = "ghmc1Acc[t_,\[Phi]_,\[Theta]_,r_] is the GHMC autocorrelation function with unit acceptance probability (note this is the inverted Laplace Transform)"; 
+ghmc::usage = "ghmc[t_,\[Phi]_, \[Theta]_, \[Rho]_, r_] is the GHMC autocorrelation function (note this is the inverted Laplace Transform)"; 
+ghmc1Acc::usage = "ghmc1Acc[t_,\[Phi]_,\[Theta]_, r_] is the GHMC autocorrelation function with unit acceptance probability (note this is the inverted Laplace Transform)"; 
 hmc::usage = "hmc[t_,\[Phi]_,\[Rho]_,r_] is the HMC autocorrelation function (note this is the inverted Laplace Transform)"; 
 hmc1Acc::usage = "hmc1Acc[t_, \[Phi]_,r_ ] is the HMC autocorrelation function with unit acceptance probability (note this is the inverted Laplace Transform)"; 
 ghmcNormalised::usage="ghmcNormalised[t_,\[Phi]_, \[Theta]_, \[Rho]_, r_] is the Normalised GHMC autocorrelation function (note this is the inverted Laplace Transform)";
@@ -22,7 +22,7 @@ hmc1AccNormalised::usage="hmc1AccNormalised[t_, \[Phi]_, r_] is the Normalised H
 Begin["`Private`"]; 
 
 
-Clear[\[Tau],r,\[Phi],\[Theta],\[Rho], tf, steps, dtau, traj, rate, j , k, \[Mu], \[Nu], pacc];
+Clear[\[Tau],r,\[Phi],\[Theta],\[Rho], tf, steps, dtau, traj, rate, j , k, \[Mu], \[Nu], pacc, b, g];
 Clear[ F, rawF, Funit, FHMC, FHMCunit];
 Clear[iF, iFunit,iFHMC, iFHMCunit,iFHMC, iFHMCunit];
 Clear[A, Aunit, AHMC, AHMCunit];
@@ -44,18 +44,18 @@ Clear[gn0, gn1, gn2, gn3, gd0, gd1, gd2, gd3];
 Clear[fG, fGHMC];
 
 
-B[k_] := If[IntegerQ[k/2],\[Beta] \[Tau]+1, (j+k-2 \[Mu] - 2 \[Nu])\[Phi]];
-g [j_,k_]:=Sum[Sum[Binomial[j,\[Mu]]  Binomial[k,\[Nu]] ((1/2)^(j+k) (-1)^(\[Nu]+(1/2 k)) B[k])/((\[Beta] \[Tau]+1)^2+\[Phi]^2 (j+k-2\[Mu]-2\[Nu])^2), {\[Nu], 0, k}],{\[Mu], 0, j}];
+b[j_,k_] := If[IntegerQ[k/2],\[Beta] \[Tau]+1, (j+k-2 \[Mu] - 2 \[Nu])\[Phi]];
+g [j_,k_]:=Sum[Sum[Binomial[j,\[Mu]]  Binomial[k,\[Nu]] ((1/2)^(j+k) (-1)^(\[Nu]+Floor[1/2 k])  b[j,k])/((\[Beta] \[Tau]+1)^2+\[Phi]^2 (j+k-2\[Mu]-2\[Nu])^2), {\[Nu], 0, k}],{\[Mu], 0, j}];
+
+
 gp[j_, k_] := \[Rho]  g[ j,k];
-gm[j_, k_] := (1-\[Rho])g[j,k];
+gm[j_, k_]  := (1-\[Rho])g[j,k];
 
 
 gp20= gp[2,0];
 gm00 = gm[0,0];
 gp11 = gp[1,1];
 gp02 = gp[0,2];
-
-
 gn0:=gp20+gm00;
 gn1:=-gp20^2-2 gp11^2+gp02 gm00+gp02 gp20+gm00^2;
 gn2:=-(gp20-gp02+gm00) (gm00+gp20+gp02);

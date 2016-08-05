@@ -9,7 +9,7 @@ from theory.operators import phi2_1df
 from theory.acceptance import acceptance
 
 m = 1.0
-n_steps   = 40
+n_steps   = 1
 step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
 

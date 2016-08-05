@@ -1,6 +1,7 @@
 import numpy as np
 import logging
 from logs import *
+from pandas import DataFrame
 
 logging.root.setLevel(logging.INFO)
 np.set_printoptions(suppress=True)
@@ -34,8 +35,11 @@ def display(test_name, outcome, details = False, minimal=False):
         np.set_printoptions(precision=2, suppress=True)
         for detail, sub_details in details.iteritems():
             extra('   ' + detail)
-            for sub_detail in sub_details:
-                extra('   ... ' + sub_detail)
+            if isinstance(sub_details, DataFrame):
+                extra(sub_details.to_string())
+            else:
+                for sub_detail in sub_details:
+                    extra('   ... ' + sub_detail)
     
     overview(' OUTCOME: {}'.format(['Failed','Passed'][int(outcome)]))
     pass

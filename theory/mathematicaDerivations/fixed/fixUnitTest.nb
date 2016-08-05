@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     41714,       1000]
-NotebookOptionsPosition[     39678,        926]
-NotebookOutlinePosition[     40036,        942]
-CellTagsIndexPosition[     39993,        939]
+NotebookDataLength[     41805,       1001]
+NotebookOptionsPosition[     39769,        927]
+NotebookOutlinePosition[     40127,        943]
+CellTagsIndexPosition[     40084,        940]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -75,35 +75,35 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "ghmcLt", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ghmcLtCoeffs",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "ghmcLtCoeffs", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["hmcLt1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "hmcLt1Acc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ighmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "ighmc1Acc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ihmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "ihmc1Acc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"]},
         {
@@ -111,27 +111,27 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "ghmcLt1Acc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["hmcLt",
           BaseStyle->"InformationLink",
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "hmcLt", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ighmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "ighmc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ihmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info873679127547-2419004", {
+           "Info213679425189-5878646", {
             "ihmc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], ""}
        },
@@ -142,7 +142,7 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.6791239472923107`*^9}]
+ CellChangeTimes->{3.679421589987701*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -500,7 +500,7 @@ Cell[BoxData[
    GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
   "Grid"]], "Output",
  CellChangeTimes->{{3.679123635666358*^9, 3.67912367707707*^9}, {
-  3.679123930370669*^9, 3.679123947495844*^9}}]
+   3.679123930370669*^9, 3.679123947495844*^9}, 3.679421590115457*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -700,7 +700,8 @@ Cell[BoxData[
    3.679076109339128*^9, {3.679076606327972*^9, 3.679076623251137*^9}, 
    3.679076770545431*^9, {3.6790768230619783`*^9, 3.679076831660817*^9}, {
    3.679120875545582*^9, 3.6791208899372473`*^9}, 3.6791235545583878`*^9, 
-   3.679123719678735*^9, {3.679123930426075*^9, 3.679123947556869*^9}}]
+   3.679123719678735*^9, {3.679123930426075*^9, 3.679123947556869*^9}, 
+   3.679421590160763*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -907,7 +908,7 @@ Cell[BoxData["\<\"unittestLT_LT.csv\"\>"], "Output",
    3.679075030659298*^9, {3.6790754522544327`*^9, 3.6790754817308903`*^9}, 
    3.6790767723927317`*^9, {3.6790768261975107`*^9, 3.679076833233375*^9}, 
    3.679120998830686*^9, 3.679121036673696*^9, 3.6791235547267036`*^9, {
-   3.679123930633774*^9, 3.679123947622592*^9}}],
+   3.679123930633774*^9, 3.679123947622592*^9}, 3.679421590243676*^9}],
 
 Cell[BoxData["\<\"unittestLT_iAC.csv\"\>"], "Output",
  CellChangeTimes->{
@@ -919,7 +920,7 @@ Cell[BoxData["\<\"unittestLT_iAC.csv\"\>"], "Output",
    3.679075030659298*^9, {3.6790754522544327`*^9, 3.6790754817308903`*^9}, 
    3.6790767723927317`*^9, {3.6790768261975107`*^9, 3.679076833233375*^9}, 
    3.679120998830686*^9, 3.679121036673696*^9, 3.6791235547267036`*^9, {
-   3.679123930633774*^9, 3.679123947626575*^9}}]
+   3.679123930633774*^9, 3.679123947622592*^9}, 3.679421590246934*^9}]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
@@ -947,58 +948,58 @@ Cell[925, 29, 269, 7, 51, "Subtitle"],
 Cell[CellGroupData[{
 Cell[1219, 40, 716, 17, 80, "Input",
  InitializationCell->True],
-Cell[1938, 59, 3067, 85, 73, "Print"]
+Cell[1938, 59, 3065, 85, 73, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[5054, 150, 147, 2, 65, "Chapter"],
-Cell[5204, 154, 603, 11, 46, "Input",
+Cell[5052, 150, 147, 2, 65, "Chapter"],
+Cell[5202, 154, 603, 11, 46, "Input",
  InitializationCell->True],
-Cell[5810, 167, 201, 4, 30, "Text"],
-Cell[6014, 173, 849, 23, 84, "Input",
+Cell[5808, 167, 201, 4, 30, "Text"],
+Cell[6012, 173, 849, 23, 84, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[6888, 200, 153, 2, 35, "Subsubsection"],
-Cell[7044, 204, 228, 4, 30, "Text"],
-Cell[7275, 210, 1680, 40, 114, "Input",
+Cell[6886, 200, 153, 2, 35, "Subsubsection"],
+Cell[7042, 204, 228, 4, 30, "Text"],
+Cell[7273, 210, 1680, 40, 114, "Input",
  InitializationCell->True]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8992, 255, 202, 3, 35, "Subsubsection"],
-Cell[9197, 260, 178, 4, 30, "Text"],
-Cell[9378, 266, 958, 23, 80, "Input",
+Cell[8990, 255, 202, 3, 35, "Subsubsection"],
+Cell[9195, 260, 178, 4, 30, "Text"],
+Cell[9376, 266, 958, 23, 80, "Input",
  InitializationCell->True]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[10373, 294, 103, 1, 64, "Section"],
-Cell[10479, 297, 181, 4, 28, "Input"],
-Cell[10663, 303, 1860, 29, 28, "Input"],
+Cell[10371, 294, 103, 1, 64, "Section"],
+Cell[10477, 297, 181, 4, 28, "Input"],
+Cell[10661, 303, 1860, 29, 28, "Input"],
 Cell[CellGroupData[{
-Cell[12548, 336, 4551, 105, 238, "Input"],
-Cell[17102, 443, 3305, 59, 615, "Output"]
+Cell[12546, 336, 4551, 105, 238, "Input"],
+Cell[17100, 443, 3328, 59, 615, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[20456, 508, 123, 1, 64, "Section"],
-Cell[20582, 511, 212, 5, 28, "Input"],
+Cell[20477, 508, 123, 1, 64, "Section"],
+Cell[20603, 511, 212, 5, 28, "Input"],
 Cell[CellGroupData[{
-Cell[20819, 520, 6279, 130, 233, "Input"],
-Cell[27101, 652, 2767, 50, 327, "Output"]
+Cell[20840, 520, 6279, 130, 233, "Input"],
+Cell[27122, 652, 2793, 51, 327, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[29917, 708, 111, 1, 64, "Section"],
-Cell[30031, 711, 154, 3, 30, "Text"],
-Cell[30188, 716, 386, 9, 28, "Input"],
-Cell[30577, 727, 186, 4, 30, "Text"],
-Cell[30766, 733, 6428, 136, 296, "Input"]
+Cell[29964, 709, 111, 1, 64, "Section"],
+Cell[30078, 712, 154, 3, 30, "Text"],
+Cell[30235, 717, 386, 9, 28, "Input"],
+Cell[30624, 728, 186, 4, 30, "Text"],
+Cell[30813, 734, 6428, 136, 296, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[37231, 874, 154, 2, 64, "Section"],
+Cell[37278, 875, 154, 2, 64, "Section"],
 Cell[CellGroupData[{
-Cell[37410, 880, 797, 17, 63, "Input"],
-Cell[38210, 899, 712, 10, 28, "Output"],
-Cell[38925, 911, 713, 10, 86, "Output"]
+Cell[37457, 881, 797, 17, 63, "Input"],
+Cell[38257, 900, 734, 10, 28, "Output"],
+Cell[38994, 912, 735, 10, 28, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
