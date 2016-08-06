@@ -83,7 +83,7 @@ root.append('0')
     
 
 
-from sympy import Symbol, poly, cos
+from sympy import Symbol, Poly, cos
 
 def fn(theta, phi, pa, tau):
     x = Symbol('x')
