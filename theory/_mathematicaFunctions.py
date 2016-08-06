@@ -5,7 +5,7 @@ from numpy.polynomial.polynomial import polyroots
 __doc__ = """These functions correspond to the inverted functions from the
 Mathematica workbooks"""
 
-s = open('theory/__CmainBody.txt', 'r').read()
+s = open('theory/__mathematicaFunctions_ghmc.py', 'r').read()
 s = s.replace('\n', '')
 
 def expCunit(t, tau, m, theta):
@@ -97,6 +97,10 @@ def expCunit(t, tau, m, theta):
 def expC(t, tau, m, theta, pa):
     """The analytic a/c for GHMC with unit acceptance
         To be explicit, this is the function f(t)
+    
+    This function contains a quintic root object which is
+    solved in numpy following a numerical reduction by the
+    input parameters
     
     Required Inputs
         t      :: float :: time (the inverse of \beta)

@@ -126,9 +126,9 @@ ghmc1Acc[t_,\[Phi]_,\[Theta]_,r_]:=Evaluate[ghmc1AccFullForm];
 ghmc1AccNormalised[t_,\[Phi]_,\[Theta]_,r_]=ghmc1Acc[t,\[Phi],\[Theta],r]/ghmc1Acc[0,\[Phi],\[Theta],r];
 
 
-ghmcFullForm= InverseLaplaceTransform[ghmcLt[\[Beta], \[Phi], \[Theta],  \[Rho], r],\[Beta],t]//ToRadicals;
+(*ghmcFullForm= InverseLaplaceTransform[ghmcLt[\[Beta], \[Phi], \[Theta],  \[Rho], r],\[Beta],t];
 ghmc[t_, \[Phi]_, \[Theta]_,  \[Rho]_, r_] := Evaluate[ghmcFullForm];
-ghmcNormalised[t_, \[Phi]_, \[Theta]_,  \[Rho]_, r_]=ghmc[t_, \[Phi]_, \[Theta]_,  \[Rho]_, r_]/ghmc[0, \[Phi]_, \[Theta]_,  \[Rho]_, r_];
+ghmcNormalised[t_, \[Phi]_, \[Theta]_,  \[Rho]_, r_]=ghmc[t_, \[Phi]_, \[Theta]_,  \[Rho]_, r_]/ghmc[0, \[Phi]_, \[Theta]_,  \[Rho]_, r_];*)
 
 
 End[]; 

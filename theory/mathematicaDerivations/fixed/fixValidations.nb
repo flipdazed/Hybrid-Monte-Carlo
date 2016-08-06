@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    115972,       3077]
-NotebookOptionsPosition[    112362,       2953]
-NotebookOutlinePosition[    112717,       2969]
-CellTagsIndexPosition[    112674,       2966]
+NotebookDataLength[    116141,       3080]
+NotebookOptionsPosition[    112531,       2956]
+NotebookOutlinePosition[    112886,       2972]
+CellTagsIndexPosition[    112843,       2969]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -94,35 +94,35 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "ghmcLt", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ghmcLtCoeffs",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "ghmcLtCoeffs", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["hmcLt1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "hmcLt1Acc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ighmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "ighmc1Acc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ihmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "ihmc1Acc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"]},
         {
@@ -130,27 +130,27 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "ghmcLt1Acc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["hmcLt",
           BaseStyle->"InformationLink",
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "hmcLt", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ighmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "ighmc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], 
          ButtonBox["ihmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info153679127507-2419004", {
+           "Info153679497684-7647432", {
             "ihmc", "packageFixAutocorrelations`"}},
           ButtonNote->"packageFixAutocorrelations`"], ""}
        },
@@ -161,7 +161,7 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.679123907693644*^9}],
+ CellChangeTimes->{3.6794940843459387`*^9}],
 
 Cell[BoxData[
  DynamicModuleBox[{Typeset`open$$ = True}, 
@@ -181,25 +181,25 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info163679127507-2419004", {"fullVerify", "mathematicaUtils`"}},
+           "Info163679497684-7647432", {"fullVerify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["getHiddenVars",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info163679127507-2419004", {"getHiddenVars", "mathematicaUtils`"}},
+           "Info163679497684-7647432", {"getHiddenVars", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["maxSimplify",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info163679127507-2419004", {"maxSimplify", "mathematicaUtils`"}},
+           "Info163679497684-7647432", {"maxSimplify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["setPrivateVars",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info163679127507-2419004", {
+           "Info163679497684-7647432", {
             "setPrivateVars", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"]},
         {
@@ -207,21 +207,21 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info163679127507-2419004", {
+           "Info163679497684-7647432", {
             "getDenominator", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["getNumerator",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info163679127507-2419004", {"getNumerator", "mathematicaUtils`"}},
+           "Info163679497684-7647432", {"getNumerator", "mathematicaUtils`"}},
           
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["quickVerify",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info163679127507-2419004", {"quickVerify", "mathematicaUtils`"}},
+           "Info163679497684-7647432", {"quickVerify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], ""}
        },
        DefaultBaseStyle->"InfoGrid",
@@ -231,7 +231,7 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.679123907738655*^9}]
+ CellChangeTimes->{3.679494084399816*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -694,7 +694,7 @@ Cell[BoxData[
                   "SummaryItemAnnotation"], "\[InvisibleSpace]", 
                  TagBox[
                   PaneBox[
-                   TagBox["mathematicaUtils`Private`t$922",
+                   TagBox["mathematicaUtils`Private`t$560",
                     Short[#, 
                     Rational[2, 3]]& ],
                    BaselinePosition->Baseline,
@@ -742,7 +742,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0.048142`4.833039126374271","\"s\"","seconds",
+                    "0.033881`4.680471217910756","\"s\"","seconds",
                     "\"Seconds\""},
                     "Quantity"],
                     Short[#, 
@@ -782,12 +782,12 @@ Cell[BoxData[
       TestResultObject[
        Association[
        "TestIndex" -> 1, "TestID" -> None, "Outcome" -> "Success", "Input" -> 
-        HoldForm[mathematicaUtils`Private`t$922], "ExpectedOutput" -> 
+        HoldForm[mathematicaUtils`Private`t$560], "ExpectedOutput" -> 
         HoldForm[True], "ActualOutput" -> HoldForm[True], 
         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-        Quantity[0.048142`4.833039126374271, "Seconds"], "CPUTimeUsed" -> 
-        Quantity[0.04393500000000006, "Seconds"], "MemoryUsed" -> 
-        Quantity[2763544, "Bytes"]]],
+        Quantity[0.033881`4.680471217910756, "Seconds"], "CPUTimeUsed" -> 
+        Quantity[0.0338630000000002, "Seconds"], "MemoryUsed" -> 
+        Quantity[2768264, "Bytes"]]],
       Editable->False,
       SelectWithContents->True,
       Selectable->False]}
@@ -798,7 +798,7 @@ Cell[BoxData[
   "Column"]], "Print",
  CellChangeTimes->{
   3.679120282370995*^9, {3.679123207900345*^9, 3.679123250384248*^9}, 
-   3.679123909173296*^9}]
+   3.679123909173296*^9, 3.6794940856606503`*^9}]
 }, Open  ]],
 
 Cell[TextData[{
@@ -1016,7 +1016,7 @@ Cell[BoxData[
                   "SummaryItemAnnotation"], "\[InvisibleSpace]", 
                  TagBox[
                   PaneBox[
-                   TagBox["mathematicaUtils`Private`t$1223",
+                   TagBox["mathematicaUtils`Private`t$869",
                     Short[#, 
                     Rational[2, 3]]& ],
                    BaselinePosition->Baseline,
@@ -1064,7 +1064,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0.000125`2.247425010840048","\"s\"","seconds",
+                    "0.000168`2.3758242795578566","\"s\"","seconds",
                     "\"Seconds\""},
                     "Quantity"],
                     Short[#, 
@@ -1104,11 +1104,11 @@ Cell[BoxData[
       TestResultObject[
        Association[
        "TestIndex" -> 2, "TestID" -> None, "Outcome" -> "Success", "Input" -> 
-        HoldForm[mathematicaUtils`Private`t$1223], "ExpectedOutput" -> 
+        HoldForm[mathematicaUtils`Private`t$869], "ExpectedOutput" -> 
         HoldForm[True], "ActualOutput" -> HoldForm[True], 
         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-        Quantity[0.000125`2.247425010840048, "Seconds"], "CPUTimeUsed" -> 
-        Quantity[0.00012700000000043232`, "Seconds"], "MemoryUsed" -> 
+        Quantity[0.000168`2.3758242795578566, "Seconds"], "CPUTimeUsed" -> 
+        Quantity[0.00016799999999994597`, "Seconds"], "MemoryUsed" -> 
         Quantity[120, "Bytes"]]],
       Editable->False,
       SelectWithContents->True,
@@ -1120,7 +1120,7 @@ Cell[BoxData[
   "Column"]], "Print",
  CellChangeTimes->{
   3.679120178762097*^9, {3.67912322359761*^9, 3.679123250981135*^9}, 
-   3.679123909534231*^9}]
+   3.679123909534231*^9, 3.679494085940905*^9}]
 }, Open  ]],
 
 Cell["vs. Derived Laplace Transform with HMC condition", "Item",
@@ -1332,7 +1332,7 @@ Cell[BoxData[
                   "SummaryItemAnnotation"], "\[InvisibleSpace]", 
                  TagBox[
                   PaneBox[
-                   TagBox["mathematicaUtils`Private`t$1242",
+                   TagBox["mathematicaUtils`Private`t$888",
                     Short[#, 
                     Rational[2, 3]]& ],
                    BaselinePosition->Baseline,
@@ -1380,7 +1380,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0.000113`2.2035934413154115","\"s\"","seconds",
+                    "0.000116`2.2149729870589128","\"s\"","seconds",
                     "\"Seconds\""},
                     "Quantity"],
                     Short[#, 
@@ -1420,11 +1420,11 @@ Cell[BoxData[
       TestResultObject[
        Association[
        "TestIndex" -> 3, "TestID" -> None, "Outcome" -> "Success", "Input" -> 
-        HoldForm[mathematicaUtils`Private`t$1242], "ExpectedOutput" -> 
+        HoldForm[mathematicaUtils`Private`t$888], "ExpectedOutput" -> 
         HoldForm[True], "ActualOutput" -> HoldForm[True], 
         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-        Quantity[0.000113`2.2035934413154115, "Seconds"], "CPUTimeUsed" -> 
-        Quantity[0.00011400000000039157`, "Seconds"], "MemoryUsed" -> 
+        Quantity[0.000116`2.2149729870589128, "Seconds"], "CPUTimeUsed" -> 
+        Quantity[0.00011699999999992272`, "Seconds"], "MemoryUsed" -> 
         Quantity[128, "Bytes"]]],
       Editable->False,
       SelectWithContents->True,
@@ -1436,7 +1436,7 @@ Cell[BoxData[
   "Column"]], "Print",
  CellChangeTimes->{
   3.679120323271435*^9, {3.679123224694436*^9, 3.679123251214514*^9}, 
-   3.679123909595694*^9}]
+   3.679123909595694*^9, 3.67949408600142*^9}]
 }, Open  ]],
 
 Cell[TextData[{
@@ -1607,7 +1607,7 @@ Cell[BoxData[
                   "SummaryItemAnnotation"], "\[InvisibleSpace]", 
                  TagBox[
                   PaneBox[
-                   TagBox["mathematicaUtils`Private`t$1261",
+                   TagBox["mathematicaUtils`Private`t$907",
                     Short[#, 
                     Rational[2, 3]]& ],
                    BaselinePosition->Baseline,
@@ -1655,7 +1655,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0.000124`2.2439366829942267","\"s\"","seconds",
+                    "0.00011`2.191907682990219","\"s\"","seconds",
                     "\"Seconds\""},
                     "Quantity"],
                     Short[#, 
@@ -1695,11 +1695,11 @@ Cell[BoxData[
       TestResultObject[
        Association[
        "TestIndex" -> 4, "TestID" -> None, "Outcome" -> "Success", "Input" -> 
-        HoldForm[mathematicaUtils`Private`t$1261], "ExpectedOutput" -> 
+        HoldForm[mathematicaUtils`Private`t$907], "ExpectedOutput" -> 
         HoldForm[True], "ActualOutput" -> HoldForm[True], 
         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-        Quantity[0.000124`2.2439366829942267, "Seconds"], "CPUTimeUsed" -> 
-        Quantity[0.000124000000000013, "Seconds"], "MemoryUsed" -> 
+        Quantity[0.00011`2.191907682990219, "Seconds"], "CPUTimeUsed" -> 
+        Quantity[0.00011100000000041632`, "Seconds"], "MemoryUsed" -> 
         Quantity[56, "Bytes"]]],
       Editable->False,
       SelectWithContents->True,
@@ -1709,7 +1709,8 @@ Cell[BoxData[
    GridBoxAlignment->{"Columns" -> {{Left}}},
    GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
   "Column"]], "Print",
- CellChangeTimes->{3.679123387051157*^9, 3.679123909626583*^9}]
+ CellChangeTimes->{3.679123387051157*^9, 3.679123909626583*^9, 
+  3.6794940860413017`*^9}]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
@@ -1893,7 +1894,7 @@ Cell[BoxData[
                   "SummaryItemAnnotation"], "\[InvisibleSpace]", 
                  TagBox[
                   PaneBox[
-                   TagBox["mathematicaUtils`Private`t$1280",
+                   TagBox["mathematicaUtils`Private`t$926",
                     Short[#, 
                     Rational[2, 3]]& ],
                    BaselinePosition->Baseline,
@@ -1941,7 +1942,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0.000109`2.1879414957726175","\"s\"","seconds",
+                    "0.000119`2.2260619592245243","\"s\"","seconds",
                     "\"Seconds\""},
                     "Quantity"],
                     Short[#, 
@@ -1981,11 +1982,11 @@ Cell[BoxData[
       TestResultObject[
        Association[
        "TestIndex" -> 5, "TestID" -> None, "Outcome" -> "Success", "Input" -> 
-        HoldForm[mathematicaUtils`Private`t$1280], "ExpectedOutput" -> 
+        HoldForm[mathematicaUtils`Private`t$926], "ExpectedOutput" -> 
         HoldForm[True], "ActualOutput" -> HoldForm[True], 
         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-        Quantity[0.000109`2.1879414957726175, "Seconds"], "CPUTimeUsed" -> 
-        Quantity[0.00010900000000013677`, "Seconds"], "MemoryUsed" -> 
+        Quantity[0.000119`2.2260619592245243, "Seconds"], "CPUTimeUsed" -> 
+        Quantity[0.00011999999999945388`, "Seconds"], "MemoryUsed" -> 
         Quantity[56, "Bytes"]]],
       Editable->False,
       SelectWithContents->True,
@@ -1998,7 +1999,7 @@ Cell[BoxData[
  CellChangeTimes->{
   3.679093332153617*^9, 3.679120013879987*^9, 3.6791203655715017`*^9, 
    3.679120464970416*^9, {3.679123226160564*^9, 3.6791232523410797`*^9}, 
-   3.679123909795319*^9}]
+   3.679123909795319*^9, 3.679494086222286*^9}]
 }, Open  ]],
 
 Cell[" vs. Full Derived Form for \[Beta] = 0", "Item",
@@ -2200,7 +2201,7 @@ Cell[BoxData[
                   "SummaryItemAnnotation"], "\[InvisibleSpace]", 
                  TagBox[
                   PaneBox[
-                   TagBox["mathematicaUtils`Private`t$1299",
+                   TagBox["mathematicaUtils`Private`t$945",
                     Short[#, 
                     Rational[2, 3]]& ],
                    BaselinePosition->Baseline,
@@ -2248,7 +2249,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0.000109`2.1879414957726175","\"s\"","seconds",
+                    "0.000106`2.175820863096764","\"s\"","seconds",
                     "\"Seconds\""},
                     "Quantity"],
                     Short[#, 
@@ -2288,11 +2289,11 @@ Cell[BoxData[
       TestResultObject[
        Association[
        "TestIndex" -> 6, "TestID" -> None, "Outcome" -> "Success", "Input" -> 
-        HoldForm[mathematicaUtils`Private`t$1299], "ExpectedOutput" -> 
+        HoldForm[mathematicaUtils`Private`t$945], "ExpectedOutput" -> 
         HoldForm[True], "ActualOutput" -> HoldForm[True], 
         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-        Quantity[0.000109`2.1879414957726175, "Seconds"], "CPUTimeUsed" -> 
-        Quantity[0.00010900000000013677`, "Seconds"], "MemoryUsed" -> 
+        Quantity[0.000106`2.175820863096764, "Seconds"], "CPUTimeUsed" -> 
+        Quantity[0.0001070000000003013, "Seconds"], "MemoryUsed" -> 
         Quantity[56, "Bytes"]]],
       Editable->False,
       SelectWithContents->True,
@@ -2306,7 +2307,8 @@ Cell[BoxData[
    3.679088378685226*^9, 3.6790884011402082`*^9}, {3.679088446271563*^9, 
    3.6790884750552197`*^9}, {3.679088549570511*^9, 3.6790885992841043`*^9}, 
    3.6790933322748127`*^9, 3.679120014140403*^9, 3.679120480084234*^9, {
-   3.679123227177752*^9, 3.6791232527002993`*^9}, 3.679123909883341*^9}]
+   3.679123227177752*^9, 3.6791232527002993`*^9}, 3.679123909883341*^9, 
+   3.679494086304276*^9}]
 }, Open  ]],
 
 Cell[" vs. Full Derived Form for \[Beta] = 0 and \[Rho]=1", "Item",
@@ -2506,7 +2508,7 @@ Cell[BoxData[
                   "SummaryItemAnnotation"], "\[InvisibleSpace]", 
                  TagBox[
                   PaneBox[
-                   TagBox["mathematicaUtils`Private`t$1318",
+                   TagBox["mathematicaUtils`Private`t$964",
                     Short[#, 
                     Rational[2, 3]]& ],
                    BaselinePosition->Baseline,
@@ -2554,7 +2556,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0.000153`2.3352064286495904","\"s\"","seconds",
+                    "0.00013`2.2644583501388307","\"s\"","seconds",
                     "\"Seconds\""},
                     "Quantity"],
                     Short[#, 
@@ -2594,11 +2596,11 @@ Cell[BoxData[
       TestResultObject[
        Association[
        "TestIndex" -> 7, "TestID" -> None, "Outcome" -> "Success", "Input" -> 
-        HoldForm[mathematicaUtils`Private`t$1318], "ExpectedOutput" -> 
+        HoldForm[mathematicaUtils`Private`t$964], "ExpectedOutput" -> 
         HoldForm[True], "ActualOutput" -> HoldForm[True], 
         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-        Quantity[0.000153`2.3352064286495904, "Seconds"], "CPUTimeUsed" -> 
-        Quantity[0.00015300000000051384`, "Seconds"], "MemoryUsed" -> 
+        Quantity[0.00013`2.2644583501388307, "Seconds"], "CPUTimeUsed" -> 
+        Quantity[0.00013000000000040757`, "Seconds"], "MemoryUsed" -> 
         Quantity[56, "Bytes"]]],
       Editable->False,
       SelectWithContents->True,
@@ -2608,7 +2610,7 @@ Cell[BoxData[
    GridBoxAlignment->{"Columns" -> {{Left}}},
    GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
   "Column"]], "Print",
- CellChangeTimes->{3.6791239099433537`*^9}]
+ CellChangeTimes->{3.6791239099433537`*^9, 3.679494086363531*^9}]
 }, Open  ]],
 
 Cell[" vs. Full Derived Form with HMC condition for \[Beta] = 0", "Item",
@@ -2812,7 +2814,7 @@ Cell[BoxData[
                   "SummaryItemAnnotation"], "\[InvisibleSpace]", 
                  TagBox[
                   PaneBox[
-                   TagBox["mathematicaUtils`Private`t$1337",
+                   TagBox["mathematicaUtils`Private`t$983",
                     Short[#, 
                     Rational[2, 3]]& ],
                    BaselinePosition->Baseline,
@@ -2860,7 +2862,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0.00016`2.3546349804879165","\"s\"","seconds",
+                    "0.00015`2.326606256887675","\"s\"","seconds",
                     "\"Seconds\""},
                     "Quantity"],
                     Short[#, 
@@ -2900,11 +2902,11 @@ Cell[BoxData[
       TestResultObject[
        Association[
        "TestIndex" -> 8, "TestID" -> None, "Outcome" -> "Success", "Input" -> 
-        HoldForm[mathematicaUtils`Private`t$1337], "ExpectedOutput" -> 
+        HoldForm[mathematicaUtils`Private`t$983], "ExpectedOutput" -> 
         HoldForm[True], "ActualOutput" -> HoldForm[True], 
         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-        Quantity[0.00016`2.3546349804879165, "Seconds"], "CPUTimeUsed" -> 
-        Quantity[0.00016000000000016001`, "Seconds"], "MemoryUsed" -> 
+        Quantity[0.00015`2.326606256887675, "Seconds"], "CPUTimeUsed" -> 
+        Quantity[0.00014100000000016877`, "Seconds"], "MemoryUsed" -> 
         Quantity[56, "Bytes"]]],
       Editable->False,
       SelectWithContents->True,
@@ -2916,7 +2918,8 @@ Cell[BoxData[
   "Column"]], "Print",
  CellChangeTimes->{
   3.6790950230415573`*^9, 3.67912001463759*^9, 3.679120599240263*^9, {
-   3.679123227928049*^9, 3.679123253199548*^9}, 3.679123910025158*^9}]
+   3.679123227928049*^9, 3.679123253199548*^9}, 3.679123910025158*^9, 
+   3.67949408642249*^9}]
 }, Open  ]],
 
 Cell[BoxData[
@@ -2975,108 +2978,108 @@ Cell[CellGroupData[{
 Cell[1221, 40, 1436, 34, 148, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[2682, 78, 3065, 85, 73, "Print"],
-Cell[5750, 165, 2412, 68, 73, "Print"]
+Cell[2682, 78, 3067, 85, 73, "Print"],
+Cell[5752, 165, 2412, 68, 73, "Print"]
 }, Open  ]]
 }, Open  ]],
-Cell[8189, 237, 787, 11, 28, "Input"]
+Cell[8191, 237, 787, 11, 28, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9013, 253, 103, 1, 65, "Chapter"],
-Cell[9119, 256, 173, 4, 30, "Text"],
+Cell[9015, 253, 103, 1, 65, "Chapter"],
+Cell[9121, 256, 173, 4, 30, "Text"],
 Cell[CellGroupData[{
-Cell[9317, 264, 116, 1, 64, "Section"],
-Cell[9436, 267, 238, 6, 30, "Text"],
-Cell[9677, 275, 197, 4, 30, "Text"],
-Cell[9877, 281, 1566, 36, 131, "Input"],
-Cell[11446, 319, 261, 5, 30, "Text"],
-Cell[11710, 326, 5673, 130, 290, "Input"],
+Cell[9319, 264, 116, 1, 64, "Section"],
+Cell[9438, 267, 238, 6, 30, "Text"],
+Cell[9679, 275, 197, 4, 30, "Text"],
+Cell[9879, 281, 1566, 36, 131, "Input"],
+Cell[11448, 319, 261, 5, 30, "Text"],
+Cell[11712, 326, 5673, 130, 290, "Input"],
 Cell[CellGroupData[{
-Cell[17408, 460, 101, 1, 44, "Subsection"],
-Cell[17512, 463, 152, 2, 28, "Item"],
-Cell[17667, 467, 722, 16, 28, "Input"]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[18438, 489, 155, 2, 64, "Section"],
-Cell[18596, 493, 102, 1, 28, "Item"],
-Cell[18701, 496, 1023, 20, 63, "Input"],
-Cell[CellGroupData[{
-Cell[19749, 520, 128, 1, 44, "Subsection"],
-Cell[19880, 523, 286, 3, 28, "Item"],
-Cell[CellGroupData[{
-Cell[20191, 530, 940, 19, 28, "Input"],
-Cell[21134, 551, 9392, 249, 54, "Print"]
-}, Open  ]],
-Cell[30541, 803, 350, 7, 28, "Item"],
-Cell[30894, 812, 1392, 28, 63, "Input"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[32323, 845, 126, 1, 44, "Subsection"],
-Cell[32452, 848, 375, 7, 28, "Item"],
-Cell[CellGroupData[{
-Cell[32852, 859, 578, 12, 45, "Input"],
-Cell[33433, 873, 9393, 249, 54, "Print"]
-}, Open  ]],
-Cell[42841, 1125, 230, 3, 28, "Item"],
-Cell[43074, 1130, 923, 20, 63, "Input"],
-Cell[CellGroupData[{
-Cell[44022, 1154, 149, 2, 35, "Subsubsection"],
-Cell[44174, 1158, 407, 8, 28, "Item"],
-Cell[CellGroupData[{
-Cell[44606, 1170, 862, 17, 28, "Input"],
-Cell[45471, 1189, 9396, 249, 54, "Print"]
-}, Open  ]],
-Cell[54882, 1441, 232, 5, 28, "Item"],
-Cell[CellGroupData[{
-Cell[55139, 1450, 620, 12, 28, "Input"],
-Cell[55762, 1464, 9339, 247, 54, "Print"]
-}, Open  ]]
-}, Open  ]]
+Cell[17410, 460, 101, 1, 44, "Subsection"],
+Cell[17514, 463, 152, 2, 28, "Item"],
+Cell[17669, 467, 722, 16, 28, "Input"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[65174, 1719, 141, 2, 64, "Section"],
-Cell[65318, 1723, 406, 8, 28, "Item"],
+Cell[18440, 489, 155, 2, 64, "Section"],
+Cell[18598, 493, 102, 1, 28, "Item"],
+Cell[18703, 496, 1023, 20, 63, "Input"],
 Cell[CellGroupData[{
-Cell[65749, 1735, 575, 13, 28, "Input"],
-Cell[66327, 1750, 9469, 250, 54, "Print"]
+Cell[19751, 520, 128, 1, 44, "Subsection"],
+Cell[19882, 523, 286, 3, 28, "Item"],
+Cell[CellGroupData[{
+Cell[20193, 530, 940, 19, 28, "Input"],
+Cell[21136, 551, 9415, 249, 54, "Print"]
 }, Open  ]],
-Cell[75811, 2003, 120, 1, 28, "Item"],
-Cell[75934, 2006, 568, 14, 28, "Input"],
-Cell[CellGroupData[{
-Cell[76527, 2024, 136, 1, 44, "Subsection"],
-Cell[76666, 2027, 329, 6, 28, "Item"],
-Cell[CellGroupData[{
-Cell[77020, 2037, 783, 18, 63, "Input"],
-Cell[77806, 2057, 9642, 251, 54, "Print"]
-}, Open  ]],
-Cell[87463, 2311, 186, 2, 28, "Item"],
-Cell[87652, 2315, 575, 11, 28, "Input"]
+Cell[30566, 803, 350, 7, 28, "Item"],
+Cell[30919, 812, 1392, 28, 63, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[88264, 2331, 183, 2, 44, "Subsection"],
-Cell[88450, 2335, 397, 6, 28, "Item"],
+Cell[32348, 845, 126, 1, 44, "Subsection"],
+Cell[32477, 848, 375, 7, 28, "Item"],
 Cell[CellGroupData[{
-Cell[88872, 2345, 915, 16, 28, "Input"],
-Cell[89790, 2363, 9322, 247, 54, "Print"]
+Cell[32877, 859, 578, 12, 45, "Input"],
+Cell[33458, 873, 9415, 249, 54, "Print"]
 }, Open  ]],
-Cell[99127, 2613, 190, 2, 28, "Item"],
-Cell[99320, 2617, 782, 15, 28, "Input"],
+Cell[42888, 1125, 230, 3, 28, "Item"],
+Cell[43121, 1130, 923, 20, 63, "Input"],
 Cell[CellGroupData[{
-Cell[100127, 2636, 213, 4, 35, "Subsubsection"],
-Cell[100343, 2642, 463, 6, 28, "Item"],
+Cell[44069, 1154, 149, 2, 35, "Subsubsection"],
+Cell[44221, 1158, 407, 8, 28, "Item"],
 Cell[CellGroupData[{
-Cell[100831, 2652, 914, 15, 28, "Input"],
-Cell[101748, 2669, 9438, 249, 54, "Print"]
+Cell[44653, 1170, 862, 17, 28, "Input"],
+Cell[45518, 1189, 9415, 249, 54, "Print"]
 }, Open  ]],
-Cell[111201, 2921, 656, 12, 62, "Input"]
+Cell[54948, 1441, 232, 5, 28, "Item"],
+Cell[CellGroupData[{
+Cell[55205, 1450, 620, 12, 28, "Input"],
+Cell[55828, 1464, 9363, 248, 54, "Print"]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[111918, 2940, 212, 3, 64, "Section"],
-Cell[112133, 2945, 201, 4, 30, "Text"]
+Cell[65264, 1720, 141, 2, 64, "Section"],
+Cell[65408, 1724, 406, 8, 28, "Item"],
+Cell[CellGroupData[{
+Cell[65839, 1736, 575, 13, 28, "Input"],
+Cell[66417, 1751, 9489, 250, 54, "Print"]
+}, Open  ]],
+Cell[75921, 2004, 120, 1, 28, "Item"],
+Cell[76044, 2007, 568, 14, 28, "Input"],
+Cell[CellGroupData[{
+Cell[76637, 2025, 136, 1, 44, "Subsection"],
+Cell[76776, 2028, 329, 6, 28, "Item"],
+Cell[CellGroupData[{
+Cell[77130, 2038, 783, 18, 63, "Input"],
+Cell[77916, 2058, 9662, 252, 54, "Print"]
+}, Open  ]],
+Cell[87593, 2313, 186, 2, 28, "Item"],
+Cell[87782, 2317, 575, 11, 28, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[88394, 2333, 183, 2, 44, "Subsection"],
+Cell[88580, 2337, 397, 6, 28, "Item"],
+Cell[CellGroupData[{
+Cell[89002, 2347, 915, 16, 28, "Input"],
+Cell[89920, 2365, 9340, 247, 54, "Print"]
+}, Open  ]],
+Cell[99275, 2615, 190, 2, 28, "Item"],
+Cell[99468, 2619, 782, 15, 28, "Input"],
+Cell[CellGroupData[{
+Cell[100275, 2638, 213, 4, 35, "Subsubsection"],
+Cell[100491, 2644, 463, 6, 28, "Item"],
+Cell[CellGroupData[{
+Cell[100979, 2654, 914, 15, 28, "Input"],
+Cell[101896, 2671, 9459, 250, 54, "Print"]
+}, Open  ]],
+Cell[111370, 2924, 656, 12, 62, "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[112087, 2943, 212, 3, 64, "Section"],
+Cell[112302, 2948, 201, 4, 30, "Text"]
 }, Open  ]]
 }, Open  ]]
 }

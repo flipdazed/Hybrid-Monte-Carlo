@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
+import itertools
 
 from hmc import checks
 from hmc.common import Init
@@ -52,6 +53,52 @@ def correlated_data(tau = 5, n = 10000):
     for i in range(1, n):
         nu[i] = np.sqrt(1 - asq)*eta[i] + a * nu[i-1]
     return [[nu*0.2 + 1]]
+
+def acorrMapped(op_samples, sep_map, mean, separation, norm = 1.0):
+    """as acorr() except this function maps the correlation to a non homogenous
+    separation mapping from t=0 that is provided by `sep_map`
+    
+    To be explicit, sep_map is a non decreasing array that maps distance from
+    t=0 such that we expect the first point to be non-zero (zero sep only possible)
+    for probabilistic separations
+    
+    sep_map will be used to determine which samples can be included
+    for averaging at a given separation length. It is assumed that all
+    lattice points for a given sample, op_samples[i], have the same separation 
+    with respect to op_samples[j] i.e. the lattice moves as a whole in HMC
+    sample space
+    
+    This is equivalent to looking at every unique pair of indices in sep_map
+    and assessing:
+        
+        if sep_map[i]-sep_map[j] == separation:
+            # include in autocorrelation calculation
+    
+    should no values exist at a given separation the routine returns np.nan
+    
+    Required Inputs
+        op_samples  :: np.ndarray :: the operator samples
+        sep_map     :: np.ndarray :: the separation mapping to op_samples
+        mean        :: float :: the mean of the operator
+        separation  :: int :: the separation between HMC steps
+        norm        :: float :: the autocorrelation with separation=0
+    
+    """
+    
+    # get all possible unique paired combinations of the map
+    sep_map = itertools.combinations(sep_map, 2)
+    
+    # keep only cases where their difference == separation
+    # note we need to transpose but .T creates a new array
+    # can cheat and use ravel as just 2D as this uses a 'view'
+    sep_map = all_pairs[np.where(np.diff(all_pairs).ravel() == separation)]
+    
+    # finally index back into op_samples with the combination map
+    # which is gives a 2D array of shape (number of matched seps, 2)
+    # can subtract the mean from both samples at once and then do
+    # the product of each pair across the second index
+    #.ravel().mean() / norm as in acorr
+    return np.prod(op_samples[sep_map] - mean, axis=1).ravel().mean() / norm
 
 def acorr(op_samples, mean, separation, norm = 1.0):
     """autocorrelation of a measured operator with optional normalisation
