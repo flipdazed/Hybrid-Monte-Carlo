@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    124917,       2541]
-NotebookOptionsPosition[    119047,       2337]
-NotebookOutlinePosition[    119565,       2359]
-CellTagsIndexPosition[    119476,       2354]
+NotebookDataLength[    125343,       2560]
+NotebookOptionsPosition[    119303,       2349]
+NotebookOutlinePosition[    119821,       2371]
+CellTagsIndexPosition[    119732,       2366]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -118,28 +118,27 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
-            "ghmc", "packageExpAutocorrelations`"}},
+           "Info93679462936-5681434", {"ghmc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ghmcLtDerived",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ghmcLtDerived", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmcLt",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "hmcLt", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ighmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ighmc1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"]},
         {
@@ -147,55 +146,56 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ghmc1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ghmcNormalised",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ghmcNormalised", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmcLt1Acc",
           BaseStyle->"InformationLink",
+          
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "hmcLt1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ihmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
-            "ihmc", "packageExpAutocorrelations`"}},
+           "Info93679462936-5681434", {"ihmc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"]},
         {
          ButtonBox["ghmc1AccNormalised",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ghmc1AccNormalised", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {"hmc", "packageExpAutocorrelations`"}},
+           "Info93679462936-5681434", {"hmc", "packageExpAutocorrelations`"}},
+          
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmcLtDerived",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "hmcLtDerived", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ihmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ihmc1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"]},
         {
@@ -203,21 +203,21 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ghmcLt", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmc1Acc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "hmc1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmcNormalised",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "hmcNormalised", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], ""},
         {
@@ -225,21 +225,21 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ghmcLt1Acc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["hmc1AccNormalised",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "hmc1AccNormalised", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], 
          ButtonBox["ighmc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info923679462119-2768891", {
+           "Info93679462936-5681434", {
             "ighmc", "packageExpAutocorrelations`"}},
           ButtonNote->"packageExpAutocorrelations`"], ""}
        },
@@ -250,7 +250,7 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.679458519743926*^9}],
+ CellChangeTimes->{3.679459336087503*^9}],
 
 Cell[BoxData[
  DynamicModuleBox[{Typeset`open$$ = True}, 
@@ -270,25 +270,25 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info933679462119-2768891", {"fullVerify", "mathematicaUtils`"}},
+           "Info103679462936-5681434", {"fullVerify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["getHiddenVars",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info933679462119-2768891", {"getHiddenVars", "mathematicaUtils`"}},
+           "Info103679462936-5681434", {"getHiddenVars", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["maxSimplify",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info933679462119-2768891", {"maxSimplify", "mathematicaUtils`"}},
+           "Info103679462936-5681434", {"maxSimplify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["setPrivateVars",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info933679462119-2768891", {
+           "Info103679462936-5681434", {
             "setPrivateVars", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"]},
         {
@@ -296,21 +296,21 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info933679462119-2768891", {
+           "Info103679462936-5681434", {
             "getDenominator", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["getNumerator",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info933679462119-2768891", {"getNumerator", "mathematicaUtils`"}},
+           "Info103679462936-5681434", {"getNumerator", "mathematicaUtils`"}},
           
           ButtonNote->"mathematicaUtils`"], 
          ButtonBox["quickVerify",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info933679462119-2768891", {"quickVerify", "mathematicaUtils`"}},
+           "Info103679462936-5681434", {"quickVerify", "mathematicaUtils`"}},
           ButtonNote->"mathematicaUtils`"], ""}
        },
        DefaultBaseStyle->"InfoGrid",
@@ -320,7 +320,7 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.67945851979706*^9}],
+ CellChangeTimes->{3.679459336132131*^9}],
 
 Cell[BoxData[
  DynamicModuleBox[{Typeset`open$$ = True}, 
@@ -340,19 +340,19 @@ Cell[BoxData[
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info943679462119-2768891", {"cleanCString", "mathematicaToC`"}},
+           "Info113679462936-5681434", {"cleanCString", "mathematicaToC`"}},
           ButtonNote->"mathematicaToC`"], 
          ButtonBox["makeMyComplex",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info943679462119-2768891", {"makeMyComplex", "mathematicaToC`"}},
+           "Info113679462936-5681434", {"makeMyComplex", "mathematicaToC`"}},
           ButtonNote->"mathematicaToC`"], 
          ButtonBox["writeFunc",
           BaseStyle->"InformationLink",
           
           ButtonData:>{
-           "Info943679462119-2768891", {"writeFunc", "mathematicaToC`"}},
+           "Info113679462936-5681434", {"writeFunc", "mathematicaToC`"}},
           ButtonNote->"mathematicaToC`"]}
        },
        DefaultBaseStyle->"InfoGrid",
@@ -362,7 +362,7 @@ Cell[BoxData[
     GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
    Dynamic[Typeset`open$$],
    ImageSize->Automatic]]], "Print", "InfoCell",
- CellChangeTimes->{3.67945851984853*^9}]
+ CellChangeTimes->{3.679459336198255*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -545,6 +545,7 @@ Cell[BoxData[{
    RowBox[{"{", 
     RowBox[{"saveLoc", ",", "\"\<exponential\>\""}], "}"}], "]"}]}]}], "Input",\
 
+ InitializationCell->True,
  CellChangeTimes->{{3.679145116259235*^9, 3.679145135285923*^9}, {
   3.67914560015676*^9, 3.679145601138606*^9}, {3.679348295903565*^9, 
   3.6793483360012293`*^9}, {3.6793490704808483`*^9, 3.679349103798818*^9}, {
@@ -592,23 +593,24 @@ Cell[BoxData[
  RowBox[{"makeMyComplex", "[", "outDir", "]"}]], "Input",
  CellChangeTimes->{{3.6791663269284687`*^9, 3.6791663279044657`*^9}}],
 
-Cell[BoxData[
- RowBox[{"(*", 
-  RowBox[{
-   RowBox[{
-    RowBox[{
-     RowBox[{"name", "=", "\"\<ghmc\>\""}], ";"}], "\n", 
-    RowBox[{"f", " ", "=", " ", 
-     RowBox[{"Evaluate", "[", 
-      RowBox[{"ghmc", 
-       StyleBox["[", "MSG"], 
-       StyleBox[
-        RowBox[{
-        "t", ",", "ph", ",", " ", "th", ",", " ", "p", ",", " ", "r"}], "MSG"], 
-       StyleBox["]", "MSG"]}], "]"}]}]}], ";", "\[IndentingNewLine]", 
-   RowBox[{"writeFunc", "[", 
-    RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], ";"}], 
-  "*)"}]], "Input",
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"name", "=", "\"\<ghmc\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"f", " ", "=", " ", 
+   RowBox[{"Evaluate", "[", 
+    RowBox[{"ghmc", 
+     StyleBox["[", "MSG"], 
+     StyleBox[
+      RowBox[{"t", ",", "ph", ",", " ", "th", ",", " ", "p", ",", " ", "r"}], 
+      "MSG"], 
+     StyleBox["]", "MSG"]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"writeFunc", "[", 
+   RowBox[{"f", ",", " ", "name", ",", " ", "outDir"}], "]"}], 
+  ";"}]}], "Input",
  CellChangeTimes->{{3.67912693500245*^9, 3.679126964517372*^9}, 
    3.679127733993648*^9, {3.679127785068099*^9, 3.67912781634243*^9}, 
    3.6791278801038857`*^9, 3.679128057158238*^9, {3.6791280893731318`*^9, 
@@ -624,7 +626,17 @@ Cell[BoxData[
    3.679139495969645*^9}, {3.679139592183021*^9, 3.679139617848404*^9}, {
    3.679143556401628*^9, 3.679143559295664*^9}, {3.679144589751205*^9, 
    3.6791445898813553`*^9}, {3.679144644494327*^9, 3.679144676770677*^9}, {
-   3.6791478039038486`*^9, 3.679147808558634*^9}}],
+   3.6791478039038486`*^9, 3.679147808558634*^9}, 3.6794593288557034`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Found Variables:\"\>"], "Print",
+ CellChangeTimes->{3.679459352755723*^9}],
+
+Cell[BoxData["\<\"FileNameJoin[{outDir, ghmc.hpp}]\"\>"], "Print",
+ CellChangeTimes->{3.679459352760384*^9}]
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2347,13 +2359,13 @@ StyleDefinitions->"Default.nb"
 (*CellTagsOutline
 CellTagsIndex->{
  "Info303679354351-1533511"->{
-  Cell[23192, 580, 445, 7, 160, "Print",
+  Cell[23199, 581, 445, 7, 160, "Print",
    CellTags->"Info303679354351-1533511"]}
  }
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Info303679354351-1533511", 119369, 2348}
+ {"Info303679354351-1533511", 119625, 2360}
  }
 *)
 (*NotebookFileOutline
@@ -2365,181 +2377,188 @@ Cell[CellGroupData[{
 Cell[1209, 40, 2902, 58, 199, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[4136, 102, 5469, 150, 136, "Print"],
-Cell[9608, 254, 2411, 68, 73, "Print"],
-Cell[12022, 324, 1416, 40, 52, "Print"]
+Cell[4136, 102, 5447, 150, 136, "Print"],
+Cell[9586, 254, 2412, 68, 73, "Print"],
+Cell[12001, 324, 1417, 40, 52, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[13487, 370, 109, 1, 64, "Section"],
-Cell[13599, 373, 115, 1, 30, "Text"],
+Cell[13467, 370, 109, 1, 64, "Section"],
+Cell[13579, 373, 115, 1, 30, "Text"],
 Cell[CellGroupData[{
-Cell[13739, 378, 374, 6, 63, "Input"],
-Cell[14116, 386, 1488, 21, 28, "Output"],
-Cell[15607, 409, 2937, 54, 148, "Output"],
-Cell[18547, 465, 2209, 40, 80, "Output"]
+Cell[13719, 378, 374, 6, 63, "Input"],
+Cell[14096, 386, 1488, 21, 28, "Output"],
+Cell[15587, 409, 2937, 54, 148, "Output"],
+Cell[18527, 465, 2209, 40, 80, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[20805, 511, 100, 1, 64, "Section"],
-Cell[20908, 514, 207, 4, 30, "Text"],
-Cell[21118, 520, 209, 5, 28, "Input"],
+Cell[20785, 511, 100, 1, 64, "Section"],
+Cell[20888, 514, 207, 4, 30, "Text"],
+Cell[21098, 520, 209, 5, 28, "Input"],
 Cell[CellGroupData[{
-Cell[21352, 529, 900, 21, 63, "Input"],
-Cell[22255, 552, 252, 3, 28, "Output"]
+Cell[21332, 529, 927, 22, 63, "Input",
+ InitializationCell->True],
+Cell[22262, 553, 252, 3, 28, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[22568, 562, 150, 2, 65, "Chapter"],
-Cell[22721, 566, 248, 5, 30, "Text"],
+Cell[22575, 563, 150, 2, 65, "Chapter"],
+Cell[22728, 567, 248, 5, 30, "Text"],
 Cell[CellGroupData[{
-Cell[22994, 575, 195, 3, 28, "Input"],
-Cell[23192, 580, 445, 7, 160, "Print",
+Cell[23001, 576, 195, 3, 28, "Input"],
+Cell[23199, 581, 445, 7, 160, "Print",
  CellTags->"Info303679354351-1533511"]
 }, Open  ]],
-Cell[23652, 590, 141, 2, 28, "Input"],
-Cell[23796, 594, 1705, 32, 63, "Input"],
+Cell[23659, 591, 141, 2, 28, "Input"],
 Cell[CellGroupData[{
-Cell[25526, 630, 869, 21, 63, "Input"],
+Cell[23825, 597, 1680, 31, 63, "Input"],
 Cell[CellGroupData[{
-Cell[26420, 655, 1122, 16, 21, "Print"],
-Cell[27545, 673, 1119, 16, 21, "Print"],
-Cell[28667, 691, 1148, 16, 22, "Print"],
-Cell[29818, 709, 1205, 17, 38, "Print"]
+Cell[25530, 632, 92, 1, 21, "Print"],
+Cell[25625, 635, 108, 1, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[31072, 732, 819, 22, 63, "Input"],
+Cell[25782, 642, 869, 21, 63, "Input"],
 Cell[CellGroupData[{
-Cell[31916, 758, 1420, 20, 21, "Print"],
-Cell[33339, 780, 1421, 20, 21, "Print"],
-Cell[34763, 802, 1444, 20, 22, "Print"],
-Cell[36210, 824, 1515, 21, 38, "Print"]
+Cell[26676, 667, 1122, 16, 21, "Print"],
+Cell[27801, 685, 1119, 16, 21, "Print"],
+Cell[28923, 703, 1148, 16, 22, "Print"],
+Cell[30074, 721, 1205, 17, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[37774, 851, 592, 15, 63, "Input"],
+Cell[31328, 744, 819, 22, 63, "Input"],
 Cell[CellGroupData[{
-Cell[38391, 870, 1411, 20, 21, "Print"],
-Cell[39805, 892, 1446, 21, 22, "Print"],
-Cell[41254, 915, 1493, 21, 22, "Print"]
+Cell[32172, 770, 1420, 20, 21, "Print"],
+Cell[33595, 792, 1421, 20, 21, "Print"],
+Cell[35019, 814, 1444, 20, 22, "Print"],
+Cell[36466, 836, 1515, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[42796, 942, 637, 16, 63, "Input"],
+Cell[38030, 863, 592, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[43458, 962, 1409, 20, 21, "Print"],
-Cell[44870, 984, 1434, 20, 22, "Print"],
-Cell[46307, 1006, 1495, 21, 38, "Print"]
+Cell[38647, 882, 1411, 20, 21, "Print"],
+Cell[40061, 904, 1446, 21, 22, "Print"],
+Cell[41510, 927, 1493, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[47851, 1033, 708, 17, 63, "Input"],
+Cell[43052, 954, 637, 16, 63, "Input"],
 Cell[CellGroupData[{
-Cell[48584, 1054, 1486, 21, 21, "Print"],
-Cell[50073, 1077, 1523, 22, 22, "Print"],
-Cell[51599, 1101, 1573, 22, 38, "Print"]
+Cell[43714, 974, 1409, 20, 21, "Print"],
+Cell[45126, 996, 1434, 20, 22, "Print"],
+Cell[46563, 1018, 1495, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[53221, 1129, 796, 24, 63, "Input"],
+Cell[48107, 1045, 708, 17, 63, "Input"],
 Cell[CellGroupData[{
-Cell[54042, 1157, 1407, 20, 21, "Print"],
-Cell[55452, 1179, 1444, 21, 22, "Print"],
-Cell[56899, 1202, 1499, 21, 38, "Print"]
+Cell[48840, 1066, 1486, 21, 21, "Print"],
+Cell[50329, 1089, 1523, 22, 22, "Print"],
+Cell[51855, 1113, 1573, 22, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[58447, 1229, 692, 21, 63, "Input"],
+Cell[53477, 1141, 796, 24, 63, "Input"],
 Cell[CellGroupData[{
-Cell[59164, 1254, 1417, 20, 21, "Print"],
-Cell[60584, 1276, 1416, 20, 21, "Print"],
-Cell[62003, 1298, 1440, 20, 22, "Print"],
-Cell[63446, 1320, 1497, 21, 22, "Print"]
+Cell[54298, 1169, 1407, 20, 21, "Print"],
+Cell[55708, 1191, 1444, 21, 22, "Print"],
+Cell[57155, 1214, 1499, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[64992, 1347, 611, 18, 63, "Input"],
+Cell[58703, 1241, 692, 21, 63, "Input"],
 Cell[CellGroupData[{
-Cell[65628, 1369, 1414, 20, 21, "Print"],
-Cell[67045, 1391, 1417, 20, 21, "Print"],
-Cell[68465, 1413, 1428, 20, 22, "Print"],
-Cell[69896, 1435, 1500, 21, 38, "Print"]
+Cell[59420, 1266, 1417, 20, 21, "Print"],
+Cell[60840, 1288, 1416, 20, 21, "Print"],
+Cell[62259, 1310, 1440, 20, 22, "Print"],
+Cell[63702, 1332, 1497, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[71445, 1462, 631, 18, 63, "Input"],
+Cell[65248, 1359, 611, 18, 63, "Input"],
 Cell[CellGroupData[{
-Cell[72101, 1484, 1393, 20, 21, "Print"],
-Cell[73497, 1506, 1396, 20, 21, "Print"],
-Cell[74896, 1528, 1408, 20, 22, "Print"],
-Cell[76307, 1550, 1487, 21, 38, "Print"]
+Cell[65884, 1381, 1414, 20, 21, "Print"],
+Cell[67301, 1403, 1417, 20, 21, "Print"],
+Cell[68721, 1425, 1428, 20, 22, "Print"],
+Cell[70152, 1447, 1500, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[77843, 1577, 663, 20, 63, "Input"],
+Cell[71701, 1474, 631, 18, 63, "Input"],
 Cell[CellGroupData[{
-Cell[78531, 1601, 1397, 20, 21, "Print"],
-Cell[79931, 1623, 1421, 20, 22, "Print"],
-Cell[81355, 1645, 1478, 21, 22, "Print"]
+Cell[72357, 1496, 1393, 20, 21, "Print"],
+Cell[73753, 1518, 1396, 20, 21, "Print"],
+Cell[75152, 1540, 1408, 20, 22, "Print"],
+Cell[76563, 1562, 1487, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[82882, 1672, 613, 18, 63, "Input"],
+Cell[78099, 1589, 663, 20, 63, "Input"],
 Cell[CellGroupData[{
-Cell[83520, 1694, 1405, 20, 21, "Print"],
-Cell[84928, 1716, 1417, 20, 22, "Print"],
-Cell[86348, 1738, 1490, 21, 38, "Print"]
+Cell[78787, 1613, 1397, 20, 21, "Print"],
+Cell[80187, 1635, 1421, 20, 22, "Print"],
+Cell[81611, 1657, 1478, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[87887, 1765, 710, 22, 63, "Input"],
+Cell[83138, 1684, 613, 18, 63, "Input"],
 Cell[CellGroupData[{
-Cell[88622, 1791, 1401, 20, 21, "Print"],
-Cell[90026, 1813, 1427, 20, 22, "Print"],
-Cell[91456, 1835, 1489, 21, 38, "Print"]
+Cell[83776, 1706, 1405, 20, 21, "Print"],
+Cell[85184, 1728, 1417, 20, 22, "Print"],
+Cell[86604, 1750, 1490, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[92994, 1862, 709, 21, 63, "Input"],
+Cell[88143, 1777, 710, 22, 63, "Input"],
 Cell[CellGroupData[{
-Cell[93728, 1887, 1411, 20, 21, "Print"],
-Cell[95142, 1909, 1412, 20, 21, "Print"],
-Cell[96557, 1931, 1438, 20, 22, "Print"],
-Cell[97998, 1953, 1501, 21, 38, "Print"]
+Cell[88878, 1803, 1401, 20, 21, "Print"],
+Cell[90282, 1825, 1427, 20, 22, "Print"],
+Cell[91712, 1847, 1489, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[99548, 1980, 520, 15, 63, "Input"],
+Cell[93250, 1874, 709, 21, 63, "Input"],
 Cell[CellGroupData[{
-Cell[100093, 1999, 1401, 20, 21, "Print"],
-Cell[101497, 2021, 1418, 20, 22, "Print"],
-Cell[102918, 2043, 1482, 21, 22, "Print"]
+Cell[93984, 1899, 1411, 20, 21, "Print"],
+Cell[95398, 1921, 1412, 20, 21, "Print"],
+Cell[96813, 1943, 1438, 20, 22, "Print"],
+Cell[98254, 1965, 1501, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[104449, 2070, 511, 15, 63, "Input"],
+Cell[99804, 1992, 520, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[104985, 2089, 1415, 20, 21, "Print"],
-Cell[106403, 2111, 1418, 20, 22, "Print"],
-Cell[107824, 2133, 1500, 21, 38, "Print"]
+Cell[100349, 2011, 1401, 20, 21, "Print"],
+Cell[101753, 2033, 1418, 20, 22, "Print"],
+Cell[103174, 2055, 1482, 21, 22, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[109373, 2160, 502, 15, 63, "Input"],
+Cell[104705, 2082, 511, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[109900, 2179, 1395, 20, 21, "Print"],
-Cell[111298, 2201, 1399, 20, 22, "Print"],
-Cell[112700, 2223, 1475, 21, 22, "Print"]
+Cell[105241, 2101, 1415, 20, 21, "Print"],
+Cell[106659, 2123, 1418, 20, 22, "Print"],
+Cell[108080, 2145, 1500, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[114224, 2250, 479, 13, 63, "Input"],
+Cell[109629, 2172, 502, 15, 63, "Input"],
 Cell[CellGroupData[{
-Cell[114728, 2267, 1397, 20, 21, "Print"],
-Cell[116128, 2289, 1393, 20, 22, "Print"],
-Cell[117524, 2311, 1483, 21, 38, "Print"]
+Cell[110156, 2191, 1395, 20, 21, "Print"],
+Cell[111554, 2213, 1399, 20, 22, "Print"],
+Cell[112956, 2235, 1475, 21, 22, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[114480, 2262, 479, 13, 63, "Input"],
+Cell[CellGroupData[{
+Cell[114984, 2279, 1397, 20, 21, "Print"],
+Cell[116384, 2301, 1393, 20, 22, "Print"],
+Cell[117780, 2323, 1483, 21, 38, "Print"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]

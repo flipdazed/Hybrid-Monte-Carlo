@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     74412,       1950]
-NotebookOptionsPosition[     69990,       1798]
-NotebookOutlinePosition[     70385,       1816]
-CellTagsIndexPosition[     70342,       1813]
+NotebookDataLength[     75141,       1965]
+NotebookOptionsPosition[     70651,       1811]
+NotebookOutlinePosition[     71046,       1829]
+CellTagsIndexPosition[     71003,       1826]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -1736,14 +1736,15 @@ Cell[TextData[{
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"ghmcFullForm", " ", "=", " ", 
-   RowBox[{"InverseLaplaceTransform", "[", 
-    RowBox[{
-     RowBox[{"F", "[", 
-      RowBox[{
-      "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", "  ", 
-       "\[Rho]", ",", " ", "r"}], "]"}], ",", "\[Beta]", ",", "t"}], "]"}]}], 
-  ";"}], "\n", 
+  RowBox[{"ghmcFullForm", "=", " ", 
+   RowBox[{
+    RowBox[{"InverseLaplaceTransform", "[", 
+     RowBox[{
+      RowBox[{"ghmcLt", "[", 
+       RowBox[{
+       "\[Beta]", ",", " ", "\[Phi]", ",", " ", "\[Theta]", ",", "  ", 
+        "\[Rho]", ",", " ", "r"}], "]"}], ",", "\[Beta]", ",", "t"}], "]"}], "//",
+     "ToRadicals"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"ghmc", "[", 
@@ -1765,7 +1766,21 @@ Cell[BoxData[{
     RowBox[{"ghmc", "[", 
      RowBox[{
      "0", ",", " ", "\[Phi]_", ",", " ", "\[Theta]_", ",", "  ", "\[Rho]_", 
-      ",", " ", "r_"}], "]"}]}]}], ";"}], "\[IndentingNewLine]", 
+      ",", " ", "r_"}], "]"}]}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.678549239219179*^9, 3.6785492392277412`*^9}, 
+   3.6787178993216267`*^9, {3.678719719993828*^9, 3.67871972280374*^9}, {
+   3.67910102200211*^9, 3.679101067715073*^9}, {3.679103339586871*^9, 
+   3.679103355151574*^9}, {3.6791036943498363`*^9, 3.679103698504829*^9}, {
+   3.6794594786642723`*^9, 3.679459522970111*^9}, {3.679459696113967*^9, 
+   3.679459702444372*^9}, {3.679460339330655*^9, 3.679460342046979*^9}, {
+   3.6794603730418167`*^9, 3.679460385263034*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
  RowBox[{
   RowBox[{"Export", "[", 
    RowBox[{"\"\<equation.txt\>\"", ",", 
@@ -1774,15 +1789,13 @@ Cell[BoxData[{
       RowBox[{"ghmc", "[", 
        RowBox[{
        "t", ",", " ", "phi", ",", " ", "theta", ",", " ", "pa", ",", " ", 
-        "r"}], "]"}], ",", "FortranForm"}], "]"}]}], "]"}], ";"}]}], "Input",
+        "r"}], "]"}], ",", "FortranForm"}], "]"}]}], "]"}], ";"}]], "Input",
  CellChangeTimes->{{3.678549239219179*^9, 3.6785492392277412`*^9}, 
    3.6787178993216267`*^9, {3.678719719993828*^9, 3.67871972280374*^9}, {
    3.67910102200211*^9, 3.679101067715073*^9}, {3.679103339586871*^9, 
-   3.679103355151574*^9}, {3.6791036943498363`*^9, 3.679103698504829*^9}}]
-}, Open  ]]
-}, Open  ]]
-}, Open  ]]
-}, Open  ]],
+   3.679103355151574*^9}, {3.6791036943498363`*^9, 3.679103698504829*^9}, {
+   3.6794594786642723`*^9, 3.679459522970111*^9}, {3.679459696113967*^9, 
+   3.679459705464505*^9}}],
 
 Cell[BoxData[{
  RowBox[{
@@ -1945,12 +1958,14 @@ Cell[66689, 1703, 342, 8, 45, "Item"],
 Cell[67034, 1713, 215, 4, 28, "Item"],
 Cell[67252, 1719, 276, 6, 28, "Item"],
 Cell[67531, 1727, 296, 7, 45, "Item"],
-Cell[67830, 1736, 1716, 44, 97, "Input"]
+Cell[67830, 1736, 1654, 40, 97, "Input",
+ InitializationCell->True]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
-Cell[69597, 1786, 389, 10, 46, "Input",
+Cell[69535, 1782, 720, 15, 28, "Input"],
+Cell[70258, 1799, 389, 10, 46, "Input",
  InitializationCell->True]
 }
 ]

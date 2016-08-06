@@ -313,7 +313,7 @@ class M2_Exp(object):
                 a2 = (3 - 6*pa + ( - 2 + pa)*( - 2 + 2*pa)*phi2)*cos_theta  \
                     + ( - 3 + ( - 4 + 4*pa)*phi2)*cos_theta2                \
                     + ( - 2 + 4*pa)*cos_theta3                              \
-                    + 4 + (8 - 4*pa)*phi2 + a2a + a2b + a2c
+                    + 4 + (8 - 4*pa)*phi2
                 
                 a3 = 4 + (8 + 2*pa)*phi2                                    \
                     + (3 - 6*pa + (4 - 4*pa)*phi2)*cos_theta                \
@@ -323,7 +323,7 @@ class M2_Exp(object):
                 a4 = (1 - 2*pa + ( - 2 + pa)*( - 2 + 2*pa)*phi2)*cos_theta  \
                     + ( - 1 + ( - 4 + 4*pa)*phi2)*cos_theta2                \
                     + ( - 1 + 2*pa - 4*( - 1 + pa)**2*phi2)*cos_theta3      \
-                    + 1 + (4 - 2*pa)*phi2 + a4a + a4b + a4c
+                    + 1 + (4 - 2*pa)*phi2
                 
                 a5 = 1 + (4 + 4*pa)*phi2                                    \
                     + (1 - 2*pa + ( - 4 - 2*pa)*( - 1 + pa)*phi2)*cos_theta \

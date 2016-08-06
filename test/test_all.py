@@ -16,9 +16,24 @@ import test_hmc
 import test_lattice
 import test_momentum
 import test_expect
+import test_autocorrelations
 
 import logging
 logging.root.setLevel(logging.DEBUG)
+
+def testAutocorrelations():
+    test = test_autocorrelations.Fixed(tol = 1e-4)
+    utils.newTest(test.id)
+    
+    assert test.integratedAutocorrelations()
+    assert test.laplaceTransformAutocorrelations()
+    
+    test = test_autocorrelations.Exp(tol = 1e-4)
+    utils.newTest(test.id)
+    assert test.integratedAutocorrelations()
+    assert test.laplaceTransformAutocorrelations()
+    assert test.autocorrelations()
+    pass
 
 def testExpectations():
     test = test_expect.Test(rng=rng, spacing=.1, length = 100, dim = 1)
@@ -106,10 +121,11 @@ def testMomentum():
     pass
 
 if __name__ == '__main__':
-    # testExpectations()
+    testExpectations()
     testPotentials()
     testDynamics()
     testLattice()
     testHMC()
     testMomentum()
+    testAutocorrelations()
     pass

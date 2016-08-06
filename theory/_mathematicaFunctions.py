@@ -1,5 +1,5 @@
 from __future__ import division
-from numpy import cos, exp, sqrt, real
+from numpy import cos, exp, sqrt, real, asscalar
 from numpy.polynomial.polynomial import polyroots
 
 __doc__ = """These functions correspond to the inverted functions from the
@@ -90,8 +90,9 @@ def expCunit(t, tau, m, theta):
     denominator *= c25 - (pf13*c1)/(3*c9a) - (c4*c1)/c9 + c24 + c6i*c3*c9a
     denominator *= c25 - (c4*c1)/c9 + (c3*c1)/c9 - c6i*c10 + c6i*c3*c9a
     
-    ans = numerator/denominator
-    return real(ans)
+    ans = real(numerator/denominator)
+    if ans.size == 1: ans = asscalar(ans)
+    return ans
 
 def expC(t, tau, m, theta, pa):
     """The analytic a/c for GHMC with unit acceptance
@@ -160,8 +161,9 @@ def expC(t, tau, m, theta, pa):
     numerator = eval(s)
     denominator = (rt1-rt2)*(rt1-rt3)*(rt2-rt3)*(rt1-rt4)*(rt2-rt4)*(rt3-rt4)*(rt1-rt5)*(rt2-rt5)*(rt3-rt5)*(rt4-rt5)
     
-    ans = numerator/denominator
-    return real(ans)
+    ans = real(numerator/denominator)
+    if ans.size == 1: ans = asscalar(ans)
+    return ans
     
 if __name__ == '__main__':
     import numpy as np
