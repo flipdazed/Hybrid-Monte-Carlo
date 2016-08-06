@@ -1,6 +1,6 @@
 #include <boost/python.hpp>
-// #include <fixed/ghmcLt.hpp>			//error: no matching function for call to 'ghmcLt'
-// #include <fixed/ghmcLt1Acc.hpp>		//error: no matching function for call to 'ghmcLt'
+#include <fixed/ghmcLt.hpp>
+#include <fixed/ghmcLt1Acc.hpp>
 #include <fixed/hmcLt.hpp>
 #include <fixed/hmcLt1Acc.hpp>
 #include <fixed/ighmc.hpp>
@@ -11,8 +11,8 @@
 BOOST_PYTHON_MODULE(fixed)
 {
     using namespace boost::python;
-	// def ("ghmcLt", ghmcLt);				//error: no matching function for call to 'ghmcLt'
-	// def ("ghmcLt1Acc", ghmcLt1Acc);		//error: no matching function for call to 'ghmcLt'
+	def ("ghmcLt", ghmcLt);
+	def ("ghmcLt1Acc", ghmcLt1Acc);
 	def ("hmcLt", hmcLt);
 	def ("hmcLt1Acc", hmcLt1Acc);
 	def ("ighmc", ighmc);

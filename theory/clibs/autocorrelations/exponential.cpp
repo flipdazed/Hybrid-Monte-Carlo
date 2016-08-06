@@ -1,9 +1,9 @@
 #include <boost/python.hpp>
 #include <exponential/ghmc1Acc.hpp>
 #include <exponential/ghmc1AccNormalised.hpp>
-// #include <exponential/ghmcLt.hpp>		// numerator=ghmcLt(b,ph,th,r);
-// #include <exponential/ghmcLt1Acc.hpp>	// numerator=ghmcLt(b,ph,th,r);
-// #include <exponential/ghmcLtDerived.hpp>	// numerator=ghmcLt(b,ph,th,r);
+#include <exponential/ghmcLt.hpp>
+#include <exponential/ghmcLt1Acc.hpp>
+#include <exponential/ghmcLtDerived.hpp>
 #include <exponential/ghmcNormalised.hpp>
 #include <exponential/hmc.hpp>
 #include <exponential/hmc1Acc.hpp>
@@ -22,9 +22,9 @@ BOOST_PYTHON_MODULE(exponential)
     using namespace boost::python;
 	def ("ghmc1Acc", ghmc1Acc);
 	def ("ghmc1AccNormalised", ghmc1AccNormalised);
-	// def ("ghmcLt", ghmcLt);						// numerator=ghmcLt(b,ph,th,r);
-	// def ("ghmcLt1Acc", ghmcLt1Acc);			// numerator=ghmcLt(b,ph,th,r);
-	// def ("ghmcLtDerived", ghmcLtDerived);		// numerator=ghmcLt(b,ph,th,r);
+	def ("ghmcLt", ghmcLt);
+	def ("ghmcLt1Acc", ghmcLt1Acc);
+	def ("ghmcLtDerived", ghmcLtDerived);
 	def ("ghmcNormalised", ghmcNormalised);
 	def ("hmc", hmc);
 	def ("hmc1Acc", hmc1Acc);

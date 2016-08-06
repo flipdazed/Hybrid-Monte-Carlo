@@ -17,5 +17,5 @@ See [this guide](https://github.com/flipdazed/boost-python-hello-world) for deta
 
 The following commands will build the libraries and link `c++/boost` to `python`:
 
-	python setup_exponential.py build_ext --inplace
+	python setup_fixed.py build_ext --inplace
 	python setup_exponential.py build_ext --inplace

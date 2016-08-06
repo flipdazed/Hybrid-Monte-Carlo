@@ -1,0 +1,15 @@
+"#pragma once\n#ifndef MY_HEADER_H\n#define MY_HEADER_H\n\n#include \
+<complex>\n#include \"myComplex.hpp\"\n#endif\n\n\ndouble ghmcLt1Acc( double \
+b, double ph, double r, double th){\n\n\tstd::complex<double> \
+numerator;\n\tstd::complex<double> \
+denominator;\n\n\tnumerator=(-1.*pow(cos(ph),2))/pow(2.718281828459045,1.*b*r\
+) + (pow(cos(ph),2)*cos(th))/pow(2.718281828459045,2.*b*r) + ((-1. + \
+2.*pow(cos(ph),2))*pow(cos(th),2))/pow(2.718281828459045,2.*b*r) - \
+(1.*pow(cos(th),3))/pow(2.718281828459045,3.*b*r);\n\n\tdenominator=-1. + \
+(pow(2.718281828459045,-3.*b*r) - \
+(1.*pow(cos(ph),2))/pow(2.718281828459045,2.*b*r))*pow(cos(th),3) + \
+(pow(cos(ph),2) + (-1. + 2.*pow(cos(ph),2))*cos(th) + \
+pow(cos(ph),2)*pow(cos(th),2))/pow(2.718281828459045,1.*b*r) - \
+(1.*(pow(cos(ph),2)*cos(th) + (-1. + \
+2.*pow(cos(ph),2))*pow(cos(th),2)))/pow(2.718281828459045,2.*b*r);\n\n\tretur\
+n (numerator/denominator).real();\n}"

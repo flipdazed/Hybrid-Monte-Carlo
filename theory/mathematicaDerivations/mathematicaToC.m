@@ -26,7 +26,10 @@ makeMyComplex[outDir_] := Module[{myFunc, saveLoc, fnName},
      "\treturn x + y*i;\n",
      "}" }
     ];
-  WriteString[saveLoc, myFunc];
+file = OpenWrite[saveLoc];
+WriteString[file, myFunc];
+Close[file];
+Print[saveLoc];
 ];
 
 cleanCString[str_] := Module[{newstr},
@@ -86,7 +89,6 @@ StringJoin[{Map[StringJoin[{" double ", # , ","}] &, Most[vars]],
   " double ", Last[vars]}],
 StringJoin[" double ", vars]];
 Print["Found Variables:"];
-Print[fnVars];
 (*define declarations of numerator and denominators*)
 
 decs = "\n\tstd::complex<double> numerator;\n\tstd::complex<double> \
@@ -94,12 +96,14 @@ denominator;";
 (*join everything up*)
 
 hdr = StringJoin[ {hdr, "\n\ndouble ", name, "(", fnVars}, {"){\n", 
- decs,  "\n\n\tnumerator="}];
+decs,  "\n\n\tnumerator="}];
 v = StringJoin[hdr, n, {";\n\n\tdenominator="}, d, 
 {";\n\n", "\treturn (numerator/denominator).real();\n}"}
 ];
+file = OpenWrite[saveLoc];
+WriteString[file, v];
+Close[file];
 Print[saveLoc];
-WriteString[saveLoc, v];
 ]
   
 End[]; 
