@@ -4,8 +4,7 @@ This repository contains the code used for the thesis component of a Masters deg
 
 Supervisors: Brian Pendleton, Tony Kennedy
 
-#### $\LaTeX$
-$\LaTeX$ is used widely in this repository. I recommend browsing in Google Chrome with the extension [`TeX All the Things`](https://chrome.google.com/webstore/detail/tex-all-the-things/cbimabofgmfdkicghcadidpemeenbffn)
+$\LaTeX$ is used widely in this repository. A good extension for Google Chrome is [`TeX All the Things`](https://chrome.google.com/webstore/detail/tex-all-the-things/cbimabofgmfdkicghcadidpemeenbffn)
 
 ## Table of Contents
  - [Hybrid Monte Carlo (HMC)](#hmc)
