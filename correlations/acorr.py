@@ -54,7 +54,7 @@ def correlated_data(tau = 5, n = 10000):
         nu[i] = np.sqrt(1 - asq)*eta[i] + a * nu[i-1]
     return [[nu*0.2 + 1]]
 
-def acorrMapped(op_samples, sep_map, mean, separation, norm = 1.0):
+def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7):
     """as acorr() except this function maps the correlation to a non homogenous
     separation mapping from t=0 that is provided by `sep_map`
     
@@ -79,26 +79,43 @@ def acorrMapped(op_samples, sep_map, mean, separation, norm = 1.0):
     Required Inputs
         op_samples  :: np.ndarray :: the operator samples
         sep_map     :: np.ndarray :: the separation mapping to op_samples
+        sep         :: int :: the separation between HMC steps
         mean        :: float :: the mean of the operator
-        separation  :: int :: the separation between HMC steps
+    
+    Optional Inputs
         norm        :: float :: the autocorrelation with separation=0
+        tol         :: float :: tolerance around zero (numpy errors)
     
     """
+    # fast return
+    if sep == 0: return ((op_samples-mean)**2).ravel().mean() / norm
+    n = op_samples.shape[0]
+    front = 0
+    back  = 0
+    l_ans = 0.0
+    r_ans = 0.0
+    counter = 0.0
+    while back < n and front < n:                # keep going until exhausted array
+        diff = sep_map[front]-sep_map[back]
+        
+        if abs(diff-sep) < tol:     # if equal vs. subj to tol. then add
+        
+            # calculate the autocorrelation function for matched pairs
+            r_ans += op_samples[front]
+            l_ans += op_samples[back]
+            counter += 1
+            
+            if front!=back: back+=1 # don't run off yet!
+            elif front==n-1:back+=1 # hold front at n-1 until back gets there 
+            else: front+=1          # if front = back budge up front
+        elif diff > sep: back+=1    # close diff with back
+        else: front+=1              # front is greater so back can catch up
     
-    # get all possible unique paired combinations of the map
-    sep_map = itertools.combinations(sep_map, 2)
+    # save operations
+    l_ans -= mean*counter
+    r_ans -= mean*counter
     
-    # keep only cases where their difference == separation
-    # note we need to transpose but .T creates a new array
-    # can cheat and use ravel as just 2D as this uses a 'view'
-    sep_map = all_pairs[np.where(np.diff(all_pairs).ravel() == separation)]
-    
-    # finally index back into op_samples with the combination map
-    # which is gives a 2D array of shape (number of matched seps, 2)
-    # can subtract the mean from both samples at once and then do
-    # the product of each pair across the second index
-    #.ravel().mean() / norm as in acorr
-    return np.prod(op_samples[sep_map] - mean, axis=1).ravel().mean() / norm
+    return np.ravel(l_ans*r_ans).mean() / norm
 
 def acorr(op_samples, mean, separation, norm = 1.0):
     """autocorrelation of a measured operator with optional normalisation
