@@ -1,6 +1,8 @@
 from scipy.special import binom
 import numpy as np
 
+import sys, traceback
+
 def testFn(results, test):
     """Takes in two arrays of your function results and compares to test data"""
     outcomes = ["Failed","Passed"]
@@ -10,7 +12,7 @@ def testFn(results, test):
             passed = True
         except:
             passed = False
-        print "test:{} :: {} :: result: {:8.4f}; actual:{:8.4f}".format(i+1, outcomes[passed], r, t)
+        print "  test:{} :: {} :: result: {:8.4f}; actual:{:8.4f}".format(i+1, outcomes[passed], r, t)
     pass
 
 def genTestData():
@@ -50,26 +52,66 @@ def genTestData():
     test_set1 = [t1a, t1b, t1c, t1d]
     test_set2 = [t2a, t2b, t2c, t2d]
     return cases, test_set1, test_set2
+    
+def debugRoutine(func):
+    """include **kwargs with func if it doesn't have same as mine
+    
+    Required Inputs
+        sep :: float :: separation
+        cases :: as defined above
+    """
+    seps = [0.1, 0.0]
+    cases, test_set1, test_set2 = genTestData()
+    
+    for test_num, (test, sep) in enumerate(zip([test_set1, test_set2], seps)):
+        print 'Case {} :: separation of {}'.format(test_num, sep)
+        res = []
+        res_pairs = []
+        for i, arr in enumerate(cases):
+            try:
+                mean = arr.mean()
+                sol, pairs = func(arr, sep=sep, mean=mean, n=arr.size, debug=True)
+                res.append(sol)
+                res_pairs.append(pairs)
+            except Exception as e:
+                res.append(False)
+                res_pairs.append([])
+                
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                err = traceback.format_exc().splitlines()[-1]
+                line = traceback.extract_tb(exc_traceback)[-1][1]
+                expr = traceback.extract_tb(exc_traceback)[-1][-1]
+                print '   > Error: test {}, line: {}, type: {}, expr: {}'.format(i, line, err, expr)
+                
+        testFn(res, test)
+    pass
 
-def attempt(arr, sep, mean, n, tol=1e-7):
+def attempt(arr, sep, mean, n, tol=1e-7, debug=True):
     # fast return
-    if sep == 0: return ((arr-mean)**2).mean()
+    if debug: pairs = []
+    if sep == 0:
+        if debug:
+            return ((arr-mean)**2).mean(), pairs
+        else:
+            return ((arr-mean)**2).mean()
     
     front = 0   # front "pythony-pointer-thing"
     back  = 0   # back "pythony-pointer-thing"
     l_ans = 0.0 # left half of pair
     r_ans = 0.0 # right half of pair
     counter = 0.0
+    
     while front < n:   # keep going until exhausted array
         diff = arr[front]-arr[back]
-    
+        
         if abs(diff-sep) < tol:     # if equal subject to tol: pair found
         
             # calculate the correlation function for matched pairs
             r_ans += arr[front]
             l_ans += arr[back]
             counter += 1
-        
+            if debug: pairs.append([arr[back], arr[front]])
+            
             # I can't remember why I put these non-standard lines in
             # I think it was due to the normal algorithm missing cases...
             if front!=back: back+=1 # don't run off yet!
@@ -79,24 +121,21 @@ def attempt(arr, sep, mean, n, tol=1e-7):
         else: front+=1              # front is greater so back can catch up
     
     # note that when no pairs are detected we cannot make any statement
-    if counter == 0: return np.nan
+    if counter == 0: 
+        if debug:
+            return np.nan, pairs
+        else:
+            return np.nan
     
     # saved up operations
     l_ans -= mean*counter
     r_ans -= mean*counter
     
-    return l_ans*r_ans
+    if debug:
+        return l_ans*r_ans, pairs
+    else:
+        return l_ans*r_ans
 
 if __name__ == "__main__":
     
-    cases, test_set1, test_set2 = genTestData()
-    
-    sep = 0.1
-    print 'test set 1 - separation is {}'.format(sep)
-    res1  = [attempt(arr, sep, arr.mean(), arr.size) for arr in cases]
-    testFn(res1, test_set1)
-    
-    sep = 0.0
-    print 'test set 2 - separation is {}'.format(sep)
-    res2  = [attempt(arr, sep, arr.mean(), arr.size) for arr in cases]
-    testFn(res2, test_set2)
+    debugRoutine(attempt)
