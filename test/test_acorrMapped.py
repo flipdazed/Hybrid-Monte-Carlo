@@ -90,11 +90,13 @@ def attempt(arr, sep, mean, n, tol=1e-7):
 if __name__ == "__main__":
     
     cases, test_set1, test_set2 = genTestData()
-    res1  = [attempt(arr, 0.1, arr.mean(), arr.size) for arr in cases]
-    res2  = [attempt(arr, 0.0, arr.mean(), arr.size) for arr in cases]
     
-    print 'test set 1'
+    sep = 0.1
+    print 'test set 1 - separation is {}'.format(sep)
+    res1  = [attempt(arr, sep, arr.mean(), arr.size) for arr in cases]
     testFn(res1, test_set1)
     
-    print 'test set 2'
+    sep = 0.0
+    print 'test set 2 - separation is {}'.format(sep)
+    res2  = [attempt(arr, sep, arr.mean(), arr.size) for arr in cases]
     testFn(res2, test_set2)
