@@ -73,6 +73,7 @@ def debugRoutine(func):
         res = []
         res_pairs = []
         for i, arr in enumerate(cases):
+            print "test",i
             try:
                 mean = arr.mean()
                 sol, pairs = func(arr, sep=sep, mean=mean, n=arr.size, debug=True)
@@ -113,24 +114,35 @@ def attempt(arr, sep, mean, n, tol=1e-7, debug=True):
     back  = 0   # back "pythony-pointer-thing"
     ans = 0.0
     counter = 0.0
-    
+    lst_f = np.nan
     while front < n:   # keep going until exhausted array
         diff = arr[front]-arr[back]
         
         if abs(diff-sep) < tol:     # if equal subject to tol: pair found
+            counter += 1
             
             # calculate the correlation function for matched pairs
             ans += (arr[front] - mean)*(arr[back] - mean)
-            
-            counter += 1
             if debug: pairs.append([arr[back], arr[front]])
             
-            # I can't remember why I put these non-standard lines in
-            # I think it was due to the normal algorithm missing cases...
-            if front-1>back:back+=1     #
-            elif front!=n-1: front+=1   
-            elif front>back: back+=1    # always the case
+            print "front {}, back {}, diff {}".format(front, back, abs(arr[front]-lst_f))
+            while abs(arr[front]-lst_f) < tol: # hold back while front scans dups
+                print "scanning front",front
+                
+                # calculate the correlation function for matched pairs
+                ans += (arr[front] - mean)*(arr[back] - mean)
+                if debug: pairs.append([arr[back], arr[front]])
+                
+               
+                if front!=n-1: front+=1
+                else: back+=1               # revert to moving back if front at limit
+            
+            if front-1==back: front+=1
+            elif front>back: back+=1        # always the case
             else: raise ValueError('Expected not to be called: front:{}, back:{}'.format(front, back))
+            
+            lst_f = arr[front]
+        
         elif diff > sep: back+=1    # close diff with back
         elif front>back: back+=1   # front is greater so back can catch up
         elif front==back:front+=1
@@ -144,6 +156,59 @@ def attempt(arr, sep, mean, n, tol=1e-7, debug=True):
     result = ans/float(counter)
     return (result, pairs) if debug else result
 
+def attempt2(arr, sep, mean, n, tol=1e-7, debug=True):
+    pairs = []
+    if sep == 0: # fast return
+        # this is a lot faster than np.unique as latter requires a mask over counts>1
+        # must be one variable if np.array([])
+        uniqueElms_counts = np.asarray([(v,c) for v,c in Counter(arr).iteritems() if c>1])
+        
+        if not uniqueElms_counts.size: # handle no unique items
+            result = np.nan
+            return (result, pairs) if debug else result
+        
+        combinations = binom(uniqueElms_counts[:,1],2)
+        
+        result = ((uniqueElms_counts[:,0]-mean)**2*combinations).sum() / combinations.sum()
+        
+        if debug: pairs = np.asarray([uniqueElms_counts[:,0]]*2).T
+        return (result, pairs) if debug else result
+    
+    front = 1   # front "pythony-pointer-thing"
+    back  = 0   # back "pythony-pointer-thing"
+    bssp  = 0   # back sweep start point
+    bsep  = 0   # back sweep end point
+    ans   = 0.0
+    count = 0.0
+    while front < n:   # keep going until exhausted array
+        diff = arr[front] - arr[back]
+        if debug: print "f {}, b {}, bssp {}, bsep {} :: diff {}".format(
+            front, back, bssp, bsep, abs(arr[front]-arr[back])<tol)
+        if abs(diff-sep) < tol:     # if equal subject to tol: pair found
+            if arr[front] - arr[front-1] < tol:
+                bssp = sep   # move sweet start point
+                back = sep   # and back to last front point
+                bsep = front # send start end point to front's position
+            else: 
+                bssp = front
+            
+            while back < bsep:
+                count += 1
+                # calculate the correlation function for matched pairs
+                ans += (arr[front] - mean)*(arr[back] - mean)
+                
+                if debug: pairs.append([arr[back], arr[front]])
+                back += 1
+            back = bssp # reset back to the sweep start point
+        front +=1
+    
+    # note that when no pairs are detected we cannot make any statement
+    if count == 0:
+        result = np.nan
+        return (result, pairs) if debug else result
+    
+    result = ans/float(count)
+    return (result, pairs) if debug else result
 if __name__ == "__main__":
     
-    debugRoutine(attempt)
+    debugRoutine(attempt2)
