@@ -27,6 +27,8 @@ class Leap_Frog(Init):
             'save_path':False
             }
         self.initDefaults(kwargs)
+        if self.n_steps == 1 and self.rand_steps: # save confusion
+            raise ValueError("Error: Exponentially distributed steps selected but n_steps = 1!")
         self.lengths = []
         self.newPaths() # create blank lists
         pass

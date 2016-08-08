@@ -141,7 +141,10 @@ def main(x0, pot, file_name,
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
         
         acs = c.getAcorr(separations, opFn, norm = False)   # non norm for uWerr
+        
         store.store(c.samples, file_name, '_samples')
+        store.store(acs, file_name, '_acs')
+        store.store(c.trajs, file_name, '_trajs')
         ans = errors.uWerr(c.op_samples, acorr=acs)         # get errors
         _, _, _, itau, itau_diff, _, acns = ans             # extract data
         w = errors.getW(itau, itau_diff, n=n_samples)       # get window length
@@ -151,7 +154,7 @@ def main(x0, pot, file_name,
         traj = c.trajs
         p = c.model.p_acc
         xx = c.op_mean
-        return xx, acns, acns_err, p, w
+        return xx, acns, acns_err, p, w, t
     #
     print 'Finished Running Model: {}'.format(file_name)
     # use multiprocessing
@@ -166,7 +169,7 @@ def main(x0, pot, file_name,
     # results have now been obtained. This operation is a dimension shuffle
     # Currently the first iterable dimension contains one copy of each item
     # Want to split into separate arrays each of length n
-    xx, acns, acns_err, ps, ws = zip(*ans)
+    xx, acns, acns_err, ps, ws, ts = zip(*ans)
     
     print '\n'*al           # hack to avoid overlapping with the progress bar from multiprocessing
     out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
@@ -181,11 +184,10 @@ def main(x0, pot, file_name,
     x = windowed_separations*step_size*n_steps      # create the x-axis in "ficticious HMC-time"
     aclabel = r'Measured: $C_{\phi^2}(t; '             \
         + r'\bar{P}_{\text{acc}}'+r'={:4.2f}; '.format(p)
-    yelpw = zip(acns, acns_err, angle_labels, ps, ws)   # this is an iterable of all a/c plot values
-    yelpw = yelpw                                       # cut to the same window length as x-axis
+    yelpwt = zip(acns, acns_err, angle_labels, ps, ws, ts)  # this is an iterable of all a/c plot values
     
     # create the dictionary item to pass to plot()
-    acns = {aclabel+r'\theta = {})$'.format(l) :(x, y[:2*w], e[:2*w]) for y,e,l,p,w_i in yelpw}
+    acns = {aclabel+r'\theta = {})$'.format(l) :(t, y[:2*w], e[:2*w]) for y,e,l,p,w_i,t in yelpwt}
     
     if acFunc is not None: # Create Dictionary for Plotting Theory
         fx_res = 100                                        # points per x-value
@@ -194,8 +196,8 @@ def main(x0, pot, file_name,
         fx = np.linspace(0, fx_f, fx_points, True)          # create the x-axis for the theory
         windowed_ps = ps[:2*w]                              # windowed acceptance probabilities
         # calculcate theory across all tau, varying p_acc and normalise
-        normFn = lambda pt: acFunc(t=fx, pa=pt[0], theta=pt[1])# / acFunc(t=0, pa=pt[0], theta=pt[1])
-        fs = map(normFn, zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
+        normFn = lambda pt: np.array([acFunc(t=xi, pa=pt[0], theta=pt[1]) for xi in fx])# / acFunc(t=0, pa=pt[0], theta=pt[1])
+        fs = map(normFn(pt), zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
         th_label = r'Theory: $C_{\phi^2}(t; ' \
             + r'\bar{P}_{\text{acc}} = '
         pfl = zip(ps, fs, angle_labels)                          # this is an iterable of all theory plot values

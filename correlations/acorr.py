@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*- 
 import numpy as np
 import itertools
+from scipy.special import binom
+from tqdm import tqdm
 
 from hmc import checks
 from hmc.common import Init
@@ -87,35 +89,39 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7):
         tol         :: float :: tolerance around zero (numpy errors)
     
     """
-    # fast return
-    if sep == 0: return ((op_samples-mean)**2).ravel().mean() / norm
     n = op_samples.shape[0]
-    front = 0
-    back  = 0
-    l_ans = 0.0
-    r_ans = 0.0
-    counter = 0.0
-    while back < n and front < n:                # keep going until exhausted array
-        diff = sep_map[front]-sep_map[back]
-        
-        if abs(diff-sep) < tol:     # if equal vs. subj to tol. then add
-        
-            # calculate the autocorrelation function for matched pairs
-            r_ans += op_samples[front]
-            l_ans += op_samples[back]
-            counter += 1
-            
-            if front!=back: back+=1 # don't run off yet!
-            elif front==n-1:back+=1 # hold front at n-1 until back gets there 
-            else: front+=1          # if front = back budge up front
-        elif diff > sep: back+=1    # close diff with back
-        else: front+=1              # front is greater so back can catch up
+    # note that in HMC we don't have any repeated elements so separations 0 
+    # can only be the array on itself
+    if sep == 0: acorr(op_samples, mean, separation=0, norm = norm)
     
-    # save operations
-    l_ans -= mean*counter
-    r_ans -= mean*counter
+    front = 1   # front "pythony-pointer-thing"
+    back  = 0   # back "pythony-pointer-thing"
+    bssp  = 0   # back sweep start point
+    bsfp  = 0   # back sweep finish point
+    ans   = 0.0 # store the answer
+    count = 0   # counter for averaging
+    new_front = True # the first front value is new
+    while front < n:            # keep going until exhausted sep_mapay
+        new_front = (sep_map[front]-sep_map[front-1]>tol)  # check if front value is a new one
+        back = bsfp if new_front else bssp         # this is the magical step
     
-    return np.ravel(l_ans*r_ans).mean() / norm
+        diff = sep_map[front] - sep_map[back]
+        if abs(diff - sep) < tol: # if equal subject to tol: pair found
+            if new_front:
+                bssp  = bsfp    # move sweep start point
+                back  = bsfp    # and back to last front point
+                bsfp  = front   # send start end point to front's position
+            else:
+                back  = bssp    # reset back to the sweep start point
+            while back < bsfp:  # calculate the correlation function for matched pairs
+                count+= 1
+                ans  += ((op_samples[front,:] - mean)*(op_samples[back,:] - mean)).ravel().mean()
+                back += 1
+        else:
+            if abs(sep_map[bssp+1]- sep_map[bssp]) > tol: bsfp = front
+        
+        front +=1
+    return ans/float(count)/norm if count > 0 else np.nan # cannot calculate if no pairs
 
 def acorr(op_samples, mean, separation, norm = 1.0):
     """autocorrelation of a measured operator with optional normalisation
@@ -197,21 +203,30 @@ class Autocorrelations_1d(Init, Base):
         # get mean for these samples if doesn't already exist - don't waste time doing multiple
         if not hasattr(self, 'op_mean'): self.op_mean = self.op_samples.ravel().mean()
         
-        # get normalised autocorrelations for each separation
-        separations.sort()
+        # This section flips between random and fixed trajectories
+        if self.model.rand_steps:
+            t = np.cumsum(self.trajs)
+            separations = np.linspace(t[0], t[t.size//2]-t[0], len(separations))
+            separations = tqdm(separations)
+            acFn = lambda separation, norm: acorrMapped(self.op_samples, sep_map=self.trajs, mean=self.op_mean,
+                sep=separation, norm=norm, tol=self.model.step_size/2.0)
+        else:
+            separations.sort()
+            acFn = lambda separation, norm: acorr(self.op_samples, mean=self.op_mean, 
+                separation=separation, norm=norm)
         
+        # get normalised autocorrelations for each separation
         if norm:
             if separations[0] == 0:
                 self.acorr = [1.] # first entry is the normalisation
                 separations = separations[1:]
             
             if not hasattr(self, 'op_norm'):
-                self.op_norm = acorr(self.op_samples, self.op_mean, separation=0)
+                self.op_norm = acFn(separation=0, norm=1.0)
             
-            self.acorr += [acorr(self.op_samples, self.op_mean, 
-                            s, self.op_norm) for s in separations]
+            self.acorr += [acFn(separation=s, norm=self.op_norm) for s in separations]
         else:
-            self.acorr = [acorr(self.op_samples, self.op_mean, s) for s in separations]
+            self.acorr = [acFn(separation=s, norm=1.0) for s in separations]
         
         self.acorr = np.asarray(self.acorr)
         

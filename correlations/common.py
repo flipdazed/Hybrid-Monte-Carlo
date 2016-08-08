@@ -1,4 +1,5 @@
 from hmc import checks
+from numpy import cumsum
 
 class Base(object):
     """Provides Base funcs for (auto)correlations"""
@@ -31,7 +32,7 @@ class Base(object):
         checks.tryAssertEqual(samples[0].size, max(samples[0].shape),
             "The lattice is not 1-dimensional: self.model.{}.shape ={}".format(
             self.attr_samples, samples[0].shape))
-        self.samples = samples[1:]  # the last burn-in sample is the 1st entry
+        self.samples = samples[1:]             # the last burn-in sample is the 1st entry
         self.trajs = trajs[1:]      # the last burn-in sample is the 1st entry
         pass
     
