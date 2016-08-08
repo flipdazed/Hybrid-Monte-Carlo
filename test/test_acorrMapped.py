@@ -1,18 +1,23 @@
 from scipy.special import binom
 import numpy as np
+from collections import Counter
 
 import sys, traceback
 
-def testFn(results, test):
+def testFn(results, test, res_pairs=None):
     """Takes in two arrays of your function results and compares to test data"""
     outcomes = ["Failed","Passed"]
-    for i,(r,t) in enumerate(zip(results, test)):
+    
+    if res_pairs is None: res_pairs = len(test)*[None]
+    for i,(r,t, pairs) in enumerate(zip(results, test, res_pairs)):
         try:
-            np.testing.assert_equal(r,t)
+            np.testing.assert_almost_equal(r,t)
             passed = True
         except:
             passed = False
-        print "  test:{} :: {} :: result: {:8.4f}; actual:{:8.4f}".format(i+1, outcomes[passed], r, t)
+        pr = "  test:{} :: {} :: res: {:6.3f} actual: {:6.3f}".format(i+1, outcomes[passed], r, t)
+        if pairs is not None: pr += " pairs: "+repr(["{:3.1f},{:3.1f}".format(i,j) for i,j in pairs])
+        print pr
     pass
 
 def genTestData():
@@ -38,7 +43,7 @@ def genTestData():
     # the test cases for 0.1 separation
     sep = 0.1
     t1a = np.nan
-    t1b = np.mean(equalSpacing(b, b.mean(), 1))
+    t1b = equalSpacing(b, b.mean(), 1)/float(n-1)
     t1c = (0.1-c.mean())*(0.2-c.mean()) #*5**2/5**2
     t1d = (equalSpacing(d[:2], dm, 1) + (.3-dm)*(.4-dm)*5.**2 + 2*(.4-dm)*(.5-dm))/(2.+5.**2+2.)
     
@@ -46,8 +51,8 @@ def genTestData():
     sep = 0.0
     t2a = 0.0
     t2b = np.nan
-    t2c = (0.0*nCr52 + (0.1-c.mean())**2*nCr52)/(2*nCr52)
-    t2d = ((0.4-dm)**2*nCr52 + (.4-dm)*(.5-dm)*2)/(nCr52+2)
+    t2c = ((0.1-c.mean())**2*nCr52 + (0.2-c.mean())**2*nCr52)/(nCr52+nCr52)
+    t2d = ((0.4-dm)**2*nCr52 + (.5-dm)**2)/(nCr52+1)
     
     test_set1 = [t1a, t1b, t1c, t1d]
     test_set2 = [t2a, t2b, t2c, t2d]
@@ -63,8 +68,8 @@ def debugRoutine(func):
     seps = [0.1, 0.0]
     cases, test_set1, test_set2 = genTestData()
     
-    for test_num, (test, sep) in enumerate(zip([test_set1, test_set2], seps)):
-        print 'Case {} :: separation of {}'.format(test_num, sep)
+    for test, sep in zip([test_set1, test_set2], seps):
+        print 'separation of {}'.format(sep)
         res = []
         res_pairs = []
         for i, arr in enumerate(cases):
@@ -81,60 +86,63 @@ def debugRoutine(func):
                 err = traceback.format_exc().splitlines()[-1]
                 line = traceback.extract_tb(exc_traceback)[-1][1]
                 expr = traceback.extract_tb(exc_traceback)[-1][-1]
-                print '   > Error: test {}, line: {}, type: {}, expr: {}'.format(i, line, err, expr)
-                
-        testFn(res, test)
+                print '   > Error: test {}, line: {}, type: {}, expr: {}'.format(i+1, line, err, expr)
+        
+        testFn(res, test, res_pairs)
     pass
 
 def attempt(arr, sep, mean, n, tol=1e-7, debug=True):
-    # fast return
-    if debug: pairs = []
-    if sep == 0:
-        if debug:
-            return ((arr-mean)**2).mean(), pairs
-        else:
-            return ((arr-mean)**2).mean()
+    pairs = []
+    if sep == 0: # fast return
+        # this is a lot faster than np.unique as latter requires a mask over counts>1
+        # must be one variable if np.array([])
+        uniqueElms_counts = np.asarray([(v,c) for v,c in Counter(arr).iteritems() if c>1])
+        
+        if not uniqueElms_counts.size: # handle no unique items
+            result = np.nan
+            return (result, pairs) if debug else result
+        
+        combinations = binom(uniqueElms_counts[:,1],2)
+        
+        result = ((uniqueElms_counts[:,0]-mean)**2*combinations).sum() / combinations.sum()
+        
+        if debug: pairs = np.asarray([uniqueElms_counts[:,0]]*2).T
+        return (result, pairs) if debug else result
     
     front = 0   # front "pythony-pointer-thing"
     back  = 0   # back "pythony-pointer-thing"
-    l_ans = 0.0 # left half of pair
-    r_ans = 0.0 # right half of pair
+    ans = 0.0
     counter = 0.0
     
     while front < n:   # keep going until exhausted array
         diff = arr[front]-arr[back]
         
         if abs(diff-sep) < tol:     # if equal subject to tol: pair found
-        
+            
             # calculate the correlation function for matched pairs
-            r_ans += arr[front]
-            l_ans += arr[back]
+            ans += (arr[front] - mean)*(arr[back] - mean)
+            
             counter += 1
             if debug: pairs.append([arr[back], arr[front]])
             
             # I can't remember why I put these non-standard lines in
             # I think it was due to the normal algorithm missing cases...
-            if front!=back: back+=1 # don't run off yet!
-            elif front==n-1:back+=1 # hold front at n-1 until back gets there 
-            else: front+=1          # if front = back budge up front
+            if front-1>back:back+=1     #
+            elif front!=n-1: front+=1   
+            elif front>back: back+=1    # always the case
+            else: raise ValueError('Expected not to be called: front:{}, back:{}'.format(front, back))
         elif diff > sep: back+=1    # close diff with back
-        else: front+=1              # front is greater so back can catch up
+        elif front>back: back+=1   # front is greater so back can catch up
+        elif front==back:front+=1
+        else: raise ValueError('Expected not to be called: front:{}, back:{}'.format(front, back))
     
     # note that when no pairs are detected we cannot make any statement
-    if counter == 0: 
-        if debug:
-            return np.nan, pairs
-        else:
-            return np.nan
+    if counter == 0:
+        result = np.nan
+        return (result, pairs) if debug else result
     
-    # saved up operations
-    l_ans -= mean*counter
-    r_ans -= mean*counter
-    
-    if debug:
-        return l_ans*r_ans, pairs
-    else:
-        return l_ans*r_ans
+    result = ans/float(counter)
+    return (result, pairs) if debug else result
 
 if __name__ == "__main__":
     
