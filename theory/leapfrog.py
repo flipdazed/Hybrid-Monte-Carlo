@@ -37,7 +37,7 @@ def siL(m, tau, lattice_p, i=2, **kwargs):
     Then used in Eq. (63)
     """
     n  = lattice_p.size
-    w2 = m**2 + 4*sin(np.pi*lattice_p.ravel()/n)**2
+    w2 = m**2 + 4.*sin(np.pi*lattice_p.ravel()/n)**2
     w  = sqrt(w2)
     wi = w2**i
     
@@ -50,21 +50,20 @@ def s2(m, tau, **kwargs):
     Required Inputs
         m   :: float :: mass
         tau :: float :: av. trajectory length
-        t   :: float :: fictitious time
     """
     c = 4.*tau
     m2 = m*m
     m4 = m2*m2
-    s0 = 3 - 3*j0(c) + jn(2, c) - jn(4,c)
-    s2 = m2*(2 - 2*j0(c) + 4*tau*jn(1, c) + jn(2, c))
-    s4 = m4*.5*(1 + (2*tau**2 - 1)*j0(c) + 3*tau*jn(1, c))
+    s0 = 3. - 3.*j0(c) + jn(2., c) - jn(4.,c)
+    s2 = m2*(2. - 2.*j0(c) + 4*tau*jn(1, c) + jn(2., c))
+    s4 = m4*.5*(1. + (2.*tau**2. - 1.)*j0(c) + 3.*tau*jn(1., c))
     sigma = s0 + s2 + s4
-    if sigma < 0:
+    if sigma < 0.:
         print 'Warning: Sigma < 0... Coefficients of m**n listed:'
         print '> m**0: {}\n> m**2: {}\n> m**4: {}'.format(s0, s2, s4)
     return sigma
 #
-def avH(tau, dtau, m, n, t, i=1, **kwargs):
+def avH(tau, dtau, m, n, i=1, **kwargs):
     """Average hamiltonian in Leap Frog MDMC
     
     Required Inputs
@@ -72,9 +71,7 @@ def avH(tau, dtau, m, n, t, i=1, **kwargs):
         dtau    :: float :: step size
         m       :: float :: mass
         n       :: integer :: number of lattice sites
-        t       :: float :: ficticious HMC - time (i_samples * n_steps * step_size) 
     """
-    if i > 1: 
-        raise NotImplemented("Requires implementation for i>1")
+    if i > 1: raise NotImplemented("Requires implementation for i>1")
     x = n*dtau**(4*i + 4)
-    return 2*pi1[0]**2*x*s2(m=m, tau=tau,t=t)
+    return 2.*pi1[0]**2*x*s2(m=m, tau=tau)
