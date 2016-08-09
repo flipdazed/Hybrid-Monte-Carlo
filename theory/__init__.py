@@ -3,4 +3,7 @@ import autocorrelations
 import operators
 import leapfrog
 import acceptance
-import clibs
+try:
+    import clibs
+except:
+    print "failed to import c++"

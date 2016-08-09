@@ -7,10 +7,10 @@ from correlations.corr import twoPoint
 from theory.autocorrelations import M2_Exp as Theory
 from theory.operators import phi2_1df
 from theory.acceptance import acceptance
-from theory.clibs.autocorrelations.exponential import hmc
+#from theory.clibs.autocorrelations.exponential import hmc
 
 m = 1.0
-n_steps   = 40
+n_steps   = 20
 step_size = 1./((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
 
@@ -20,12 +20,12 @@ th = Theory(tau=step_size*n_steps, m=m)
 file_name = __file__
 pot = KG(m=m)
 
-n, dim = 20, 1
+n, dim = 10, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.
 
-n_samples, n_burn_in = 100000, 25
-c_len     = 5000
+n_samples, n_burn_in = 1000000, 50
+c_len     = 500
 
 mixing_angles = [.5*np.pi]
 angle_labels = [r'\frac{\pi}{2}']
@@ -36,7 +36,7 @@ op_name = r'$\hat{O} = \sum_{pq} \Omega \phi_p\phi_q :\Omega = \delta_{p0}\delta
 op_theory   = phi2_1df(mu=pot.m, n=x0.size, a=spacing, sep=0)
 pacc_theory = acceptance(dtau=step_size, tau=tau, n=x0.size, m=pot.m)
 
-acFunc = lambda t, pa, theta: hmc(pa, tau*m, 1./tau, t)
+acFunc = None #lambda t, pa, theta: hmc(pa, tau*m, 1./tau, t)
 
 print '> Trajectory Length: tau: {}'.format(tau)
 print '> Step Size: {}'.format(step_size)

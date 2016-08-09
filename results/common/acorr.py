@@ -141,10 +141,11 @@ def main(x0, pot, file_name,
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
         
         acs = c.getAcorr(separations, opFn, norm = False)   # non norm for uWerr
-        
         store.store(c.samples, file_name, '_samples')
-        store.store(acs, file_name, '_acs')
         store.store(c.trajs, file_name, '_trajs')
+        store.store(c.model.p_acc, file_name, '_probs')
+        store.store(acs, file_name, '_acs')
+        
         ans = errors.uWerr(c.op_samples, acorr=acs)         # get errors
         _, _, _, itau, itau_diff, _, acns = ans             # extract data
         w = errors.getW(itau, itau_diff, n=n_samples)       # get window length

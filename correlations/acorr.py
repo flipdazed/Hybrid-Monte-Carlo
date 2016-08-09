@@ -92,7 +92,7 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7):
     n = op_samples.shape[0]
     # note that in HMC we don't have any repeated elements so separations 0 
     # can only be the array on itself
-    if sep == 0: acorr(op_samples, mean, separation=0, norm = norm)
+    if sep == 0: return acorr(op_samples, mean, separation=0, norm = norm)
     
     front = 1   # front "pythony-pointer-thing"
     back  = 0   # back "pythony-pointer-thing"
@@ -174,7 +174,7 @@ class Autocorrelations_1d(Init, Base):
         self._setUp()
         pass
     
-    def getAcorr(self, separations, op_func, norm = False):
+    def getAcorr(self, separations, op_func, norm = False, prll_map=None):
         """Returns the autocorrelations for a specific sampled operator 
         
         Once the model is run then the samples can be passed through the autocorrelation
@@ -186,6 +186,7 @@ class Autocorrelations_1d(Init, Base):
         
         Optional Inputs
             norm    :: bool :: specifiy whether to normalise the autocorrelations
+            prll_map :: fn :: the prll_map from results.common.utils for multicore usage
         
         Notes: op_func must be optimised to only take ALL HMC trajectories as an input
         """
@@ -206,30 +207,26 @@ class Autocorrelations_1d(Init, Base):
         # This section flips between random and fixed trajectories
         if self.model.rand_steps:
             t = np.cumsum(self.trajs)
-            separations = np.linspace(t[0], t[t.size//2]-t[0], len(separations))
+            separations = np.linspace(t[0], self.model.step_size*len(separations)/2., len(separations))
             separations = tqdm(separations)
-            acFn = lambda separation, norm: acorrMapped(self.op_samples, sep_map=self.trajs, mean=self.op_mean,
-                sep=separation, norm=norm, tol=self.model.step_size/2.0)
+            acFn = lambda separation: acorrMapped(self.op_samples, sep_map=self.trajs, mean=self.op_mean,
+                sep=separation, norm=1.0, tol=self.model.step_size/2.0)
         else:
             separations.sort()
-            acFn = lambda separation, norm: acorr(self.op_samples, mean=self.op_mean, 
-                separation=separation, norm=norm)
+            acFn = lambda separation: acorr(self.op_samples, mean=self.op_mean, 
+                separation=separation, norm=1.0)
         
         # get normalised autocorrelations for each separation
         if norm:
-            if separations[0] == 0:
-                self.acorr = [1.] # first entry is the normalisation
-                separations = separations[1:]
-            
             if not hasattr(self, 'op_norm'):
-                self.op_norm = acFn(separation=0, norm=1.0)
-            
-            self.acorr += [acFn(separation=s, norm=self.op_norm) for s in separations]
+                self.op_norm = acFn(separation=0)
         else:
-            self.acorr = [acFn(separation=s, norm=1.0) for s in separations]
-        
-        self.acorr = np.asarray(self.acorr)
-        
+            self.op_norm = 1.0
+        if prll_map is not None:
+            self.acorr = prll_map(acFn, separations, verbose=True)
+        else:
+            self.acorr = [acFn(separation=s) for s in separations]
+        self.acorr = np.asarray(self.acorr)/ self.op_norm
         return self.acorr
         
     

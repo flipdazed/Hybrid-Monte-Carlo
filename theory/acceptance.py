@@ -31,7 +31,7 @@ def acceptance(dtau, delta_h=None, **kwargs):
     """
     
     if delta_h is None:
-        reqs = ['tau','m','n', 't']
+        reqs = ['tau','m','n']
         if all(k in kwargs for k in reqs):
             delta_h = leapfrog.avH(dtau=dtau, **kwargs)
         else:
