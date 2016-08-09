@@ -30,13 +30,10 @@ cumut     = np.cumsum(t)
 min_sep   = 0.
 max_sep   = 10.0
 res       = step_size
-
-# theory calclations
-th_x     = np.linspace(min_sep, max_sep, 1000)
-th = np.array([hmc(p, phi, r, i) for i in th_x])
+tolerance = res/2.-step_size*0.1
 
 # calculate autocorrelations
-aFn = lambda s: acorrMapped(cfn, cumut, s, av_cfn, norm=1.0, tol=res/2., counts=True)
+aFn = lambda s: acorrMapped(cfn, cumut, s, av_cfn, norm=1.0, tol=tolerance, counts=True)
 separations = np.linspace(min_sep, max_sep, (max_sep-min_sep)/res+1)
 
 # multicore
@@ -45,6 +42,10 @@ a,counts = zip(*result)
 
 a = np.asarray(a)           # the autocorrelation array
 counts = np.array(counts)   # the counts at each separation
+
+# theory calclations
+th_x = np.linspace(min_sep, max_sep, 1000)
+th = np.array([hmc(p, phi, r, i) for i in th_x])
 
 pp = Pretty_Plotter()
 pp._teXify()
@@ -69,7 +70,7 @@ ax[0].plot(th_x, th, linewidth=2.0, alpha=0.6, label=th_label)
 ax[0].legend(loc='best', shadow=True, fontsize = 12, fancybox=True)
 ax[0].set_ylabel(r'Unnormalised Correlation Function, $\mathcal{C}(t)$')
 
-ax[1].set_title('Counts of trajectories at each separation', fontsize = 12)
-ax[1].bar(separations, counts, width=0.1, edgecolor=none, alpha=0.6, label=r'Bin Width = $\delta\tau$')
+ax[1].set_title(r'Counts of trajectories at each separation - $10^6$ at $t=0$ omitted', fontsize = 12)
+ax[1].bar(separations[1:], counts[1:], linewidth=0, alpha=0.6, width = tolerance, label=r'Separation Tolerance = $\delta\tau/2$ i.e. Bins of $\tau$')
 ax[1].legend(loc='best', shadow=True, fontsize = 12, fancybox=True)
 ax[1].set_ylabel(r'Count')
