@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- 
+from __future__ import division
 import numpy as np
 import itertools
 from scipy.special import binom
@@ -56,7 +57,7 @@ def correlated_data(tau = 5, n = 10000):
         nu[i] = np.sqrt(1 - asq)*eta[i] + a * nu[i-1]
     return [[nu*0.2 + 1]]
 
-def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7):
+def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=False):
     """as acorr() except this function maps the correlation to a non homogenous
     separation mapping from t=0 that is provided by `sep_map`
     
@@ -87,12 +88,18 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7):
     Optional Inputs
         norm        :: float :: the autocorrelation with separation=0
         tol         :: float :: tolerance around zero (numpy errors)
+        counts      :: bool  :: return counts in a tuple
     
+    Notes :: Assume that front is ALWAYS ahead of back so that
+    we can do (diff - sep) < tol without abs()
     """
     n = op_samples.shape[0]
     # note that in HMC we don't have any repeated elements so separations 0 
     # can only be the array on itself
-    if sep == 0: return acorr(op_samples, mean, separation=0, norm = norm)
+    if sep == 0: 
+        result = acorr(op_samples, mean, separation=0, norm = norm)
+        if counts: result = (result, op_samples.size)
+        return result
     
     front = 1   # front "pythony-pointer-thing"
     back  = 0   # back "pythony-pointer-thing"
@@ -102,11 +109,10 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7):
     count = 0   # counter for averaging
     new_front = True # the first front value is new
     while front < n:            # keep going until exhausted sep_mapay
-        new_front = (sep_map[front]-sep_map[front-1]>tol)  # check if front value is a new one
+        new_front = sep_map[front]-sep_map[front-1] > tol  # check if front value is a new one
         back = bsfp if new_front else bssp         # this is the magical step
-    
-        diff = sep_map[front] - sep_map[back]
-        if abs(diff - sep) < tol: # if equal subject to tol: pair found
+        
+        if sep_map[front] - sep_map[back] - sep < tol: # if equal subject to tol: pair found
             if new_front:
                 bssp  = bsfp    # move sweep start point
                 back  = bsfp    # and back to last front point
@@ -117,11 +123,13 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7):
                 count+= 1
                 ans  += ((op_samples[front,:] - mean)*(op_samples[back,:] - mean)).ravel().mean()
                 back += 1
-        else:
-            if abs(sep_map[bssp+1]- sep_map[bssp]) > tol: bsfp = front
+        else:   # check if there is a new back
+            if sep_map[bssp+1] - sep_map[bssp] > tol: bsfp = front
         
         front +=1
-    return ans/float(count)/norm if count > 0 else np.nan # cannot calculate if no pairs
+    result = ans/count*norm if count > 0.0 else np.nan # cannot calculate if no pairs
+    if counts: result = (result, count)
+    return result
 
 def acorr(op_samples, mean, separation, norm = 1.0):
     """autocorrelation of a measured operator with optional normalisation
