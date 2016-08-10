@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from theory.clibs.autocorrelations.exponential import hmc
-from correlations.corr import twoPoint
+from theory.operators import magnetisation_sq
 from correlations.acorr import acorrMapped
 from results.common.utils import prll_map
 from results.data.store import load
@@ -13,7 +13,7 @@ t = load('results/data/numpy_objs/acorr_xx_hmc_kg_trajs.json')
 p = load('results/data/other_objs/acorr_xx_hmc_kg_probs.pkl')
 s = load('results/data/numpy_objs/acorr_xx_hmc_kg_samples.json')
 
-cfn = twoPoint(s, 0)
+cfn = magnetisation_sq(s)
 av_cfn = cfn.mean()
 
 n, dim    = 10, 1
@@ -26,11 +26,12 @@ step_size = 1./((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
 r         = 1/tau
 phi       = tau*m
-cumut     = np.cumsum(t)
+
 min_sep   = 0.
 max_sep   = 10.0
 res       = step_size
 tolerance = res/2.-step_size*0.1
+cumut     = np.cumsum(t)
 
 # calculate autocorrelations
 aFn = lambda s: acorrMapped(cfn, cumut, s, av_cfn, norm=1.0, tol=tolerance, counts=True)

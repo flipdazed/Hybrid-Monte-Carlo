@@ -78,13 +78,15 @@ class Periodic_Lattice(np.ndarray):
         
         This is NOT compatible with slicing
         """
-        if not hasattr(index, '__iter__'): return index         # handle integer slices
-        if len(index) != len(self.lattice_shape): return index  # must reference a scalar
-        if any(type(i) == slice for i in index): return index   # slices not supported
-        if len(index) == len(self.lattice_shape):               # periodic indexing of scalars
-            mod_index = tuple(( (i%s + s)%s for i,s in zip(index, self.lattice_shape)))
-            return mod_index
-        raise ValueError('Unexpected index: {}'.format(index))
+        # if not hasattr(index, '__iter__'): return index         # handle integer slices
+        # if len(index) != len(self.lattice_shape): return index  # must reference a scalar
+        # if any(type(i) == slice for i in index): return index   # slices not supported
+        try:
+            if len(index) == len(self.lattice_shape):               # periodic indexing of scalars
+                mod_index = tuple(( (i%s + s)%s for i,s in zip(index, self.lattice_shape)))
+                return mod_index
+        except:
+            raise ValueError('Unexpected index: {}'.format(index))
     
 #
 def laplacian(lattice, position, a_power=0):

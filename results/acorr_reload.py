@@ -12,7 +12,7 @@ dest = 'results/data/other_objs/{}_allPlot.pkl'.format(file_name)
 a = load(dest)
 
 m = 1.0
-n_steps   = 40
+n_steps   = 20
 step_size = 1/((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 pa = 1.00
 tau = 1/(n_steps*step_size)

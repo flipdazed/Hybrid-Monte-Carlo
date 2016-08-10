@@ -22,9 +22,17 @@ for m in Line2D.filled_markers: # generate a list of markers
 # randomly order and create an iterable of markers to select from
 marker = (i for i in random.sample(markers, len(markers)))
 
-# do the same as above with colours but exclude lame colours
-clist = [i for i in colors.ColorConverter.colors if i not in ['snow', 'white', 'k', 'w', 'r']]
-colours = [i for i in random.sample(clist, len(clist))]
+# generatte basic colours list
+clist = [i for i in colors.ColorConverter.colors if i != 'w']
+colour = [i for i in random.sample(clist, len(clist))]
+
+# generate only dark colours
+darkclist = [i for i in colors.cnames if 'dark' in i]
+darkcolour = [i for i in random.sample(darkclist, len(darkclist))]
+lightcolour = map(lambda strng: strng.replace('dark',''), darkcolour)
+
+theory_colours = iter(darkcolour)
+measured_colours = iter(lightcolour)
 
 from scipy.optimize import curve_fit
 def expFit(t, a, b, c):
@@ -50,6 +58,7 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
+    pp.params['text.latex.preamble'] =r"\usepackage{amssymb}"
     pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
     pp._updateRC()
     
@@ -64,8 +73,7 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
     
     # Add top pseudo-title and bottom shared x-axis label
     ax[0].set_title(subtitle, fontsize=pp.tfont)
-    ax[-1].set_xlabel(r'Av. trajectories between samples, '\
-        + r'$t = \langle\frac{\tau_{i+t} - \tau_{i}}{n}\rangle \frac{1}{\delta\tau}$')
+    ax[-1].set_xlabel(r'Window Length')
     
     if not mcore: # don't want clutter in a multiple plot env.
         for a in range(1,len(ax)):  # Add the Window stop point as a red line
@@ -79,11 +87,12 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
     #### plot for the 0th axis ####
     line_list = lines_d[0]
     axis = ax[0]
-    colour = iter(colours)  # reset the iterable
+    theory_colours = iter(colour)
+    measured_colours = iter(colour)
     for x, lines in zip(x_lst, line_list):
         m = next(marker)        # get next marker style
-        c = next(colour)        # get next colour
-        
+        c = next(measured_colours)        # get next colour
+        th_c = next(theory_colours)
         # split into y function, errors in y and label
         y, e, l = lines # in this case there are no errors or labels used
         
@@ -98,6 +107,7 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
             axis.plot(x, yp, color=c, lw=1., alpha=0.6)   # label with the angle
             axis.plot(x, ym, color='r', lw=1., alpha=0.6)
             once_label = None                     # set to blank so don't get multiple copies
+        
     if not mcore: axis.legend(loc='best', shadow=True, fontsize = pp.axfont)
     
     #### plot the 1st axis ###
@@ -106,16 +116,21 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
     # so the label on the bottom axis is enough
     line_list = lines_d[1]
     axis = ax[1]
-    colour = iter(colours)      # reset the iterable
+    theory_colours = iter(colour)
+    measured_colours = iter(colour)
     for x, lines in zip(x_lst, line_list):
         m = next(marker)        # get next marker style
-        c = next(colour)        # get next colour
+        c = next(measured_colours)        # get next colour
+        th_c = next(theory_colours)
         y, e, l, t = lines         # split into y function, errors, label and theory
-        axis.fill_between(x, y-e, y+e, color=c, alpha=0.5)
+        try:
+            axis.fill_between(x, y-e, y+e, color=c, alpha=0.5)
+        except:
+            print "errors are dodgy"
+            axis.errorbar(x, y, yerr=e, markersize=3, color=c, fmt=m, alpha=0.5, ecolor='k')
         if t is not None:
-            axis.axhline(y=t, linewidth=1, color = c, linestyle='--')
-        # errorbar(x, y, yerr=e, markersize=3,
-        #     color=c, fmt=m, alpha=0.5, ecolor='k')
+            axis.axhline(y=t, linewidth=1, color = th_c, linestyle='--')
+        
         
         # Only add informative label if there is only one line
         # adds a pretty text box above the middle plot with info
@@ -126,17 +141,23 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
     # This plot explicitly list the labels for all the angles
     line_list = lines_d[2]
     axis = ax[2]
-    colour = iter(colours)      # reset the iterable
+    theory_colours = iter(colour)
+    measured_colours = iter(colour)
     for x, lines, a in zip(x_lst, line_list, angle_labels):
         m = next(marker)        # get next marker style
-        c = next(colour)        # get next colour
-        y, e, l = lines         # split into y function, errors in y and label
+        c = next(measured_colours)        # get next colour
+        th_c = next(theory_colours)
+        y, e, l, t = lines         # split into y function, errors in y and label
         try:    # errors when there are low number of sims
-            axis.fill_between(x, y-e, y+e, color=c, alpha=0.5, label=a)
+            axis.fill_between(x, y-e, y+e, color=c, alpha=0.6, label=a)
             # axis.errorbar(x, y, yerr=e, label = a,
 #                 markersize=3, color=c, fmt=m, alpha=0.5, ecolor='k')
         except: # avoid crashing
             print 'Too few MCMC simulations to plot autocorrelations for: {}'.format(a)
+        
+        if t is not None:
+            axis.plot(x, t, linewidth=1.2, alpha=0.9, color=th_c, linestyle='-', label='Theoretical')
+        
     axis.legend(loc='best', shadow=True, fontsize = pp.axfont)
     
     #### start outdated section ####
@@ -166,7 +187,8 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
 #
 def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         opFn, op_name, rand_steps = False, step_size = .5, n_steps = 1,
-        spacing = 1., itauFunc = None,
+        spacing = 1., itauFunc = None, separations = range(5000),
+        acTheory=None,
         save = False):
     """Takes a function: opFn. Runs HMC-MCMC. Runs opFn on HMC samples.
         Calculates Autocorrelation + Errors on opFn.
@@ -179,7 +201,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         n_burn_in   :: int :: number of burn in samples
         mixing_angle :: iterable :: mixing angles for the HMC algorithm
         angle_labels :: list :: list of angle label text for legend plotting
-        opFn        :: func :: a function o run over samples
+        opFn        :: func :: a function to run over samples
         op_name     :: str :: label for the operator for plotting
     
     Optional Inputs
@@ -188,6 +210,8 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         n_steps :: int :: number of MDMC steps
         spacing ::float :: lattice spacing
         save :: bool :: True saves the plot, False prints to the screen
+        acTheory :: func :: acTheory(t, pa, theta) takes in acceptance prob., time, angle 
+        separations :: range / nparray :: the number of separations for A/C
     """
     rng = np.random.RandomState()
     multi_angle = len(mixing_angle) > 1         # see if multiprocessing is needed
@@ -203,24 +227,25 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         model = Model(x0, pot=pot, spacing=spacing, # set up model
             rng=rng, step_size = step_size,
             n_steps = n_steps, rand_steps=rand_steps)
-        
         c = acorr.Autocorrelations_1d(model)                    # set up autocorrs
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in,    # run MCMC
             mixing_angle = mixing_angle, verbose=True)
-        cfn = opFn(c.model.samples)                             # run func on HMC samples
+        acs = c.getAcorr(separations, opFn, norm = False, prll_map=None)
+        cfn = c.op_samples
         
         # get parameters generated
         traj = c.model.traj         # get trajectory lengths for each LF step
         p = c.model.p_acc           # get acceptance rates at each M-H step
-        xx = np.average(cfn)        # get average of the function run over the samples
+        xx = np.average(c.op_samples)        # get average of the function run over the samples
         
-        if itauFunc:
-            t = itauFunc(tau=(n_steps*step_size), m=1, pa=p, theta=mixing_angle)
-        else:
-            t = None
+        if itauFunc: t = itauFunc(tau=(n_steps*step_size), m=1, pa=p, theta=mixing_angle)
+        else: t = None
+        if acTheory is not None: 
+            ac_th = np.asarray([acTheory(t, p,mixing_angle) for t in c.acorr_ficticous_time])
+        else: ac_th = None
         
-        ans = errors.uWerr(cfn)                 # get the errors from uWerr
-        x, gta, w = preparePlot(cfn, ans=ans, n=n_samples, theory=t, mcore=False)
+        ans = errors.uWerr(cfn, acorr=acs)
+        x, gta, w = preparePlot(cfn, ans, n=n_samples, itau_theory=t, mcore = False, acn_theory=ac_th)
         window_fns, int_ac_fns, acorr_fns = [[item] for item in gta]
         ws   = [w]                              # makes compatible with multiproc
         x_lst = [x]                             # again same as last two lines
@@ -237,20 +262,21 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
             c = acorr.Autocorrelations_1d(model)                    # set up autocorrs
             c.runModel(n_samples=n_samples, n_burn_in=n_burn_in,    # run MCMC
                 mixing_angle = a, verbose=True, verb_pos=i)
-            cfn = opFn(c.model.samples)                             # run func on HMC samples
-            
+            acs = c.getAcorr(range(100), opFn, norm = False, prll_map=None, ac=acs)
+            cfn = c.op_samples
             # get parameters generated
-            traj = c.model.traj         # get trajectory lengths for each LF step
             p = c.model.p_acc          # get acceptance rates at each M-H step
             xx = np.average(cfn)        # get average of the function run over the samples
             
-            ans = errors.uWerr(cfn)
-            if itauFunc:
-                t = itauFunc(tau=n_steps*step_size, m=1, pa=p, theta=a)
-            else:
-                t = None
-            print t
-            x, gta, w = preparePlot(cfn, ans=ans, n = n_samples, theory=t, mcore = True)
+            ans = errors.uWerr(cfn, acorr=acs)
+            if itauFunc: t = itauFunc(tau=n_steps*step_size, m=1, pa=p, theta=a)
+            else: t = None
+            if acTheory is not None: 
+                th_x = np.linspace(0, c.acorr_ficticous_time, 10000)
+                ac_th = np.asarray([th_x,[acTheory(t, p, a) for t in th_x]])
+            else: ac_th = None
+            
+            x, gta, w = preparePlot(cfn, n=n_samples, itau_theory=t, mcore = True, acn_theory=ac_th)
             return xx, traj, p, x, gta, w
         #
         # use multiprocessing
@@ -285,37 +311,43 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         )
     pass
 #
-def preparePlot(op_samples, ans, n, theory=None, mcore=False):
+def preparePlot(op_samples, ans, n, itau_theory=None, acn_theory=None, mcore=False):
     """Prepares the plot according to the output of uWerr
     
     Required Inputs
         op_samples :: np.ndarray :: function acted upon the HMC samples
         ans :: tuple :: output form uWerr
         n   :: int   :: number of samples from MCMC
-        theory   :: float :: theoretical iTau value
     
     Optional Input
+        itau_theory   :: float :: theoretical iTau value
+        acn_theory    :: float :: theoretical ac values plotted against ficticous time NOT window length
         mcore :: bool :: flag that ans is a nested list of l_ans = [ans, ans, ...]
     """
     
     f_aav, f_diff, f_ddiff, itau, itau_diff, itaus, acn = ans
     
-    w = round((f_ddiff/f_diff)**2*n - .5, 0)            # obtain the best windowing point
-    l = min(itaus.size, int(2*w)+1)
-    fn = lambda t: acorr.acorr(op_samples=op_samples, mean=f_aav, separation=t)
-    ac  = np.asarray([fn(t=t) for t in range(0, l)])    # calculate autocorrelations
-    itaus_diff  = errors.itauErrors(itaus, n=n)         # calcualte error in itau
-    
-    g_int = np.cumsum(ac[1:l]/ac[0])                    # recreate the g_int function
+    if not np.isnan(itau):
+        w = errors.getW(itau, itau_diff, n)            # get window
+        l = w*2
+        itaus_diff  = errors.itauErrors(itaus, n=n)             # calcualte error in itau
+        acn_diff = errors.acorrnErr(acn, w, n)                  # note acn not ac is used
+        itau_label = r"$\tau_{\text{int}}(w_{\text{best}} = " + r"{}) = ".format(int(w)) \
+            + r"{:.2f} \pm {:.2f}$".format(itau, itau_diff)
+    else:
+        w = np.nan
+        l = acn.size//2
+        itaus_diff = np.zeros(acn.shape)
+        acn_diff = np.zeros(acn.shape)
+        itau_label = r"$\tau_{\text{int}}(w_{\text{best}}:\ \text{n/a}) = \text{n/a}$"
+        
+    if acn_theory is not None: acn_theory = acn_theory[:l]
+    g_int = np.cumsum(np.nan_to_num(acn[1:l]/acn[0]))                    # recreate the g_int function
     g = np.asarray([errors.gW(t, v, 1.5, n) for t,v in enumerate(g_int,1)]) # recreate the gW function
-    acn_diff = errors.acorrnErr(acn, w, n)                  # note acn not ac is used
     
-    itau_label = r"$\tau_{\text{int}}(w_{\text{best}} = " + r"{}) = ".format(int(w)) \
-        + r"{:.2f} \pm {:.2f}$".format(itau, itau_diff)
     x = np.arange(l) # same size for itaus and acn
-    
     g = np.insert(g,0,np.nan)   # g starts at x[1] not x[0]
     
     # create items for plotting
-    gta = (g, None, ''), (itaus[:l], itaus_diff[:l], itau_label, theory), (acn[:l], acn_diff[:l], '')
+    gta = (g[:l], None, ''), (itaus[:l], itaus_diff[:l], itau_label, itau_theory), (acn[:l], acn_diff[:l], '', acn_theory)
     return x, gta, w

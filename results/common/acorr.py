@@ -1,3 +1,4 @@
+from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
@@ -8,7 +9,7 @@ from scipy import stats
 from data import store
 from utils import saveOrDisplay, prll_map
 
-from correlations import acorr, corr, errors
+from correlations import acorr, errors
 from models import Basic_GHMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
 
@@ -40,6 +41,7 @@ def plot(acns, lines, subtitle, op_name, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
+    pp.params['text.latex.preamble'] =r"\usepackage{amssymb}"
     pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
     pp._updateRC()
     
@@ -65,13 +67,15 @@ def plot(acns, lines, subtitle, op_name, save):
         # p2 = ax[0].add_patch(Rectangle((0, 0), 0, 0, fc=c, linewidth=0, alpha=.4, label=label))
         try:
             if e is not None:
-                ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
+                # ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
+                ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
+                    label=label)
             else:
                 ax[0].scatter(x, y, c=c, ms=3, fmt='o', alpha=0.5, label=label)
         except Exception, e:
-            print 'Failed for "{}"'.format(label)
-            print 'Shapes: x:{} y:{} e:{}'.format(x.shape, y.shape, e.shape)
-            print 'Error:'
+            print '\nFailed for "{}"'.format(label)
+            print 'Wrong types? x:{} y:{} e:{}'.format(type(x), type(y), type(e))
+            print '\nError:'
             print e
     
     for label, line in sorted(lines.iteritems()):
@@ -116,6 +120,8 @@ def main(x0, pot, file_name,
         acFunc :: func :: function for evaluating autocorrelations
         save :: bool :: True saves the plot, False prints to the screen
     """
+    al = len(mixing_angles) # the number of mixing angles
+    send_prll = prll_map if al==1 else None
     
     # required declarations. If no lines are provided this still allows iteration for 0 times
     lines = {}  # contains the label as the key and a tuple as (x,y) data in the entry
@@ -140,27 +146,29 @@ def main(x0, pot, file_name,
         c = acorr.Autocorrelations_1d(model)
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
         
-        acs = c.getAcorr(separations, opFn, norm = False)   # non norm for uWerr
-        store.store(c.samples, file_name, '_samples')
-        store.store(c.trajs, file_name, '_trajs')
-        store.store(c.model.p_acc, file_name, '_probs')
-        store.store(acs, file_name, '_acs')
+        acs = c.getAcorr(separations, opFn, norm = False, prll_map=send_prll)   # non norm for uWerr
+        
+        # get parameters generated
+        traj        = np.cumsum(c.trajs)
+        p           = c.model.p_acc
+        xx          = c.op_mean
+        acorr_seps  = c.acorr_ficticous_time
+        acorr_counts= c.acorr_counts
         
         ans = errors.uWerr(c.op_samples, acorr=acs)         # get errors
         _, _, _, itau, itau_diff, _, acns = ans             # extract data
         w = errors.getW(itau, itau_diff, n=n_samples)       # get window length
-        acns_err = errors.acorrnErr(acns, w, n_samples)     # get autocorr errors
+        acns_err = errors.acorrnErr(acns, w, n_samples)     # get error estimates
         
-        # get parameters generated
-        traj = c.trajs
-        p = c.model.p_acc
-        xx = c.op_mean
-        return xx, acns, acns_err, p, w, t
+        if rand_steps: # correct for N being different for each correlation
+            acns_err *= np.sqrt(n_samples)/acorr_counts
+            
+        
+        return xx, acns, acns_err, p, w, traj, acorr_seps
     #
     print 'Finished Running Model: {}'.format(file_name)
     # use multiprocessing
     
-    al = len(mixing_angles) # the number of mixing angles
     if al == 1:             # don't use multiprocessing for just 1 mixing angle
         a = mixing_angles[0]
         ans = [coreFunc((i, a)) for i,a in enumerate(mixing_angles)]
@@ -170,7 +178,7 @@ def main(x0, pot, file_name,
     # results have now been obtained. This operation is a dimension shuffle
     # Currently the first iterable dimension contains one copy of each item
     # Want to split into separate arrays each of length n
-    xx, acns, acns_err, ps, ws, ts = zip(*ans)
+    xx, acns, acns_err, ps, ws, ts, acxs = zip(*ans)
     
     print '\n'*al           # hack to avoid overlapping with the progress bar from multiprocessing
     out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
@@ -180,29 +188,27 @@ def main(x0, pot, file_name,
     # Decide a good total length for the plot
     w = np.max(ws)                                  # same length for all theory and measured data
     print 'Window is:{}'.format(w)
+    
     # Create Dictionary for Plotting Measured Data
-    windowed_separations = separations[:2*w]        # cut short to 2*window for a nicer plot
-    x = windowed_separations*step_size*n_steps      # create the x-axis in "ficticious HMC-time"
     aclabel = r'Measured: $C_{\phi^2}(t; '             \
         + r'\bar{P}_{\text{acc}}'+r'={:4.2f}; '.format(p)
-    yelpwt = zip(acns, acns_err, angle_labels, ps, ws, ts)  # this is an iterable of all a/c plot values
+    yelpwx = zip(acns, acns_err, angle_labels, ps, ws, acxs)  # this is an iterable of all a/c plot values
     
     # create the dictionary item to pass to plot()
-    acns = {aclabel+r'\theta = {})$'.format(l) :(t, y[:2*w], e[:2*w]) for y,e,l,p,w_i,t in yelpwt}
+    acns = {aclabel+r'\theta = {})$'.format(l) :(x[:2*w], y[:2*w], e[:2*w]) for y,e,l,p,w_i,x in yelpwx}
     
     if acFunc is not None: # Create Dictionary for Plotting Theory
-        fx_res = 100                                        # points per x-value
-        fx_points = 2*w*fx_res+1                            # number of points to use
-        fx_f = windowed_separations[-1]*step_size*n_steps   # last trajectory separation length to plot
+        fx_f = np.max(np.asarray([a[:2*w] for a in acxs]))  # last trajectory separation length to plot
+        fx_res = step_size*0.1                              # points per x-value
+        fx_points = fx_f/fx_res+1                           # number of points to use
         fx = np.linspace(0, fx_f, fx_points, True)          # create the x-axis for the theory
         windowed_ps = ps[:2*w]                              # windowed acceptance probabilities
         # calculcate theory across all tau, varying p_acc and normalise
-        normFn = lambda pt: np.array([acFunc(t=xi, pa=pt[0], theta=pt[1]) for xi in fx])# / acFunc(t=0, pa=pt[0], theta=pt[1])
-        fs = map(normFn(pt), zip(ps, mixing_angles))               # map the a/c function to acceptance & angles
-        th_label = r'Theory: $C_{\phi^2}(t; ' \
-            + r'\bar{P}_{\text{acc}} = '
-        pfl = zip(ps, fs, angle_labels)                          # this is an iterable of all theory plot values
-        pfl = pfl[:2*w]                                       # cut to the same window length as x-axis
+        normFn = lambda pt: np.array([acFunc(t=xi, pa=pt[0], theta=pt[1]) for xi in fx]) / acFunc(t=0, pa=pt[0], theta=pt[1])
+        fs = map(normFn, zip(ps, mixing_angles))            # map the a/c function to acceptance & angles
+        th_label = r'Theory: $C_{\phi^2}(t; \bar{P}_{\text{acc}} = '
+        pfl = zip(ps, fs, angle_labels)                     # this is an iterable of all theory plot values
+        pfl = pfl[:2*w]                                     # cut to the same window length as x-axis
         
         # create the dictionary item to pass to plot()
         lines = {th_label+ r'{:4.2f}; \theta = {})$'.format(p, l): (fx, f) for p,f,l in pfl if f is not None} 

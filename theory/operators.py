@@ -1,5 +1,5 @@
 from __future__ import division
-from numpy import exp, real, cos, sin, pi, array, log, sqrt
+from numpy import exp, real, cos, sin, pi, array, log, sqrt, sum
 
 __doc__ = """
 References
@@ -19,12 +19,11 @@ fnW = lambda mu, a: mu*sqrt(1 + .25*(a*mu)**2)
 # defined in equation (C.23) of [3]
 fnR = lambda mu, a: 1 + 0.5*(a*mu)**2 - a*fnW(mu, a)
 
-def phi2_1df(mu, n, a, sep):
-    """1D Magnetisation as calculated Appendix C of [3]
+def x2_1df(mu, n, a, sep):
+    """x^2 as calculated Appendix C of [3]
     
-    This is the 1D version of <M^2> = <\phi^2>
-    the theoretical prediction of the 1D 2-point
-    correlation function for w=m
+    The theoretical prediction of the 1D 2-point
+    correlation function - NOT the magnetisation
     
     Required Inputs
         mu  :: float :: mass as defined in Eq C.1
@@ -41,3 +40,27 @@ def phi2_1df(mu, n, a, sep):
         ratio = (r**sep + r**(n-sep))/(1. - r**n)
         
     return .5/w*ratio
+    
+def magnetisation(lattice, sum_axes=1):
+    """Calculates the magnetisation across a lattice
+    
+    This is really just a renaming of np.sum(arr ,axis=1)
+    
+    Required Inputs
+        lattice :: np.ndarray :: the lattice
+        sum_axes :: int/tuple :: can be tuple of dimensions or integer which
+                                assumed samples are in axis 0
+    """
+    return sum(lattice, axis=sum_axes)
+
+def magnetisation_sq(lattice, sum_axes=1):
+    """Calculates the magnetisation^2 across a lattice
+    
+    This is really just a renaming of np.sum(arr ,axis=1)^2
+    
+    Required Inputs
+        lattice :: np.ndarray :: the lattice
+        sum_axes :: int/tuple :: can be tuple of dimensions or integer which
+                                assumed samples are in axis 0
+    """
+    return sum(lattice, axis=sum_axes)**2

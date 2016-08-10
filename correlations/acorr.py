@@ -91,6 +91,13 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=Fal
         tol         :: float :: tolerance around zero (numpy errors)
         counts      :: bool  :: return counts in a tuple
     
+    the standard deviation formula is:
+        sum( (x-m)^2 )
+    which is equiv to:
+        sum( x^2 - 2mx + m^2)
+    we cannot know the mean of the measured data until the end of the
+    while loop so by summing the squared values and calculating the mean
+    in the loop we can do the full sdev calculation at the end!
     """
     n = op_samples.shape[0]
     # note that in HMC we don't have any repeated elements so separations 0 
@@ -98,13 +105,15 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=Fal
     if sep == 0: 
         result = acorr(op_samples, mean, separation=0, norm = norm)
         if counts: result = (result, n)
-        return copy(result)
+        return result
     
     front = 1   # front "pythony-pointer-thing"
     back  = 0   # back "pythony-pointer-thing"
     bssp  = 0   # back sweep start point
     bsfp  = 0   # back sweep finish point
-    ans   = 0.0 # store the answer
+    ans   = 0.0 # the answer
+    av_ac = 0.0 # the average a/c at this separation
+    sq_ac = 0.0 # the summed squares of the a/c function
     count = 0   # counter for averaging
     new_front = True # the first front value is new
     while front < n:            # keep going until exhausted sep_mapay
@@ -120,7 +129,7 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=Fal
                 back  = bssp    # reset back to the sweep start point
             while back < bsfp:  # calculate the correlation function for matched pairs
                 count+= 1
-                ans  += ((op_samples[front,:] - mean)*(op_samples[back,:] - mean)).mean()
+                ans  += ((op_samples[front] - mean)*(op_samples[back] - mean)).mean()
                 back += 1
         else:   # check if there is a new back
             if abs(sep_map[bssp+1] - sep_map[bssp]) > tol: bsfp = front
@@ -128,7 +137,7 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=Fal
         front +=1
     result = ans/(count*norm) if count > 0.0 else np.nan # cannot calculate if no pairs
     if counts: result = (result, count)
-    return copy(result)
+    return result
 
 def acorr(op_samples, mean, separation, norm = 1.0):
     """autocorrelation of a measured operator with optional normalisation
@@ -212,16 +221,6 @@ class Autocorrelations_1d(Init, Base):
         if not hasattr(self, 'op_mean'): self.op_mean = self.op_samples.ravel().mean()
         
         # This section flips between random and fixed trajectories
-        if self.model.rand_steps:
-            t = np.cumsum(self.trajs)
-            separations = np.linspace(t[0], self.model.step_size*len(separations)/2., len(separations))
-            separations = tqdm(separations)
-            acFn = lambda separation: acorrMapped(self.op_samples, sep_map=self.trajs, mean=self.op_mean,
-                sep=separation, norm=1.0, tol=self.model.step_size/2.0)
-        else:
-            separations.sort()
-            acFn = lambda separation: acorr(self.op_samples, mean=self.op_mean, 
-                separation=separation, norm=1.0)
         
         # get normalised autocorrelations for each separation
         if norm:
@@ -229,11 +228,32 @@ class Autocorrelations_1d(Init, Base):
                 self.op_norm = acFn(separation=0)
         else:
             self.op_norm = 1.0
-        if prll_map is not None:
-            self.acorr = prll_map(acFn, separations, verbose=True)
+        
+        if self.model.rand_steps:
+            cumut       = np.cumsum(self.trajs)
+            max_sep     = self.model.step_size*len(separations)/2.
+            n_seps      = max_sep/self.model.step_size + 1
+            separations = np.linspace(0, max_sep, n_seps)
+            tolerance   = self.model.step_size/2.-self.model.step_size*0.1
+            
+            acFn = lambda separation: acorrMapped(self.op_samples, cumut, separation, self.op_mean, 
+            norm=self.op_norm, tol=tolerance, counts=True)
         else:
-            self.acorr = [acFn(separation=s) for s in separations]
-        self.acorr = np.asarray(self.acorr)/ self.op_norm
+            acFn = lambda separation: acorr(self.op_samples, mean=self.op_mean, 
+                separation=separation, norm=self.op_norm)
+        
+        if prll_map is not None:
+            result = prll_map(acFn, separations, verbose=True)
+            if self.model.rand_steps: acs, counts = zip(*result)
+            else: acs, counts = result, None
+        else:
+            result = [acFn(separation=s) for s in separations]
+            if self.model.rand_steps: acs, counts = zip(*result)
+            else: acs, counts = result, None
+        
+        self.acorr_ficticous_time = separations
+        self.acorr_counts = counts
+        self.acorr = np.asarray(acs)
         return self.acorr
         
     

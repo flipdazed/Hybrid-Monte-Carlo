@@ -22,7 +22,7 @@ def getW(itau, itau_diff, n):
         n           :: int   :: number of original MCMC samples
     """
     w  = np.around((itau_diff/itau/2.)**2*n - .5 + itau, 0)
-    return int(np.around(w, 0))
+    return np.rint(w).astype(int)
     
 def acorrnErr(acn, w, n):
     """Calculates the errors in the autocorrelations
@@ -37,10 +37,10 @@ def acorrnErr(acn, w, n):
     if not isinstance(w, int): w = int(w)
     l = acn.size
     pd = np.zeros(2*l+w)   # make sure enough room
-    pd[:acn.size] = acn
+    pd[:acn.size] = np.nan_to_num(acn)
     for t in range(0,l): # this is a horrible loop 
         tmp = 0                 # but doesn't run that slow
-        for k in range(max(1,t-w), t+w):
+        for k in range(max(0,t-w), t+w):
             tmp += (pd[k+t] + pd[abs(k-t)] - 2*pd[t]*pd[k])**2
         err.append(np.sqrt(tmp/n))
     return np.asarray(err)
@@ -61,11 +61,10 @@ def itauErrors(itau, n, window = None):
     # check that the error can be calculated
     if hasattr(window, '__iter__'):
         for i, (window_i, itau_i) in enumerate(zip(window, itau)):
-            checks.tryAssertLtEqual(0, window_i - itau_i + .5,
-                '{}th Window is too small.\n > W = {}; \n > itau = {}'.format(
+            print 'Warning: {}th Window is too small.\n > W = {}; \n > itau = {}'.format(
                 i, window_i, itau_i) + \
                 '\n result: {}'.format(window_i - itau_i + .5)
-            )
+            return np.empty(itau.shape)
     else:
         checks.tryAssertLtEqual(0, window - itau + .5,
             'Window is too small.\n > W = {}; \n > itau = {}'.format(window, itau))
@@ -96,7 +95,7 @@ def intAcorr(acorrn, n, window = None):
             $$\bbar{\tau_{int},F}(W) = 0.5 + \frac{2}{\bbar{\nu}_F}\sum_1^W \Lambda_F(W)$$
     """
     if window is None: window = acorrn.size # assume alrady windowed
-    itau_aav  = np.cumsum(acorrn) - .5      # Eq. (41)
+    itau_aav  = np.cumsum(np.nan_to_num(acorrn)) - .5      # Eq. (41)
     itau = itau_aav[window]
     itau_diff = itauErrors(itau, n, window=window)
     return itau, itau_diff, itau_aav
@@ -155,14 +154,14 @@ def autoWindow(acorrn, s_tau, n, t_max = None):
     already been adjusted w.r.t. the n//2 parameter for t_max
     """
     if t_max is None: t_max = acorrn.size
-    g_int = np.cumsum(acorrn[1:t_max])
+    g_int = np.cumsum(np.nan_to_num(acorrn[1:t_max]))
     
     # see http://stackoverflow.com/a/8534381/4013571
     try:
         w = next(t for t,v in enumerate(g_int,1) if gW(t, v, s_tau, n) < 0)
     except:
-        checks.tryAssertNotEqual(False, False,
-        'Windowing condition failed up to W = {}'.format(g_int.size))
+        print 'Error: Windowing condition failed up to W = {}'.format(g_int.size)
+        return None
         # UWerr actually returns min(t_max, 2*t) anyway
     return w
 #
@@ -189,9 +188,10 @@ def windowing(f_ret, f_aav, s_tau, n, fast):
             acorr.append(v)
             g_int += v
             if gW(w, g_int, s_tau, n) < 0: return norm, np.asarray(acorr), w
+        
         ## should exit before here!
-        checks.tryAssertNotEqual(False, False,
-        'Windowing condition failed up to W = {}'.format(g_int.size))
+        print 'Error: Windowing condition failed up to W = {}'.format(g_int.size)
+        return None, None, None
     else:
         acorr  = np.asarray([fn(t=t) for t in range(0, t_max)]) # t_max implicit n//2
         checks.tryAssertNotEqual(norm, 0,
@@ -257,14 +257,18 @@ def uWerr(f_ret, acorr=None, s_tau=1.5, fast_threshold=5000):
     else:
         fast = (n >= fast_threshold)
         norm, acorr, w = windowing(f_ret, f_aav, s_tau, n, fast=fast)
+    if w == None: 
+        nans = np.empty(acorr.shape)
+        nans[:] = np.nan
+        return f_aav, np.nan, np.nan, np.nan, np.nan, nans, acorr/acorr[0]
     
     l = max(acorr.size, 2*w+1)
     
     # correct acorr for variance in the function
-    c_aav  = covarianceN(acorr=acorr, window=w, var=norm) # var = c_aav/n     Eq. 35
+    c_aav  = covarianceN(acorr=np.nan_to_num(acorr), window=w, var=norm) # var = c_aav/n     Eq. 35
     acorr += c_aav/n                                        # correct for bias  Eq. 32,49
     norm   = acorr[0]
-    c_aav  = covarianceN(acorr=acorr, window=w, var=norm)
+    c_aav  = covarianceN(acorr=np.nan_to_num(acorr), window=w, var=norm)
     acorrn = acorr/norm                                     # normalise corrected a/c fn.
     
     itau, itau_diff, itau_aav = intAcorr(acorrn=acorrn, n=n, window=w)
