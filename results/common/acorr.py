@@ -155,6 +155,11 @@ def main(x0, pot, file_name,
         acorr_seps  = c.acorr_ficticous_time
         acorr_counts= c.acorr_counts
         
+        store.store(acs, 'results/data/numpy_objs/acorr_mag2_hmc_kg_acs.json')
+        store.store(traj, 'results/data/numpy_objs/acorr_mag2_hmc_kg_trajs.json')
+        store.store(p, 'results/data/other_objs/acorr_mag2_hmc_kg_probs.pkl')
+        store.store(c.samples, 'results/data/numpy_objs/acorr_mag2_hmc_kg_samples.json')
+        
         ans = errors.uWerr(c.op_samples, acorr=acs)         # get errors
         _, _, _, itau, itau_diff, _, acns = ans             # extract data
         w = errors.getW(itau, itau_diff, n=n_samples)       # get window length
@@ -187,7 +192,7 @@ def main(x0, pot, file_name,
     
     # Decide a good total length for the plot
     w = np.max(ws)                                  # same length for all theory and measured data
-    if np.isnan(w): alen = len(separations)
+    if np.isnan(w): alen = len(separations)/2
     else: alen = 2*w
     print 'Window is:{}'.format(w)
     

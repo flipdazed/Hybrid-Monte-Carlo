@@ -1,5 +1,5 @@
 from __future__ import division
-from numpy import exp, real, cos, sin, pi, array, log, sqrt, sum
+import numpy as np
 
 __doc__ = """
 References
@@ -14,7 +14,7 @@ f   - free field theory
 
 # defined in equation (C.14) of [3]
 fnW2 = lambda mu, a: mu**2*(1 + .25*(a*mu)**2)
-fnW = lambda mu, a: mu*sqrt(1 + .25*(a*mu)**2)
+fnW = lambda mu, a: mu*np.sqrt(1 + .25*(a*mu)**2)
 
 # defined in equation (C.23) of [3]
 fnR = lambda mu, a: 1 + 0.5*(a*mu)**2 - a*fnW(mu, a)
@@ -51,7 +51,7 @@ def magnetisation(lattice, sum_axes=1):
         sum_axes :: int/tuple :: can be tuple of dimensions or integer which
                                 assumed samples are in axis 0
     """
-    return sum(lattice, axis=sum_axes)
+    return np.sum(lattice, axis=sum_axes)
 
 def magnetisation_sq(lattice, sum_axes=1):
     """Calculates the magnetisation^2 across a lattice
@@ -63,4 +63,4 @@ def magnetisation_sq(lattice, sum_axes=1):
         sum_axes :: int/tuple :: can be tuple of dimensions or integer which
                                 assumed samples are in axis 0
     """
-    return sum(lattice, axis=sum_axes)**2
+    return np.sum(lattice, axis=sum_axes)**2

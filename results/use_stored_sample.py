@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 
 from theory.clibs.autocorrelations.exponential import hmc
 from theory.operators import magnetisation_sq
-from correlations.acorr import acorrMapped
+from correlations.acorr import acorrMapped, acorrMapped_noDups
 from results.common.utils import prll_map
 from results.data.store import load
 from plotter.pretty_plotting import Pretty_Plotter
 
-acs = load('results/data/numpy_objs/acorr_xx_hmc_kg_acs.json')
-t = load('results/data/numpy_objs/acorr_xx_hmc_kg_trajs.json')
-p = load('results/data/other_objs/acorr_xx_hmc_kg_probs.pkl')
-s = load('results/data/numpy_objs/acorr_xx_hmc_kg_samples.json')
+acs = load('results/data/numpy_objs/acorr_mag2_hmc_kg_acs.json')
+t = load('results/data/numpy_objs/acorr_mag2_hmc_kg_trajs.json')
+p = load('results/data/other_objs/acorr_mag2_hmc_kg_probs.pkl')
+s = load('results/data/numpy_objs/acorr_mag2_hmc_kg_samples.json')
 
 cfn = magnetisation_sq(s)
 av_cfn = cfn.mean()
@@ -34,7 +34,7 @@ tolerance = res/2.-step_size*0.1
 cumut     = np.cumsum(t)
 
 # calculate autocorrelations
-aFn = lambda s: acorrMapped(cfn, cumut, s, av_cfn, norm=1.0, tol=tolerance, counts=True)
+aFn = lambda s: acorrMapped_noDups(cfn, cumut, s, av_cfn, norm=1.0, tol=tolerance, counts=True)
 separations = np.linspace(min_sep, max_sep, (max_sep-min_sep)/res+1)
 
 # multicore

@@ -24,8 +24,8 @@ n, dim  = 10, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.0
 
-n_samples, n_burn_in = 100000, 50
-c_len   = 500
+n_samples, n_burn_in = 1000000, 50
+c_len   = 10000
 
 mixing_angles = [.5*np.pi]
 angle_labels = [r'\frac{\pi}{2}']
