@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import checks
+import checks
 
 class Periodic_Lattice(np.ndarray):
     """Creates an n-dimensional ring that joins on boundaries w/ numpy
@@ -64,9 +64,15 @@ class Periodic_Lattice(np.ndarray):
         # arr.view(Periodic_Lattice).
         #
         # These are in effect the default values from these operations
-        self.lattice_shape = getattr(obj, 'lattice_shape', obj.shape)
-        self.lattice_dim = getattr(obj, 'lattice_dim', len(obj.shape))
-        self.lattice_spacing = getattr(obj, 'lattice_spacing', None)
+            
+        try: # this is a way faster method of doing this
+            self.lattice_shape   = getattr(obj, 'lattice_shape', obj.shape)
+            self.lattice_dim     = getattr(obj, 'lattice_dim', len(obj.shape)) 
+            self.lattice_spacing = getattr(obj, 'lattice_spacing', None)
+        except: 
+            self.lattice_shape   = obj.shape
+            self.lattice_dim     = len(self.lattice_shape)
+            self.lattice_spacing = None
         pass
     
     def latticeWrapIdx(self, index):
@@ -78,9 +84,9 @@ class Periodic_Lattice(np.ndarray):
         
         This is NOT compatible with slicing
         """
-        # if not hasattr(index, '__iter__'): return index         # handle integer slices
-        # if len(index) != len(self.lattice_shape): return index  # must reference a scalar
-        # if any(type(i) == slice for i in index): return index   # slices not supported
+        if not hasattr(index, '__iter__'): index = [index]
+        if len(index) != len(self.lattice_shape): return index  # must reference a scalar
+        if any(type(i) == slice for i in index): return index   # slices not supported
         try:
             if len(index) == len(self.lattice_shape):               # periodic indexing of scalars
                 mod_index = tuple(( (i%s + s)%s for i,s in zip(index, self.lattice_shape)))

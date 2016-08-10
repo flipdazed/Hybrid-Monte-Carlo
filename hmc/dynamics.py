@@ -31,33 +31,12 @@ class Leap_Frog(Init):
             raise ValueError("Error: Exponentially distributed steps selected but n_steps = 1!")
         self.lengths = []
         self.newPaths() # create blank lists
-        pass
-    
-    def integrate(self, p0, x0, verbose = False):
-        """The Leap Frog Integration: optimises method
         
-        Required Input
-            p0  :: float :: initial momentum to start integration
-            x0  :: float :: initial position to start integration
-        
-        Optional Input
-            verbose :: bool :: prints out progress bar if True (ONLY use for LARGE path lengths)
-        
-        Expectations
-            save_path :: Bool :: save (p,x). IN PHASE: Start at (1,1)
-            self.x_step = x0 when class is instantiated
-            self.p_step = p0 when class is instantiated
-        
-        Returns
-            (x,p) :: tuple :: momentum, position
-        """
         if self.save_path:
-            fn = getattr(self, '_integrateSave')
+            self.integrate = getattr(self, '_integrateSave')
         else:
-            fn = getattr(self, '_integrateFast')
-        
-        p, x = fn(p0, x0, verbose = verbose)
-        return p, x
+            self.integrate = getattr(self, '_integrateFast')
+        pass
     
     def _integrateSave(self, p0, x0, verbose = False):
         """The Leap Frog Integration - optimised for saving data
@@ -166,7 +145,6 @@ class Leap_Frog(Init):
         # for index in np.ndindex(p.shape):
         try:
             p -= frac_step*self.step_size*self.duE(x)
-            # p[index] -= frac_step*self.step_size*self.duE(x, index)
         except:
             checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(x, index)))
         return p

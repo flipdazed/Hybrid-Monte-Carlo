@@ -1,13 +1,31 @@
+from __future__ import division
 import numpy as np
 
 from lattice import Periodic_Lattice, laplacian, gradSquared
 from scipy import ndimage
-from . import checks
+from scipy.ndimage import _nd_image
+import checks
 
 __all__ = [ 'Klein_Gordon',
             'Quantum_Harmonic_Oscillator',
             'Simple_Harmonic_Oscillator',
             'Multivariate_Gaussian']
+
+laplace_filter = np.asarray([1, -2, 1], dtype=np.float64)
+def fastLaplaceNd(arr):
+    """A very fast laplace filter for small arrays directly calling the scipy c++ fucntion
+    
+    Required Inputs
+        arr :: nd.array :: the array to calculate the n-dim laplace filter
+    """
+    output = np.zeros(arr.shape, 'float64')
+    if arr.ndim > 0:
+        # send output as a pointer sio no need for equals sign
+        _nd_image.correlate1d(arr, laplace_filter, 0, output, 1, 0.0, 0)
+        if arr.ndim == 1: return output
+        for ax in xrange(1, arr.ndim):
+            output += _nd_image.correlate1d(arr, laplace_filter, ax, output, 1, 0.0, 0)
+    return output
 
 class Shared(object):
     """Shared methods"""
@@ -68,6 +86,13 @@ class Klein_Gordon(Shared):
         self.phi_3 = phi_3      # phi^3 coupling const.
         self.phi_4 = phi_4      # phi^4 coupling const.
         
+        if self.phi_3 == self.phi_4 == 0 and self.debug == False:
+            self.potentialEnergy = self.potentialEnergyBare
+            self.gradPotentialEnergy = self.gradPotentialEnergyBare
+        else: 
+            self.potentialEnergy = self.potentialEnergyint
+            self.gradPotentialEnergy = self.gradPotentialEnergyInt
+        
         super(Klein_Gordon, self)._lattice()
         super(Klein_Gordon, self).__init__()
         pass
@@ -80,10 +105,31 @@ class Klein_Gordon(Shared):
         Required Inputs
             p :: np.array (nd) :: momentum array
         """
-        return .5 * np.square(p).ravel().sum(axis=0)
+        return .5 * np.sum(p**2, axis=None)
     
-    def potentialEnergy(self, positions):
-        """n-dim potential
+    def potentialEnergyBare(self, positions):
+        """n-dim potential without interactions for speed
+        
+        See potentialEnergyInt for help docs
+        
+        Required Inputs
+            positions :: class :: see lattice.py for info
+        """
+        p_sq = fastLaplaceNd(positions) / float(positions.lattice_spacing)
+        
+        # multiply the potential by the positions spacing as required
+        return .5 * (-np.sum(positions * p_sq) + positions.lattice_spacing * self.m**2 * np.sum(positions**2))
+    def gradPotentialEnergyBare(self, positions):
+        """Gradient of the action with interactions
+        
+        See gradPotentialEnergyInt for help docs
+        
+        Required Inputs
+            positions :: class :: see lattice.py for info
+        """
+        return -fastLaplaceNd(positions) / positions.lattice_spacing + positions.lattice_spacing * self.m * positions
+    def potentialEnergyInt(self, positions):
+        """n-dim potential with interactions
         
         This is the action. In HMC, the action
         is the potential in the shadow hamiltonian.
@@ -94,34 +140,13 @@ class Klein_Gordon(Shared):
         Required Inputs
             positions :: class :: see lattice.py for info
         """
-        lattice = positions # shortcut for brevity
-        a = lattice.lattice_spacing
-        x_sq_sum = np.power(lattice.ravel(), 2).sum()
+        x_sq_sum = (positions**2).sum()
         
         # p_sq_sum = np.array(0.)
-        # sum (integrate) across euclidean-space (i.e. all lattice sites)
-        p_sq = ndimage.filters.laplace(lattice, mode='wrap').view(Periodic_Lattice) / float(a)
-        p_sq_sum = (lattice * p_sq).sum()
-        # for idx in np.ndindex(lattice.shape):
-        #
-        #     x = lattice[idx] # iterates single points of the lattice
-        #
-        #     # kinetic term: - x * (Lattice laplacian of x) * lattice spacing
-        #     p_sq = laplacian(positions, idx, a_power=1)
-        #
-        #     # gradient should be an array of the length of degrees of freedom
-        #     checks.tryAssertEqual(p_sq.shape, (),
-        #          ' laplacian shape should be scalar' \
-        #          + '\n> p_sq shape: {}'.format(p_sq.shape))
-        #
-        #     p_sq_sum += np.dot(x.T, p_sq)
-        #
-        #     # x.p_sq is a scalar
-        #     checks.tryAssertEqual(p_sq_sum.shape, (),
-        #          'p_sq * x should be scalar.' \
-        #          + '\n> p_sq: {} \n> x: {}'.format(p_sq, x.T)
-        #          + '\n> p_sq_sum {}'.format(p_sq_sum)
-        #          )
+        # sum (integrate) across euclidean-space (i.e. all positions sites)
+        # p_sq = ndimage.filters.laplace(positions, mode='wrap') / float(positions.lattice_spacing)
+        p_sq = fastLaplaceNd(positions) / float(positions.lattice_spacing)
+        p_sq_sum = (positions * p_sq).sum()
         
         #### free action S_0: 1/2 \phi(m^2 - \klein_gordon)\phi 
         kinetic = - .5 * p_sq_sum
@@ -130,13 +155,13 @@ class Klein_Gordon(Shared):
         
         # Add interation terms if required
         if self.phi_3: # phi^3 term
-            x_3_sum = np.power(lattice.ravel(), 3).sum()
+            x_3_sum = np.power(positions.ravel(), 3).sum()
             u_3 = self.phi_3 * x_3_sum / np.math.factorial(3)
         else:
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            x_4_sum = np.power(lattice.ravel(), 4).sum()
+            x_4_sum = np.power(positions.ravel(), 4).sum()
             u_4 = self.phi_4 * x_4_sum / np.math.factorial(4)
         else:
             u_4 = 0.
@@ -144,53 +169,40 @@ class Klein_Gordon(Shared):
         # the potential terms in the action
         potential = u_0 + u_3 + u_4
         
-        # multiply the potential by the lattice spacing as required
+        # multiply the potential by the positions spacing as required
         euclidean_action = kinetic + positions.lattice_spacing * potential
         
         if self.debug: # allows for debugging
-            ret_val = [euclidean_action, kinetic, potential*positions.lattice_spacing]
+            ret_val = [euclidean_action, kinetic, potential*positions.positions_spacing]
         else:
             ret_val = euclidean_action
         return ret_val
-    
-    def gradPotentialEnergy(self, positions):
-        """Gradient of the action
+    def gradPotentialEnergyInt(self, positions):
+        """Gradient of the action with interactions
         
         Here the laplacian in the action is used with 1/a
         the potential is then Va
         
         Required Inputs
-            idx   :: integer :: lattice position
             positions :: class :: see lattice.py for info
         """
-        
-        # don't want the whole lattice in here!
-        # the laplacian indexs the other elements
-        # x = positions[idx]
-        x = positions
-        a = positions.lattice_spacing
-        # gradient of kinetic term x \klein_gordon^2 x = 2 \klein_gordon^2 x
-        p_sq = ndimage.filters.laplace(x, mode='wrap').view(Periodic_Lattice) / float(a)
-        # p_sq = laplacian(positions, idx, a_power=1)
-        
-        # gradient should be an array of the length of degrees of freedom 
-        # checks.tryAssertEqual(p_sq.shape, (),
-        #      ' laplacian shape should be scalar' \
-        #      + '\n> p_sq shape: {}'.format(p_sq.shape))
+        # gradient of kinetic term positions \klein_gordon^2 positions = 2 \klein_gordon^2 positions
+        p_sq = fastLaplaceNd(positions) / float(positions.lattice_spacing)
+        # p_sq = laplacian(positions, idpositions, a_power=1)
         
         #### grad of free action S_0: 2/2 * (m^2 - \klein_gordon^2)\phi
         kinetic = - p_sq
-        u_0 = self.m * x # derivative taken
+        u_0 = self.m * positions # derivative taken
         ### End free action
         
         # Add interation terms if required
         if self.phi_3: # phi^3 term
-            u_3 = self.phi_3 * x**2 / np.math.factorial(2)
+            u_3 = self.phi_3 * positions**2 / np.math.factorial(2)
         else:
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            u_4 = self.phi_4 * x**3 / np.math.factorial(3)
+            u_4 = self.phi_4 * positions**3 / np.math.factorial(3)
         else:
             u_4 = 0.
         
@@ -321,7 +333,7 @@ class Quantum_Harmonic_Oscillator(Shared):
         # identical to - \klein_gordon^2
         a = positions.lattice_spacing
         # gradient of kinetic term x \klein_gordon^2 x = 2 \klein_gordon^2 x
-        v_sq = ndimage.filters.laplace(x, mode='wrap').view(Periodic_Lattice)/float(a)
+        v_sq = ndimage.filters.laplace(x, mode='wrap')/float(a)
         
         # gradient should be an array of the length of degrees of freedom 
         # checks.tryAssertEqual(v_sq.shape, (),
@@ -453,4 +465,16 @@ class Multivariate_Gaussian(Shared):
         return np.dot(self.cov_inv, x)
 #
 if __name__ == '__main__':
+    from lattice import Periodic_Lattice
+    
+    arr = Periodic_Lattice(np.random.random(100))
+    
+    k = Klein_Gordon()
+    assert (k.potentialEnergyBare(arr) == k.potentialEnergyInt(arr)).all()
+    assert (k.gradPotentialEnergyBare(arr) == k.gradPotentialEnergyInt(arr)).all()
+    # %timeit k.potentialEnergyBare(arr)
+    # %timeit k.potentialEnergyInt(arr)
+    #
+    # %timeit k.gradPotentialEnergyBare(arr)
+    # %timeit k.gradPotentialEnergyInt(arr)
     pass

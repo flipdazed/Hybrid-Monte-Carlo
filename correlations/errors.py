@@ -21,6 +21,7 @@ def getW(itau, itau_diff, n):
         itau_diff   :: float :: error in the integrated a/c time
         n           :: int   :: number of original MCMC samples
     """
+    if np.isnan(itau): return np.nan
     w  = np.around((itau_diff/itau/2.)**2*n - .5 + itau, 0)
     return np.rint(w).astype(int)
     
@@ -34,16 +35,18 @@ def acorrnErr(acn, w, n):
         n      :: int :: number of MCMC samples
     """
     err = []
-    if not isinstance(w, int): w = int(w)
+    if not isinstance(w, int): 
+        if np.isnan(w): return np.array([np.nan]*acn.size)
+        w = int(w)
     l = acn.size
-    pd = np.zeros(2*l+w)   # make sure enough room
+    pd = np.zeros(2*l+w, dtype='float64')   # make sure enough room
     pd[:acn.size] = np.nan_to_num(acn)
     for t in range(0,l): # this is a horrible loop 
         tmp = 0                 # but doesn't run that slow
         for k in range(max(0,t-w), t+w):
             tmp += (pd[k+t] + pd[abs(k-t)] - 2*pd[t]*pd[k])**2
         err.append(np.sqrt(tmp/n))
-    return np.asarray(err)
+    return np.asarray(err, dtype='float64')
 #
 def itauErrors(itau, n, window = None):
     """Calculates the standard deviation in the integrated autocorrelations

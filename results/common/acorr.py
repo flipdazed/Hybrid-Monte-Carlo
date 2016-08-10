@@ -41,7 +41,7 @@ def plot(acns, lines, subtitle, op_name, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] =r"\usepackage{amssymb}"
+    pp.params['text.latex.preamble'] =r"\usepackage{amsfonts}"
     pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
     pp._updateRC()
     
@@ -187,6 +187,8 @@ def main(x0, pot, file_name,
     
     # Decide a good total length for the plot
     w = np.max(ws)                                  # same length for all theory and measured data
+    if np.isnan(w): alen = len(separations)
+    else: alen = 2*w
     print 'Window is:{}'.format(w)
     
     # Create Dictionary for Plotting Measured Data
@@ -195,20 +197,20 @@ def main(x0, pot, file_name,
     yelpwx = zip(acns, acns_err, angle_labels, ps, ws, acxs)  # this is an iterable of all a/c plot values
     
     # create the dictionary item to pass to plot()
-    acns = {aclabel+r'\theta = {})$'.format(l) :(x[:2*w], y[:2*w], e[:2*w]) for y,e,l,p,w_i,x in yelpwx}
+    acns = {aclabel+r'\theta = {})$'.format(l) :(x[:alen], y[:alen], e[:alen]) for y,e,l,p,w_i,x in yelpwx}
     
     if acFunc is not None: # Create Dictionary for Plotting Theory
-        fx_f = np.max(np.asarray([a[:2*w] for a in acxs]))  # last trajectory separation length to plot
+        fx_f = np.max(np.asarray([a[:alen] for a in acxs]))  # last trajectory separation length to plot
         fx_res = step_size*0.1                              # points per x-value
         fx_points = fx_f/fx_res+1                           # number of points to use
         fx = np.linspace(0, fx_f, fx_points, True)          # create the x-axis for the theory
-        windowed_ps = ps[:2*w]                              # windowed acceptance probabilities
+        windowed_ps = ps[:alen]                              # windowed acceptance probabilities
         # calculcate theory across all tau, varying p_acc and normalise
         normFn = lambda pt: np.array([acFunc(t=xi, pa=pt[0], theta=pt[1]) for xi in fx]) / acFunc(t=0, pa=pt[0], theta=pt[1])
         fs = map(normFn, zip(ps, mixing_angles))            # map the a/c function to acceptance & angles
         th_label = r'Theory: $C_{\phi^2}(t; \bar{P}_{\text{acc}} = '
         pfl = zip(ps, fs, angle_labels)                     # this is an iterable of all theory plot values
-        pfl = pfl[:2*w]                                     # cut to the same window length as x-axis
+        pfl = pfl[:alen]                                     # cut to the same window length as x-axis
         
         # create the dictionary item to pass to plot()
         lines = {th_label+ r'{:4.2f}; \theta = {})$'.format(p, l): (fx, f) for p,f,l in pfl if f is not None} 

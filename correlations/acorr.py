@@ -252,7 +252,7 @@ class Autocorrelations_1d(Init, Base):
             else: acs, counts = result, None
         
         self.acorr_ficticous_time = separations
-        self.acorr_counts = counts
+        self.acorr_counts = np.asarray(counts, dtype='float64')
         self.acorr = np.asarray(acs)
         return self.acorr
         
