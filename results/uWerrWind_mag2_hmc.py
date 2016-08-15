@@ -10,8 +10,8 @@ from theory.clibs.autocorrelations.exponential import hmc
 file_name = __file__
 pot = KG()
 
-m         = 1.0
-n_steps   = 20
+m         = 0.1
+n_steps   = 1000
 step_size = 1./((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
 
@@ -30,7 +30,7 @@ th = M2_Exp(tau=n_steps*step_size, m=1)
 t = th.integrated
 
 acFunc = lambda t, pa, theta: hmc(pa, tau*m, 1./tau, t)/hmc(pa, tau*m, 1./tau, 0)
-separations=range(500)
+separations=range(100000)
 
 if '__main__' == __name__:
     uWerrWind.main(x0, pot, file_name, 

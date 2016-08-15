@@ -58,7 +58,7 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] =r"\usepackage{amssymb}"
+    pp.params['text.latex.preamble'] =r"\usepackage{amsfonts}"
     pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
     pp._updateRC()
     
@@ -123,11 +123,11 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
         c = next(measured_colours)        # get next colour
         th_c = next(theory_colours)
         y, e, l, t = lines         # split into y function, errors, label and theory
-        try:
-            axis.fill_between(x, y-e, y+e, color=c, alpha=0.5)
-        except:
-            print "errors are dodgy"
-            axis.errorbar(x, y, yerr=e, markersize=3, color=c, fmt=m, alpha=0.5, ecolor='k')
+        # try:
+        #     axis.fill_between(x, y-e, y+e, color=c, alpha=0.5)
+        # except:
+        #     print "errors are dodgy"
+        axis.errorbar(x, y, yerr=e, markersize=3, color=c, fmt=m, alpha=0.5, ecolor='k')
         if t is not None:
             axis.axhline(y=t, linewidth=1, color = th_c, linestyle='--')
         

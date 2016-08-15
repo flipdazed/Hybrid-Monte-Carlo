@@ -127,7 +127,7 @@ class Klein_Gordon(Shared):
         Required Inputs
             positions :: class :: see lattice.py for info
         """
-        return -fastLaplaceNd(positions) / positions.lattice_spacing + positions.lattice_spacing * self.m * positions
+        return -fastLaplaceNd(positions) / positions.lattice_spacing + positions.lattice_spacing * self.m**2 * positions
     def potentialEnergyInt(self, positions):
         """n-dim potential with interactions
         
@@ -192,7 +192,7 @@ class Klein_Gordon(Shared):
         
         #### grad of free action S_0: 2/2 * (m^2 - \klein_gordon^2)\phi
         kinetic = - p_sq
-        u_0 = self.m * positions # derivative taken
+        u_0 = self.m**2 * positions # derivative taken
         ### End free action
         
         # Add interation terms if required

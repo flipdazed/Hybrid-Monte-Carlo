@@ -41,7 +41,7 @@ def plot(acns, lines, subtitle, op_name, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] =r"\usepackage{amsfonts}"
+    pp.params['text.latex.preamble'] =r"\usepackage{bbold}"
     pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
     pp._updateRC()
     
@@ -130,8 +130,8 @@ def main(x0, pot, file_name,
     if not isinstance(separations, np.ndarray): separations = np.asarray(separations)
     rng = np.random.RandomState()
     
-    subtitle = r"Potential: {}; Lattice: ${}$; $a={:.1f}; \delta\tau={:.2f}; n={}$".format(
-        pot.name, x0.shape, spacing, step_size, n_steps)
+    subtitle = r"Potential: {}; Lattice: ${}$; $a={:.1f}; \delta\tau={:.2f}; n={}; m={:.1f}$".format(
+        pot.name, x0.shape, spacing, step_size, n_steps, pot.m)
     
     print 'Running Model: {}'.format(file_name)
     
@@ -145,7 +145,8 @@ def main(x0, pot, file_name,
         
         c = acorr.Autocorrelations_1d(model)
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
-        
+        store.store(c.model.samples, file_name, '_samples')
+        store.store(c.model.traj, file_name, '_trajs')
         acs = c.getAcorr(separations, opFn, norm = False, prll_map=send_prll)   # non norm for uWerr
         
         # get parameters generated
@@ -154,11 +155,8 @@ def main(x0, pot, file_name,
         xx          = c.op_mean
         acorr_seps  = c.acorr_ficticous_time
         acorr_counts= c.acorr_counts
-        
-        store.store(acs, 'results/data/numpy_objs/acorr_mag2_hmc_kg_acs.json')
-        store.store(traj, 'results/data/numpy_objs/acorr_mag2_hmc_kg_trajs.json')
-        store.store(p, 'results/data/other_objs/acorr_mag2_hmc_kg_probs.pkl')
-        store.store(c.samples, 'results/data/numpy_objs/acorr_mag2_hmc_kg_samples.json')
+        store.store(p, file_name, '_probs')
+        store.store(acs, file_name, '_acs')
         
         ans = errors.uWerr(c.op_samples, acorr=acs)         # get errors
         _, _, _, itau, itau_diff, _, acns = ans             # extract data
@@ -192,9 +190,11 @@ def main(x0, pot, file_name,
     
     # Decide a good total length for the plot
     w = np.max(ws)                                  # same length for all theory and measured data
-    if np.isnan(w): alen = len(separations)/2
-    else: alen = 2*w
     print 'Window is:{}'.format(w)
+    if np.isnan(w): 
+        alen = int(len(separations)/2)
+    else:
+        alen = 2*w
     
     # Create Dictionary for Plotting Measured Data
     aclabel = r'Measured: $C_{\phi^2}(t; '             \

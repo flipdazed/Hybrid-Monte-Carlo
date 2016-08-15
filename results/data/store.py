@@ -73,18 +73,17 @@ def load(path):
         path :: string :: file path
     """
     
-    # check the file referenced is sensible
-    obj_id = [k for k in flocs.keys() if k in path]
-    if obj_id is None or len(obj_id) > 1: raise ValueError(
-        '{} not found in the path: \n {}'.format(flocs.keys(), path))
-    obj_id = obj_id.pop(0)
-    
     with codecs.open(path, 'r', **rparams) as f:
         print ' > loading... {}'.format(path)
-        if obj_id == 'numpy_objs':
+        if '.json' in path:
             obj = json.load(f, object_hook=json_numpy_obj_hook)
-        else:
+        elif '.pkl' in path:
             obj = pickle.load(file=f)
+        else:
+            # check the file referenced is sensible
+            obj_id = [k for k in flocs.keys() if k in path]
+            if obj_id is None or len(obj_id) != 1: raise ValueError(
+                '{} not found in the path: \n {}'.format(flocs.keys(), path))
     return obj
 #
 def store(obj, filename, suffix = ''):

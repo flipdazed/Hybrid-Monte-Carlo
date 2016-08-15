@@ -229,7 +229,7 @@ class Autocorrelations_1d(Init, Base):
         self._setUp()
         pass
     
-    def getAcorr(self, separations, op_func, norm = False, prll_map=None):
+    def getAcorr(self, separations, op_func, norm = False, prll_map=None, proc_max=1000):
         """Returns the autocorrelations for a specific sampled operator 
         
         Once the model is run then the samples can be passed through the autocorrelation
@@ -240,8 +240,9 @@ class Autocorrelations_1d(Init, Base):
             op_func      :: func :: the operator function
         
         Optional Inputs
-            norm    :: bool :: specifiy whether to normalise the autocorrelations
+            norm     :: bool :: specifiy whether to normalise the autocorrelations
             prll_map :: fn :: the prll_map from results.common.utils for multicore usage
+            proc_max :: int :: max number of processes to spawn
         
         Notes: op_func must be optimised to only take ALL HMC trajectories as an input
         """
@@ -274,6 +275,11 @@ class Autocorrelations_1d(Init, Base):
             n_seps      = max_sep/self.model.step_size + 1
             separations = np.linspace(0, max_sep, n_seps)
             tolerance   = self.model.step_size/2.-self.model.step_size*0.1
+            
+            # http://stackoverflow.com/q/5900985/4013571
+            # ensures that do not hit limit of processes
+            sep_skip    = max(1, int(n_seps // proc_max))
+            separations = separations[::sep_skip]
             
             acFn = lambda separation: acorrMapped(self.op_samples, cumut, separation, self.op_mean, 
             norm=self.op_norm, tol=tolerance, counts=True)
