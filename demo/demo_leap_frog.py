@@ -1,4 +1,5 @@
 import numpy as np
+import subprocess
 
 import hmc
 from hmc.dynamics import Leap_Frog
@@ -206,7 +207,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
                                       interval=50, blit=False, init_func=init)
         
         if save:
-            save_dir = '../' + ANIM_LOC
+            save_dir = ANIM_LOC
             subprocess.call(['mkdir', save_dir])
             
             if save.split('.')[-1] == 'gif':
@@ -225,7 +226,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
                     tmp_dir+'output*.png',
                     save_dir+'{0}.gif'.format(save.split('.')[0])])
                 
-                # subprocess.call(['rm', '-r', './temp/']) # remove temp folder
+                subprocess.call(['rm', '-r', './temp/']) # remove temp folder
             else:
                 anim.save(save_dir+save, fps=30, 
                     extra_args=['-vcodec', 'h264', '-pix_fmt', 'yuv420p'])
