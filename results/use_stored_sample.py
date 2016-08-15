@@ -27,10 +27,10 @@ av_op = op.mean()
 
 n, dim    = 10, 1
 spacing   = 1.
-n_samples, n_burn_in = 100000, 50
-c_len     = 10000
+n_samples, n_burn_in = 1000000, 50
+c_len     = 1000
 m         = 0.1
-n_steps   = 1000
+n_steps   = 20
 step_size = 1./((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
 r         = 1/tau

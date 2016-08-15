@@ -48,7 +48,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         self.potential = potential
         self.kE, self.uE = self.potential.kE, self.potential.uE
         
-        self.p0, self.x0 = np.matrix(p0), np.matrix(x0)
+        self.p0, self.x0 = np.array(p0), np.array(x0)
         self.dynamics = dynamics
         
         self.p,self.x = self.p0, self.x0 # initial conditions
@@ -107,8 +107,8 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         
         
         """
-        
-        kE,uE,dkE,duE = self.potential.all
+        p = self.potential
+        kE,uE,duE = p.kE, p.uE, p.duE
         
         n = 1000 # Resolution of the spring (< 500 is shit)
         fig = plt.figure(figsize=(8, 8)) # make plot
@@ -133,8 +133,10 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         ax[0].set_ylim([-1.,1.])
         
         # Intial parameters
-        pos = x_ar[0,:,:].reshape((1,)) # expect 1D p and x
-        mom = p_ar[0,:,:].reshape((1,)) # expect 1D p and x
+        p_ar = np.array(p_ar)
+        x_ar = np.array(x_ar)
+        pos = x_ar[0].reshape((1,)) # expect 1D p and x
+        mom = p_ar[0].reshape((1,)) # expect 1D p and x
         x = np.linspace(-6., pos, n, endpoint=True) # x range to clip wire
         wire = np.sin(6. * np.linspace(0, 2.*np.pi, n)) # wire is clipped at x[-1]
         # Lines: spring (sin curve); weight (rectangle)
@@ -223,7 +225,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
                     tmp_dir+'output*.png',
                     save_dir+'{0}.gif'.format(save.split('.')[0])])
                 
-                subprocess.call(['rm', '-r', './temp/']) # remove temp folder
+                # subprocess.call(['rm', '-r', './temp/']) # remove temp folder
             else:
                 anim.save(save_dir+save, fps=30, 
                     extra_args=['-vcodec', 'h264', '-pix_fmt', 'yuv420p'])
@@ -262,7 +264,6 @@ def fullDemo():
     
     logger.debug('Running integration')
     test.run() # run dynamics
-    test.dynamics.pathToNumpy()
     
     logger.info('Demonstrating Energy Drift')
     test.energy_drift( # show energy drift

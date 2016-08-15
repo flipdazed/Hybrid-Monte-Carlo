@@ -156,7 +156,7 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
             print 'Too few MCMC simulations to plot autocorrelations for: {}'.format(a)
         
         if t is not None:
-            axis.plot(x, t, linewidth=1.2, alpha=0.9, color=th_c, linestyle='-', label='Theoretical')
+            axis.plot(x, t, linewidth=1.2, alpha=0.9, color=th_c, linestyle='--', label='Theoretical')
         
     axis.legend(loc='best', shadow=True, fontsize = pp.axfont)
     
@@ -181,14 +181,14 @@ def plot(lines_d, x_lst, ws, subtitle, mcore, angle_labels, op_name, save):
     for a in ax:                            # 5% extra room at top & add legend
         yi,yf = a.get_ylim()
         a.set_ylim(ymax= yf+.05*(yf-yi), ymin= yi-.05*(yf-yi))
-    
+    ax[-1].set_ylim(ymax=2)
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
 def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         opFn, op_name, rand_steps = False, step_size = .5, n_steps = 1,
         spacing = 1., itauFunc = None, separations = range(5000),
-        acTheory=None,
+        acTheory=None, max_sep=None,
         save = False):
     """Takes a function: opFn. Runs HMC-MCMC. Runs opFn on HMC samples.
         Calculates Autocorrelation + Errors on opFn.
@@ -212,6 +212,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         save :: bool :: True saves the plot, False prints to the screen
         acTheory :: func :: acTheory(t, pa, theta) takes in acceptance prob., time, angle 
         separations :: range / nparray :: the number of separations for A/C
+        max_sep :: float :: the maximum separation tom consider for autocorrelations
     """
     rng = np.random.RandomState()
     multi_angle = len(mixing_angle) > 1         # see if multiprocessing is needed
@@ -230,7 +231,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
         c = acorr.Autocorrelations_1d(model)                    # set up autocorrs
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in,    # run MCMC
             mixing_angle = mixing_angle, verbose=True)
-        acs = c.getAcorr(separations, opFn, norm = False, prll_map=None)
+        acs = c.getAcorr(separations, opFn, norm = False, prll_map=prll_map)
         cfn = c.op_samples
         
         # get parameters generated
@@ -262,7 +263,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, mixing_angle, angle_labels,
             c = acorr.Autocorrelations_1d(model)                    # set up autocorrs
             c.runModel(n_samples=n_samples, n_burn_in=n_burn_in,    # run MCMC
                 mixing_angle = a, verbose=True, verb_pos=i)
-            acs = c.getAcorr(range(100), opFn, norm = False, prll_map=None, ac=acs)
+            acs = c.getAcorr(separations, opFn, norm = False, prll_map=None, ac=acs, max_itau=max_itau)
             cfn = c.op_samples
             # get parameters generated
             p = c.model.p_acc          # get acceptance rates at each M-H step
@@ -340,7 +341,10 @@ def preparePlot(op_samples, ans, n, itau_theory=None, acn_theory=None, mcore=Fal
         itaus_diff = np.zeros(acn.shape)
         acn_diff = np.zeros(acn.shape)
         itau_label = r"$\tau_{\text{int}}(w_{\text{best}}:\ \text{n/a}) = \text{n/a}$"
-        
+    
+    # a quick hack
+    l = min(acn.size, itaus.size, l)
+    
     if acn_theory is not None: acn_theory = acn_theory[:l]
     g_int = np.cumsum(np.nan_to_num(acn[1:l]/acn[0]))                    # recreate the g_int function
     g = np.asarray([errors.gW(t, v, 1.5, n) for t,v in enumerate(g_int,1)]) # recreate the gW function

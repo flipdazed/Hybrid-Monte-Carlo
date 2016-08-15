@@ -20,6 +20,7 @@ class Hybrid_Monte_Carlo(Init):
         rng        :: np.random.RandomState :: random number state
     
     Expectations
+        None
     """
     def __init__(self, x0, dynamics, potential, rng, **kwargs):
         super(Hybrid_Monte_Carlo, self).__init__()

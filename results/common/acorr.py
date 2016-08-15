@@ -147,7 +147,7 @@ def main(x0, pot, file_name,
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
         store.store(c.model.samples, file_name, '_samples')
         store.store(c.model.traj, file_name, '_trajs')
-        acs = c.getAcorr(separations, opFn, norm = False, prll_map=send_prll)   # non norm for uWerr
+        acs = c.getAcorr(separations, opFn, norm = False, prll_map=send_prll, max_sep=500.)   # non norm for uWerr
         
         # get parameters generated
         traj        = np.cumsum(c.trajs)

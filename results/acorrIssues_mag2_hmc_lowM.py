@@ -14,8 +14,8 @@ except:
     print 'failed to import hmc c++ thory'
     theory = False
 
-m         = 0.1
-n_steps   = 1000
+m         = 1.
+n_steps   = 20
 step_size = 1./((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
 
@@ -24,12 +24,12 @@ th = Theory(tau=step_size*n_steps, m=m)
 file_name = __file__
 pot = KG(m=m)
 
-n, dim  = 10, 1
+n, dim  = 1000, 1
 x0 = np.random.random((n,)*dim)
-spacing = 1.0
+spacing = 0.2
 
-n_samples, n_burn_in = 1000000, 50
-c_len   = 1000
+n_samples, n_burn_in = 10000, 50
+c_len   = 100
 
 mixing_angles = [.5*np.pi]
 angle_labels = [r'\frac{\pi}{2}']
