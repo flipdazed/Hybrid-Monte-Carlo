@@ -202,8 +202,7 @@ def acorr(op_samples, mean, separation, norm = 1.0):
         acorr = acorrs.ravel().mean()
     as the mean of means is the same as the overall mean
     """
-    if separation == 0: return ((op_samples-mean)**2).ravel().mean() / norm
-    return ((op_samples[:op_samples.size-separation]-mean)*(op_samples[separation:]-mean)).ravel().mean() / norm
+    return ((op_samples[:op_samples.shape[0]-separation]-mean)*(op_samples[separation:]-mean)).ravel().mean() / norm
 
 class Autocorrelations_1d(Init, Base):
     """Runs a model and calculates the 1 dimensional autocorrelation function
