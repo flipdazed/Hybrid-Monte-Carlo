@@ -84,9 +84,12 @@ class Periodic_Lattice(np.ndarray):
         
         This is NOT compatible with slicing
         """
-        if not hasattr(index, '__iter__'): index = [index]
-        if len(index) != len(self.lattice_shape): return index  # must reference a scalar
-        if any(type(i) == slice for i in index): return index   # slices not supported
+        if hasattr(index, '__iter__'):
+            if len(index) != len(self.lattice_shape): return index  # must reference a scalar
+            if any(type(i) == slice for i in index): return index   # slices not supported
+        else:
+            if self.lattice_dim == 1: index = [index]
+            else:  return index
         try:
             if len(index) == len(self.lattice_shape):               # periodic indexing of scalars
                 mod_index = tuple(( (i%s + s)%s for i,s in zip(index, self.lattice_shape)))
