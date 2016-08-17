@@ -31,6 +31,11 @@ class M2_Fix(object):
         super(M2_Fix, self).__init__()
         self.p_thresh = p_thresh
         self.setRoots(tau, m, pa, theta)
+        
+        # set various warnings
+        self.warnImpEval0 = True
+        self.warnImpRoots0 = True
+        self.warnImpRoots1 = True
         pass
         
     def lapTfm(self, b, tau, m, pa, theta=.5*pi):
@@ -128,8 +133,10 @@ class M2_Fix(object):
             cos_theta  = cos(theta)
             cos_theta2 = cos_theta*cos_theta
             cos_theta3 = cos_theta2*cos_theta
-            print "\nWarning: Implementation may be incorrect." \
-                + "\n> Read http://tinyurl.com/hjlkgsq for more information"
+            if self.warnImpRoots0:
+                print "\nWarning: Implementation may be incorrect." \
+                    + "\n> Read http://tinyurl.com/hjlkgsq for more information"
+                self.warnImpRoots0 = False
             
             if pa > self.p_thresh:
                 numerator = [ # checked and verified with Mathematica
@@ -190,8 +197,10 @@ class M2_Fix(object):
         if theta is not None: self.theta = theta
         self.setRoots(self.tau, self.m, self.pa, self.theta)
         
-        print "\nWarning: Implementation may be incorrect." \
-            + "\n> The Fixed autocorrelation doesn't have an analytic solution!"
+        if self.warnImpEval0:
+            print "\nWarning: Implementation may be incorrect." \
+                + "\n> The Fixed autocorrelation doesn't have an analytic solution!"
+            self.warnImpEval0 = False
         
         n = t/self.tau # the number of HMC trajectories (samples)
         b = self.poles
@@ -200,9 +209,10 @@ class M2_Fix(object):
         # For for both P_acc = 1 and P_acc != 1 is the same
         if self.theta==.5*pi:
             req = (absolute(array(self.poles)) < 1).all()
-            if not req:
+            if not req and self.warnImpEval1:
                 print '\n\tWarning: Magnitude of roots' \
                  + 'not all < 1:\n\t > {}'.format(self.poles)
+                self.warnImpEval1 = False
             # see http://math.stackexchange.com/q/1869017/272850
             # this uses a different way of summing the geometric series
             # to the more general method below
@@ -212,9 +222,10 @@ class M2_Fix(object):
             if b.size > 1: ans = nansum(ans, axis=0)
         else:
             req = (absolute(array(self.poles)) < 1).all()
-            if not req:
+            if not req and self.warnImpEval1:
                 print '\n\tWarning: Magnitude of roots' \
-                 + 'not all > 1:\n\t > {}'.format(self.poles)
+                    + 'not all > 1:\n\t > {}'.format(self.poles)
+                self.warnImpEval1 = False
             a = self.res
             # see http://math.stackexchange.com/q/1869017/272850
             ans = - array([a_i/b_i*b_i**(n) for a_i,b_i in zip(a, b)])
