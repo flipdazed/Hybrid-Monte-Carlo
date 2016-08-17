@@ -13,7 +13,10 @@ def metropolisHastings(samples,q,phi):
     return np.array(chain) # phi_{t,x}
 
 # sample q
-q = lambda x,y: np.exp(-abs(x**2+y**2-50)/10.) # an interesting distribution
+from hmc.potentials import Ring_Potential
+# q = lambda x,y: np.exp(-abs(x**2+y**2-50)/10.) # an interesting distribution
+ring = Ring_Potential()
+q = lambda x,y: np.exp(-ring.uE(np.asarray([x,y])))
 chain = np.array(metropolisHastings(1000,q,[0,0])) # make 1000 samples
 
 # the rest is just to make the plot pretty
@@ -46,5 +49,6 @@ plt.grid('off')
 plt.axis('off')
 
 save_name = __file__
-save      = True
+save      = False
 pp.save_or_show(saveOrDisplay(save, save_name), PLOT_LOC)
+plt.show()

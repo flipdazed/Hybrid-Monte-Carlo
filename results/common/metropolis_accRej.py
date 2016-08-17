@@ -111,7 +111,7 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs,
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
-def main(x0, pot, file_name, n_samples, n_burn_in, save = False, 
+def main(x0, pot, file_name, n_samples, n_burn_in, accept_kwargs, save = False, 
         step_size=0.05, n_steps=20, spacing=1., mixing_angle=np.pi/2., 
         accept_all = False, plot_mdmc=False):
     """A wrapper function
@@ -122,6 +122,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False,
         file_name       :: string   :: the final plot will be saved with a similar name if save=True
         n_samples       :: int      :: number of HMC samples
         n_burn_in       :: int      :: number of burn in samples
+        accept_kwargs   :: dict     :: required for Model() see docs in dynamics
     
     Optional Inputs
         save :: bool    :: bool     :: True saves the plot, False prints to the screen
@@ -133,7 +134,6 @@ def main(x0, pot, file_name, n_samples, n_burn_in, save = False,
         plot_mdmc       :: bool     :: plots all intermediate MDMC steps
     """
     
-    accept_kwargs={'store_acceptance':True, 'accept_all':True}
     model = Model(x0, pot, step_size=step_size, n_steps=n_steps, spacing=spacing, accept_kwargs=accept_kwargs)
     
     # plots out mdmc path in full for each HMC trajctory

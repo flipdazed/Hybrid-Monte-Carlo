@@ -38,8 +38,8 @@ def acceptance(dtau, delta_h=None, **kwargs):
             raise ValueError('Need to define: tau, m, m if delta_h is None')
     return erfc(.25*dtau**2*sqrt(delta_h))
 
-def KHMC1dfolf0(dtau, m, n, **kwargs):
-    """Acceptance probability for KHMC as given on pg.37 of [2]
+def KMC1dfolf0(dtau, m, n, **kwargs):
+    """Acceptance probability for KMC as given on pg.37 of [2]
     
     This is only valid at the optimal parameter choices
     for the mixing angle, m and phi

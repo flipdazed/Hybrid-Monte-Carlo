@@ -79,6 +79,5 @@ class Accept_Reject(Init):
                 # append the non plural from locals
                 lk = k[:-1]
                 getattr(self, k).append(l[lk])
-            
+        
         return accept_reject
-
