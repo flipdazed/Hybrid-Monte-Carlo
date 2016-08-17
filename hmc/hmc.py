@@ -147,10 +147,8 @@ class Hybrid_Monte_Carlo(Init):
         self.h_new = self.potential.hamiltonian(p, x)       # get new hamiltonian
         accept = self.accept.metropolisHastings(h_old=self.h_old, h_new=self.h_new)
         
-        if accept:
-            return p,x
-        else: # return old p,x
-            return p0, x0
+        if accept: return p,x
+        else: return p0, x0 # return old p,x
     
 #
 class Momentum(object):
