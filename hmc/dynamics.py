@@ -146,7 +146,7 @@ class Leap_Frog(Init):
         try:
             p -= frac_step*self.step_size*self.duE(x)
         except:
-            checks.fullTrace(msg='idx: {}, deriv {}'.format(index, self.duE(x, index)))
+            checks.fullTrace(msg='deriv {}'.format(self.duE(x)))
         return p
     
     def _storeSteps(self, p, x, l):
