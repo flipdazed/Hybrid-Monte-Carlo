@@ -80,7 +80,8 @@ class Fixed(object):
         
         columns_to_compare = ["ghmcLt[... , 1/tau]",
                                 "ghmcLt cpp",
-                                "lapTfm python"]
+                                # "lapTfm python"
+                            ]
         
         passed, failed, errors = compareVals(df, columns_to_compare, self.tol)
         
@@ -119,7 +120,8 @@ class Fixed(object):
         columns_to_compare = ["A[phi, theta, p_acc]",
                                 "ghmcLt[0, ... , 1/tau]",
                                 "ighmc cpp",
-                                "ighmc python"]
+                                # "ighmc python"
+                            ]
         
         passed, failed, errors = compareVals(df, columns_to_compare, self.tol)
         
@@ -171,7 +173,8 @@ class Exp(object):
         columns_to_compare = ['invL[ghmcLt[... , 1/tau]](t)', 
                                 'invL[ghmcLtDerived[... , tau]](t)',
                                 # "ghmc cpp",
-                                "ghmc python"]
+                                # "ghmc python"
+                            ]
         
         passed, failed, errors = compareVals(df, columns_to_compare, self.tol)
         
@@ -210,7 +213,8 @@ class Exp(object):
         
         columns_to_compare = ["ghmcLt[... , 1/tau]",
                                 "ghmcLt cpp",
-                                "lapTfm python"]
+                                # "lapTfm python"
+                            ]
         
         passed, failed, errors = compareVals(df, columns_to_compare, self.tol)
         
@@ -249,7 +253,8 @@ class Exp(object):
         columns_to_compare = ["A[phi, theta, p_acc]",
                                 "ghmcLt[0, ... , 1/tau]",
                                 "ighmc cpp",
-                                "ighmc python"]
+                                # "ighmc python"
+                            ]
         
         passed, failed, errors = compareVals(df, columns_to_compare, self.tol)
         
