@@ -37,18 +37,20 @@ class Base(object):
         """gets the relevant instances for the model"""
         
         self.x0 = Periodic_Lattice(self.x0, lattice_spacing=self.spacing)
+        if not hasattr(self, 'save_path'): self.save_path=False
         dynamics = Leap_Frog(
             duE = self.pot.duE,
             step_size = self.step_size,
             n_steps = self.n_steps,
-            rand_steps = self.rand_steps)
+            rand_steps = self.rand_steps,
+            save_path = self.save_path)
         
         if hasattr(self, 'accept_kwargs'):
             if 'get_accept_rates' not in self.accept_kwargs:
                 self.accept_kwargs['get_accept_rates'] = True
         else:
             self.accept_kwargs = {'get_accept_rates':True}
-            
+        
         self.sampler = Hybrid_Monte_Carlo(self.x0, dynamics, self.pot, self.rng,
             accept_kwargs = self.accept_kwargs)
         pass
