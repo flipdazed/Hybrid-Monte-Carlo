@@ -3,7 +3,7 @@ import numpy as np
 
 from lattice import Periodic_Lattice, laplacian, gradSquared
 from scipy import ndimage
-from scipy.ndimage import _nd_image
+from scipy.ndimage import _nd_image,_ni_support,correlate1d,generic_laplace
 import checks
 
 __all__ = [ 'Klein_Gordon',
@@ -24,8 +24,10 @@ def fastLaplaceNd(arr):
         _nd_image.correlate1d(arr, laplace_filter, 0, output, 1, 0.0, 0)
         if arr.ndim == 1: return output
         for ax in xrange(1, arr.ndim):
-            output += _nd_image.correlate1d(arr, laplace_filter, ax, output, 1, 0.0, 0)
-    return output
+            return_value = np.zeros(arr.shape, dtype=output.dtype)
+            _nd_image.correlate1d(arr, laplace_filter, ax, output, 1, 0.0, 0)
+            output += return_value
+    return output.view(Periodic_Lattice)
 
 class Shared(object):
     """Shared methods"""
@@ -36,7 +38,21 @@ class Shared(object):
         self.duE.__name__ = 'Gradient of Action (HMC Potential)'
         pass
     
+    def _prepare(self):
+        self.kE  = lambda p, *args, **kwargs: self.kineticEnergy(p=p)
+        self.uE  = lambda x, *args, **kwargs: self.potentialEnergy(positions=x)
+        self.duE = lambda x, *args, **kwargs: self.gradPotentialEnergy(positions=x)
+        pass
+    
+    def _nonLattice(self):
+        """replaced by _prepare"""
+        self.kE = lambda p, *args, **kwargs: self.kineticEnergy(p=p)
+        self.uE = lambda x, *args, **kwargs: self.potentialEnergy(x=x)
+        self.duE = lambda x, *args, **kwargs: self.gradPotentialEnergy(x=x)
+        pass
+    
     def _lattice(self):
+        """replaced by _prepare"""
         self.kE  = lambda p, *args, **kwargs: self.kineticEnergy(p=p)
         self.uE  = lambda x, *args, **kwargs: self.potentialEnergy(positions=x)
         self.duE = lambda x, *args, **kwargs: self.gradPotentialEnergy(positions=x)
@@ -86,11 +102,12 @@ class Klein_Gordon(Shared):
         self.phi_3 = phi_3      # phi^3 coupling const.
         self.phi_4 = phi_4      # phi^4 coupling const.
         
+        # use a fast method from C++ if no additional terms
         if self.phi_3 == self.phi_4 == 0 and self.debug == False:
             self.potentialEnergy = self.potentialEnergyBare
             self.gradPotentialEnergy = self.gradPotentialEnergyBare
         else: 
-            self.potentialEnergy = self.potentialEnergyint
+            self.potentialEnergy = self.potentialEnergyInt
             self.gradPotentialEnergy = self.gradPotentialEnergyInt
         
         super(Klein_Gordon, self)._lattice()
@@ -115,7 +132,7 @@ class Klein_Gordon(Shared):
         Required Inputs
             positions :: class :: see lattice.py for info
         """
-        p_sq = fastLaplaceNd(positions) / float(positions.lattice_spacing)
+        p_sq = fastLaplaceNd(positions)*positions.lattice_spacing**(positions.lattice_dim-2)
         
         # multiply the potential by the positions spacing as required
         return .5 * (-np.sum(positions * p_sq) + positions.lattice_spacing * self.m**2 * np.sum(positions**2))
@@ -127,7 +144,7 @@ class Klein_Gordon(Shared):
         Required Inputs
             positions :: class :: see lattice.py for info
         """
-        return -fastLaplaceNd(positions) / positions.lattice_spacing + positions.lattice_spacing * self.m**2 * positions
+        return -fastLaplaceNd(positions)*positions.lattice_spacing**(positions.lattice_dim-2) + positions.lattice_spacing * self.m**2 * positions
     def potentialEnergyInt(self, positions):
         """n-dim potential with interactions
         
@@ -155,13 +172,13 @@ class Klein_Gordon(Shared):
         
         # Add interation terms if required
         if self.phi_3: # phi^3 term
-            x_3_sum = np.power(positions.ravel(), 3).sum()
+            x_3_sum = (positions**3).sum()
             u_3 = self.phi_3 * x_3_sum / np.math.factorial(3)
         else:
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            x_4_sum = np.power(positions.ravel(), 4).sum()
+            x_4_sum = (positions**4).sum()
             u_4 = self.phi_4 * x_4_sum / np.math.factorial(4)
         else:
             u_4 = 0.
@@ -202,7 +219,7 @@ class Klein_Gordon(Shared):
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            u_4 = self.phi_4 * positions**3 / np.math.factorial(3)
+            u_4 = self.phi_4 * positions**3 /4 / np.math.factorial(3)
         else:
             u_4 = 0.
         
@@ -289,13 +306,13 @@ class Quantum_Harmonic_Oscillator(Shared):
         
         # Add interation terms if required
         if self.phi_3: # phi^3 term
-            x_3_sum = np.power(lattice.ravel(), 3).sum()
+            x_3_sum = (lattice**3).sum()
             u_3 = self.phi_3 * x_3_sum / np.math.factorial(3)
         else:
             u_3 = 0.
         
         if self.phi_4: # phi^4 term
-            x_4_sum = np.power(lattice.ravel(), 4).sum()
+            x_4_sum = (lattice**4).sum()
             u_4 = self.phi_4 * x_4_sum / np.math.factorial(4)
         else:
             u_4 = 0.
@@ -364,7 +381,80 @@ class Quantum_Harmonic_Oscillator(Shared):
         derivative = kinetic + (positions.lattice_spacing * potential)
             
         return derivative
+ 
+#
+class Mexican_Hat(Shared):
+    """Simple Harmonic Oscillator
     
+    The potential is given by: F(x) = k*x
+    
+    Optional Inputs
+        k :: float :: spring constant
+    """
+    def __init__(self, bias=-1.5, scale=5):
+        self.name = 'Ring Potential'
+        self.bias = bias
+        self.scale = scale
+        
+        super(Mexican_Hat, self)._nonLattice()
+        super(Mexican_Hat, self).__init__()
+        pass
+    
+    def kineticEnergy(self, p):
+        return .5 * (p**2).sum()
+    
+    def potentialEnergy(self, x):
+        return ((x**2).sum(axis=0)+self.bias)**2*self.scale
+    
+    def gradPotentialEnergy(self, x):
+        """
+        Required Inputs
+            x :: np.matrix :: column vector
+        
+        Optional Inputs
+            idx :: tuple(int) :: an index for the n-dim SHO
+        Notes
+            discard just stores extra arguments passed for compatibility
+            with the lattice versions
+        """
+        return 2.*self.scale*x*self.potentialEnergy(x)
+
+class Ring_Potential(Shared):
+    """Defines a simple ring potential
+        
+        exp{-|x^2+bias|*scale}
+    
+    Optional Inputs
+        bias :: float :: 
+        scale
+    """
+    def __init__(self, bias=-50, scale=0.1):
+        self.name = 'Ring Potential'
+        self.bias = bias
+        self.scale = scale
+        
+        super(Ring_Potential, self)._nonLattice()
+        super(Ring_Potential, self).__init__()
+        pass
+    
+    def kineticEnergy(self, p):
+        return .5 * (p**2).sum()
+    
+    def potentialEnergy(self, x):
+        return np.abs((x**2).sum(axis=0)+self.bias)*self.scale
+    
+    def gradPotentialEnergy(self, x):
+        """
+        Required Inputs
+            x :: np.matrix :: column vector
+        
+        Optional Inputs
+            idx :: tuple(int) :: an index for the n-dim SHO
+        Notes
+            discard just stores extra arguments passed for compatibility
+            with the lattice versions
+        """
+        return 2.*self.scale*x*self.potentialEnergy(x)
 #
 class Simple_Harmonic_Oscillator(Shared):
     """Simple Harmonic Oscillator
