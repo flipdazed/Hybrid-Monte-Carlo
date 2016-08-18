@@ -10,7 +10,8 @@ from utils import saveOrDisplay, prll_map, tqdm
 from models import Basic_HMC as Model
 from plotter import Pretty_Plotter, PLOT_LOC
 from hmc.lattice import Periodic_Lattice, laplacian
-import theory.acceptance
+from theory.acceptance import HMC1dfVm0lf0,acceptance
+from correlations import errors
 
 __doc__ == """
 References
@@ -30,29 +31,28 @@ def plot(scats, lines, subtitle, save):
     """
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
     pp._updateRC()
     
     fig = plt.figure(figsize=(8, 8)) # make plot
     ax =[]
     ax.append(fig.add_subplot(111))
     
-    fig.suptitle(r'Testing Acceptance Rate', fontsize=pp.ttfont)
+    # fig.suptitle(r'Testing Acceptance Rate', fontsize=pp.ttfont)
     
     ax[0].set_title(subtitle, fontsize=pp.tfont)
     ax[-1].set_xlabel(r'Trajectory Length, $\tau=n\delta\tau$')
     
     ### add the lines to the plots
-    ax[0].set_ylabel(r'$\langle P_{\text{acc}} \rangle$')
+    ax[0].set_ylabel(r'Average Acceptance, $\langle \rho \rangle_t$')
     
     clist = [i for i in colors.ColorConverter.colors if i != 'w']
     colour = (i for i in random.sample(clist, len(clist)))
     for label, line in lines.iteritems():
         ax[0].plot(*line, linestyle='-', color = next(colour), linewidth=2., alpha=0.4, label=label)
     
-    for label, scat in scats.iteritems():
-        ax[0].scatter(*scat, marker='o', label=label, color = next(colour))
-    
+    for label,scats in scats.iteritems():
+        x,y,e = scats
+        ax[0].errorbar(x,y,yerr=e, ecolor='k', ms=3, fmt='o', alpha=0.6, label=label, color = next(colour))
     ### place legends
     ax[0].legend(loc='best', shadow=True, fontsize = pp.ipfont, fancybox=True)
     
@@ -81,7 +81,8 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
     scats = {}
     
     print 'Running Model: {}'.format(file_name)
-    f = np.vectorize(lambda t: accHMC1dFree(t, step_size, 0, np.arange(1, x0.size+1)))
+    # f = np.vectorize(lambda t: accHMC1dFree(t, step_size, 0, np.arange(1, x0.size+1)))
+    f = np.vectorize(lambda t: HMC1dfVm0lf0(t, step_size, x0.size))
     x_fine = np.linspace(0, n_rng[-1]*step_size,101, True)
     theory1 = f(x_fine)
     
@@ -113,24 +114,28 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
             av_dh = np.mean(delta_hs)
             if av_dh < 0: tqdm.write('running again -ve av_dh')
         
+        accept_rates = np.asarray(accept_rates)
         samples = np.concatenate(tuple(samples), axis=0)
-        prob = np.mean(accept_rates)
+        prob = accept_rates.mean()
         meas_av_exp_dh  = np.asscalar((1./np.exp(delta_hs)).mean())
         
-        theory = theory.acceptance.acceptance(delta_h = av_dh) 
+        ans = errors.uWerr(accept_rates)                    # get errors
+        f_aav, f_diff, _, itau, itau_diff, _, acns = ans    # extract data
         
-        return prob, theory
+        theory = acceptance(dtau=step_size, delta_h = av_dh) 
+        
+        return f_aav, theory, f_diff
     
     # use multi-core support to speed up
     ans = prll_map(coreFunc, n_rng, verbose=True)
     print 'Finished Running Model: {}'.format(file_name)
     
-    prob, theory = zip(*ans)
+    prob, theory, errs = zip(*ans)
     
     x = np.asarray(n_rng)*step_size
     # theories[r'$p_{HMC}$'] = (x2, theory2)
-    scats[r'$\text{erfc}(\sqrt{\langle \delta H \rangle}/2)$'] = (x, theory)
-    scats[r'Measured'] = (x, prob)
+    scats[r'$\text{erfc}(\sqrt{\langle \delta H \rangle}/2)$'] = (x, theory, None)
+    scats[r'Measured'] = (x, prob, errs)
     
     # one long subtitle - long as can't mix LaTeX and .format()
     subtitle = '\centering Potential: {}, Lattice: {}'.format(pot.name, x0.shape) \

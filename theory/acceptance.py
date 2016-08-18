@@ -36,7 +36,8 @@ def acceptance(dtau, delta_h=None, **kwargs):
             delta_h = leapfrog.avH(dtau=dtau, **kwargs)
         else:
             raise ValueError('Need to define: tau, m, m if delta_h is None')
-    return erfc(.25*dtau**2*sqrt(delta_h))
+    x = .5*sqrt(delta_h)
+    return erfc(x)
 
 def KMC1dfolf0(dtau, m, n, **kwargs):
     """Acceptance probability for KMC as given on pg.37 of [2]
@@ -95,7 +96,7 @@ def HMC1dfVm0lf0(tau, dtau, n, **kwargs):
     """
     c = 4.*tau
     sigma = .75 - .75*j0(c) + jn(2, c) - .25*jn(4,c)
-    return acceptance(dtau=dtau,delta_h=.5*n*sigma)
+    return acceptance(dtau=dtau,delta_h=.125*n*sigma*dtau**4)
 
 def GHMC1dfL(tau, dtau, m, lattice_p, i=0, **kwargs):
     """Acceptance probability routine for Hybrid Monte Carlo
