@@ -14,19 +14,22 @@ class Pretty_Plotter(object):
         
         self.s = 1   # Increase plot size by a scale factor
         self.fig_dims = [12*self.s,5*self.s]    # size of plot
-        self.axfont = 11*self.s                 # axes
+        self.axfont = 14*self.s                 # axes
         self.tfont  = 14*self.s                 # subplot titles
-        self.ttfont = 16*self.s                 # figure title
-        self.ipfont = 9*self.s                  # label fonts
+        self.ttfont = 14*self.s                 # figure title
+        self.ipfont = 14*self.s                  # label fonts
         
         # Customising Options
         self.params = {'text.usetex' : True,
                   'font.size' : 11,
                   'font.family' : 'lmodern',
                   'text.latex.unicode': True,
-                  'text.latex.preamble': [r"\usepackage{lmodern}"],
-                  # 'text.latex.preamble': [r"\usepackage{hyperref}"], # doesn't work
-                  # 'text.latex.preamble': [r"\usepackage{amsmath}"],
+                  'text.latex.preamble': [
+                          r"\usepackage{lmodern}",
+                          r"\usepackage{bbold}",
+                          r"\usepackage{amsmath}",
+                          r"\usepackage{mathrsfs}"
+                      ],
                   'figure.figsize' : self.fig_dims,
                   'figure.subplot.top':    0.90, #0.85 for title
                   'figure.subplot.hspace': 0.40,
