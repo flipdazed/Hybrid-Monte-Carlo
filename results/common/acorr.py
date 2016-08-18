@@ -41,24 +41,20 @@ def plot(acns, lines, subtitle, op_name, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] =r"\usepackage{bbold}"
-    pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
     pp._updateRC()
     
     fig = plt.figure(figsize=(8, 8)) # make plot
     ax =[]
     ax.append(fig.add_subplot(111))
     
-    fig.suptitle(r"Autocorrelation Function for {}".format(op_name),
-        fontsize=pp.ttfont)
+    # fig.suptitle(r"Autocorrelation Function for {}".format(op_name),
+        # fontsize=pp.ttfont)
     
     ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
     
-    ax[0].set_xlabel(r'Fictitious sample time, '                            \
-        + r'$t = \sum^j_{i=0}\tau_i \stackrel{j\to\infty}{=} j\bar{\tau} '  \
-        + r'= j \delta \tau \bar{n}$')
+    ax[0].set_xlabel(r'Fictitious time separation, $s$')
     
-    ax[0].set_ylabel(r'Normalised Autocorrelation, $C(t)$')# \
+    ax[0].set_ylabel(r'Normalised Autocorrelation, $C(s)$')# \
         # + r'(\hat{O}_{i+t} - \langle\hat{O}\rangle) \rangle}/{\langle \hat{O}_0^2 \rangle}$')
     
     for label, (x, y, e) in sorted(acns.iteritems()):
@@ -80,7 +76,7 @@ def plot(acns, lines, subtitle, op_name, save):
     
     for label, line in sorted(lines.iteritems()):
         dc = next(theory_colours)
-        ax[0].plot(*line, linestyle='-', linewidth=1, alpha=1, label=label, color = dc)
+        ax[0].plot(*line, linestyle='-', linewidth=2, alpha=0.6, label=label, color = dc)
     
     xi,xf = ax[0].get_xlim()
     ax[0].set_xlim(xmin=xi-0.05*(xf-xi)) # give a decent view of the first point
@@ -111,6 +107,7 @@ def main(x0, pot, file_name,
         opFn        :: func :: function for autocorellations - takes one input: samples
         op_name     :: str :: name of opFn for plotting
         separations :: iterable :: lengths of autocorellations
+        max_sep     :: float :: define the max separation
     
     Optional Inputs
         rand_steps :: bool :: probability of with prob
@@ -197,7 +194,7 @@ def main(x0, pot, file_name,
         alen = 2*w
     
     # Create Dictionary for Plotting Measured Data
-    aclabel = r'Measured: $C_{\phi^2}(t; '             \
+    aclabel = r'Measured: $C_{M^2}(t; '             \
         + r'\bar{P}_{\text{acc}}'+r'={:4.2f}; '.format(p)
     yelpwx = zip(acns, acns_err, angle_labels, ps, ws, acxs)  # this is an iterable of all a/c plot values
     
@@ -213,7 +210,7 @@ def main(x0, pot, file_name,
         # calculcate theory across all tau, varying p_acc and normalise
         normFn = lambda pt: np.array([acFunc(t=xi, pa=pt[0], theta=pt[1]) for xi in fx]) / acFunc(t=0, pa=pt[0], theta=pt[1])
         fs = map(normFn, zip(ps, mixing_angles))            # map the a/c function to acceptance & angles
-        th_label = r'Theory: $C_{\phi^2}(t; \bar{P}_{\text{acc}} = '
+        th_label = r'Theory: $C_{M^2}(t; \bar{P}_{\text{acc}} = '
         pfl = zip(ps, fs, angle_labels)                     # this is an iterable of all theory plot values
         pfl = pfl[:alen]                                     # cut to the same window length as x-axis
         

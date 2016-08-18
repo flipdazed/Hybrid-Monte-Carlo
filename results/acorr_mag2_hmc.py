@@ -19,20 +19,19 @@ th = Theory(tau=step_size*n_steps, m=m)
 file_name = __file__
 pot = KG(m=m)
 
-n, dim  = 20, 1
+n, dim  = 100, 1
 x0 = np.random.random((n,)*dim)
-spacing = 1.0
+spacing = 1.
 
-n_samples, n_burn_in = 100000, 50
-c_len   = 10000
+n_samples, n_burn_in = 1000000, 1000
+c_len   = 1000
 
 mixing_angles = [.5*np.pi]
 angle_labels = [r'\frac{\pi}{2}']
 
 separations = range(c_len)
 opFn = magnetisation_sq
-op_name = r'$\hat{O} = \phi_0^2 :\phi_0 = \mathcal{F}^{-1}\tilde{\phi}_0 = '\
-    + r' \sum_{x\in\mathbb{Z}^d_\text{L}}\tilde{\phi}_0$'
+op_name = r'$\mathscr{M}^2$'
 pacc_theory = acceptance(dtau=step_size, tau=tau, n=x0.size, m=pot.m)
 
 acFunc = lambda t, pa, theta: hmc(pa, tau*m, 1./tau, t)

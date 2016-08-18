@@ -63,7 +63,7 @@ def s2(m, tau, **kwargs):
         print '> m**0: {}\n> m**2: {}\n> m**4: {}'.format(s0, s2, s4)
     return sigma
 #
-def avH(tau, dtau, m, n, i=1, **kwargs):
+def avH(tau, dtau, m, n, i=0, **kwargs):
     """Average hamiltonian in Leap Frog MDMC
     
     Required Inputs
@@ -74,4 +74,5 @@ def avH(tau, dtau, m, n, i=1, **kwargs):
     """
     if i > 1: raise NotImplemented("Requires implementation for i>1")
     x = n*dtau**(4*i + 4)
-    return 2.*pi1[0]**2*x*s2(m=m, tau=tau)
+    omega = s2(m=m, tau=tau)
+    return 2.*pi1[0]**2*x*omega

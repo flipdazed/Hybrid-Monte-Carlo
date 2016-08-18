@@ -6,7 +6,7 @@ from common.acorr import plot
 from common.utils import saveOrDisplay
 
 save = False
-file_name = 'acorrIssues_mag2_hmc_lowM'
+file_name = 'acorr_mag2_hmc'
 
 dest = 'results/data/other_objs/{}_allPlot.pkl'.format(file_name)
 a = load(dest)
@@ -32,18 +32,25 @@ pa =  load('results/data/other_objs/{}_probs.pkl'.format(file_name))
 # f1 = vFn(x)
 # a['lines'][l] = (x, f1)
 
-n = 450
+n = 100
 k = a['acns'].keys()[0]
 x,y, e = a['acns'][k]
+del a['acns'][k]
+k  =r'Measured data for $C_{\mathscr{M}^2}$'
 a['acns'][k] = x[:n], y[:n], e[:n]
 
-# from scipy.optimize import curve_fit
-# fn = lambda x, a, b, c: a*np.cos(b*x)**2+c
-# fit,cov = curve_fit(fn, x[:100], y[:100])
-#
-# l = a['lines'].keys()[0]
-# x, f0 = a['lines'][l]
-# f1 = fn(x, *fit)
-# a['lines'][l] = (x, f1)
+from scipy.optimize import curve_fit
+fn = lambda x, a, b, c: a*np.cos(b*x)**2+c
+fit,cov = curve_fit(fn, x[:20], y[:20])
+
+l = a['lines'].keys()[0]
+x, f0 = a['lines'][l]
+del a['lines'][l]
+l = r'Theory: $C_{\mathscr{M}^2}(s; \langle\rho\rangle_t = 0.99; \vartheta = \frac{\pi}{2})$'
+a['lines'][l] = (x, f0)
+
+f1 = fn(x, *fit)
+cos = r'${:3.2f}\cos^2{:3.2f}s+{:3.2f}$'.format(*fit)
+a['lines'][cos] = (x, f1)
 
 plot(save = saveOrDisplay(save, file_name), **a)

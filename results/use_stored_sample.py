@@ -15,21 +15,21 @@ from plotter import Pretty_Plotter, PLOT_LOC
 from common.utils import saveOrDisplay, multiprocessing
 import ctypes
 
-acs = load('results/data/numpy_objs/acorrIssues_mag2_hmc_lowM_acs.json')
-t   = load('results/data/numpy_objs/acorrIssues_mag2_hmc_lowM_trajs.json')
-p   = load('results/data/other_objs/acorrIssues_mag2_hmc_lowM_probs.pkl')
-s   = load('results/data/numpy_objs/acorrIssues_mag2_hmc_lowM_samples.json')
+fname = 'acorr_mag2_hmc'
+acs = load('results/data/numpy_objs/{}_acs.json'.format(fname))
+t   = load('results/data/numpy_objs/{}_trajs.json'.format(fname))
+p   = load('results/data/other_objs/{}_probs.pkl'.format(fname))
+s   = load('results/data/numpy_objs/{}_samples.json'.format(fname))
 
 save      = True
-file_name = 'acorrIssues_mag2_hmc_m0p10_acCount'
 op = magnetisation_sq(s)
 av_op = op.mean()
 
 n, dim    = 10, 1
 spacing   = 1.
-n_samples, n_burn_in = 1000000, 50
+n_samples, n_burn_in = 100000, 50
 c_len     = 1000
-m         = 0.1
+m         = 1.0
 n_steps   = 20
 step_size = 1./((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
@@ -37,7 +37,7 @@ r         = 1/tau
 phi       = tau*m
 
 min_sep   = 0.
-max_sep   = 500
+max_sep   = 20.
 res       = step_size
 tolerance = res/2.-step_size*0.1
 
@@ -52,7 +52,7 @@ shared_array = np.ctypeslib.as_array(shared_array.get_obj())
 shared_array = shared_array.reshape(op.shape)
 shared_array[...] = op[...]
 
-aFn = lambda s: acorrMapped(op, t, s, shared_array, norm=1.0, tol=tolerance, counts=True)
+aFn = lambda s: acorrMapped(shared_array, t, s, av_op, norm=1.0, tol=tolerance, counts=True)
 separations = np.linspace(min_sep, max_sep, (max_sep-min_sep)/res+1)
 separations = separations[::sep_skip]
 
@@ -71,6 +71,7 @@ if cpp:
 pp = Pretty_Plotter()
 pp._teXify()
 pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
+pp.params['text.latex.preamble'] = [r"\usepackage{mathrsfs}"]
 pp._updateRC()
 
 fig = plt.figure(figsize=(8, 8)) # make plot
@@ -86,8 +87,8 @@ th_label = r'Theory: $\mathcal{C}_{\text{HMC}}(t; P_{\text{acc}}='+ r'{:5.3f}, \
 fig.suptitle(main_title, fontsize = 14)
 ax[0].set_title(info_title, fontsize = 12)
 
-ax[0].scatter(separations, a, linewidth=2.0, alpha=0.6, label='Measured $\mathcal{C}_{HMC}(t)$')
-if cpp: ax[0].plot(th_x, th, linewidth=2.0, alpha=0.6, label=th_label)
+ax[0].errorbar(separations, a/a[0], yerr=my_err, ecolor='k', ms=3, fmt='o', alpha=0.6, label='Measured $\mathcal{C}_{HMC}(t)$')
+if cpp: ax[0].plot(th_x, th/th[0], linewidth=2.0, alpha=0.6, label=th_label)
 ax[0].legend(loc='best', shadow=True, fontsize = 12, fancybox=True)
 ax[0].set_ylabel(r'Unnormalised Correlation Function, $\mathcal{C}(t)$')
 
@@ -96,4 +97,6 @@ ax[1].bar(separations[1:], counts[1:], linewidth=0, alpha=0.6, width = tolerance
 ax[1].legend(loc='best', shadow=True, fontsize = 12, fancybox=True)
 ax[1].set_ylabel(r'Count')
 
+if hasattr(locals(), "__file__"): file_name = __file__
+else: file_name = "use_stored_sample_tmp.png"
 pp.save_or_show(saveOrDisplay(save, file_name), PLOT_LOC)

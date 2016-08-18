@@ -68,10 +68,10 @@ class Correlations_1d(Init, Base):
         if not hasattr(self, 'samples'): self._getSamples()
         if not isinstance(self.samples, np.ndarray): self.samples = np.asarray(self.samples)
         
-        self.two_point = twoPoint(self.samples, separation)
+        self.op_samples = twoPoint(self.samples, separation)
         
         # ravel() just flattens averything into one dimension
         # rather than averaging over each lattice sample and averaging over
         # all samples I jsut average the lot saving a calculation
-        return self.two_point.ravel().mean()
+        return self.op_samples.ravel().mean()
     
