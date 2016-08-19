@@ -13,15 +13,14 @@ def plot(burn_in, samples, bg_xyz, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
     pp.params['figure.subplot.top'] = 0.85
     pp._updateRC()
     
     fig = plt.figure(figsize=(8,8))
     ax = fig.add_subplot(111)
     
-    ax.set_xlabel(r'$\phi_{1}$')
-    ax.set_ylabel(r'$\phi_{2}$')
+    ax.set_xlabel(r'$\phi_{1}$', fontsize=pp.axfont)
+    ax.set_ylabel(r'$\phi_{2}$', fontsize=pp.axfont)
     
     # fig.suptitle(r'Sampling a ring potential with HMC',
         # fontsize=pp.ttfont)

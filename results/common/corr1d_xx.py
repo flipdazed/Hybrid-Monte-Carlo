@@ -10,7 +10,7 @@ from tqdm import tqdm
 from results.data import store
 from plotter import Pretty_Plotter, PLOT_LOC
 
-def plot(c_fn, errs, theory, spacing, subtitle, save):
+def plot(c_fn, errs, th_x_sq, spacing, subtitle, logscale, save):
     """Plots the two-point correlation function
     
     Required Inputs
@@ -19,6 +19,7 @@ def plot(c_fn, errs, theory, spacing, subtitle, save):
         spacing :: float :: the lattice spacing
         subtitle :: string :: subtitle for the plot
         save :: bool :: True saves the plot, False prints to the screen
+        logscale :: bool :: adds a logscale
     
     Optional Inputs
         all_lines :: bool :: if True, plots hamiltonian as well as all its components
@@ -38,7 +39,7 @@ def plot(c_fn, errs, theory, spacing, subtitle, save):
     ax[0].set_title(subtitle)
     
     ax[0].set_xlabel(r'Lattice Separation, $ia$')
-    ax[0].set_ylabel(r'$\langle \phi_{x}\phi_{x+i} \rangle$')
+    ax[0].set_ylabel(r'$\langle \phi_{t,x}\phi_{t,x+i} \rangle_{t,x}$')
     
     steps = np.linspace(0, spacing*c_fn.size, c_fn.size, False)    # get x values
     # log_y = np.log(c_fn)        # regress for logarithmic scale
@@ -49,25 +50,25 @@ def plot(c_fn, errs, theory, spacing, subtitle, save):
     # m, c, r_val, p_val, std_err = stats.linregress(x, y)
     # fit = np.exp(m*steps + c)
     
-    if theory is not None:
-        th = ax[0].plot(steps, theory, color='green',linewidth=3., linestyle = '-', 
+    if th_x_sq is not None:
+        th = ax[0].plot(steps, th_x_sq, color='green',linewidth=3., linestyle = '-', 
             alpha=0.2, label = r'Theoretical prediction')
     
     # bf = ax[0].plot(steps, fit, color='blue',
     #      linewidth=3., linestyle = '-', alpha=0.2, label=r'fit: $y = e^{'\
     #          + '{:.2f}x'.format(m)+'}e^{'+'{:.2f}'.format(c) + r'}$')
+    # err = c_fn*np.exp(c_fn)*errs
     f = ax[0].errorbar(steps, c_fn, yerr=errs, ecolor='k', ms=3, fmt='o', alpha=0.6,
         label='Measured Data')
     
     ax[0].set_xlim(xmin=0)
-    ax[0].set_yscale("log", nonposy='clip')
+    if logscale: ax[0].set_yscale("log", nonposy='clip')
     
     ax[0].legend(loc='best', shadow=True, fontsize = pp.axfont)
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
-def main(x0, pot, file_name, n_samples, n_burn_in, c_len=5, step_size = .5, n_steps = 50, spacing = 1., free=True, 
-save = False):
+def main(x0, pot, file_name, n_samples, n_burn_in, c_len=5, step_size = .5, n_steps = 50, spacing = 1., free=True, logscale=False, save = False):
     """A wrapper function
     
     Required Inputs
@@ -83,7 +84,8 @@ save = False):
         n_steps :: int :: number of MDMC steps
         spacing ::float :: lattice spacing
         save :: bool :: True saves the plot, False prints to the screen
-        free ::  assumes free field
+        free ::  bool :: assumes free field
+        logscale :: bool :: add a logscale
     """
     
     rng = np.random.RandomState()
@@ -91,8 +93,8 @@ save = False):
       n_steps = n_steps, rand_steps=True)
     c = corr.Correlations_1d(model)
     
-    subtitle = r"Potential: {}; Lattice: ${}$; $a={:.1f}$".format(
-        pot.name, x0.shape, spacing)
+    subtitle = r"Lattice: ${}$; $a={:.1f}$".format(
+        x0.shape, spacing)
     length = model.x0.size
     
     if hasattr(pot, 'm'):
@@ -102,8 +104,7 @@ save = False):
             # [qho_theory(spacing, mu, length, i) for i in range(c_len)])
             [x2_1df(mu, length, spacing, i) for i in range(c_len)])
         print 'theory:   <x(0)x(0)> = {}'.format(th_x_sq[0])
-        subtitle += r"; $m_0={:.0f}$; $\mu={:.0f}$;".format(m0, mu) \
-                    + r' $M' + '=10^{}$'.format(int(np.log10(n_samples)))
+        subtitle += r"; $m=1" + r' $M' + '=10^{}$'.format(int(np.log10(n_samples)))
     else:
         th_x_sq, m0, mu = None, None, None
     
@@ -129,11 +130,11 @@ save = False):
     print 'measured: <x(0)x(0)> = {}'.format(av_x0_sq)
     
     # make periodic
-    if free: th_x_sq = np.tile(th_x_sq[:c_len], int(np.around(c_len/float(x0.shape[0]),0)))[:c_fn.size]
+    if free: th_x_sq = np.tile(th_x_sq[:x0.shape[0]], c_len//x0.shape[0]+1)[:c_len]
     else: th_x_sq = None
     
-    all_plot = {'c_fn':c_fn, 'errs':errs, 'th_x_sq':th_x_sq, 'spacing':spacing, 'subtitle':subtitle}
+    all_plot = {'c_fn':c_fn, 'errs':errs, 'th_x_sq':th_x_sq, 'spacing':spacing, 'subtitle':subtitle, 'logscale':logscale}
     store.store(all_plot, file_name, '_allPlot')
-    plot(c_fn, errs, th_x_sq, spacing, subtitle, 
+    plot(c_fn, errs, th_x_sq, spacing, subtitle, logscale,
         save = saveOrDisplay(save, file_name))
     

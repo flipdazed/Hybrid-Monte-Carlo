@@ -17,7 +17,7 @@ import ctypes
 
 fname = 'acorr_mag2_hmc'
 acs = load('results/data/numpy_objs/{}_acs.json'.format(fname))
-t   = load('results/data/numpy_objs/{}_trajs.json'.format(fname))
+seps= load('results/data/numpy_objs/{}_trajs.json'.format(fname))
 p   = load('results/data/other_objs/{}_probs.pkl'.format(fname))
 s   = load('results/data/numpy_objs/{}_samples.json'.format(fname))
 
@@ -40,6 +40,7 @@ min_sep   = 0.
 max_sep   = 20.
 res       = step_size
 tolerance = res/2.-step_size*0.1
+t = np.cumsum(seps)
 
 # this line ensures that we skip this number of iterations
 # to make sure the process doesn't spwn over 32000 processes
@@ -62,6 +63,14 @@ a,counts = zip(*result)
 
 a = np.asarray(a)           # the autocorrelation array
 counts = np.array(counts)   # the counts at each separation
+
+# grab errors
+print 'getting errors...'
+ans = uWerr(op, a)
+_, _, _, itau, itau_diff, _, acns = ans             # extract data
+my_w = getW(itau, itau_diff, n=n_samples)       # get window length
+my_err = acorrnErr(acns, my_w, n_samples)     # get autocorr errors
+my_err *= np.sqrt(n_samples)/np.sqrt(counts)
 
 # theory calclations
 if cpp:

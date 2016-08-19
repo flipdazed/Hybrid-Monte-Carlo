@@ -190,7 +190,7 @@ class Klein_Gordon(Shared):
         euclidean_action = kinetic + positions.lattice_spacing * potential
         
         if self.debug: # allows for debugging
-            ret_val = [euclidean_action, kinetic, potential*positions.positions_spacing]
+            ret_val = [euclidean_action, kinetic, potential*positions.lattice_spacing]
         else:
             ret_val = euclidean_action
         return ret_val

@@ -5,7 +5,7 @@ from common import dynamics_constEn_1d
 from hmc.potentials import Klein_Gordon as KG
 
 file_name = __file__
-pot = KG()
+pot = KG(debug=True)
 
 n, dim = 100, 1
 x0 = np.random.random((n,)*dim)

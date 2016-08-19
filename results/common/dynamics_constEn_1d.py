@@ -22,25 +22,25 @@ def plot(y1, y2, subtitle, save, all_lines = False):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
     pp._updateRC()
     
     fig = plt.figure(figsize=(8, 8)) # make plot
     ax =[]
     ax.append(fig.add_subplot(111))
     
-    fig.suptitle(r"Change in Energy during Leap Frog integration",
-        fontsize=pp.ttfont)
+    # fig.suptitle(r"Change in Energy during Leap Frog integration",
+    #     fontsize=pp.ttfont)
     
-    ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
+    ax[0].set_title(subtitle, fontsize=pp.ttfont)
     
-    ax[0].set_xlabel(r'Number of Leap Frog Steps, $n$')
-    ax[0].set_ylabel(r'Change in Energy, $\delta E = E_n - E_0$')
+    ax[0].set_xlabel(r'Number of Leap Frog Steps, $n$', fontsize=pp.axfont)
+    ax[0].set_ylabel(r'Change in Energy, $\delta E_{n} = E_{n} - E_0$', fontsize=pp.axfont)
     
     steps = np.linspace(0, y1.size, y1.size, True)
     
     # check for multiple values in the potential
-    multi_pot = (y2.shape[-1] > 1)
+    multi_pot = (len(y2.shape) > 1)
+    print multi_pot, y2.shape
     if multi_pot:
         action, k, u = zip(*y2)
         k = np.asarray(k)
@@ -51,30 +51,30 @@ def plot(y1, y2, subtitle, save, all_lines = False):
     action = np.asarray(action)
     
     h = ax[0].plot(steps, y1+np.asarray(action), # Full Hamiltonian
-        label=r"$\delta H = \delta T(\pi) + \delta S(x,t)$", color='blue',
-        linewidth=5., linestyle = '-', alpha=0.2)
+        label=r"$\delta H_t = \delta T_n + \delta S_t$", color='blue',
+        linewidth=5., linestyle = '-', alpha=1)
     
     if all_lines:
         t = ax[0].plot(steps, np.asarray(y1), # Kinetic Energy (conjugate)
-            label=r'$\delta T(\pi)$', color='darkred',
-            linewidth=3., linestyle='-', alpha=0.2)
+            label=r'$\delta T_n$', color='darkred',
+            linewidth=2., linestyle='-', alpha=1)
         
         if multi_pot:
             s = ax[0].plot(steps, np.asarray(action), # Potential Energy (Action)
-                label=r'$\delta S(x,t) = \sum_{n} (\delta T_S + \delta V_S)$', color='darkgreen',
-                linewidth=3., linestyle='-', alpha=0.2)
+                label=r'$\delta \delta S_n = \sum_{n} (\delta T^{(s)}_n + \delta V^{(s)}_n)$', color='darkgreen',
+                linewidth=1., linestyle='-', alpha=1)
                 
             t_s = ax[0].plot(steps, np.asarray(k),  # Kinetic Energy in Action
-                label=r'$\sum_{n} \delta T_S$', color='red',
-                linewidth=1., linestyle='--', alpha=1.)
+                label=r'$\sum_{n} \delta T^{(s)}_n$', color='red',
+                linewidth=1., linestyle='--', alpha=2.)
             
             v_s = ax[0].plot(steps, np.asarray(u),  # Potential Energy in Action
-                label=r'$\sum_{n} \delta V_S$', color='green',
+                label=r'$\sum_{n} \delta V^{(s)}_n$', color='green',
                 linewidth=1., linestyle='--', alpha=1.)
         else:
             s = ax[0].plot(steps, np.asarray(action), # Potential Energy (Action)
-                label=r'$\delta S(x,t) = \frac{1}{2}\delta(x^2)$', color='darkgreen',
-                linewidth=3., linestyle='-', alpha=0.2)
+                label=r'$\delta S(x,t) = \frac{1}{2}\delta \phi_{n,x}^2$', color='darkgreen',
+                linewidth=3., linestyle='-', alpha=1)
     
     # add legend
     ax[0].legend(loc='upper left', shadow=True, fontsize = pp.axfont)
@@ -97,9 +97,9 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
     model = Model(x0, pot,
         n_steps   = n_steps, 
         step_size = step_size,
-        rng=rng)
-    model.sampler.dynamics.save_path = True # saves the dynamics path
-    model.sampler.potential.debug = True          # saves all energies
+        rng=rng,
+        save_path=True)
+    # model.sampler.dynamics.save_path = True # saves the dynamics path
     
     # initial conditions - shoudn't matter much
     p0 = model.sampler.p0
@@ -109,10 +109,10 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
     h0    = model.sampler.potential.hamiltonian(p0, x0)
     kE0   = model.sampler.potential.kE(p0)
     uE0   = model.sampler.potential.uE(x0)
-    
+    print model.sampler.potential.debug
     # Setting debug = True returns a tuple
     # from the potential: (action, action_ke, action_ue)
-    if len(list(uE0)) > 1: # list() as can be np.array or plain float
+    if len([uE0]) > 1: # list() as can be np.array or plain float
         check_uE0 = uE0[0] # if a debug then this is action
     else:
         check_uE0 = uE0    # if not debug then as normal
@@ -128,7 +128,7 @@ def dynamicalEnergyChange(x0, pot, n_steps, step_size):
     pots = np.asarray([uE0] + uE_path) - uE0
     return kins, pots 
 #
-def main(x0, pot, file_name, save = False, n_steps   = 500, step_size = .1, all_lines = True):
+def main(x0, pot, file_name, save = False, n_steps   = 100, step_size = .1, all_lines = True):
     """A wrapper function
     
     Required Inputs
@@ -147,8 +147,8 @@ def main(x0, pot, file_name, save = False, n_steps   = 500, step_size = .1, all_
     print 'Finished Running Model: {}'.format(file_name)
     
     plot(y1 = kins, y2 = pots, all_lines = all_lines,
-        subtitle = r'Potential: {}, Lattice shape: {}, '.format(pot.name, x0.shape) + \
-        r'$\epsilon ='+'{}$'.format(step_size),
+        subtitle = r'Lattice: {}, '.format(x0.shape) + \
+        r'$\delta\tau ='+'{}$'.format(step_size),
         save = saveOrDisplay(save, file_name)
         )
     pass

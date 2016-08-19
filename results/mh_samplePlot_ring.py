@@ -13,22 +13,21 @@ def plot(burn_in, samples, bg_xyz, save):
     
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
     pp.params['figure.subplot.top'] = 0.85
     pp._updateRC()
     
     fig = plt.figure(figsize=(8,8))
     ax = fig.add_subplot(111)
     
-    ax.set_xlabel(r'$\phi_{1}$')
-    ax.set_ylabel(r'$\phi_{2}$')
+    ax.set_xlabel(r'$\phi_{1}$', fontsize=pp.axfont)
+    ax.set_ylabel(r'$\phi_{2}$', fontsize=pp.axfont)
     
     # fig.suptitle(r'Sampling a ring potential with HMC',
         # fontsize=pp.ttfont)
     pot = r'$Q(\phi_{x}) = e^{-50\left|\phi_{x}^2 + 1/10\right|}$'
-    ax.set_title(r'Showing {} burn-in \& {} MH moves sampling from {}'.format(
-    max(burn_in.shape), max(samples.shape), pot),
-        fontsize=(pp.tfont-4))
+    ax.set_title(r'{} burn-in \& {} MH moves'.format(
+    max(burn_in.shape), max(samples.shape)),
+        fontsize=pp.tfont)
     
     plt.grid(False)
     

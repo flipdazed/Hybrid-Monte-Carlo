@@ -16,8 +16,8 @@ dtau    = 0.1
 tau     = n_steps*dtau
 mass    = 1
 
-a['subtitle'] = r"Potential: {}; Lattice: ".format('Klein-Gordon') \
-    + r"${}$; $a={:.1f}; \delta\tau={:.1f}; n={}$".format(
+a['subtitle'] = r"Lattice: " \
+    + r"${}$; $a={:.1f}; \delta\tau={:.1f}; n={}; M=10^7$".format(
         (sites,), n_steps, dtau, n_steps)
 
 # add integrated autocorrelation theory

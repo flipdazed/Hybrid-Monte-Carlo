@@ -30,12 +30,12 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs,
     """
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
+    # pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
     pp._updateRC()
     
     fig, ax = plt.subplots(3, sharex=True, figsize = (8, 8))
-    fig.suptitle(r'Data from {} Metropolis acceptance steps'.format(len(probs)), 
-        fontsize=pp.ttfont)
+    # fig.suptitle(r'Data from {} Metropolis acceptance steps'.format(len(probs)),
+    #     fontsize=pp.ttfont)
     
     fig.subplots_adjust(hspace=0.2)
     
@@ -43,7 +43,7 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs,
     
     ### Add top pseudo-title and bottom shared x-axis label
     ax[0].set_title(subtitle, fontsize=pp.tfont)
-    ax[-1].set_xlabel(r'HMC trajectory, $t$')
+    ax[-1].set_xlabel(r'Markov Time, $j$')
     
     ### add the rejection points in the background
     xrng = range(1, l+1)    # calculate xrange to match length
@@ -52,19 +52,19 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs,
             if val == False: a.axvline(x=x, linewidth=4, color='red', alpha=0.2)
     
     ### add the lines to the plots
-    ax[0].set_ylabel(r'Hamiltonian, $H$')
-    ax[0].plot(xrng, h_olds, linestyle='-', color='blue', linewidth=2., alpha=0.4, 
-        label=r'$H(t-1)$')
-    ax[0].plot(xrng, h_news, linestyle='-', color='green', linewidth=2., alpha=0.4, 
-        label=r'$H(t)$')
+    ax[0].set_ylabel(r'Hamiltonian, $H_j$')
+    ax[0].plot(xrng, h_olds, linestyle='-', color='blue', linewidth=2., alpha=1, 
+        label=r'$H_{j-1}$')
+    # ax[0].plot(xrng, h_news, linestyle='-', color='green', linewidth=2., alpha=0.4,
+    #     label=r'$H(t)$')
     
-    ax[1].set_ylabel(r'$\exp{-\delta H}$')
+    ax[1].set_ylabel(r'$\exp{-\delta H_j}$')
     
-    ax[1].plot(xrng, exp_delta_hs, linestyle='-', color='blue', linewidth=2., alpha=0.4,
-        label=r'$\exp{ -\delta H(t)}$')
+    ax[1].plot(xrng, exp_delta_hs, linestyle='-', color='blue', linewidth=2., alpha=1,
+        label=r'$\exp{ -\delta H_t}$')
     
-    ax[2].set_ylabel(r'Acceptance Prob., $P_{\text{acc}}$')
-    ax[2].plot(xrng, probs, linestyle='-', color='blue', linewidth=2., alpha=0.6)
+    ax[2].set_ylabel(r'Acceptance $\rho_j$')
+    ax[2].plot(xrng, probs, linestyle='-', color='blue', linewidth=2., alpha=1)
     
     ### test to see if we will plot all the intermediate MDMC steps
     plot_mdmc = (h_mdmc is not None) & (mdmc_deltaH is not None)
@@ -84,19 +84,20 @@ def plot(probs, accepts, h_olds, h_news, exp_delta_hs,
         mdmc_x = mdmc_x.flatten()
         
         ax[0].plot(mdmc_x, remove_links(h_mdmc), linestyle='--', color='green', linewidth=1, alpha=1, 
-            label=r'MDMC: $H(t+\epsilon)$')
+            label=r'MDMC: $H_{j+1}$')
         ax[0].scatter(staggered_xi, staggered_y(h_mdmc,0), color='red', marker='o', alpha=1, 
             label=r'Start MDMC')
         ax[0].scatter(staggered_xf, staggered_y(h_mdmc,n), color='red', marker='x', alpha=1, 
             label=r'End MDMC')
         
         ax[1].plot(mdmc_x, remove_links(mdmc_deltaH), linestyle='--', color='blue', linewidth=1., alpha=1,
-            label=r'MDMC: $\exp{ -\delta H(t+\epsilon)}$')
+            label=r'MDMC: $\exp{ -\delta H_{j+1}$')
         ax[1].scatter(staggered_xi, staggered_y(mdmc_deltaH, 0), color='red', marker='o', 
             alpha=1, label=r'Start MDMC')
         ax[1].scatter(staggered_xf, staggered_y(mdmc_deltaH, n), color='red', marker='x',
             alpha=1, label=r'End MDMC')
-    
+        
+        
     ### adds labels to the plots
     for i, text in labels.iteritems(): pp.add_label(ax[i], text, fontsize=pp.tfont)
     
@@ -167,15 +168,14 @@ def main(x0, pot, file_name, n_samples, n_burn_in, accept_kwargs, save = False,
     decimal = meas_av_exp_dh / float(10**pow_ten)       # calculate A for AeN
     
     # one long subtitle - long as can't mix LaTeX and .format()
-    subtitle = '\centering Potential: {}, Lattice: {}'.format(pot.name, x0.shape) \
-        + ', Accept: {}'.format(['M-H','All'][accept_all]) \
-        + r', $\theta = ' + '{:3.1f}$'.format(mixing_angle) \
-        + r', $\epsilon = ' + '{:4.2f}$'.format(step_size) \
+    subtitle = \
+        'Lattice: {}'.format(x0.shape) \
+        + r', $\delta\tau = ' + '{:4.2f}$'.format(step_size) \
         + r', $n = ' + '{}$'.format(n_steps)
     
     # text for pretty labels in each subplot
-    ax2_label = r'$\langle P_{\text{acc}} \rangle='+' {:4.2f}$'.format(av_acc)
-    ax1_label = r' $\langle \exp{ -\delta H}  \rangle='+' {:3.1f}'.format(decimal) \
+    ax2_label = r'$\langle \rho_j \rangle_j='+' {:4.2f}$'.format(av_acc)
+    ax1_label = r' $\langle \exp{ -\delta H_j}  \rangle_j='+' {:3.1f}'.format(decimal) \
         + r'\times 10^{' + '{}'.format(pow_ten) + '}$'
     
     ### This is pulling data from the MDMC steps
@@ -187,7 +187,6 @@ def main(x0, pot, file_name, n_samples, n_burn_in, accept_kwargs, save = False,
         kE_mdmc = map(model.sampler.potential.kE, p_mdmc) # calculate kE
         uE_mdmc = map(model.sampler.potential.uE, x_mdmc) # calculate uE
         h_mdmc = np.asarray(np.asarray(kE_mdmc) + np.asarray(uE_mdmc))
-        
         # filters out all the values multiples of n_steps
         h_mdmc_0 = np.repeat(h_mdmc[0::(n_steps+1)], n_steps+1)
         delta_H = h_mdmc - h_mdmc_0
@@ -195,6 +194,7 @@ def main(x0, pot, file_name, n_samples, n_burn_in, accept_kwargs, save = False,
         
     else:
         h_mdmc = mdmc_deltaH = None
+    
     
     plot(accept_rates, accept_rejects, h_olds, h_news, exp_delta_hs,
         subtitle = subtitle,

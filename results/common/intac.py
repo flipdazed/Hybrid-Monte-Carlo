@@ -26,23 +26,22 @@ def plot(x, lines, subtitle, op_name, save):
     """
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
-    pp.params['text.latex.preamble'] = r"\usepackage{amsmath}"
     pp._updateRC()
     ax =[]
     
     fig, ax = plt.subplots(4, sharex=True, figsize = (8, 8))
-    fig.suptitle(r"Integrated Autocorrelations for " \
-        + r"{} and varying $\theta$".format(op_name), fontsize=pp.ttfont)
+    # fig.suptitle(r"Integrated Autocorrelations for " \
+    #     + r"{} and varying $\theta$".format(op_name), fontsize=pp.ttfont)
     
     fig.subplots_adjust(hspace=0.2)
     
     # Add top pseudo-title and bottom shared x-axis label
     ax[0].set_title(subtitle, fontsize=pp.tfont)
-    ax[-1].set_xlabel(r'Mixing angle, $\theta$')
-    ax[0].set_ylabel(r'$\bar{\bar{\tau}}_{\text{int}}$')
-    ax[1].set_ylabel(r'$\langle \hat{O} \rangle_{L,\tau}$')
+    ax[-1].set_xlabel(r'Mixing angle, $\vartheta$')
+    ax[0].set_ylabel(r'$\tau_{\text{int}}$')
+    ax[1].set_ylabel(r'$\langle X^2\rangle_{t}$')
     ax[2].set_ylabel(r'Int. window, $w$')
-    ax[3].set_ylabel(r'$\langle P_{\text{acc}}\rangle$')
+    ax[3].set_ylabel(r'$\langle \rho_t\rangle_t$')
     
     def formatFunc(tic, tic_loc):
         return r"${}\pi$".format(tic)
@@ -60,10 +59,10 @@ def plot(x, lines, subtitle, op_name, save):
                 c = next(colour)
             
             if err is None:
-                ax[k].plot(x, y, c=c, lw=1., alpha=0.6, label=label, linestyle=s)
+                ax[k].plot(x, y, c=c, lw=1., alpha=1, label=label, linestyle=s)
             else:
                 y = np.asarray(y); err = np.asarray(err)
-                ax[k].fill_between(x, y-err, y+err, color=c, alpha=0.9, label=label)
+                ax[k].fill_between(x, y-err, y+err, color=c, alpha=1, label=label)
                 # ax[k].errorbar(x, y, yerr=err, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
                 #     label=label)
             if i == 0:

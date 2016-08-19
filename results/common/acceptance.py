@@ -8,7 +8,7 @@ import random
 from data import store
 from utils import saveOrDisplay, prll_map, tqdm
 from models import Basic_HMC as Model
-from plotter import Pretty_Plotter, PLOT_LOC
+from plotter import Pretty_Plotter, PLOT_LOC, colors, clist, mlist
 from hmc.lattice import Periodic_Lattice, laplacian
 from theory.acceptance import HMC1dfVm0lf0,acceptance
 from correlations import errors
@@ -43,16 +43,26 @@ def plot(scats, lines, subtitle, save):
     ax[-1].set_xlabel(r'Trajectory Length, $\tau=n\delta\tau$')
     
     ### add the lines to the plots
-    ax[0].set_ylabel(r'Average Acceptance, $\langle \rho \rangle_t$')
+    ax[0].set_ylabel(r'Average Acceptance, $\langle \rho_t \rangle_t$')
     
-    clist = [i for i in colors.ColorConverter.colors if i != 'w']
-    colour = (i for i in random.sample(clist, len(clist)))
+    colour = [i for i in random.sample(clist, len(clist))]
+    ms = [i for i in random.sample(mlist, len(mlist))]
+    darkclist = [i for i in colors.cnames if 'dark' in i]
+    darkcolour = [i for i in random.sample(darkclist, len(darkclist))]
+    lightcolour = map(lambda strng: strng.replace('dark',''), darkcolour)
+    
+    cs = iter(colour)
+    m = iter(ms)
+    lc = iter(lightcolour)
+    # clist = [i for i in colors.ColorConverter.colors if i != 'w']
+    # colour = (i for i in random.sample(clist, len(clist)))
     for label, line in lines.iteritems():
-        ax[0].plot(*line, linestyle='-', color = next(colour), linewidth=2., alpha=0.4, label=label)
+        ax[0].plot(*line, linestyle='-', color = next(lc), linewidth=2., alpha=0.4, label=label)
     
     for label,scats in scats.iteritems():
         x,y,e = scats
-        ax[0].errorbar(x,y,yerr=e, ecolor='k', ms=3, fmt='o', alpha=0.6, label=label, color = next(colour))
+        ax[0].errorbar(x,y,yerr=e, ecolor='k', ms=6, fmt=next(m), alpha=0.9, label=label, 
+        c = next(cs), lw=1, elinewidth=1)
     ### place legends
     ax[0].legend(loc='best', shadow=True, fontsize = pp.ipfont, fancybox=True)
     
@@ -86,8 +96,8 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
     x_fine = np.linspace(0, n_rng[-1]*step_size,101, True)
     theory1 = f(x_fine)
     
-    label = r'$\text{erfc}\left(\frac{\delta \tau^2}{4}' \
-        + r' \sqrt{\frac{N \sigma_{\text{HMC}}}{2}}\right)$'
+    label = r'$\text{erfc}\left( \frac{\delta\tau^2}{2}' \
+        + r' \sqrt{ 2 p^{2}_{0,1} N \sigma^{(2)}_{m^2} } \right)$'
     lines[label] =  (x_fine, theory1)
     
     def coreFunc(n_steps):
@@ -119,30 +129,32 @@ def main(x0, pot, file_name, n_rng, n_samples = 1000, n_burn_in = 25, step_size 
         prob = accept_rates.mean()
         meas_av_exp_dh  = np.asscalar((1./np.exp(delta_hs)).mean())
         
-        ans = errors.uWerr(accept_rates)                    # get errors
-        f_aav, f_diff, _, itau, itau_diff, _, acns = ans    # extract data
-        
+        # ans = errors.uWerr(accept_rates)                    # get errors
+        # f_aav, f_diff, _, itau, itau_diff, _, acns = ans    # extract data
+        mean = accept_rates.mean()
+        err = np.std(accept_rates)/np.sqrt(n_samples)
+        th_err = np.std(accept_rates)/np.sqrt(n_samples)
         theory = acceptance(dtau=step_size, delta_h = av_dh) 
         
-        return f_aav, theory, f_diff
+        return mean, theory, err, th_err
     
     # use multi-core support to speed up
     ans = prll_map(coreFunc, n_rng, verbose=True)
     print 'Finished Running Model: {}'.format(file_name)
     
-    prob, theory, errs = zip(*ans)
+    prob, theory, errs, th_err = zip(*ans)
     
     x = np.asarray(n_rng)*step_size
     # theories[r'$p_{HMC}$'] = (x2, theory2)
-    scats[r'$\text{erfc}(\sqrt{\langle \delta H \rangle}/2)$'] = (x, theory, None)
+    scats[r'$\text{erfc}(\sqrt{\langle \delta H_t \rangle}/2)$'] = (x, theory, th_err)
     scats[r'Measured'] = (x, prob, errs)
     
     # one long subtitle - long as can't mix LaTeX and .format()
     subtitle = '\centering Potential: {}, Lattice: {}'.format(pot.name, x0.shape) \
         + r', $\delta\tau = ' + '{:4.2f}$'.format(step_size)
     
-    store.store(lines, file_name, '_lines')
-    store.store(scats, file_name, '_scats')
+    all_plot = {'lines':lines, 'scats':scats, 'subtitle':subtitle}
+    store.store(all_plot, file_name, '_allPlot')
     plot(lines = lines, scats = scats,
         subtitle = subtitle,
         save = saveOrDisplay(save, file_name),

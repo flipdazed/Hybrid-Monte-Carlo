@@ -40,7 +40,19 @@ def x2_1df(mu, n, a, sep):
         ratio = (r**sep + r**(n-sep))/(1. - r**n)
         
     return .5/w*ratio
+
+def x_sq(lattice, sum_axes=1):
+    """Calculates the magnetisation across a lattice
     
+    This is really just a renaming of np.sum(arr ,axis=1)
+    
+    Required Inputs
+        lattice :: np.ndarray :: the lattice
+        sum_axes :: int/tuple :: can be tuple of dimensions or integer which
+                                assumed samples are in axis 0
+    """
+    return np.mean(lattice**2, axis=sum_axes)
+
 def magnetisation(lattice, sum_axes=1):
     """Calculates the magnetisation across a lattice
     

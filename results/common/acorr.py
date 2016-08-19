@@ -50,7 +50,7 @@ def plot(acns, lines, subtitle, op_name, save):
     # fig.suptitle(r"Autocorrelation Function for {}".format(op_name),
         # fontsize=pp.ttfont)
     
-    ax[0].set_title(subtitle, fontsize=pp.ttfont-4)
+    ax[0].set_title(subtitle, fontsize=pp.ttfont)
     
     ax[0].set_xlabel(r'Fictitious time separation, $s$')
     
@@ -62,10 +62,11 @@ def plot(acns, lines, subtitle, op_name, save):
         # for some reason I occisionally need to add a fake plot
         # p2 = ax[0].add_patch(Rectangle((0, 0), 0, 0, fc=c, linewidth=0, alpha=.4, label=label))
         try:
+            x,y,e = x[:250], y[:250], e[:250]
             if e is not None:
-                # ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
-                ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
-                    label=label)
+                ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
+                # ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
+                #     label=label)
             else:
                 ax[0].scatter(x, y, c=c, ms=3, fmt='o', alpha=0.5, label=label)
         except Exception, e:
@@ -194,12 +195,12 @@ def main(x0, pot, file_name,
         alen = 2*w
     
     # Create Dictionary for Plotting Measured Data
-    aclabel = r'Measured: $C_{M^2}(t; '             \
-        + r'\bar{P}_{\text{acc}}'+r'={:4.2f}; '.format(p)
+    aclabel = r'Measured: $C_{M^2}(s; '             \
+        + r'\langle\rho\rangle'+r'={:4.2f}; '.format(p)
     yelpwx = zip(acns, acns_err, angle_labels, ps, ws, acxs)  # this is an iterable of all a/c plot values
     
     # create the dictionary item to pass to plot()
-    acns = {aclabel+r'\theta = {})$'.format(l) :(x[:alen], y[:alen], e[:alen]) for y,e,l,p,w_i,x in yelpwx}
+    acns = {aclabel+r'\vartheta = {})$'.format(l) :(x[:alen], y[:alen], e[:alen]) for y,e,l,p,w_i,x in yelpwx}
     
     if acFunc is not None: # Create Dictionary for Plotting Theory
         fx_f = np.max(np.asarray([a[:alen] for a in acxs]))  # last trajectory separation length to plot
@@ -210,7 +211,7 @@ def main(x0, pot, file_name,
         # calculcate theory across all tau, varying p_acc and normalise
         normFn = lambda pt: np.array([acFunc(t=xi, pa=pt[0], theta=pt[1]) for xi in fx]) / acFunc(t=0, pa=pt[0], theta=pt[1])
         fs = map(normFn, zip(ps, mixing_angles))            # map the a/c function to acceptance & angles
-        th_label = r'Theory: $C_{M^2}(t; \bar{P}_{\text{acc}} = '
+        th_label = r'Theory: $C_{\mathscr{M}^2}(s; \langle\rho_t\rangle_t = '
         pfl = zip(ps, fs, angle_labels)                     # this is an iterable of all theory plot values
         pfl = pfl[:alen]                                     # cut to the same window length as x-axis
         
