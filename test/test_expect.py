@@ -33,7 +33,7 @@ class Test(object):
         
         self.n = dim*length
     
-    def qhoDeltaH(self, n_steps = 20, step_size = .1, tol = 1e-1, print_out = True):
+    def kgDeltaH(self, n_steps = 20, step_size = .1, tol = 1e-1, print_out = True):
         """Tests to see if <exp{-\delta H}> == 1
         
         Optional Inputs
@@ -43,7 +43,7 @@ class Test(object):
             print_out :: bool :: prints info if True
         """
         passed = True
-        pot = QHO()
+        pot = KG()
         delta_hs, av_acc = self._runDeltaH(pot)
         meas_av_exp_dh  = np.asscalar(np.exp(-delta_hs).mean())
         passed *= np.abs(meas_av_exp_dh - 1) <= tol
@@ -59,7 +59,7 @@ class Test(object):
                     })
         return passed
     
-    def qhoCorrelation(self, mu = 1., tol = 1e-2, print_out = True):
+    def kgCorrelation(self, mu = 1., tol = 1e-2, print_out = True):
         """calculates the value <x(0)x(0)> for the QHO
         
         Optional Inputs
@@ -69,9 +69,9 @@ class Test(object):
         """
         passed = True
         
-        pot = QHO(mu=mu)
+        pot = KG(m=mu)
         measured_xx = self._runCorrelation(pot)
-        expected_xx = theory.operators.phi2_1df(self.spacing, mu, self.n)
+        expected_xx = theory.operators.x2_1df(1, self.n, self.spacing, 0)
         
         passed *= np.abs(measured_xx - expected_xx) <= tol
         
@@ -98,7 +98,7 @@ class Test(object):
         passed = True
         
         pot = KG()
-        n_samples = 250
+        n_samples = 1000
         delta_hs, measured_acc = self._runDeltaH(pot, n_samples = n_samples, 
             step_size=step_size, n_steps=n_steps)
         av_dh = np.asscalar(delta_hs.mean())
@@ -120,7 +120,7 @@ class Test(object):
                     })
         return passed
     
-    def _runDeltaH(self, pot, n_samples = 2000, n_burn_in = 20, n_steps=20, step_size=.1):
+    def _runDeltaH(self, pot, n_samples = 10000, n_burn_in = 20, n_steps=20, step_size=.1):
         """Obtains the average exponentiated change in H for 
         a given potential
         
@@ -131,8 +131,9 @@ class Test(object):
             step_size       :: int      :: Leap Frog step size
         """
         x0 = np.random.random(self.lattice_shape)
-        model = Model(x0, pot, spacing=self.spacing, n_steps=n_steps, step_size=step_size)
-        model.sampler.accept.store_acceptance = True
+        
+        model = Model(x0, pot, spacing=self.spacing, n_steps=n_steps, step_size=step_size,      
+                        accept_kwargs={'get_delta_hs':True})
         model.run(n_samples=n_samples, n_burn_in=n_burn_in, verbose = True)
         delta_hs = np.asarray(model.sampler.accept.delta_hs[n_burn_in:]).flatten()
         accept_rates = np.asarray(model.sampler.accept.accept_rates[n_burn_in:]).flatten()
@@ -140,7 +141,7 @@ class Test(object):
         av_acc          = np.asscalar(accept_rates.mean())
         return (delta_hs, av_acc)
     
-    def _runCorrelation(self, pot, n_samples = 2000, n_burn_in = 20):
+    def _runCorrelation(self, pot, n_samples = 10000, n_burn_in = 20):
         """Runs the correlation function calculation
         and instantiates all the necessary functions
         using an arbitrary potential
@@ -162,5 +163,5 @@ if __name__ == '__main__':
     test = Test(rng)
     utils.newTest(test.id)
     test.kgAcceptance(1, .1)
-    test.qhoCorrelation()
-    test.qhoDeltaH()
+    test.kgCorrelation()
+    test.kgDeltaH()

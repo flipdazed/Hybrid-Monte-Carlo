@@ -12,7 +12,7 @@ class Pretty_Plotter(object):
     def _teXify(self):
         """makes plots look posh"""
         
-        self.s = 1.5   # Increase plot size by a scale factor
+        self.s = 1.0   # Increase plot size by a scale factor
         self.fig_dims = [12*self.s,5*self.s]    # size of plot
         self.axfont = 14*self.s                 # axes
         self.tfont  = 14*self.s                 # subplot titles
