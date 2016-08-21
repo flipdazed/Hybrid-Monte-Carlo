@@ -38,6 +38,7 @@ class Base(object):
         
         self.x0 = Periodic_Lattice(self.x0, lattice_spacing=self.spacing)
         if not hasattr(self, 'save_path'): self.save_path=False
+        if not hasattr(self, 'save_path'): self.save_path=False
         dynamics = Leap_Frog(
             duE = self.pot.duE,
             step_size = self.step_size,

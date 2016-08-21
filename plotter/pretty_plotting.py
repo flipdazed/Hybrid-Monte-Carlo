@@ -7,13 +7,13 @@ import subprocess
 class Pretty_Plotter(object):
     """contains things to make plots look nice"""
     def __init__(self):
+        self.s = 1.0   # Increase plot size by a scale factor
         pass
     
     def _teXify(self):
         """makes plots look posh"""
         
-        self.s = 1.0   # Increase plot size by a scale factor
-        self.fig_dims = [12*self.s,5*self.s]    # size of plot
+        self.fig_dims = [5*self.s,5*self.s]    # size of plot
         self.axfont = 14*self.s                 # axes
         self.tfont  = 14*self.s                 # subplot titles
         self.ttfont = 14*self.s                 # figure title
@@ -21,7 +21,7 @@ class Pretty_Plotter(object):
         
         # Customising Options
         self.params = {'text.usetex' : True,
-                  'font.size' : 11,
+                  'font.size' : 12*self.s,
                   'font.family' : 'lmodern',
                   'text.latex.unicode': True,
                   'text.latex.preamble': [

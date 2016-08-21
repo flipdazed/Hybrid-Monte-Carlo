@@ -97,7 +97,7 @@ def getPotential(potFn, n_points=100):
 if __name__ == '__main__':
     
     n_burn_in = 25
-    n_samples = 10000
+    n_samples = 1000
     
     pot = Klein_Gordon(phi_4=-0.05*np.math.factorial(4),m=0.05)
     spacing = 0.1
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     x0 = np.random.random((n,)*dim)
     x0 = np.asarray(x0, dtype=np.float64)
     x0 = Periodic_Lattice(x0)
-    model = Model(x0, pot=pot, step_size=0.01, n_steps=20, rand_steps=True, spacing=spacing)
+    model = Model(x0, pot=pot, step_size=0.1, n_steps=20, rand_steps=True, spacing=spacing)
     
     # adjust for nice plotting
     print "Running Model: {}".format(__file__)

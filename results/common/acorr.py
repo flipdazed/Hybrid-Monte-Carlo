@@ -64,9 +64,9 @@ def plot(acns, lines, subtitle, op_name, save):
         try:
             x,y,e = x[:250], y[:250], e[:250]
             if e is not None:
-                ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
-                # ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
-                #     label=label)
+                # ax[0].fill_between(x, y-e, y+e, color=c, alpha=0.3, label=label)
+                ax[0].errorbar(x, y, yerr=e, c=c, ecolor='k', ms=3, fmt='o', alpha=0.5,
+                    label=label)
             else:
                 ax[0].scatter(x, y, c=c, ms=3, fmt='o', alpha=0.5, label=label)
         except Exception, e:
@@ -139,13 +139,15 @@ def main(x0, pot, file_name,
         """
         i,a = a
         model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
-          n_steps = n_steps, rand_steps=rand_steps)
+          n_steps = n_steps, rand_steps=True)
         
+        model.rand_steps=False
+        rand_steps = False
         c = acorr.Autocorrelations_1d(model)
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
         store.store(c.model.samples, file_name, '_samples')
         store.store(c.model.traj, file_name, '_trajs')
-        acs = c.getAcorr(separations, opFn, norm = False, prll_map=send_prll, max_sep=500.)   # non norm for uWerr
+        acs = c.getAcorr(separations, opFn, norm = False, prll_map=prll_map, max_sep=50)   # non norm for uWerr
         
         # get parameters generated
         traj        = np.cumsum(c.trajs)
@@ -166,8 +168,6 @@ def main(x0, pot, file_name,
             
         
         return xx, acns, acns_err, p, w, traj, acorr_seps
-    #
-    print 'Finished Running Model: {}'.format(file_name)
     # use multiprocessing
     
     if al == 1:             # don't use multiprocessing for just 1 mixing angle
@@ -175,7 +175,8 @@ def main(x0, pot, file_name,
         ans = [coreFunc((i, a)) for i,a in enumerate(mixing_angles)]
     else:                   # use multiprocessing for a number of mixing angles
         ans = prll_map(coreFunc, zip(range(al), mixing_angles), verbose=False)
-    
+    #
+    print 'Finished Running Model: {}'.format(file_name)
     # results have now been obtained. This operation is a dimension shuffle
     # Currently the first iterable dimension contains one copy of each item
     # Want to split into separate arrays each of length n

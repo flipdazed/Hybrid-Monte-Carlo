@@ -23,8 +23,8 @@ n, dim  = 100, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.
 
-n_samples, n_burn_in = 1000000, 1000
-c_len   = 1000
+n_samples, n_burn_in = 10000, 1000
+c_len   = 500
 
 mixing_angles = [.5*np.pi]
 angle_labels = [r'\frac{\pi}{2}']
@@ -49,4 +49,4 @@ if '__main__' == __name__:
         separations = separations, opFn = opFn, op_name = op_name,
         rand_steps= True, step_size = step_size, n_steps = n_steps,
         acFunc = acFunc,
-        save = True)
+        save = False)
