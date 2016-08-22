@@ -262,7 +262,6 @@ class Autocorrelations_1d(Init, Base):
         if not hasattr(self, 'op_mean'): self.op_mean = self.op_samples.ravel().mean()
         
         # This section flips between random and fixed trajectories
-        
         # get normalised autocorrelations for each separation
         if norm:
             if not hasattr(self, 'op_norm'):
@@ -289,9 +288,7 @@ class Autocorrelations_1d(Init, Base):
             acFn = lambda separation: acorr(self.op_samples, mean=self.op_mean, 
                 separation=separation, norm=self.op_norm)
         
-        prll_map = None
         if prll_map is not None:
-            print 'here'
             result = prll_map(acFn, separations, verbose=True)
             if self.model.rand_steps: acs, counts = zip(*result)
             else: acs, counts = result, None
@@ -299,10 +296,11 @@ class Autocorrelations_1d(Init, Base):
             result = [acFn(separation=s) for s in separations]
             if self.model.rand_steps: acs, counts = zip(*result)
             else: acs, counts = result, None
-        print 'here'
+        
         self.acorr_ficticous_time = separations
         self.acorr_counts = np.asarray(counts, dtype='float64')
         self.acorr = np.asarray(acs)
+        
         return self.acorr
         
     

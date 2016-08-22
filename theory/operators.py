@@ -51,7 +51,7 @@ def x_sq(lattice, sum_axes=1):
         sum_axes :: int/tuple :: can be tuple of dimensions or integer which
                                 assumed samples are in axis 0
     """
-    return np.mean(lattice**2, axis=sum_axes)
+    return lattice**2
 
 def magnetisation(lattice, sum_axes=1):
     """Calculates the magnetisation across a lattice

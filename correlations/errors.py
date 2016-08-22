@@ -260,14 +260,18 @@ def uWerr(f_ret, acorr=None, s_tau=1.5, fast_threshold=5000):
     else:
         fast = (n >= fast_threshold)
         norm, acorr, w = windowing(f_ret, f_aav, s_tau, n, fast=fast)
+    
+    # error handling if window is not found
     if w == None:
-        try:
+        if acorr is not None: # windowing returns None if failed
             nans = np.empty(acorr.shape)
-        except:
+            nans[:] = np.nan
+            return f_aav, np.nan, np.nan, np.nan, np.nan, nans, acorr/acorr[0]
+        else: # just send everything to NaN
             nans = np.empty(f_ret.shape)
             acorr = np.empty(f_ret.shape)
-        nans[:] = np.nan
-        return f_aav, np.nan, np.nan, np.nan, np.nan, nans, acorr/acorr[0]
+            acorr[:] = nans[:] = np.nan
+            return f_aav, np.nan, np.nan, np.nan, np.nan, nans, acorr
     
     l = max(acorr.size, 2*w+1)
     

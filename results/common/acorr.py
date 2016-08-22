@@ -141,8 +141,6 @@ def main(x0, pot, file_name,
         model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
           n_steps = n_steps, rand_steps=True)
         
-        model.rand_steps=False
-        rand_steps = False
         c = acorr.Autocorrelations_1d(model)
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
         store.store(c.model.samples, file_name, '_samples')
