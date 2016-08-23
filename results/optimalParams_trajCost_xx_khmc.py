@@ -45,7 +45,7 @@ def plot(itau, pacc, acorr, op, tint_th=None, pacc_th=None, op_th=None, save=Fal
     fig.suptitle(r"$\langle\rho_t\rangle_t$ and $\tau_{\text{int}}$ varying with $\delta\tau$ for $X^2$",
         fontsize=pp.ttfont)
     
-    ax[0].set_title(r"HMC; lattice: $(100,)$; $n=20$; $m=0.1$; $M=10^5$", fontsize=pp.ttfont)
+    ax[0].set_title(r"HMC; lattice: $(100,)$; $n=20$; $m=0.1$; $M=10^5$; $\vartheta=\frac{\pi}{6}$", fontsize=pp.ttfont)
     
     ax[-1].set_xlabel(r'$\delta\tau$')
     
@@ -218,8 +218,8 @@ if __name__ == '__main__':
     # number of samples/burnin per point
     n_samples, n_burn_in = 100000, 1000
     
-    mixing_angles = np.array([.5*np.pi])
-    min_step = 0.2
+    mixing_angles = np.array([np.pi/8.])
+    min_step = 0.1
     max_step = 0.7
     data_res = 100
     plot_res = 1000
