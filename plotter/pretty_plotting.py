@@ -7,12 +7,11 @@ import subprocess
 class Pretty_Plotter(object):
     """contains things to make plots look nice"""
     def __init__(self):
-        self.s = 1.0   # Increase plot size by a scale factor
         pass
     
     def _teXify(self):
         """makes plots look posh"""
-        
+        if not hasattr(self,'s'): self.s = 1.0   # Increase plot size by a scale factor
         self.fig_dims = [5*self.s,5*self.s]    # size of plot
         self.axfont = 14*self.s                 # axes
         self.tfont  = 14*self.s                 # subplot titles
@@ -59,7 +58,7 @@ class Pretty_Plotter(object):
             subprocess.call(['mkdir', save_dir])
             
             fig = plt.gcf()
-            fig.savefig(save_dir+save)
+            fig.savefig(save_dir+save, dpi=600)
         else:
             plt.show()
         pass

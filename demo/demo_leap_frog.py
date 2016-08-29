@@ -40,6 +40,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
                               '.gif' with 'convert'. Temp files del'd.
     """
     def __init__(self, p0, x0, dynamics, potential):
+        super(Pretty_Plotter,self).__init__()
         # code test based on the following matlab blog entry
         prefix = 'https://'
         self.blog = 'TheCleverMachine.wordpress.com'
@@ -112,7 +113,7 @@ class Demo_Hamiltonian_Dynamics(Pretty_Plotter):
         kE,uE,duE = p.kE, p.uE, p.duE
         
         n = 1000 # Resolution of the spring (< 500 is shit)
-        fig = plt.figure(figsize=(8, 8)) # make plot
+        fig = plt.figure(figsize=(8, 8), dpi=600) # make plot
         self._teXify() # make it lookm like LaTeX
         # fig.suptitle(r"Hamiltonian Dynamics of the SHO using Leap-Frog Integrator",
             # fontsize=16)
@@ -276,7 +277,7 @@ def fullDemo():
     logger.info('Plotting an animated demonstration')
     logger.debug('Circular phase space characteristic of Symplectic integrators')
     test.full_anim( # animated demo
-        save=False,
+        save='h_dynamics_anim.mp4',
         p_ar = test.dynamics.p_ar,
         x_ar = test.dynamics.x_ar
         )
