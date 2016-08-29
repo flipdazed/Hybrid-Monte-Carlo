@@ -11,7 +11,7 @@ from utils import saveOrDisplay, prll_map
 
 from correlations import acorr, errors
 from models import Basic_GHMC as Model
-from plotter import Pretty_Plotter, PLOT_LOC
+from plotter import Pretty_Plotter, PLOT_LOC, mlist
 
 # generatte basic colours list
 clist = [i for i in colors.ColorConverter.colors if i != 'w']
