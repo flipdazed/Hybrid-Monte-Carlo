@@ -48,7 +48,7 @@ if __name__ == '__main__':
         
         return itau#, itau_diff, pacc, pacc_err
     
-    bnds = [(0.1*np.pi, 0.4*np.pi),(0.05, 0.7)]
+    bnds = [(0.05, 0.3),(0.15, 0.3)]
     params = brute(minimise_func, ranges=bnds, Ns=16, full_output=True)
     
     store.store(params, file_name, '_params')

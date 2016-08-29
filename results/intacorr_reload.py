@@ -5,7 +5,7 @@ from common.intac import plot
 from common.utils import saveOrDisplay
 
 save = False
-file_name = 'intacorr_xx_khmc_kg_0p00t2p00'
+file_name = 'intacorr_xx_khmc_kg_0p00t0p50'
 
 dest = 'results/data/other_objs/{}_allPlot.pkl'.format(file_name)
 a = load(dest)

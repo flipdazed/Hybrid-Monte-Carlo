@@ -37,6 +37,9 @@ def plot(itau, pacc, acorr, op, tint_th=None, pacc_th=None, op_th=None, save=Fal
         save     :: bool :: True saves the plot, False prints to the screen
     """
     
+    # annotate minimum values
+    min_idx = np.argmin(itau[1])
+    
     pp = Pretty_Plotter()
     pp._teXify() # LaTeX
     
@@ -51,37 +54,58 @@ def plot(itau, pacc, acorr, op, tint_th=None, pacc_th=None, op_th=None, save=Fal
     
     ax[0].set_ylabel(r'$\tau_{\text{int}}$')
     x,y,e = itau
-    ax[0].errorbar(x, y, yerr=e, ecolor='k', ms=3, fmt='o', alpha=0.5, label='Measured')
+    if len(x)>100: ax[0].fill_between(x, y+e, y-e, alpha=0.5, label='Measured')
+    else:ax[1].errorbar(x, y, yerr=e, ecolor='k', ms=3, fmt='o', alpha=0.5, label='Measured')
+    
+    ax[0].scatter(x[min_idx], y[min_idx], c='r', alpha=1,
+        label=r'min $\tau_{\text{int}}=' \
+            + r'{:8.4f}$ at $\delta\tau={:5.3f}$'.format(y[min_idx],x[min_idx]))
+    
     if tint_th is not None:
         if len(tint_th) == 4:
             x,y,y_hi,y_lo = tint_th
             ax[0].fill_between(x, y_hi, y_lo, color='r', alpha=0.5, label='Theory')
         else:
             x,y = tint_th
-        ax[0].plot(x, y, c='r', alpha=1, linestyle='--')
+            ax[0].plot(x, y, c='r', alpha=1, linestyle='-')
     
     ax[1].set_ylabel(r'$\langle\rho_t\rangle_t$')
     x,y,e = pacc
-    ax[1].errorbar(x, y, yerr=e, ecolor='k', ms=3, fmt='o', alpha=0.5, label='Measured')
+    
+    if len(x)>100: 
+        ax[1].fill_between(x, y+e, y-e, alpha=0.5, label='Measured')
+        ax[1].plot(x, y, alpha=0.5)
+    else:
+        ax[1].errorbar(x, y, yerr=e, ecolor='k', ms=3, fmt='o', alpha=0.5, label='Measured')
+    
+    ax[1].scatter(x[min_idx], y[min_idx], c='r', alpha=1,
+        label=r'min $\tau_{\text{int}}$' \
+            + r' at $\langle\rho_t\rangle_t={:5.3f}\pm{:.1f}$'.format(y[min_idx], e[min_idx]))
+    
     if pacc_th is not None:
         x,y = pacc_th
         ax[1].plot(x, y, c='r', alpha=0.7, linestyle='--', label='Theory')
-
+    
     ax[-1].set_ylabel(r'$\langle X^2_t\rangle_t$')
     x,y,e = op
-    ax[-1].errorbar(x, y, yerr=e, ecolor='k', ms=3, fmt='o', alpha=0.5, label='Measured')
+    
+    if len(x)>100: ax[-1].fill_between(x, y+e, y-e, alpha=0.5, label='Measured')
+    else:ax[-1].errorbar(x, y, yerr=e, ecolor='k', ms=3, fmt='o', alpha=0.5, label='Measured')
+    
     if op_th is not None:
         x,y = op_th
-        ax[-1].plot(x, y, c='r', alpha=0.7, linestyle='--', label='Theory')
+        ax[-1].plot(x, y, c='r', alpha=0.7, linestyle='-', label='Theory')
     
     for a in ax: 
-        a.legend(loc='best', shadow=True, fontsize = pp.axfont)
         xi,xf = a.get_xlim()
         a.set_xlim(xmin=xi-0.01*(xf-xi), xmax=xf+0.01*(xf-xi)) # give a decent view of the first point
         
         yi,yf = a.get_ylim()
         a.set_ylim(ymax=yf + .05*(yf-yi), ymin=yi-.05*(yf-yi)) # give 5% extra room at top
     
+    ax[0].legend(loc='upper left', shadow=True, fontsize = pp.axfont)
+    ax[-1].legend(loc='lower left', shadow=True, fontsize = pp.axfont)
+    ax[1].legend(loc='best', shadow=True, fontsize = pp.axfont)
     pp.save_or_show(save, PLOT_LOC)
     pass
 #
@@ -214,18 +238,18 @@ if __name__ == '__main__':
     file_name = __file__
     pot = KG(m=m)
     
-    n, dim  = 20, 1
+    n, dim  = 100, 1
     x0 = np.random.random((n,)*dim)
     spacing = 1.
     
     # number of samples/burnin per point
-    n_samples, n_burn_in = 100000, 1000
+    n_samples, n_burn_in = 100000, 500
     
     mixing_angles = np.array([.5*np.pi])
     min_step = 0.2
     max_step = 0.7
-    data_res = 100
-    plot_res = 1000
+    data_res = 500
+    plot_res = 10000
     step_sizes = np.linspace(min_step, max_step, data_res)
     separations = np.arange(500)
     
