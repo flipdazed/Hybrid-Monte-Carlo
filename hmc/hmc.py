@@ -1,26 +1,60 @@
+# default pip imports
 import numpy as np
 from tqdm import tqdm
 
-from . import checks
+# local imports
+import checks
 from common import Init
 from dynamics import Leap_Frog
 from metropolis import Accept_Reject
 
+__docformat__ = "restructuredtext en"
+
 class Hybrid_Monte_Carlo(Init):
     """The Hybrid (Hamiltonian) Monte Carlo method
     
-    Optional Inputs
-        store_acceptance :: bool :: optionally store the acceptance rates
-        accept_kwargs    :: dict :: kwargs to pass to Accept_Reject(**accept_kwargs)
+    This class contains the framework to extract various observables from the
+    Generalised Hybrid Monte Carlo model
     
-    Required Inputs
-        x0         :: tuple :: initial starting position vector
-        potential  :: class :: class from potentials.py
-        dynamics   :: class :: integrator class for dynamics from h_dynamics.py
-        rng        :: np.random.RandomState :: random number state
+    Parameters
+    ----------
+    x0         : array_like
+        Initial starting position vector
+    potential  : class
+        A potential class following the structure
+        in :mod:`potentials`
+    dynamics   : class
+        Integrator class for Hamiltonian Dynamics following the structure
+        in :mod:`dynamics`
+    rng        : `np.random.RandomState`
+        random number state
+    store_acceptance : bool, optional
+        optionally store the acceptance rates
+    accept_kwargs    : dict, optional
+        A dictionary of keyworkd arguments (kwargs) to pass to
+        :class:`metropolis.Accept_Reject` as `self.accept(**accept_kwargs)`
     
-    Expectations
-        None
+    Methods
+    ----------
+    sample
+        Runs the MCMC sampler. Returns both momentum and position lattices, 
+        `(burn_in_p, samples_p), (burn_in, samples)`
+    move
+        Makes a GHMC move. Returns `p,x` if accepted and `p0,x0` if not.
+    
+    Attributes
+    ----------
+    dynamics
+        An instance of the chosen integrator (e.g. :class:`dynamics.Leap_Frog`)
+    momentum
+        An instance of `Momentum` containing momentum refreshment maps
+    accept
+        An instance of :class:`metropolis.Accept_Reject` instanciated with `accept_kwargs`
+    p0
+        Initial momentum
+    x0 
+        Initial position
+    
     """
     def __init__(self, x0, dynamics, potential, rng, **kwargs):
         super(Hybrid_Monte_Carlo, self).__init__()
@@ -53,23 +87,30 @@ class Hybrid_Monte_Carlo(Init):
         pass
     
     def sample(self, n_samples, n_burn_in = 20, mixing_angle=.5*np.pi, verbose = False, verb_pos = 0):
-        """runs the sampler for HMC
+        """Runs the sampler for GHMC
         
-        Required Inputs
-            n_samples   :: integer :: Number of samples (# steps after burn in)
+        Parameters
+        ----------
+        n_samples       : integer
+            Number of samples (# steps after burn in)
+        n_burn_in       : int,  optional 
+            Number of steps to discard at start
+        store_path      : bool, optional 
+            Store path for plotting
+        mixing_angle    : float,optional 
+            `0` is no mixing, pi/2 is total mix. The mixing angle is implemented so that 
+            it could be converted to a function that varies the angle with respect to 
+            some input
+        verbose         : bool, optional 
+            A progress bar if True
+        verb_pos        : int,  optional 
+            Offset for status bar
         
-        Optional Inputs
-            n_burn_in   :: integer :: Number of steps to discard at start
-            store_path  :: bool    :: Store path for plotting
-            mixing_angle :: float    :: 0 is no mixing, pi/2 is total mix
-            verbose :: bool :: a progress bar if True
-            verb_pos :: int :: offset for status bar
-        
-        Returns
-            (p_data, x_data) where *_data = (burn in samples, sample)
-        
-        The mixing angle is implemented so that it could be converted to
-        a function that varies the angle with respect to some input
+        Notes
+        ----------
+        Returns  `(p_data, x_data) where *_data = (burn in samples, sample)`
+        although it is expected that these values will be extracted as class 
+        attributes
         """
         p, x = self.p0.copy(), self.x0.copy()
         self.h_old = None
@@ -112,19 +153,23 @@ class Hybrid_Monte_Carlo(Init):
         As HMC but includes option for partial momentum refreshment
         through the mixing angle
         
-        Optional Inputs
-            step_size    :: float    :: step_size for integrator
-            n_steps      :: integer  :: number of integrator steps
-            mixing_angle :: float    :: 0 is no mixing, pi/2 is total mix
-        Returns
-            (p,x) :: (float, float) :: new momentum and position
+        Parameters
+        ----------
+        step_size    : float,   optional
+            Step_size for integrator
+        n_steps      : integer, optional
+            Number of integrator steps
+        mixing_angle : float,   optional
+            `0` is no mixing, `np.pi/2.` is a total refreshment
         
         Notes:
         If the proposed state is not accepted (i.e. it is rejected),
         the next state is the same as the current state
         (and is counted again when estimating the expectation of
-        some function of state by its average over states of the Markov chain)
-        - Neal, "MCMC using Hamiltonian Dynamics"
+        some function of state by its average over states of the Markov 
+        chain) :cite:`Neal2011a`
+        
+        .. bibliography:: references.bib
         """
         if (step_size is not None): self.dynamics.step_size = step_size
         if (n_steps is not None): self.dynamics.n_steps = step_size

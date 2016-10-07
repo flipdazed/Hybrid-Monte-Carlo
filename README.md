@@ -1,5 +1,9 @@
 Hybrid Monte Carlo & Kramers Algorithm
 ===============
+
+**NB: re-writing all the docstrings to fit `PEP` standards**
+*doc strings are currently being revamped to meet `PEP` standards and allow a `numpy`-style website documenting the code base*
+
 This repository contains the code used for the thesis component of a Masters degree in Theoretical Physics at Edinburgh University.
 
 Supervisors: Brian Pendleton, Tony Kennedy
