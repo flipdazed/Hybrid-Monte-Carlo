@@ -4,7 +4,6 @@ import numpy as np
 from results.common import acorr as routine
 from hmc.potentials import Klein_Gordon as KG
 from correlations.corr import twoPoint
-from theory.autocorrelations import M2_Exp as Theory
 from theory.operators import x2_1df
 from theory.acceptance import acceptance
 from theory.clibs.autocorrelations.exponential import hmc
@@ -23,7 +22,7 @@ n, dim  = 20, 1
 x0 = np.random.random((n,)*dim)
 spacing = 1.0
 
-n_samples, n_burn_in = 100000, 50
+n_samples, n_burn_in = 10000, 50
 c_len   = 500
 
 mixing_angles = [.5*np.pi]
@@ -47,6 +46,6 @@ if '__main__' == __name__:
         n_samples = n_samples, n_burn_in = n_burn_in, spacing = spacing,
         mixing_angles=mixing_angles, angle_labels = angle_labels,
         separations = separations, opFn = opFn, op_name = op_name,
-        rand_steps= False, step_size = step_size, n_steps = n_steps,
+        rand_steps = False, step_size = step_size, n_steps = n_steps,
         acFunc = acFunc,
         save = False)

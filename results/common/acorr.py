@@ -111,7 +111,7 @@ def main(x0, pot, file_name,
         max_sep     :: float :: define the max separation
     
     Optional Inputs
-        rand_steps :: bool :: probability of with prob
+        rand_steps :: bool :: True for exponential distribution of MDMC steps
         step_size :: float :: MDMC step size
         n_steps :: int :: number of MDMC steps
         spacing :: float :: lattice spacing
@@ -139,7 +139,7 @@ def main(x0, pot, file_name,
         """
         i,a = a
         model = Model(x0, pot=pot, spacing=spacing, rng=rng, step_size = step_size,
-          n_steps = n_steps, rand_steps=True)
+          n_steps = n_steps, rand_steps=rand_steps)
         
         c = acorr.Autocorrelations_1d(model)
         c.runModel(n_samples=n_samples, n_burn_in=n_burn_in, mixing_angle = a, verbose=True, verb_pos=i)
