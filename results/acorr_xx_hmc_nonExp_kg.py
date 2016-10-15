@@ -13,8 +13,6 @@ n_steps   = 20
 step_size = 1./((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
 
-th = Theory(tau=step_size*n_steps, m=m)
-
 file_name = __file__
 pot = KG(m=m)
 
@@ -48,4 +46,4 @@ if '__main__' == __name__:
         separations = separations, opFn = opFn, op_name = op_name,
         rand_steps = False, step_size = step_size, n_steps = n_steps,
         acFunc = acFunc,
-        save = False)
+        save = True)

@@ -194,8 +194,8 @@ def main(x0, pot, file_name,
         alen = 2*w
     
     # Create Dictionary for Plotting Measured Data
-    aclabel = r'Measured: $C_{M^2}(s; '             \
-        + r'\langle\rho\rangle'+r'={:4.2f}; '.format(p)
+    aclabel = r'Measured: $C_{\mathscr{X}^2}(s; '             \
+        + r'\langle\rho_t\rangle_t'+r'={:4.2f}; '.format(p)
     yelpwx = zip(acns, acns_err, angle_labels, ps, ws, acxs)  # this is an iterable of all a/c plot values
     
     # create the dictionary item to pass to plot()
@@ -210,7 +210,7 @@ def main(x0, pot, file_name,
         # calculcate theory across all tau, varying p_acc and normalise
         normFn = lambda pt: np.array([acFunc(t=xi, pa=pt[0], theta=pt[1]) for xi in fx]) / acFunc(t=0, pa=pt[0], theta=pt[1])
         fs = map(normFn, zip(ps, mixing_angles))            # map the a/c function to acceptance & angles
-        th_label = r'Theory: $C_{\mathscr{M}^2}(s; \langle\rho_t\rangle_t = '
+        th_label = r'Theory: $C_{\mathscr{X}^2}(s\sim \text{Exp}(\frac{1}{r}); \langle\rho_t\rangle_t = '
         pfl = zip(ps, fs, angle_labels)                     # this is an iterable of all theory plot values
         pfl = pfl[:alen]                                     # cut to the same window length as x-axis
         

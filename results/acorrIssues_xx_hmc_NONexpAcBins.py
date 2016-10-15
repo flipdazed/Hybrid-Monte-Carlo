@@ -71,7 +71,7 @@ ax =[]
 fig, ax = plt.subplots(2, sharex=True, figsize = (8, 8))
 ax[-1].set_xlabel(r'Fictitious time separation, $s : s = m\delta\tau$ for $m\in\mathbb{N}$', fontsize=14)
 
-main_title = r'HMC Autocorrelation Data for $M^2$ and $\tau\sim\text{Exp}(1/r)$'
+main_title = r'HMC Autocorrelation Data for $X^2$ and $\tau\sim\text{Exp}(1/r)$'
 info_title = r'Samples: $10^{:d}$ Lattice: ({:d},{:d}), $m={:3.1f}$, $n={:d}$, '.format(
     int(np.log10(n_samples)), n,dim, m, n_steps)+r'$\delta\tau = \frac{2}{m(3\sqrt{3} - \sqrt{15})}\frac{1}{n}$'
 
@@ -80,10 +80,10 @@ ax[0].set_title(info_title, fontsize = 14)
 mask = ~np.isnan(a)
 
 ax[0].errorbar(separations[mask], a[mask]/a[0], yerr=my_err[mask], ecolor='k', ms=3,
- fmt='o', alpha=0.6, label=r'Measured $\mathcal{C}_{\langle \phi^2_{x} \rangle_x}(s)$')
+ fmt='o', alpha=0.6, label=r'Measured $\mathcal{C}_{\langle \mathscr{X}^2_{x} \rangle_x}(s)$')
  
 ax[0].legend(loc='best', shadow=True, fontsize = 14, fancybox=True)
-ax[0].set_ylabel(r'Normalised $\mathcal{C}(s)$', fontsize = 14)
+ax[0].set_ylabel(r'Normalised $\mathcal{C}_{\langle \mathscr{X}^2_{x} \rangle_x}(s)$', fontsize = 14)
 ax[0].set_xlim([0,max_x_view])
 ax[0].set_ylim([0,max_y_view])
 ax[0].relim()
