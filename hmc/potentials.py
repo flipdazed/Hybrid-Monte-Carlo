@@ -13,7 +13,7 @@ __all__ = [ 'Klein_Gordon',
 
 laplace_filter = np.asarray([1, -2, 1], dtype=np.float64)
 def fastLaplaceNd(arr):
-    """A very fast laplace filter for small arrays directly calling the scipy c++ fucntion
+    """A very fast laplace filter for small arrays directly calling the scipy c++ function
     
     Required Inputs
         arr :: nd.array :: the array to calculate the n-dim laplace filter
@@ -86,9 +86,9 @@ class Shared(object):
 class Klein_Gordon(Shared):
     """Klein Gordon Potential on a lattice
     
-    H = \frac{m}{2}\dot{x}^2 + V(x)
+    $H = \frac{m}{2}\dot{x}^2 + V(x)$
     
-    V(x) = \frac{1}{2}mx^2 + \frac{1}{3!}\lambda_3 x^3 + \frac{1}{4!}\lambda_4 x^4
+    $V(x) = \frac{1}{2}mx^2 + \frac{1}{3!}\lambda_3 x^3 + \frac{1}{4!}\lambda_4 x^4$
     
     Optional Inputs
         m       :: float :: mass

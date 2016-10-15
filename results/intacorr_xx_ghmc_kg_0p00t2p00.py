@@ -4,7 +4,7 @@ import numpy as np
 from common import intac
 from hmc.potentials import Klein_Gordon as KG
 from correlations.corr import twoPoint
-from theory.operators import phi2_1df
+from theory.operators import x2_1df
 from theory.acceptance import acceptance
 from theory.autocorrelations import M2_Exp as AC_Theory
 
@@ -29,7 +29,7 @@ opFn        = lambda samples: twoPoint(samples, separation=0)
 op_name     = r'$\hat{O}_{pq} = \phi_0^2$'
 
 # theoretical calculations
-op_theory   = phi2_1df(mu=pot.m, n=x0.size, a=spacing, sep=0)
+op_theory   = x2_1df(mu=pot.m, n=x0.size, a=spacing, sep=0)
 pacc_theory = acceptance(dtau=step_size, tau=tau, n=x0.size, m=pot.m, t=tau*n_samples)
 acth = AC_Theory(tau=n_steps*step_size, m=pot.m)
 iTauTheory  = acth.integrated
