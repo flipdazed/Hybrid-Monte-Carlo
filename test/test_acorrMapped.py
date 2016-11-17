@@ -32,8 +32,8 @@ def testFn(results, test, res_pairs=None):
 def genTestData():
     """Generate test data
         test_cases :: list of 4 test arrays each of length 10
-        test_set1  :: the four test cases with 0.1 separation
-        test_set2  :: the four test cases with no separation
+        test_set1  :: the test cases (a,b,c,d,e,f) with 0.1 separation
+        test_set2  :: the test cases (a,b,c,d,e,f) with 0.0 separation
     """
     n = 10
     
@@ -89,7 +89,11 @@ def debugRoutine(func, verbose=False, debug=False):
     """
     seps = [0.1, 0.0] # the separations to test
     cases, test_set1, test_set2 = genTestData() # generate the test cases
-    
+    print 'Starting test...'
+    print '\nShowing test cases:\n'
+    for case in cases:
+        print case
+    print ""
     for test, sep in zip([test_set1, test_set2], seps): # loop over separations
         print '\nStart separation of {}'.format(sep)
         res = []
@@ -122,12 +126,12 @@ if __name__ == "__main__":
     from sweeper import attempt, attemptShort
     
     debugRoutine(attempt, verbose=False, debug=True)
-    debugRoutine(attemptShort)
+    # debugRoutine(attemptShort)
     
-
 # # This can be run from the main directory of the repository in Ipython!
 
 # from plotter.pretty_plotting import Pretty_Plotter
+# pp = Pretty_Plotter()
 # pp._teXify()
 # pp.params['text.latex.preamble'] = [r"\usepackage{amsmath}"]
 # pp._updateRC()

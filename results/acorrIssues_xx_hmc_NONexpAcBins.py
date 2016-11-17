@@ -89,7 +89,7 @@ ax[0].set_ylim([0,max_y_view])
 ax[0].relim()
 ax[0].autoscale_view()
 
-ax[1].set_title(r'Counts of trajectories at each separation - $10^6$ at $s=0$ omitted', fontsize = 14)
+ax[1].set_title(r'Counts of trajectories at each separation - $10^{:d}$ at $s=0$ omitted'.format(int(np.log10(n_samples))), fontsize = 14)
 ax[1].bar(separations[1:], counts[1:], linewidth=0, alpha=0.6, width = tolerance, label=r'Separation Tolerance = $\delta\tau/2$ i.e. Bins of $\tau$')
 
 # ax[1].plot(th_x, fn(th_x, *f[0]), linewidth=2.0, alpha=0.6, label=r'f(s) = ${:4.2}'.format(f[0][0]) \
