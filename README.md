@@ -1,20 +1,20 @@
 Hybrid Monte Carlo & Kramers Algorithm
 ===============
 
-**NB: re-writing all the docstrings to fit `PEP` standards**
-*doc strings are currently being revamped to meet `PEP` standards and allow a `numpy`-style website documenting the code base*
-
-This repository contains the code used for the thesis component of a Masters degree in Theoretical Physics at Edinburgh University.
+This repository contains the code used for the thesis component of a Masters degree in 
+Theoretical Physics at Edinburgh University.
 
 Supervisors: Brian Pendleton, Tony Kennedy
 
-$\LaTeX$ is used widely in this repository. A good extension for Google Chrome is [`TeX All the Things`](https://chrome.google.com/webstore/detail/tex-all-the-things/cbimabofgmfdkicghcadidpemeenbffn)
+$\LaTeX$ is used widely in this repository. A good extension for Google Chrome
+ is [`TeX All the Things`](https://chrome.google.com/webstore/detail/tex-all-the-things/cbimabofgmfdkicghcadidpemeenbffn)
 
 ## Table of Contents
  - [Hybrid Monte Carlo (HMC)](#hmc)
  - [Kramers Algorithm (KHMC)](#khmc)
  - [Generalised HMC (GHMC)](#ghmc)
  - [Conventions](#conv)
+ - [Known Issues](#issues)
 
 <a name="hmc"/>
 ## Hybrid Monte Carlo (HMC)
@@ -42,3 +42,12 @@ Both the above algorithms are specific parameterisations of the generalised Hybr
 - Functions :: `CamelType()`
 - Variables :: `lower_case`
 - Classes   :: `Upper_Case()`
+
+<a name="issues"/>
+## Known Issues
+
+See the [Issues](https://github.com/flipdazed/Hybrid-Monte-Carlo/issues) tab and filter
+for `bug` to see current issues. At the time of writing, the HMC/GHMC code is assumed to 
+be without fault. Remaining issues lie within autocorrelations and theoretical results.
+
+- `README` docs are currently very dodgy and will be updated soon
