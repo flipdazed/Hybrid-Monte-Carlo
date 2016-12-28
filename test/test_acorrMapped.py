@@ -3,6 +3,11 @@ import sys, traceback
 from scipy.special import binom
 from collections import Counter
 
+def equalSpacing(seg, mean, sep):
+    """corr fn for equal spacing
+    used a few times in this module"""
+    return np.sum((seg[:seg.size-sep]-mean)*(seg[sep:]-mean))
+
 def testFn(results, test, res_pairs=None):
     """Takes in two arrays of your function results and compares to test data
     If you pass the pairs you found to res_pairs it will also neatly display those
@@ -45,9 +50,6 @@ def genTestData():
     e = np.array([0.4]*3 + [0.5]*3 + [0.6]*3 + [5]) # series of identicals
     f = np.asarray([0, 0.2, 0.4, 0.6, 0.8] + [0.9]*3 + [1.0]*2) # no match then matches
     
-    
-    # a quick function used a fair bit in the case of equal incrementation
-    equalSpacing = lambda seg, mean, sep: np.sum((seg[:seg.size-sep]-mean)*(seg[sep:]-mean))
     nCr52 = binom(5,2)  # ways of choosing n from r where order matters
     nCr32 = binom(3,2)
     dm = d.mean()      # both means used a lot so declaring saves space
@@ -72,7 +74,7 @@ def genTestData():
     t2e = ((0.4-em)**2*nCr32 + (.5-em)**2*nCr32 + (0.6-em)**2*nCr32)/(3*nCr32)
     t2f = ((0.9-fm)**2*nCr32 + (1.0-fm)**2)/(nCr32+1)
     
-    cases = [a,b,c,d,e, f]
+    cases = [a, b, c, d, e, f]
     test_set1 = [t1a, t1b, t1c, t1d, t1e, t1f]
     test_set2 = [t2a, t2b, t2c, t2d, t2e, t2f]
     return cases, test_set1, test_set2
@@ -122,12 +124,50 @@ def debugRoutine(func, verbose=False, debug=False):
         testFn(res, test, res_pairs)
     pass
 
+def issue73():
+    """a minimal test using the first 10
+    trajectory points from an autocorrelation
+    as defined in issue:#73
+    """
+    diff = 2./(3*np.sqrt(3) - np.sqrt(15))
+    tol = diff*0.4
+    g = np.arange(10)*diff
+    gm = g.mean()
+    tg = np.array([
+        equalSpacing(g, gm, i)/(g.size-i) 
+        for i in xrange(1, g.size)
+    ])
+
+    res_pairs = []
+    res = []
+    print '\nTesting runtime example ...'
+    for i in range(1, g.size):
+        sep = diff*i
+        print "\nseparation: {:f}".format(diff*i)
+        sol,pairs = attempt(
+            arr=g,
+            sep=sep,
+            mean=gm,
+            n=g.size,
+            tol=tol,
+            debug=True,
+            verbose=True
+        )
+    print sol
+    res.append(sol)
+    res_pairs.append(pairs)
+    testFn(res, tg, res_pairs)
+    pass
+
 if __name__ == "__main__":
     from sweeper import attempt, attemptShort
     
     debugRoutine(attempt, verbose=False, debug=True)
     # debugRoutine(attemptShort)
     
+    # test the actual trajectories that need to be matched
+    issue73()
+
 # # This can be run from the main directory of the repository in Ipython!
 
 # from plotter.pretty_plotting import Pretty_Plotter

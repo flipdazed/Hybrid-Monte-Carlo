@@ -179,7 +179,8 @@ def main(x0, pot, file_name,
     # Currently the first iterable dimension contains one copy of each item
     # Want to split into separate arrays each of length n
     xx, acns, acns_err, ps, ws, ts, acxs = zip(*ans)
-    
+    print 'trajs:'
+    print ts
     print '\n'*al           # hack to avoid overlapping with the progress bar from multiprocessing
     out = lambda p,x,a: '> measured at angle:{:3.1f}: <x(0)x(0)> = {}; <P_acc> = {:4.2f}'.format(a,x,p)
     for p, x, a in zip(ps, xx, mixing_angles):

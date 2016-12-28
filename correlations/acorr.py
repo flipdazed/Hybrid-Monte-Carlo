@@ -9,6 +9,7 @@ from copy import copy
 from hmc import checks
 from hmc.common import Init
 from .common import Base
+from clibs import iterateSymmCartesian
 
 def correlatedData(tau = 5, n = 10000):
     r"""A sequence of n normally distributed r.v. unit variance
@@ -102,7 +103,7 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=Fal
     n = op_samples.shape[0]
     # note that in HMC we don't have any repeated elements so separations 0 
     # can only be the array on itself
-    if sep == 0: 
+    if sep == 0:
         result = acorr(op_samples, mean, separation=0, norm = norm)
         if counts: result = (result, n)
         return result
@@ -115,7 +116,7 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=Fal
     count = 0   # counter for averaging
     new_front = True # the first front value is new
     while front < n:            # keep going until exhausted sep_mapay
-        new_front = abs(sep_map[front]-sep_map[front-1]) > tol  # check if front value is a new one
+        new_front = abs(sep_map[front]-sep_map[front-1]) > tol  # check if front value is a new pair
         back = bsfp if new_front else bssp         # this is the magical step
         
         if abs(sep_map[front] - sep_map[back] - sep) < tol: # if equal subject to tol: pair found
@@ -137,10 +138,11 @@ def acorrMapped(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=Fal
     if counts: result = (result, count)
     return result
 
-def acorrMapped_noDups(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=False):
-    """NOT TESTED AND DOESN'T WORK AS INTENDED!
+def acorrMapped2(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, counts=False):
+    """This is a second attempt at the acorr mapped algorithm because I 
+    ballsed up the first :)
     
-    The idea was to write a faster algorithm that uses
+    Theoretical basis is identical to acorrMapped
     
     Required Inputs
         op_samples  :: np.ndarray :: the operator samples
@@ -152,29 +154,26 @@ def acorrMapped_noDups(op_samples, sep_map, sep, mean, norm = 1.0, tol=1e-7, cou
         norm        :: float :: the autocorrelation with separation=0
         tol         :: float :: tolerance around zero (numpy errors)
         counts      :: bool  :: return counts in a tuple
-    
-    the standard deviation formula is:
-        sum( (x-m)^2 )
-    which is equiv to:
-        sum( x^2 - 2mx + m^2)
-    we cannot know the mean of the measured data until the end of the
-    while loop so by summing the squared values and calculating the mean
-    in the loop we can do the full sdev calculation at the end!
     """
-    raise NotImplemented("Waiting on a good method to index np.ndarray")
     n = op_samples.shape[0]
-    # note that in HMC we don't have any repeated elements so separations 0 
-    # can only be the array on itself
+    # the diagonal of the cartesian product
     if sep == 0: 
+        # note that in HMC we don't have any repeated elements 
+        # so 0 seps can only be the array on itself
         result = acorr(op_samples, mean, separation=0, norm = norm)
         if counts: result = (result, n)
         return result
     
-    # see attempt in acorrMapped_noDups.c for inner workings
-    # acorrMapped_noDup (double* op_samples,double* sep_map,
-    #     double* ans, int* count, int n, double tol, double sep)
-    
-    result = ans/(count*norm) if count > 0 else np.nan # cannot calculate if no pairs
+    ans     = 0.0
+    count   = 0
+    iterateSymmCartesian(
+        ans, count,
+        sep_map,
+        op_samples,
+        mean, tol, n
+    )
+    # cannot calculate if no pairs
+    result = ans/(count*norm) if count > 0.0 else np.nan 
     if counts: result = (result, count)
     return result
 

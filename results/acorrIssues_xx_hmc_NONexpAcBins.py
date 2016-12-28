@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 
 from correlations.errors import uWerr, acorrnErr, getW
 from theory.operators import x_sq
-from correlations.acorr import acorrMapped
+from correlations.acorr import acorrMapped2
 from results.common.utils import prll_map
 from results.data.store import load
 from plotter.pretty_plotting import Pretty_Plotter
 
 min_sep   = 0.
 max_sep   = 50
-max_x_view = 10.
+max_x_view = 20.
 max_y_view = 2.
 
 file_desc = 'acorr_xx_hmc_nonExp_kg'
@@ -31,24 +31,25 @@ m         = 1.0
 n_steps   = 20
 step_size = 1./((3.*np.sqrt(3)-np.sqrt(15))*m/2.)/float(n_steps)
 tau       = step_size*n_steps
-r         = 1/tau
+r         = 1./tau
 phi       = tau*m
 
 res       = step_size
-tolerance = res/2.-step_size*0.1
+tolerance = res*0.4
 
 print 'loaded {} samples'.format(s.shape[0])
 print 'lattice: {}'.format(repr(s.shape[0:]))
-print 'total t: {}'.format(t[-1])
+print 'total t: {}'.format(tsum[-1])
 print 'acceptance: {}'.format(p)
 del t
 del acs
+print tsum[:10]
 # calculate autocorrelations
-aFn = lambda s: acorrMapped(op_samples, tsum, s, av_op, norm=1.0, tol=tolerance, counts=True)
+aFn = lambda s: acorrMapped2(op_samples, tsum, s, av_op, norm=1.0, tol=tolerance, counts=True)
 separations = np.linspace(min_sep, max_sep, (max_sep-min_sep)/res+1)
 
 # multicore
-result = prll_map(aFn, separations, verbose=True)
+result = map(aFn, separations)
 a,counts = zip(*result)
 
 a = np.asarray(a)           # the autocorrelation array
