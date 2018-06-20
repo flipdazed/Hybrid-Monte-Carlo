@@ -11,7 +11,9 @@ This directory contains the correlation and autocorrelation routines used.
 
 <a name="td"/>
 <a name="td-corr"/>
+
 ## Correlation Functions
+
 ### Implementation
  - ~~Two Point Correlation Function class~~
  
@@ -20,7 +22,9 @@ This directory contains the correlation and autocorrelation routines used.
  - Plot: Two point correlation function for AHO vs. separation
  
 <a name="td-acorr"/>
+
 ## Autocorrelation Functions
+
 ### Implementation
  - ~~Implement autocorrelation function~~
  - ~~Implement existing algorithm into python from matlab for error analysis~~
@@ -31,9 +35,11 @@ This directory contains the correlation and autocorrelation routines used.
  - ~~Plot: Integrated Autocorrelations vs. integration Window~~
 
 <a name="tests"/>
+
 ## Unit Tests
 None yet!
 
 <a name="ak"/>
+
 ## Code Acknowledgements
 See `../ref_code` for code snippets I found useful: Always helpful to see existing implementations to guide new implementations.
